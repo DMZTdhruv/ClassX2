@@ -5,3 +5,13 @@ Content-Type: application/json
   "email" : "abcd@gmail.com",
   "password": "12345678"
 }
+
+###
+
+POST http://localhost:3001/auth/singIn
+Content-Type: application/json
+
+{
+  "email": "abcd@gmail.com",
+  "password": "12345678"
+}

@@ -4,6 +4,7 @@ import dotenv from "dotenv"
 import morgan from "morgan"
 import helmet from "helmet";
 import cors from "cors"
+import authRouter from "./routes/auth.js"
 dotenv.config()
 
 const app = express()
@@ -16,6 +17,8 @@ app.use(cors())
 app.get("/" ,(req,res) => {
   res.status(200).json({message: "Hello classX server"})
 })
+
+app.use("/auth", authRouter)
 
 mongoose.connect(process.env.DB_URL)
 const db = mongoose.connection;

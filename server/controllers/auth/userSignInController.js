@@ -1,7 +1,7 @@
 import User from "../../model/user/user.model.js";
 import bcrypt from "bcrypt";
 
-const userSignInController = async (req, res) => {
+export const userSignInController = async (req, res) => {
   try {
     const { email, password } = req.body;
     const userToFind = await User.findOne({ email: email });
@@ -19,5 +19,3 @@ const userSignInController = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
-export default userSignInController;

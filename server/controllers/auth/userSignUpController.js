@@ -1,7 +1,7 @@
 import User from "../../model/user/user.model.js";
 import bcrypt from "bcrypt";
 
-const userSignUpController = async (req, res) => {
+export const userSignUpController = async (req, res) => {
   try {
     const { email, password } = req.body;
     const saltRounds = 10;
@@ -22,4 +22,3 @@ const userSignUpController = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-export default userSignUpController;

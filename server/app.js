@@ -6,7 +6,7 @@ import helmet from "helmet";
 import cors from "cors";
 import authRouter from "./routes/authRoutes.js";
 import branchesRouter from "./routes/branchRoutes.js";
-import userRouter from "./routes/userRoutes.js";
+import userProfileRouter from "./routes/protected/userProfileRoutes.js";
 
 dotenv.config();
 
@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
 
 app.use("/auth", authRouter);
 app.use("/branches", branchesRouter);
-app.use("/users", userRouter);
+app.use("/users", userProfileRouter);
 
 mongoose.connect(process.env.DB_URL);
 const db = mongoose.connection;

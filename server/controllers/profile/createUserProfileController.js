@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 import User from "../../model/user/user.model.js";
 import bcrypt from "bcrypt";
 
-export const userProfileController = async (req, res) => {
+export const createUserProfileController = async (req, res) => {
   try {
     const {
       userID,

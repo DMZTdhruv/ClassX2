@@ -8,7 +8,6 @@ export const authenticateUserToken = (req,res,next) => {
 
   jwt.verify(token,process.env.ACCESS_TOKEN, (err,user) => {
     if(err) return res.status(401).json({message: err.message})
-
     req.user = user;
     next()
   })

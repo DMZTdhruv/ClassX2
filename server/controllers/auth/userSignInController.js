@@ -1,6 +1,7 @@
 import User from "../../model/user/user.model.js";
 import bcrypt from "bcrypt";
 
+
 export const userSignInController = async (req, res) => {
   try {
     const { email, password } = req.body;

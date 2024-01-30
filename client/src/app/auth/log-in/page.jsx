@@ -2,7 +2,10 @@ import React from 'react'
 
 function page() {
   return (
-    <div>page</div>
+    <section className='login_section'>
+      <h3>ClassX</h3>
+      
+    </section>
   )
 }
 

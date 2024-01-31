@@ -1,8 +1,9 @@
+// routes/unprotected/authRoutes.js
 import express from "express";
 import {
   userSignUpController,
   userSignInController,
-} from "../controllers/index.js";
+} from "../../controllers/auth/index.js";
 
 const router = express.Router();
 

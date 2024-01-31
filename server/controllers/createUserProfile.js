@@ -2,6 +2,7 @@ import Division from "../model/college/division.model.js";
 import Branch from "../model/college/branch.model.js";
 import UserProfile from "../model/user/userProfile.model.js";
 import Semester from "../model/college/semester.model.js";
+import User from "../model/user/user.model.js";
 
 export const createUserProfileController = async (req,res) => {
   try {
@@ -70,9 +71,12 @@ export const createUserProfileController = async (req,res) => {
       semesterNumber,
       isPrivate,
     })
-
-   
+    
     const savedUserProfile = await newUserProfile.save();
+    const currentUser = await User.findOne({email: user.email});
+    if(!currentUser) return res.status(401).json({message: "This user doesn't exit"});
+    currentUser.userProfile = savedUserProfile._id;
+    
     return res.status(201).json({message: "Successfully created new user profile", userProfile: savedUserProfile})
 
   } catch (err) {

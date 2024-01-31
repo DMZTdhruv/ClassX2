@@ -10,7 +10,8 @@ const userProfileSchema = new mongoose.Schema(
     enrollmentNumber: { type: String, unique: true, required: true },
     branches: [{ type: mongoose.Schema.Types.ObjectId, ref: "Branch" }], // Use Branch schema from the branchModel
     isPrivate: { type: Boolean, default: false },
-    semesterNumber: {type: Number, default: false},
+    semesterNumber: {type: mongoose.Schema.Types.ObjectId, default: false},
+    division: {type: mongoose.Schema.Types.ObjectId, ref: 'Division'},
     friends: [{ type: String }],
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
     medals: { type: Number, default: 0 },

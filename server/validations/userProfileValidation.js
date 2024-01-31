@@ -1,6 +1,7 @@
 // validations/userProfileValidation.js
 
 export const validateUserProfileInput = (
+  user,
   userID,
   name,
   enrollmentNumber,
@@ -15,19 +16,15 @@ export const validateUserProfileInput = (
   password
 ) => {
   if (
-    !userID ||
+    !user.userID || 
     !name ||
     !enrollmentNumber ||
     !branchName ||
     !semesterNumber ||
-    !divisionName ||
-    !email ||
-    !password
+    !divisionName
   ) {
     throw new Error("Missing required input fields");
   }
-
-  // Add more specific validation checks as needed
 
   return true;
 };

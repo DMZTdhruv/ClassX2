@@ -2,8 +2,8 @@ POST http://localhost:3001/auth/signUp
 Content-Type: application/json
 
 {
-  "email" : "abcd@gmail.com",
-  "password": "12345678"
+  "email" : "karina@gmail.com",
+  "password": "karinaDhruv"
 }
 
 ###
@@ -11,13 +11,13 @@ POST http://localhost:3001/auth/signIn
 Content-Type: application/json
 
 {
-  "email": "abcd@gmail.com",
-  "password": "12345678"
+  "email" : "karina@gmail.com",
+  "password": "karinaDhruv"
 }
 
 ###
-POST http://localhost:3001/create/user-profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFiY2RAZ21haWwuY29tIiwidXNlcklkIjoiNjViOWQyODM0MDdjMzBhODJlNTAyNzY2IiwiaWF0IjoxNzA2Njc5MDg4fQ.oXPSUBQHIUZoP0urRENPcyiYKAw6VkPoRMZ1pEgyODg
+POST http://localhost:3001/users/create-user-profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJhYTU2YzFjMTJjM2MyYmQwYWZjY2EiLCJpYXQiOjE3MDY3MzA4ODIsImV4cCI6MTcwOTMyMjg4Mn0.TpCLVcbmy1GlmTwfk6Oa-VG1IKQaZb9PkEgxVHGucqQ
 Content-Type: application/json
 
 {

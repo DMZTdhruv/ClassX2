@@ -1,15 +1,15 @@
 // services/userProfileService.js
-import UserProfileRepository from "../repositories/UserProfileRepository.js";
-import BranchRepository from "../repositories/BranchRepository.js";
-import SemesterRepository from "../repositories/SemesterRepository.js";
-import DivisionRepository from "../repositories/DivisionRepository.js";
-import { validateUserProfileInput } from "../validations/userProfileValidation.js";
-import { userService } from "./userService.js";
-import UserProfile from "../models/user/userProfile.model.js";
-import UserRepository from "../repositories/UserRepository.js";
+import UserProfileRepository from '../repositories/UserProfileRepository.js'
+import BranchRepository from '../repositories/BranchRepository.js'
+import SemesterRepository from '../repositories/SemesterRepository.js'
+import DivisionRepository from '../repositories/DivisionRepository.js'
+import { validateUserProfileInput } from '../validations/userProfileValidation.js'
+import { userService } from './userService.js'
+import UserProfile from '../models/user/userProfile.model.js'
+import UserRepository from '../repositories/UserRepository.js'
 
-const userProfileRepository = new UserProfileRepository();
-const userRepository = new UserRepository();
+const userProfileRepository = new UserProfileRepository()
+const userRepository = new UserRepository()
 
 export async function createUserProfileInstance(
   userID,
@@ -17,27 +17,27 @@ export async function createUserProfileInstance(
   enrollmentNumber,
   branches,
   isPrivate,
+  semesterNumber,
+  division,
   friends,
   posts,
-  groups,
-  email,
-  password
+  groups
 ) {
-  const existingUserProfile = await userProfileRepository.findByUserID(userID);
+  const existingUserProfile = await userProfileRepository.findByUserID(userID)
 
   if (existingUserProfile) {
-    throw new Error("User Profile already exists");
+    throw new Error('User Profile already exists')
   }
 
+  const user = await userRepository.findByID(userID)
+  const userEmail = user.email
   const existingUserProfileByEmail = await userProfileRepository.findByEmail(
-    email
-  );
+    userEmail
+  )
 
   if (existingUserProfileByEmail) {
-    throw new Error("User Profile with the same email already exists");
+    throw new Error('User Profile with the same email already exists')
   }
-
-  await userService.checkPasswordMatch(userID, password);
 
   return new UserProfile({
     userID,
@@ -45,15 +45,16 @@ export async function createUserProfileInstance(
     enrollmentNumber,
     branches,
     isPrivate,
+    semesterNumber,
+    division,
     friends,
     posts,
     groups,
-    email,
-    password,
-  });
+  })
 }
 
 export const createUserProfile = async (
+  user,
   userID,
   name,
   enrollmentNumber,
@@ -67,8 +68,10 @@ export const createUserProfile = async (
   email,
   password
 ) => {
+  const currentUser = user
   try {
     validateUserProfileInput(
+      currentUser,
       userID,
       name,
       enrollmentNumber,
@@ -81,50 +84,52 @@ export const createUserProfile = async (
       groups,
       email,
       password
-    );
+    )
 
-    const branchRepository = new BranchRepository();
-    const semesterRepository = new SemesterRepository();
-    const divisionRepository = new DivisionRepository();
+    const branchRepository = new BranchRepository()
+    const semesterRepository = new SemesterRepository()
+    const divisionRepository = new DivisionRepository()
 
-    const branch = await branchRepository.findBranchByName(branchName);
+    const branch = await branchRepository.findBranchByName(branchName)
     const semester = await semesterRepository.findSemesterByNumberAndBranch(
       semesterNumber,
       branch
-    );
+    )
+
     const division = await divisionRepository.findOrCreateDivision(
       divisionName,
       semester
-    );
+    )
 
     const userProfileInstance = await createUserProfileInstance(
-      userID,
+      currentUser.userID,
       name,
       enrollmentNumber,
       [branch._id],
       isPrivate,
+      [semester._id],
+      [division._id],
       friends,
       posts,
-      groups,
-      email,
-      password
-    );
+      groups
+    )
 
     // get user
-    const user = await userRepository.findByID(userID);
-
+    const user = await userRepository.findByID(currentUser.userID)
     // adding ref of userProfile
-    user.userProfile = userProfileInstance._id;
+    user.userProfile = userProfileInstance._id
 
     // saving user data and user profile
-    await userRepository.save(user);
-    await userProfileRepository.save(userProfileInstance);
+    await userRepository.save(user)
+
+    //saving user profile
+    await userProfileRepository.save(userProfileInstance)
 
     return {
-      message: "User Profile created successfully",
+      message: 'User Profile created successfully',
       userProfile: userProfileInstance,
-    };
+    }
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error(error.message)
   }
-};
+}

@@ -14,4 +14,8 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
   async save(userProfile) {
     return userProfile.save();
   }
+
+  async findSemester(semesterNumber) {
+    
+  }
 }

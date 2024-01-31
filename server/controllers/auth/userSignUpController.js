@@ -6,7 +6,6 @@ export const userSignUpController = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validate user input
     validateUserSignUp(email, password);
 
     const result = await signUp(email, password);
@@ -15,3 +14,4 @@ export const userSignUpController = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+

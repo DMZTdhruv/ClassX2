@@ -15,7 +15,6 @@ class UserService {
 
   async checkPasswordMatch(userID, password) {
     const user = await this.checkUserExistsByID(userID);
-    console.log(userID);
 
     if (!user) {
       throw new Error("User not found");

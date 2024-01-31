@@ -4,7 +4,7 @@ import UserRepositoryInterface from "../interfaces/UserRepositoryInterface.js";
 
 class UserRepository extends UserRepositoryInterface {
   async findByID(userID) {
-    return User.findOne({ _id: userID });
+    return User.findOne({ _id: userID }).populate("userProfile");
   }
 
   async findByEmail(email) {

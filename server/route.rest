@@ -1,4 +1,4 @@
-POST http://localhost:3001/auth/singUp
+POST http://localhost:3001/auth/signUp
 Content-Type: application/json
 
 {
@@ -8,10 +8,24 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:3001/auth/singIn
+POST http://localhost:3001/auth/signIn
 Content-Type: application/json
 
 {
   "email": "abcd@gmail.com",
   "password": "12345678"
+}
+
+###
+POST http://localhost:3001/create/user-profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFiY2RAZ21haWwuY29tIiwidXNlcklkIjoiNjViOWQyODM0MDdjMzBhODJlNTAyNzY2IiwiaWF0IjoxNzA2Njc5MDg4fQ.oXPSUBQHIUZoP0urRENPcyiYKAw6VkPoRMZ1pEgyODg
+Content-Type: application/json
+
+{
+  "name": "Dhruv",
+  "enrollmentNumber": "2204030100775",
+  "branchName": "bca",
+  "semesterNumber": 4,
+  "divisionName": "a",
+  "isPrivate": true
 }

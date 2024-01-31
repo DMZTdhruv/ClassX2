@@ -5,12 +5,12 @@ const userProfileSchema = new mongoose.Schema(
     userID: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
     name: { type: String, required: true },
     enrollmentNumber: { type: String, unique: true, required: true },
     branches: [{ type: mongoose.Schema.Types.ObjectId, ref: "Branch" }], // Use Branch schema from the branchModel
     isPrivate: { type: Boolean, default: false },
+    semesterNumber: {type: Number, default: false},
     friends: [{ type: String }],
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
     medals: { type: Number, default: 0 },

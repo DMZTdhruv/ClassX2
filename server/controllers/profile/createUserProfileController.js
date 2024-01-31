@@ -1,13 +1,12 @@
-import UserProfile from "../../model/user/userProfile.model.js"; // Adjust the path as needed
-import Branch from "../../model/college/branch.model.js"; // Adjust the path as needed
-import Semester from "../../model/college/semester.model.js"; // Adjust the path as needed
-import Division from "../../model/college/division.model.js"; // Adjust the path as needed
-import mongoose from "mongoose";
+import Division from "../../model/college/division.model.js"; // 
 import User from "../../model/user/user.model.js";
 import bcrypt from "bcrypt";
+import Branch from "../../model/college/branch.model.js";
+import Semester from "../../model/college/semester.model.js";
 
 export const createUserProfileController = async (req, res) => {
   try {
+    const user = req.user;
     const {
       userID,
       name,

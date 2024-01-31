@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import User from '../../model/user/user.model.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -22,6 +23,15 @@ export const userSignInController = async (req, res) => {
 
     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN)
     return res.status(200).json({ message: 'Successful logged in', accessToken: accessToken})
+=======
+import { signIn } from "../../services/authService.js";
+
+export const userSignInController = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const result = await signIn(email, password);
+    res.status(200).json(result);
+>>>>>>> main
   } catch (err) {
     res.status(500).json({ message: err.message })
   }

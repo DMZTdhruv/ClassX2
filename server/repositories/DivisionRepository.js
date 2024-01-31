@@ -4,7 +4,7 @@ import Division from "../models/college/division.model.js";
 
 export default class DivisionRepository extends DivisionRepositoryInterface {
   async findOrCreateDivision(divisionName, semester) {
-    let division = await Division.findOne({
+    const division = await Division.findOne({
       divisionName,
       _id: { $in: semester.divisions },
     });

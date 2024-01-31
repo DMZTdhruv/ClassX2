@@ -27,8 +27,6 @@ class UserService {
       throw new Error("Invalid credentials");
     }
   }
-
-  // ... other existing methods ...
 }
 
 export const userService = new UserService(new UserRepository());

@@ -39,5 +39,3 @@ export const createBranch = async (
     throw new Error(error.message);
   }
 };
-
-// Add other branch-related methods as needed

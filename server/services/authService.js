@@ -56,5 +56,3 @@ export const signUp = async (email, password) => {
     throw new Error(error.message);
   }
 };
-
-// Add other auth-related methods as needed

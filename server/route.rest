@@ -17,7 +17,7 @@ Content-Type: application/json
 
 ###
 POST http://localhost:3001/users/create-user-profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJiNjBjYzEwOThkNTUxYWY5NmQ4ZjAiLCJpYXQiOjE3MDY3Nzk4OTIsImV4cCI6MTcwOTM3MTg5Mn0.aBQe9xJ2Seg6loJqugeX9EBirMoyrVd_lckKOPRJ0w0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJiNjBjYzEwOThkNTUxYWY5NmQ4ZjAiLCJpYXQiOjE3MDY3OTE3NjUsImV4cCI6MTcwOTM4Mzc2NX0.L9RpddhaJbSS5rQniC8Z7hGxT0PE_hAOSveD5YAfxVI
 Content-Type: application/json
 
 {
@@ -31,7 +31,7 @@ Content-Type: application/json
 
 ###
 POST http://localhost:3001/post/create-post
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJiNjBjYzEwOThkNTUxYWY5NmQ4ZjAiLCJpYXQiOjE3MDY3Nzk4OTIsImV4cCI6MTcwOTM3MTg5Mn0.aBQe9xJ2Seg6loJqugeX9EBirMoyrVd_lckKOPRJ0w0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJiNjBjYzEwOThkNTUxYWY5NmQ4ZjAiLCJpYXQiOjE3MDY3OTE3NjUsImV4cCI6MTcwOTM4Mzc2NX0.L9RpddhaJbSS5rQniC8Z7hGxT0PE_hAOSveD5YAfxVI
 Content-Type: application/json
 
 {
@@ -44,8 +44,8 @@ Content-Type: application/json
 }
 
 ### 
-POST http://localhost:3001/branches//create-branch
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJhYTU2YzFjMTJjM2MyYmQwYWZjY2EiLCJpYXQiOjE3MDY3NzUyMzYsImV4cCI6MTcwOTM2NzIzNn0.R0AdkaNs7_DWZqTnZ6C080Nr9la7PaIjSPpTu3szenI
+POST http://localhost:3001/branches/create-branch
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJiNjBjYzEwOThkNTUxYWY5NmQ4ZjAiLCJpYXQiOjE3MDY3OTE3NjUsImV4cCI6MTcwOTM4Mzc2NX0.L9RpddhaJbSS5rQniC8Z7hGxT0PE_hAOSveD5YAfxVI
 Content-Type: application/json
 
 {
@@ -53,3 +53,7 @@ Content-Type: application/json
   "branchFullName": "computer-science-engineering",
   "numberOfSemesters": 8
 }
+
+###
+GET http://localhost:3001/post/get-post?page=1&limit=10
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJiNjBjYzEwOThkNTUxYWY5NmQ4ZjAiLCJpYXQiOjE3MDY3OTE3NjUsImV4cCI6MTcwOTM4Mzc2NX0.L9RpddhaJbSS5rQniC8Z7hGxT0PE_hAOSveD5YAfxVI

@@ -54,7 +54,7 @@ export async function createUserProfileInstance(
 }
 
 export const createUserProfile = async (
-  user,
+  currentUser,
   userID,
   name,
   enrollmentNumber,
@@ -68,7 +68,6 @@ export const createUserProfile = async (
   email,
   password
 ) => {
-  const currentUser = user
   try {
     validateUserProfileInput(
       currentUser,
@@ -130,6 +129,7 @@ export const createUserProfile = async (
       userProfile: userProfileInstance,
     }
   } catch (error) {
+    console.log(error);
     throw new Error(error.message)
   }
 }

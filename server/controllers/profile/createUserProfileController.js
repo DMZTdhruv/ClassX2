@@ -3,7 +3,7 @@ import { createUserProfile } from "../../services/userProfileService.js";
 
 export const createUserProfileController = async (req, res) => {
   try {
-    const user = req.user;
+    const currentUser = req.user;
     const {
       userID,
       name,
@@ -20,7 +20,7 @@ export const createUserProfileController = async (req, res) => {
     } = req.body;
 
     const result = await createUserProfile(
-      user,
+      currentUser,
       userID,
       name,
       enrollmentNumber,

@@ -1,6 +1,6 @@
 // controllers/auth/userSignUpController.js
 import { validateUserSignUp } from "../../validations/userValidation.js";
-import { signUp } from "../../services/authService.js";
+import { signUp } from "../../services/AuthService/authService.js";
 
 export const userSignUpController = async (req, res) => {
   try {

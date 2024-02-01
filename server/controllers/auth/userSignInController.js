@@ -1,4 +1,4 @@
-import { signIn } from "../../services/authService.js";
+import { signIn } from "../../services/AuthService/authService.js";
 
 export const userSignInController = async (req, res) => {
   try {

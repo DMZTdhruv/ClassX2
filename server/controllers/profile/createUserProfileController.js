@@ -1,5 +1,5 @@
 // controllers/profile/createUserProfileController.js
-import { createUserProfile } from "../../services/userProfileService.js";
+import { createUserProfile } from "../../services/ProfileService/userProfileService.js";
 
 export const createUserProfileController = async (req, res) => {
   try {

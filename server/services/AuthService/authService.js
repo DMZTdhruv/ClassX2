@@ -1,7 +1,7 @@
 // services/authService.js
 import jwt from "jsonwebtoken";
-import UserRepository from "../repositories/UserRepository.js";
-import { generateSaltAndHashPassword } from "../utils/passwordUtils.js";
+import UserRepository from "../../repositories/UserRepository.js";
+import { generateSaltAndHashPassword } from "../../utils/passwordUtils.js";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv"
 dotenv.config();

@@ -1,12 +1,11 @@
 // services/userProfileService.js
-import UserProfileRepository from '../repositories/UserProfileRepository.js'
-import BranchRepository from '../repositories/BranchRepository.js'
-import SemesterRepository from '../repositories/SemesterRepository.js'
-import DivisionRepository from '../repositories/DivisionRepository.js'
-import { validateUserProfileInput } from '../validations/userProfileValidation.js'
-import { userService } from './userService.js'
-import UserProfile from '../models/user/userProfile.model.js'
-import UserRepository from '../repositories/UserRepository.js'
+import UserProfileRepository from '../../repositories/UserProfileRepository.js'
+import BranchRepository from '../../repositories/BranchRepository.js'
+import SemesterRepository from '../../repositories/SemesterRepository.js'
+import DivisionRepository from '../../repositories/DivisionRepository.js'
+import { validateUserProfileInput } from '../../validations/userProfileValidation.js'
+import UserProfile from '../../models/user/userProfile.model.js'
+import UserRepository from '../../repositories/UserRepository.js'
 
 const userProfileRepository = new UserProfileRepository()
 const userRepository = new UserRepository()

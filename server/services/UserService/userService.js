@@ -1,6 +1,6 @@
 // services/UserService.js
 import bcrypt from "bcrypt";
-import UserRepository from "../repositories/UserRepository.js";
+import UserRepository from "../../repositories/UserRepository.js";
 
 const userRepository = new UserRepository();
 

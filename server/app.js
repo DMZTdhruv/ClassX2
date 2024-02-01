@@ -6,8 +6,6 @@ import helmet from "helmet";
 import cors from "cors";
 import authRouter from "./routes/unprotected/authRoutes.js";
 import { branchRouter, postRouter, userProfileRouter } from "./routes/protected/index.js";
-
-
 dotenv.config();
 
 const app = express();

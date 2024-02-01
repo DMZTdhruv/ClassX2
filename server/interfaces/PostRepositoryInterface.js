@@ -9,4 +9,7 @@ export default class PostRepositoryInterface {
   async pushPostInUserProfile(userID, postId) {
     throw new Error("Not pushing in the userprofile model?method not implemented")
   }
+  async getAllPost() {
+    throw new Error("Method is not implemented")
+  }
 }

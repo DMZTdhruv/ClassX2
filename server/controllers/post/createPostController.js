@@ -1,8 +1,8 @@
-import {createPostService}  from "../../services/createPostService.js";
+import { createPostService } from '../../services/PostService/createPostService.js'
 
-export const createPostController = async (req,res) => {
+export const createPostController = async (req, res) => {
   try {
-    const currentUser = req.user;
+    const currentUser = req.user
     const {
       title,
       imageUrl,
@@ -10,20 +10,20 @@ export const createPostController = async (req,res) => {
       location,
       category,
       postedBy, // client will send the userId
-    } = req.body;
+    } = req.body
 
-    const createdPost =  await createPostService(
+    const createdPost = await createPostService(
       currentUser,
       title,
       imageUrl,
       caption,
       location,
       category,
-      postedBy,
+      postedBy
     )
 
-    res.status(201).json(createdPost);
+    res.status(201).json(createdPost)
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message })
   }
 }

@@ -1,6 +1,6 @@
-import PostRepository from '../repositories/PostRepository.js'
-import { validateCreatePostInput } from '../validations/createPostValidator.js'
-import Post from '../models/post/post.model.js'
+import PostRepository from '../../repositories/PostRepository.js'
+import { validateCreatePostInput } from '../../validations/createPostValidator.js'
+import Post from '../../models/post/post.model.js'
 
 export const createPostInstance = async (
   title,
@@ -16,7 +16,7 @@ export const createPostInstance = async (
     caption,
     location,
     category,
-    postedBy
+    postedBy,
   })
 }
 
@@ -29,8 +29,8 @@ export const createPostService = async (
   category,
   postedBy
 ) => {
-  const userProfileId = postedBy;
-  
+  const userProfileId = postedBy
+
   try {
     validateCreatePostInput(
       title,
@@ -38,7 +38,7 @@ export const createPostService = async (
       caption,
       location,
       category,
-      postedBy,
+      postedBy
     )
 
     const postRepository = new PostRepository()
@@ -50,14 +50,14 @@ export const createPostService = async (
       category,
       postedBy
     )
-    const userProfile = await postRepository.getUserProfile(userProfileId);
-    const savedPost = await postRepository.savePost(postInstance);
-    //pushing postId in userProfile  
+    const userProfile = await postRepository.getUserProfile(userProfileId)
+    const savedPost = await postRepository.savePost(postInstance)
+    //pushing postId in userProfile
     await postRepository.pushPostInUserProfile(userProfileId, savedPost._id)
-  
+
     return {
-      message: "Posted.",
-      post: savedPost
+      message: 'Posted.',
+      post: savedPost,
     }
   } catch (err) {
     throw new Error(err.message)

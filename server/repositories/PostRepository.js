@@ -13,7 +13,8 @@ export default class PostRepository extends PostRepositoryInterface {
 
   async pushPostInUserProfile(userID, postId) {
     const userProfile = await this.getUserProfile(userID)
-    await userProfile.posts.push(postId)
+     userProfile.posts.push(postId)
     return userProfile.save()
   }
+  
 }

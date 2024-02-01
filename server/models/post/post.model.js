@@ -6,9 +6,9 @@ const postSchema = new mongoose.Schema({
   caption: { type: String, required: true },
   location: { type: String },
   category: { type: String },
-  postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-  comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
+  postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile', required: true },
+  likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile' }],
+  comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile' }],
 }, { timestamps: true });
 
 const Post = mongoose.model('Post', postSchema);

@@ -5,8 +5,8 @@ import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
 import authRouter from "./routes/unprotected/authRoutes.js";
-import branchRouter from "./routes/protected/branchRoutes.js";
-import userProfileRouter from "./routes/protected/userProfileRoutes.js";
+import { branchRouter, postRouter, userProfileRouter } from "./routes/protected/index.js";
+
 
 dotenv.config();
 
@@ -23,6 +23,7 @@ app.get("/", (req, res) => {
 app.use("/auth", authRouter);
 app.use("/branches", branchRouter);
 app.use("/users", userProfileRouter);
+app.use("/post", postRouter)
 
 mongoose.connect(process.env.DB_URL);
 const db = mongoose.connection;

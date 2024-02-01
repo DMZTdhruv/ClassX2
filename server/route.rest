@@ -2,8 +2,8 @@ POST http://localhost:3001/auth/signUp
 Content-Type: application/json
 
 {
-  "email" : "karina@gmail.com",
-  "password": "karinaDhruv"
+  "email" : "shruvparmar@gmail.com",
+  "password": "shruvDhruv"
 }
 
 ###
@@ -11,20 +11,45 @@ POST http://localhost:3001/auth/signIn
 Content-Type: application/json
 
 {
-  "email" : "karina@gmail.com",
-  "password": "karinaDhruv"
+  "email" : "shruvparmar@gmail.com",
+  "password": "shruvDhruv"
 }
 
 ###
 POST http://localhost:3001/users/create-user-profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJhYTU2YzFjMTJjM2MyYmQwYWZjY2EiLCJpYXQiOjE3MDY3MzA4ODIsImV4cCI6MTcwOTMyMjg4Mn0.TpCLVcbmy1GlmTwfk6Oa-VG1IKQaZb9PkEgxVHGucqQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJiNjBjYzEwOThkNTUxYWY5NmQ4ZjAiLCJpYXQiOjE3MDY3Nzk4OTIsImV4cCI6MTcwOTM3MTg5Mn0.aBQe9xJ2Seg6loJqugeX9EBirMoyrVd_lckKOPRJ0w0
 Content-Type: application/json
 
 {
   "name": "Dhruv",
-  "enrollmentNumber": "2204030100775",
-  "branchName": "bca",
+  "enrollmentNumber": "2204030100805",
+  "branchName": "cse",
   "semesterNumber": 4,
-  "divisionName": "a",
+  "divisionName": "b",
   "isPrivate": true
+}
+
+###
+POST http://localhost:3001/post/create-post
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJiNjBjYzEwOThkNTUxYWY5NmQ4ZjAiLCJpYXQiOjE3MDY3Nzk4OTIsImV4cCI6MTcwOTM3MTg5Mn0.aBQe9xJ2Seg6loJqugeX9EBirMoyrVd_lckKOPRJ0w0
+Content-Type: application/json
+
+{
+  "title": "New 2d Student",
+  "imageUrl": "https://pbs.twimg.com/media/F2t7yOrW4AEnwXX?format=jpg&name=4096x4096",
+  "caption": "Hi guys meet my new friend from btecha",
+  "location": "",
+  "category": "friends",
+  "postedBy": "65bb60cc1098d551af96d8f0"
+}
+
+### 
+POST http://localhost:3001/branches//create-branch
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJhYTU2YzFjMTJjM2MyYmQwYWZjY2EiLCJpYXQiOjE3MDY3NzUyMzYsImV4cCI6MTcwOTM2NzIzNn0.R0AdkaNs7_DWZqTnZ6C080Nr9la7PaIjSPpTu3szenI
+Content-Type: application/json
+
+{
+  "branchName": "cse",
+  "branchFullName": "computer-science-engineering",
+  "numberOfSemesters": 8
 }

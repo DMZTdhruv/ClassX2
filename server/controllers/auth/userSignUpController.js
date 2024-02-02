@@ -7,7 +7,6 @@ export const userSignUpController = async (req, res) => {
     const { email, password } = req.body;
 
     validateUserSignUp(email, password);
-
     const result = await signUp(email, password);
     res.status(201).json(result);
   } catch (err) {

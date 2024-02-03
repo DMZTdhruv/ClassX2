@@ -12,7 +12,7 @@ Content-Type: application/json
 
 {
   "email" : "shruvparmar@gmail.com",
-  "password": "shruvDhruv"
+  "password": "12345678"
 }
 
 ###
@@ -57,3 +57,9 @@ Content-Type: application/json
 ###
 GET http://localhost:3001/post/get-post?page=1&limit=10
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJiNjBjYzEwOThkNTUxYWY5NmQ4ZjAiLCJpYXQiOjE3MDY3OTE3NjUsImV4cCI6MTcwOTM4Mzc2NX0.L9RpddhaJbSS5rQniC8Z7hGxT0PE_hAOSveD5YAfxVI
+
+
+
+###
+GET http://localhost:3001/branches/get-branch
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJkZWUyODAzYjM3NDk4YWRjZDcwNzciLCJpYXQiOjE3MDY5NTQ1ODEsImV4cCI6MTcwOTU0NjU4MX0.uncpEbZ_40JVfF_8FwS2NuidU2LIeRZYvGHifCqQNsU

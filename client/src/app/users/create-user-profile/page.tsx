@@ -21,19 +21,35 @@ interface Branch {
   branchName: string
 }
 
+interface SemesterNumber {
+  _id: string
+  semesterNumber: number
+}
+
 function SignUpPage() {
   const navigate = useRouter()
 
-  // all states
+  // all states of single value
   const [username, setUsername] = useState<string>('')
   const [enrollmentNo, setEnrollmentNo] = useState<string>('')
-  const [branch, setBranch] = useState<string>('')
   const [division, setDivision] = useState<string>('')
-  const [semester, setSemester] = useState<number | undefined>(undefined)
-  const [errorMessage, setErrorMessage] = useState<string>('')
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [userBranch, setUserBranch] = useState<string>('')
+  const [userSemester, setUserSemester] = useState<number | undefined>(
+    undefined
+  )
+  const [isPrivate, setIsPrivate] = useState<boolean | undefined>(undefined)
+  const [message, setMessage] = useState<string>('')
+
+  // all states of array
+  const [semesters, setSemesters] = useState<SemesterNumber[]>([])
   const [branchNames, setBranchNames] = useState<Branch[]>([])
-  const [isSemestersLoading, setIsSemesterLoading] = useState<boolean>(false)
+
+  // all states of error
+  const [errorMessage, setErrorMessage] = useState<string>('')
+
+  // all states of loading
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isSemestersLoading, setIsSemesterLoading] = useState<boolean>(true)
   const [isBranchLoading, setIsBranchLoading] = useState<boolean>(true)
 
   // all handles
@@ -46,7 +62,8 @@ function SignUpPage() {
   }
 
   const handleBranch = (value: string) => {
-    setBranch(value)
+    setUserBranch(value)
+    getSemesterOfBranch(value)
   }
 
   const handleDivision = (e: ChangeEvent<HTMLInputElement>) => {
@@ -55,22 +72,12 @@ function SignUpPage() {
 
   const handleSemester = (value: string) => {
     const sem = parseInt(value, 10)
-    setSemester(sem)
+    setUserSemester(sem)
   }
 
-  const handleOnSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (
-      !username ||
-      !enrollmentNo ||
-      !branch ||
-      !division ||
-      semester === undefined
-    ) {
-      setErrorMessage('Please enter all the details')
-      return
-    }
-    signUpUser()
+  const handleIsPrivateAccount = (value: string) => {
+    const booleanValue = value.toLowerCase() === 'true'
+    setIsPrivate(booleanValue)
   }
 
   useEffect(() => {
@@ -78,38 +85,68 @@ function SignUpPage() {
   }, [])
 
   // handling fetches
-  const signUpUser = async () => {
-    const api = `${process.env.NEXT_PUBLIC_API}/auth/signUp`
-    setIsLoading(true)
+  const createUserProfile = async (e: FormEvent<HTMLFormElement>) => {
+    setIsLoading(true);
+    e.preventDefault()
+    if (
+      !username ||
+      !enrollmentNo ||
+      !userBranch ||
+      !division ||
+      userSemester === undefined ||
+      isPrivate === undefined
+    ) {
+      setErrorMessage('Please enter all the details')
+      return
+    }
+    const userDetails = {
+      name: username,
+      enrollmentNumber: enrollmentNo,
+      branchName: userBranch,
+      semesterNumber: userSemester,
+      divisionName: division,
+      isPrivate: isPrivate,
+    }
+    const api = `${process.env.NEXT_PUBLIC_API}/users/create-user-profile`
+    console.log(userDetails)
     try {
       const createUser = await fetch(api, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${Cookies.get('classX_user_token')}`,
         },
-        body: JSON.stringify({
-          username,
-          enrollmentNo,
-          branch,
-          division,
-          semester,
-        }),
+        body: JSON.stringify(userDetails),
       })
-      const savedUser = await createUser.json()
-      console.log(savedUser)
+
+      const user = await createUser.json()
+
       if (!createUser.ok) {
-        setErrorMessage(savedUser.message)
+        console.error(
+          `HTTP error! Status: ${createUser.status}, Message: ${user.message}`
+        )
+        setErrorMessage(
+          `HTTP error! Status: ${createUser.status}, Message: ${user.message}`
+        )
         setTimeout(() => {
           setErrorMessage('')
         }, 5000)
         return
       }
-      navigate.push('/users/create-user-profile')
-      Cookies.set('classX_user_token', savedUser.token, { expires: 30 })
+
+      const { message } = await user
+      setMessage(message)
+      setTimeout(() => {
+        setMessage('')
+      }, 5000)
     } catch (err: any) {
       console.error(err.message)
+      setErrorMessage(err.message)
+      setTimeout(() => {
+        setErrorMessage('')
+      }, 5000)
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
@@ -126,7 +163,6 @@ function SignUpPage() {
       })
 
       const result = await branches.json()
-      setBranchNames(result.data)
       if (!branches.ok) {
         console.error(result.message)
         setErrorMessage(result.message)
@@ -135,6 +171,8 @@ function SignUpPage() {
         }, 5000)
         return
       }
+
+      setBranchNames(result.data)
     } catch (err: any) {
       console.log(err.message)
     } finally {
@@ -142,11 +180,38 @@ function SignUpPage() {
     }
   }
 
-  const getSemesterOfBranch = async () => {
-    const api = `${process.env.NEXT_PUBLIC_API}`
+  const getSemesterOfBranch = async (branchName: string) => {
+    const api = `${process.env.NEXT_PUBLIC_API}/branches/get-semester?branchName=${branchName}`
     setIsSemesterLoading(true)
+
     try {
+      const getSemester = await fetch(api, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${Cookies.get('classX_user_token')}`,
+        },
+      })
+
+      if (!getSemester.ok) {
+        const result = await getSemester.json()
+        console.error(
+          `HTTP error! Status: ${getSemester.status}, Message: ${result.message}`
+        )
+        setErrorMessage(
+          `HTTP error! Status: ${getSemester.status}, Message: ${result.message}`
+        )
+        setTimeout(() => {
+          setErrorMessage('')
+        }, 5000)
+        return
+      }
+
+      const result = await getSemester.json()
+      console.log(result)
+      setSemesters(result.data.semesters)
+      console.log(semesters)
     } catch (err) {
+      console.error(err)
     } finally {
       setIsSemesterLoading(false)
     }
@@ -165,14 +230,14 @@ function SignUpPage() {
       />
       <form
         className='flex items-center flex-col md:w-[30%] sm:w-[50%] w-[100%] gap-[12px]'
-        onSubmit={handleOnSubmit}
+        onSubmit={createUserProfile}
       >
         <label className='w-full mb-[4px]'>
           <p className='mb-[2px]'>Username</p>
           <Input
             type='text'
             className='rounded-full bg-[#171717] border-none outline-none px-[16px]'
-            placeholder='Username'
+            placeholder='Enter full name'
             onChange={handleUsername}
             required
           />
@@ -227,7 +292,7 @@ function SignUpPage() {
         </label>
         <label className='w-full mb-[4px]'>
           <p className='mb-[2px]'>Semester</p>
-          <Select onValueChange={handleSemester}>
+          <Select onValueChange={handleSemester} disabled={isSemestersLoading}>
             <SelectTrigger className='bg-[#171717] border-none outline-none rounded-full  px-[16px]'>
               <SelectValue
                 className='text-green-500'
@@ -235,14 +300,32 @@ function SignUpPage() {
               />
             </SelectTrigger>
             <SelectContent className='bg-[#171717]'>
-              <SelectItem className='bg-[#171717]' value='1'>
-                1
+              {semesters?.map((semester: SemesterNumber) => {
+                return (
+                  <SelectItem
+                    key={semester._id}
+                    className='bg-[#171717]'
+                    value={semester.semesterNumber.toString()}
+                  >
+                    {semester.semesterNumber}
+                  </SelectItem>
+                )
+              })}
+            </SelectContent>
+          </Select>
+        </label>
+        <label className='w-full mb-[4px]'>
+          <p className='mb-[2px]'>Private account</p>
+          <Select onValueChange={handleIsPrivateAccount}>
+            <SelectTrigger className='bg-[#171717] border-none outline-none rounded-full  px-[16px]'>
+              <SelectValue placeholder='Private account?' />
+            </SelectTrigger>
+            <SelectContent className='bg-[#171717]'>
+              <SelectItem className='bg-[#171717]' value='true'>
+                True
               </SelectItem>
-              <SelectItem className='bg-[#171717]' value='2'>
-                2
-              </SelectItem>
-              <SelectItem className='bg-[#171717]' value='3'>
-                3
+              <SelectItem className='bg-[#171717]' value='false'>
+                False
               </SelectItem>
             </SelectContent>
           </Select>
@@ -260,12 +343,12 @@ function SignUpPage() {
           Error: <span className='text-red-500'> {errorMessage}</span>
         </p>
       )}
-      <p className='text-center  error_message'>
-        Already have an account?{' '}
-        <Link href={'/auth/sign-in'} className='mt-[10px]'>
-          <span className='text-[#891DCC]'>Sign in</span>
-        </Link>
-      </p>
+      {message && (
+        <p className='text-center  error_message'>
+          Success: <span className='text-green-500'> {message}</span>
+        </p>
+      )}
+
     </div>
   )
 }

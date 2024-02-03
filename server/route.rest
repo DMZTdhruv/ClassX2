@@ -63,3 +63,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJiN
 ###
 GET http://localhost:3001/branches/get-branch
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJkZWUyODAzYjM3NDk4YWRjZDcwNzciLCJpYXQiOjE3MDY5NTQ1ODEsImV4cCI6MTcwOTU0NjU4MX0.uncpEbZ_40JVfF_8FwS2NuidU2LIeRZYvGHifCqQNsU
+
+###
+
+GET http://localhost:3001/branches/get-semester?branchName=cse
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJkZWUyODAzYjM3NDk4YWRjZDcwNzciLCJpYXQiOjE3MDY5NTQ1ODEsImV4cCI6MTcwOTU0NjU4MX0.uncpEbZ_40JVfF_8FwS2NuidU2LIeRZYvGHifCqQNsU

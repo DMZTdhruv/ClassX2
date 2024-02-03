@@ -4,13 +4,21 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ChangeEvent, FormEvent, useState } from 'react'
 import Image from 'next/image'
-import Style from './page.module.css'
 import Link from 'next/link'
+import { FaRegEye } from 'react-icons/fa6'
+import { FaRegEyeSlash } from 'react-icons/fa6'
+import Cookies from 'js-cookie'
+import { useRouter } from 'next/navigation'
 
 function SignInPage() {
+  const navigate = useRouter()
+
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const [showPassword, setShowPassword] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [message, setMessage] = useState<string>('')
 
   const handleEmail = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
@@ -31,8 +39,9 @@ function SignInPage() {
 
   const signInUser = async () => {
     const api = `${process.env.NEXT_PUBLIC_API}/auth/signIn `
+    setIsLoading(true)
     try {
-      const createUser = await fetch(api, {
+      const checkUser = await fetch(api, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,20 +51,31 @@ function SignInPage() {
           password,
         }),
       })
-      const savedUser = await createUser.json()
-      console.log(savedUser)
-
-      if (!createUser.ok) {
-        setErrorMessage(savedUser.message)
+      const existingUser = await checkUser.json()
+      console.log(existingUser)
+      if (!checkUser.ok) {
+        setErrorMessage(existingUser.message)
+        setTimeout(() => {
+          setErrorMessage('')
+        }, 5000)
+        return
       }
+      setMessage(existingUser.message)
+      setTimeout(() => {
+        setMessage('')
+      }, 5000)
+      navigate.push("/users/create-user-profile");
+      Cookies.set('classX_user_token', existingUser.token, { expires: 30 })
     } catch (err: any) {
       console.error(err.message)
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
     <div
-      className={`flex p-[36px]  items-center gap-[8px] justify-center flex-col  ${Style.gradient}`}
+      className={`flex p-[36px]  items-center gap-[8px] justify-center flex-col gradient`}
     >
       <Image
         src={'/assets/ClassX.svg'}
@@ -65,11 +85,11 @@ function SignInPage() {
         unoptimized
       />
       <form
-        className='flex items-center flex-col w-[100%] gap-[12px] '
+        className='flex items-center flex-col md:w-[30%] sm:w-[50%] w-[100%]  gap-[12px] '
         onSubmit={handleOnSubmit}
       >
         <label className='w-full mb-[4px]'>
-          <p className='mb-[2px]' >Email</p>
+          <p className='mb-[2px]'>Email</p>
           <Input
             type='email'
             className='rounded-full bg-[#171717] border-none outline-none px-[16px]'
@@ -78,21 +98,28 @@ function SignInPage() {
             required
           />
         </label>
-        <label className='w-full mb-[4px]'>
-          <p className='mb-[2px]' >Password</p>
+        <label className='w-full mb-[4px] relative '>
+          <p className='mb-[2px]'>Password</p>
           <Input
-            type='password'
-            className='rounded-full bg-[#171717] border-none outline-none px-[16px]'
+            type={showPassword ? 'text' : 'password'}
+            className='rounded-full relative bg-[#171717] border-none outline-none px-[16px]'
             placeholder='Password'
             onChange={handlePassword}
             required
           />
+          <button
+            className='show_password cursor-pointer  absolute top-[35px] z-10  right-[12px]'
+            onClick={() => setShowPassword(prev => !prev)}
+            type='button'
+          >
+            {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+          </button>
         </label>
         <Button
           className='rounded-full text-white px-[24px] py-[3px]'
           type='submit'
         >
-          Create account
+          {isLoading ? 'Signing in...' : 'Sign in '}
         </Button>
       </form>
       {errorMessage && (
@@ -100,10 +127,15 @@ function SignInPage() {
           Error: <span className='text-red-500'> {errorMessage}</span>
         </p>
       )}
+      {message && (
+        <p className='text-center  error_message'>
+          Success: <span className='text-green-500'> {message}</span>
+        </p>
+      )}
       <p className='text-center  error_message'>
-        Already have an account?{' '}
-        <Link href={'/auth/sign-in'} className='mt-[10px]'>
-          <span className='text-[#891DCC]'>Sign in</span>
+        Don't have an account?{' '}
+        <Link href={'/auth/sign-up'} className='mt-[10px]'>
+          <span className='text-[#891DCC]'>Sign up</span>
         </Link>
       </p>
     </div>

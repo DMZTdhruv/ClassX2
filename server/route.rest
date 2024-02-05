@@ -31,16 +31,16 @@ Content-Type: application/json
 
 ###
 POST http://localhost:3001/post/create-post
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJiNjBjYzEwOThkNTUxYWY5NmQ4ZjAiLCJpYXQiOjE3MDY3OTE3NjUsImV4cCI6MTcwOTM4Mzc2NX0.L9RpddhaJbSS5rQniC8Z7hGxT0PE_hAOSveD5YAfxVI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMwYmFjM2I3NzY4NWRlZDQ4MWZlNTQiLCJpYXQiOjE3MDcxMzA0NzAsImV4cCI6MTcwOTcyMjQ3MH0.89xuHvRWeLxNr5PditHGtVrEIKiMuMMABwzWQVDv4XA
 Content-Type: application/json
 
 {
-  "title": "New 2d Student",
-  "imageUrl": "https://pbs.twimg.com/media/F2t7yOrW4AEnwXX?format=jpg&name=4096x4096",
-  "caption": "Hi guys meet my new friend from btecha",
+  "title": "Do you guys play genshin impact?",
+  "imageUrl": "https://pbs.twimg.com/media/GE4khWFW0AAYBuI?format=jpg&name=4096x4096",
+  "caption": "Hi guys meet the new character navia which I just unlocked",
   "location": "",
   "category": "friends",
-  "postedBy": "65bb60cc1098d551af96d8f0"
+  "postedBy": "65c0bac3b77685ded481fe54"
 }
 
 ### 

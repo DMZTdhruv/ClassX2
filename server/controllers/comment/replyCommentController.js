@@ -1,8 +1,19 @@
-import { repliedCommentValidator } from "../../validations/commentValidator.js";
+
+import { replyCommentService } from '../../services/Comment/replyCommentService.js'
 
 export const replyCommentController = async (req, res) => {
   try {
-    const { postId, repliedUser, commentText, postedBy } = req.body
-    repliedCommentValidator(postId, repliedUser, commentText, postedBy);
-  } catch (err) {}
+    const { parentCommentId, postId, repliedUserId, commentText, postedBy } =
+      req.body
+    const result = await replyCommentService(
+      parentCommentId,
+      postId,
+      repliedUserId,
+      commentText,
+      postedBy
+    )
+    res.status(201).json(result);
+  } catch (err) {
+    res.status(500).json({message: err.message})
+  }
 }

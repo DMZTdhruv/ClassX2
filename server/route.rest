@@ -31,7 +31,7 @@ Content-Type: application/json
 
 ###
 POST http://localhost:3001/post/create-post
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMwYmFjM2I3NzY4NWRlZDQ4MWZlNTQiLCJpYXQiOjE3MDcxNDAyMjUsImV4cCI6MTcwOTczMjIyNX0.MX-Hm7xJr5v9Gr7YeXSZbxaBvyTyHKmmnUPmLWgBHh8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMxMTcwMmRhY2E3ZjgyZTQ3NjFjY2YiLCJpYXQiOjE3MDcxNTcxOTQsImV4cCI6MTcwOTc0OTE5NH0.FTFVwW_5eHVtrfoAtWW0fv06E1CRwztebMxE0bWvHRA
 Content-Type: application/json
 
 {
@@ -40,7 +40,7 @@ Content-Type: application/json
   "caption": "Hi guys meet the new character navia which I just unlocked",
   "location": "",
   "category": "friends",
-  "postedBy": "65c0bac3b77685ded481fe54"
+  "postedBy": "65c11702daca7f82e4761ccf"
 }
 
 ### 
@@ -71,14 +71,14 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMwY
 
 
 ###
-POST http://localhost:3001/post/create-comment
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMwYmFjM2I3NzY4NWRlZDQ4MWZlNTQiLCJpYXQiOjE3MDcxNDAyMjUsImV4cCI6MTcwOTczMjIyNX0.MX-Hm7xJr5v9Gr7YeXSZbxaBvyTyHKmmnUPmLWgBHh8
+POST http://localhost:3001/post/comment/create-comment
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMxMTcwMmRhY2E3ZjgyZTQ3NjFjY2YiLCJpYXQiOjE3MDcxNTcxOTQsImV4cCI6MTcwOTc0OTE5NH0.FTFVwW_5eHVtrfoAtWW0fv06E1CRwztebMxE0bWvHRA
 Content-Type: application/json
 
 {
-  "postId": "65c0beac65b07e2dfd74d389",
+  "postId": "65c1276af85aafdfb2309f1c",
   "commentText": "I wish I could marry her",
-  "postedBy": "65c0bac3b77685ded481fe54"
+  "postedBy": "65c11702daca7f82e4761ccf"
 }
 
 ###
@@ -90,3 +90,30 @@ Content-Type: application/json
   "commentId": "65c0e776a47b51effeaf6c2f",
   "userID": "65c0bac3b77685ded481fe54"
 }
+
+###
+POST http://localhost:3001/post/comment/reply-comment
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMxMTcwMmRhY2E3ZjgyZTQ3NjFjY2YiLCJpYXQiOjE3MDcxNjcxNDgsImV4cCI6MTcwOTc1OTE0OH0.UfGAK5JLQr3fGFkRw3aSRHbrDBTZKywS-eEQlsk1kp8
+Content-Type: application/json
+
+{
+  "parentCommentId": "65c12796f85aafdfb2309f21",
+  "postId": "65c1276af85aafdfb2309f1c",
+  "repliedUserId": "65c14a8c7f2ff4f179511177",
+  "commentText": "hey she's my wifeeeee!!!",
+  "postedBy": "65c11702daca7f82e4761ccf"
+}
+
+###
+POST http://localhost:3001/post/comment/reply-comment
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMxNGE4YzdmMmZmNGYxNzk1MTExNzciLCJpYXQiOjE3MDcxNjcwODQsImV4cCI6MTcwOTc1OTA4NH0.rgdMgb4TOVxAgz9CJiN2OwxjpMibFS99asrNMBrrTWA
+Content-Type: application/json
+
+{
+  "parentCommentId": "65c12796f85aafdfb2309f21",
+  "postId": "65c1276af85aafdfb2309f1c",
+  "repliedUserId": "65c11702daca7f82e4761ccf",
+  "commentText": "Yupp",
+  "postedBy": "65c14a8c7f2ff4f179511177"
+}
+

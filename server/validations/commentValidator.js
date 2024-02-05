@@ -11,3 +11,9 @@ export const validateComment = (
   return true;
 }
 
+export const validateCommentLike = (commentId, userID) => {
+  if(!userID || !commentId) {
+    throw new Error('Incomplete post details')
+  }
+  return true;
+}

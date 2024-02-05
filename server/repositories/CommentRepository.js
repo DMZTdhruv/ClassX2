@@ -11,9 +11,20 @@ export default class CommentRepository extends CommentRepositoryInterface {
     })
     return await newComment.save()
   }
+  
   async pushComment(postId, commentId) {
     const post = await Post.findOne({ _id: postId })
     post.comments.push(commentId)
     return await post.save()
+  }
+
+  async findCommentById(commentId) {
+    return await Comment.findOne({ _id: commentId })
+  }
+
+  async pushLike(commentId,userID) {
+    const comment = await this.findCommentById(commentId);
+    comment.likes.push(userID);
+    return await comment.save();
   }
 }

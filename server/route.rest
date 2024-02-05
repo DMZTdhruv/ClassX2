@@ -80,3 +80,13 @@ Content-Type: application/json
   "commentText": "I wish I could marry her",
   "postedBy": "65c0bac3b77685ded481fe54"
 }
+
+###
+POST http://localhost:3001/post/comment/like-comment
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMwYmFjM2I3NzY4NWRlZDQ4MWZlNTQiLCJpYXQiOjE3MDcxNDAyMjUsImV4cCI6MTcwOTczMjIyNX0.MX-Hm7xJr5v9Gr7YeXSZbxaBvyTyHKmmnUPmLWgBHh8
+Content-Type: application/json
+
+{
+  "commentId": "65c0e776a47b51effeaf6c2f",
+  "userID": "65c0bac3b77685ded481fe54"
+}

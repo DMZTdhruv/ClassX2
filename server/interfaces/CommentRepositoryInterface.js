@@ -5,4 +5,10 @@ export default class CommentRepositoryInterface {
   async pushComment(postId, commentId) {
     throw new Error('Method now implemented')
   }
+  async findCommentById(commentId) {
+    throw new Error('Method now implemented')
+  }
+  async pushLike(commentId, userID){
+    throw new Error('Method now implemented')
+  }
 }

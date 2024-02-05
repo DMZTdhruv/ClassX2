@@ -7,6 +7,7 @@ export const createUserProfileController = async (req, res) => {
     const {
       userID,
       name,
+      username,
       enrollmentNumber,
       branchName,
       semesterNumber,
@@ -23,6 +24,7 @@ export const createUserProfileController = async (req, res) => {
       currentUser,
       userID,
       name,
+      username,
       enrollmentNumber,
       branchName,
       semesterNumber,
@@ -34,7 +36,7 @@ export const createUserProfileController = async (req, res) => {
       email,
       password
     );
-
+      
     res.status(201).json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });

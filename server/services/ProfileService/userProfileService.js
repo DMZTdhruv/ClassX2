@@ -13,6 +13,7 @@ const userRepository = new UserRepository()
 export async function createUserProfileInstance(
   userID,
   name,
+  username,
   enrollmentNumber,
   branches,
   isPrivate,
@@ -22,8 +23,13 @@ export async function createUserProfileInstance(
   posts,
   groups
 ) {
-  let existingUserProfile = await userProfileRepository.findByUserID(userID)
-  existingUserProfile = await userProfileRepository.findByUsername(name)
+
+  const existingUserProfile = await userProfileRepository.findByUserID(userID)
+  const existingUsername = await userProfileRepository.findByUsername(username) 
+
+  if(existingUsername) {
+    throw new Error("This username already exists")
+  }
 
   if (existingUserProfile) {
     throw new Error('User Profile already exists')
@@ -42,6 +48,7 @@ export async function createUserProfileInstance(
   return new UserProfile({
     userID,
     name,
+    username,
     enrollmentNumber,
     branches,
     isPrivate,
@@ -57,6 +64,7 @@ export const createUserProfile = async (
   currentUser,
   userID,
   name,
+  username,
   enrollmentNumber,
   branchName,
   semesterNumber,
@@ -73,6 +81,7 @@ export const createUserProfile = async (
       currentUser,
       userID,
       name,
+      username,
       enrollmentNumber,
       branchName,
       semesterNumber,
@@ -84,7 +93,6 @@ export const createUserProfile = async (
       email,
       password
     )
-
 
     const branchRepository = new BranchRepository()
     const semesterRepository = new SemesterRepository()
@@ -104,6 +112,7 @@ export const createUserProfile = async (
     const userProfileInstance = await createUserProfileInstance(
       currentUser.userID,
       name,
+      username,
       enrollmentNumber,
       [branch._id],
       isPrivate,

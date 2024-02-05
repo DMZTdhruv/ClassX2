@@ -4,6 +4,7 @@ export const validateUserProfileInput = (
   user,
   userID,
   name,
+  username,
   enrollmentNumber,
   branchName,
   semesterNumber,
@@ -18,6 +19,7 @@ export const validateUserProfileInput = (
   if (
     !user.userID || 
     !name ||
+    !username ||
     !enrollmentNumber ||
     !branchName ||
     !semesterNumber ||

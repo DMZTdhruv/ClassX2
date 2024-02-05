@@ -7,6 +7,7 @@ const userProfileSchema = new mongoose.Schema(
       ref: "User",
     },
     name: { type: String, required: true },
+    username: {type: String, required: true, unique: true},
     enrollmentNumber: { type: String, unique: true, required: true },
     branches: [{ type: mongoose.Schema.Types.ObjectId, ref: "Branch" }], // Use Branch schema from the branchModel
     isPrivate: { type: Boolean, default: false },

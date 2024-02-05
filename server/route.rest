@@ -17,7 +17,7 @@ Content-Type: application/json
 
 ###
 POST http://localhost:3001/users/create-user-profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJiNjBjYzEwOThkNTUxYWY5NmQ4ZjAiLCJpYXQiOjE3MDY3OTE3NjUsImV4cCI6MTcwOTM4Mzc2NX0.L9RpddhaJbSS5rQniC8Z7hGxT0PE_hAOSveD5YAfxVI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMwYmFjM2I3NzY4NWRlZDQ4MWZlNTQiLCJpYXQiOjE3MDcxNDAyMjUsImV4cCI6MTcwOTczMjIyNX0.MX-Hm7xJr5v9Gr7YeXSZbxaBvyTyHKmmnUPmLWgBHh8
 Content-Type: application/json
 
 {
@@ -31,7 +31,7 @@ Content-Type: application/json
 
 ###
 POST http://localhost:3001/post/create-post
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMwYmFjM2I3NzY4NWRlZDQ4MWZlNTQiLCJpYXQiOjE3MDcxMzA0NzAsImV4cCI6MTcwOTcyMjQ3MH0.89xuHvRWeLxNr5PditHGtVrEIKiMuMMABwzWQVDv4XA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMwYmFjM2I3NzY4NWRlZDQ4MWZlNTQiLCJpYXQiOjE3MDcxNDAyMjUsImV4cCI6MTcwOTczMjIyNX0.MX-Hm7xJr5v9Gr7YeXSZbxaBvyTyHKmmnUPmLWgBHh8
 Content-Type: application/json
 
 {
@@ -45,7 +45,7 @@ Content-Type: application/json
 
 ### 
 POST http://localhost:3001/branches/create-branch
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJiNjBjYzEwOThkNTUxYWY5NmQ4ZjAiLCJpYXQiOjE3MDY3OTE3NjUsImV4cCI6MTcwOTM4Mzc2NX0.L9RpddhaJbSS5rQniC8Z7hGxT0PE_hAOSveD5YAfxVI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMwYmFjM2I3NzY4NWRlZDQ4MWZlNTQiLCJpYXQiOjE3MDcxNDAyMjUsImV4cCI6MTcwOTczMjIyNX0.MX-Hm7xJr5v9Gr7YeXSZbxaBvyTyHKmmnUPmLWgBHh8
 Content-Type: application/json
 
 {
@@ -56,15 +56,37 @@ Content-Type: application/json
 
 ###
 GET http://localhost:3001/post/get-post?page=1&limit=10
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJiNjBjYzEwOThkNTUxYWY5NmQ4ZjAiLCJpYXQiOjE3MDY3OTE3NjUsImV4cCI6MTcwOTM4Mzc2NX0.L9RpddhaJbSS5rQniC8Z7hGxT0PE_hAOSveD5YAfxVI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMwYmFjM2I3NzY4NWRlZDQ4MWZlNTQiLCJpYXQiOjE3MDcxNDAyMjUsImV4cCI6MTcwOTczMjIyNX0.MX-Hm7xJr5v9Gr7YeXSZbxaBvyTyHKmmnUPmLWgBHh8
 
 
 
 ###
 GET http://localhost:3001/branches/get-branch
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJkZWUyODAzYjM3NDk4YWRjZDcwNzciLCJpYXQiOjE3MDY5NTQ1ODEsImV4cCI6MTcwOTU0NjU4MX0.uncpEbZ_40JVfF_8FwS2NuidU2LIeRZYvGHifCqQNsU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMwYmFjM2I3NzY4NWRlZDQ4MWZlNTQiLCJpYXQiOjE3MDcxNDAyMjUsImV4cCI6MTcwOTczMjIyNX0.MX-Hm7xJr5v9Gr7YeXSZbxaBvyTyHKmmnUPmLWgBHh8
 
 ###
 
 GET http://localhost:3001/branches/get-semester?branchName=cse
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWJkZWUyODAzYjM3NDk4YWRjZDcwNzciLCJpYXQiOjE3MDY5NTQ1ODEsImV4cCI6MTcwOTU0NjU4MX0.uncpEbZ_40JVfF_8FwS2NuidU2LIeRZYvGHifCqQNsU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMwYmFjM2I3NzY4NWRlZDQ4MWZlNTQiLCJpYXQiOjE3MDcxNDAyMjUsImV4cCI6MTcwOTczMjIyNX0.MX-Hm7xJr5v9Gr7YeXSZbxaBvyTyHKmmnUPmLWgBHh8
+
+
+###
+POST http://localhost:3001/post/create-comment
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMwYmFjM2I3NzY4NWRlZDQ4MWZlNTQiLCJpYXQiOjE3MDcxNDAyMjUsImV4cCI6MTcwOTczMjIyNX0.MX-Hm7xJr5v9Gr7YeXSZbxaBvyTyHKmmnUPmLWgBHh8
+Content-Type: application/json
+
+{
+  "postId": "65c0beac65b07e2dfd74d389",
+  "commentText": "I wish I could marry her",
+  "postedBy": "65c0bac3b77685ded481fe54"
+}
+
+###
+POST http://localhost:3001/post/comment/like-comment
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMwYmFjM2I3NzY4NWRlZDQ4MWZlNTQiLCJpYXQiOjE3MDcxNDAyMjUsImV4cCI6MTcwOTczMjIyNX0.MX-Hm7xJr5v9Gr7YeXSZbxaBvyTyHKmmnUPmLWgBHh8
+Content-Type: application/json
+
+{
+  "commentId": "65c0e776a47b51effeaf6c2f",
+  "userID": "65c0bac3b77685ded481fe54"
+}

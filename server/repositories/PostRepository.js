@@ -1,6 +1,6 @@
-import Post from '../models/post/post.model.js'
 import PostRepositoryInterface from '../interfaces/PostRepositoryInterface.js'
 import UserProfile from '../models/user/userProfile.model.js'
+import Post from '../models/post/post.model.js'
 
 export default class PostRepository extends PostRepositoryInterface {
   async savePost(post) {
@@ -17,4 +17,7 @@ export default class PostRepository extends PostRepositoryInterface {
     return userProfile.save()
   }
   
+  async findPostById(postId){
+    await Post.findOne({_id: postId})
+  }
 }

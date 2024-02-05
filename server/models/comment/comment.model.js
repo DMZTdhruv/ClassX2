@@ -13,7 +13,8 @@ const commentSchema = new Schema({
   },
   postedBy: {
     type: Schema.Types.ObjectId,
-    ref: 'UserProfile'
+    ref: 'UserProfile',
+    required: true
   },
   likes: [{
     type: Schema.Types.ObjectId,

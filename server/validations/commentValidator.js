@@ -17,3 +17,16 @@ export const validateCommentLike = (commentId, userID) => {
   }
   return true;
 }
+
+export const repliedCommentValidator = (
+  postId,
+  repliedUser,
+  commentText,
+  postedBy
+) => {
+  if(!postId || !repliedUser || !commentText || !postedBy) {
+    throw new Error("Incomplete details")
+  }
+
+  return true
+}

@@ -22,7 +22,8 @@ export async function createUserProfileInstance(
   posts,
   groups
 ) {
-  const existingUserProfile = await userProfileRepository.findByUserID(userID)
+  let existingUserProfile = await userProfileRepository.findByUserID(userID)
+  existingUserProfile = await userProfileRepository.findByUsername(name)
 
   if (existingUserProfile) {
     throw new Error('User Profile already exists')
@@ -83,6 +84,7 @@ export const createUserProfile = async (
       email,
       password
     )
+
 
     const branchRepository = new BranchRepository()
     const semesterRepository = new SemesterRepository()

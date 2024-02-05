@@ -24,7 +24,6 @@ const repliedCommentSchema = new Schema({
   likes: [{
     type: Schema.Types.ObjectId,
     ref: 'UserProfile',
-    required: true,
   }]
 }, {timestamps: true})
 

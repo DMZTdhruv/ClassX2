@@ -11,6 +11,10 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
     return UserProfile.findOne({ email });
   }
 
+  async findByUsername(username) {
+    return UserProfile.findOne({name: username});
+  }
+
   async save(userProfile) {
     return userProfile.save();
   }

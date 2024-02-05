@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/select'
 
 import Image from 'next/image'
-import Link from 'next/link'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
 import { useState, ChangeEvent, FormEvent, useEffect } from 'react'
@@ -30,13 +29,13 @@ function SignUpPage() {
   const navigate = useRouter()
 
   // all states of single value
+  const [name,setName] = useState<string>('');
   const [username, setUsername] = useState<string>('')
   const [enrollmentNo, setEnrollmentNo] = useState<string>('')
   const [division, setDivision] = useState<string>('')
   const [userBranch, setUserBranch] = useState<string>('')
-  const [userSemester, setUserSemester] = useState<number | undefined>(
-    undefined
-  )
+  const [userSemester, setUserSemester] = useState<number | undefined>(undefined)
+  
   const [isPrivate, setIsPrivate] = useState<boolean | undefined>(undefined)
   const [message, setMessage] = useState<string>('')
 
@@ -53,6 +52,10 @@ function SignUpPage() {
   const [isBranchLoading, setIsBranchLoading] = useState<boolean>(true)
 
   // all handles
+  const handleName = (e:ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  }
+
   const handleUsername = (e: ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value)
   }
@@ -89,6 +92,7 @@ function SignUpPage() {
     setIsLoading(true);
     e.preventDefault()
     if (
+      !name ||
       !username ||
       !enrollmentNo ||
       !userBranch ||
@@ -100,13 +104,15 @@ function SignUpPage() {
       return
     }
     const userDetails = {
-      name: username,
+      name: name,
+      username: username,
       enrollmentNumber: enrollmentNo,
       branchName: userBranch,
       semesterNumber: userSemester,
       divisionName: division,
       isPrivate: isPrivate,
     }
+
     const api = `${process.env.NEXT_PUBLIC_API}/users/create-user-profile`
     console.log(userDetails)
     try {
@@ -123,10 +129,10 @@ function SignUpPage() {
 
       if (!createUser.ok) {
         console.error(
-          `HTTP error! Status: ${createUser.status}, Message: ${user.message}`
+          `${user.message}`
         )
         setErrorMessage(
-          `HTTP error! Status: ${createUser.status}, Message: ${user.message}`
+          `${user.message}`
         )
         setTimeout(() => {
           setErrorMessage('')
@@ -140,8 +146,8 @@ function SignUpPage() {
         setMessage('')
       }, 5000)
     } catch (err: any) {
-      console.error(err.message)
-      setErrorMessage(err.message)
+      console.error(err.Message)
+      setErrorMessage(err.Message)
       setTimeout(() => {
         setErrorMessage('')
       }, 5000)
@@ -164,8 +170,8 @@ function SignUpPage() {
 
       const result = await branches.json()
       if (!branches.ok) {
-        console.error(result.message)
-        setErrorMessage(result.message)
+        console.log(result.Message)
+        setErrorMessage(result.Message)
         setTimeout(() => {
           setErrorMessage('')
         }, 5000)
@@ -194,11 +200,11 @@ function SignUpPage() {
 
       if (!getSemester.ok) {
         const result = await getSemester.json()
-        console.error(
-          `HTTP error! Status: ${getSemester.status}, Message: ${result.message}`
+        console.log(
+          `${result.message}`
         )
         setErrorMessage(
-          `HTTP error! Status: ${getSemester.status}, Message: ${result.message}`
+          `${result.message}`
         )
         setTimeout(() => {
           setErrorMessage('')
@@ -233,11 +239,21 @@ function SignUpPage() {
         onSubmit={createUserProfile}
       >
         <label className='w-full mb-[4px]'>
-          <p className='mb-[2px]'>Username</p>
+          <p className='mb-[2px]'>name</p>
           <Input
             type='text'
             className='rounded-full bg-[#171717] border-none outline-none px-[16px]'
             placeholder='Enter full name'
+            onChange={handleName}
+            required
+          />
+        </label>
+        <label className='w-full mb-[4px]'>
+          <p className='mb-[2px]'>Username</p>
+          <Input
+            type='text'
+            className='rounded-full bg-[#171717] border-none outline-none px-[16px]'
+            placeholder='Enter a unique username'
             onChange={handleUsername}
             required
           />

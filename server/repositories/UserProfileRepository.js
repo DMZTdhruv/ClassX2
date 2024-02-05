@@ -18,4 +18,7 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
   async findSemester(semesterNumber) {
     
   }
+  async findByUsername(username) {
+    return await UserProfile.findOne({username: username});
+  }
 }

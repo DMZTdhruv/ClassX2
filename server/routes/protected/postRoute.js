@@ -7,6 +7,7 @@ import { paginatedResults } from "../../middlewares/paginatedResults.js";
 import { getPostController } from "../../controllers/post/getPostController.js";
 import { createCommentController } from "../../controllers/comment/createCommentController.js";
 import { likeCommentController } from "../../controllers/comment/likeCommentController.js";
+import { replyCommentController } from "../../controllers/comment/replyCommentController.js";
 
 const router = express.Router();
 
@@ -31,6 +32,13 @@ router.post(
   authenticateUserToken,
   likeCommentController
 )
+
+router.post(
+  "/comment/reply-comment",
+  authenticateUserToken,
+  replyCommentController
+)
+
 
 //Get routes
 router.get(

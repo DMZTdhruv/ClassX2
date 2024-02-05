@@ -2,12 +2,16 @@ import mongoose from "mongoose";
 const Schema =  mongoose.Schema;
 
 const repliedCommentSchema = new Schema({
+  parentCommentId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Comment',
+  },
   postId: {
     type: Schema.Types.ObjectId,
-    ref: 'Post',
-    required: true,
+    ref: 'Post'
   },
-  repliedUser: {
+  // client is responsible for sending postedById to here.
+  repliedUserId: {
     type: Schema.Types.ObjectId,
     ref: 'UserProfile',
     required: true,
@@ -24,7 +28,6 @@ const repliedCommentSchema = new Schema({
   likes: [{
     type: Schema.Types.ObjectId,
     ref: 'UserProfile',
-    required: true,
   }]
 }, {timestamps: true})
 

@@ -7,8 +7,9 @@ export const useGenerateLink = () => {
     if (type === 'image/jpeg' || type === 'image/png') {
       try {
         const file = await client.assets.upload('image', e.target.files[0], { contentType: type, filename: name });
-        const url = getUrl(file);
-        return url;
+        console.log(file.url)
+        return file
+
       } catch (err: any) {
         console.log(err.message)
       }
@@ -42,6 +43,7 @@ export const useGenerateLink = () => {
   }
 
   return {
-    generateUrl
+    generateUrl,
+    getUrl
   }
 }

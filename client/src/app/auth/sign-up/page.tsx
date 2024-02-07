@@ -69,7 +69,7 @@ function SignUpPage() {
   }
 
   return (
-    <div
+    <section
       className={`flex p-[36px]  items-center gap-[8px] justify-center flex-col gradient`}
     >
       <Image
@@ -122,13 +122,13 @@ function SignUpPage() {
           Error: <span className='text-red-500'> {errorMessage}</span>
         </p>
       )}
-      <p className='text-center  error_message'>
+      <div className='text-center  error_message'>
         Already have an account?{' '}
         <Link href={'/auth/sign-in'} className='mt-[10px]'>
           <span className='text-[#891DCC]'>Sign in</span>
         </Link>
-      </p>
-    </div>
+      </div>
+    </section>
   )
 }
 

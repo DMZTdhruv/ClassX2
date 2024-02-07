@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import "../globals.css";
+import SideBar from "@/components/shared/sidebar";
 
 export const metadata: Metadata = {
   title: "ClassX",
@@ -13,7 +14,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
-      <body className="dark">
+      <body className="dark flex">
+        <SideBar />
         <main>
           {children}
         </main>

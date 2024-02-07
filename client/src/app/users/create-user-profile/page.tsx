@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useGenerateLink } from '@/hooks/useGenerateLink'
 import {
   Select,
   SelectContent,
@@ -27,15 +28,19 @@ interface SemesterNumber {
 
 function SignUpPage() {
   const navigate = useRouter()
-
+  const {generateUrl} = useGenerateLink();
+ 
   // all states of single value
-  const [name,setName] = useState<string>('');
+  const [name, setName] = useState<string>('');
   const [username, setUsername] = useState<string>('')
   const [enrollmentNo, setEnrollmentNo] = useState<string>('')
   const [division, setDivision] = useState<string>('')
   const [userBranch, setUserBranch] = useState<string>('')
   const [userSemester, setUserSemester] = useState<number | undefined>(undefined)
-  
+  const [imageAsset,setImageAsset] = useState<any>(null);
+  const [userProfileImageLink,setUserProfileImageLink] = useState<string>("");
+
+
   const [isPrivate, setIsPrivate] = useState<boolean | undefined>(undefined)
   const [message, setMessage] = useState<string>('')
 
@@ -50,9 +55,11 @@ function SignUpPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isSemestersLoading, setIsSemesterLoading] = useState<boolean>(true)
   const [isBranchLoading, setIsBranchLoading] = useState<boolean>(true)
+  const [isUploadingImage, setIsUploadingImage] = useState<boolean>(true);
+
 
   // all handles
-  const handleName = (e:ChangeEvent<HTMLInputElement>) => {
+  const handleName = (e: ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   }
 
@@ -81,6 +88,20 @@ function SignUpPage() {
   const handleIsPrivateAccount = (value: string) => {
     const booleanValue = value.toLowerCase() === 'true'
     setIsPrivate(booleanValue)
+  }
+
+  const handleImageUpload = async (e: FormEvent<HTMLInputElement>) => {
+    setIsUploadingImage(true);
+    try {
+      const url = await generateUrl(e);
+      setUserProfileImageLink(url);
+    } catch (err: any) {
+      console.log(err.message);
+      setErrorMessage(err.message);
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 5000);
+    }
   }
 
   useEffect(() => {
@@ -238,26 +259,36 @@ function SignUpPage() {
         className='flex items-center flex-col md:w-[30%] sm:w-[50%] w-[100%] gap-[12px]'
         onSubmit={createUserProfile}
       >
-        <label className='w-full mb-[4px]'>
-          <p className='mb-[2px]'>name</p>
-          <Input
-            type='text'
-            className='rounded-full bg-[#171717] border-none outline-none px-[16px]'
-            placeholder='Enter full name'
-            onChange={handleName}
-            required
-          />
-        </label>
-        <label className='w-full mb-[4px]'>
-          <p className='mb-[2px]'>Username</p>
-          <Input
-            type='text'
-            className='rounded-full bg-[#171717] border-none outline-none px-[16px]'
-            placeholder='Enter a unique username'
-            onChange={handleUsername}
-            required
-          />
-        </label>
+        <div className='w-full flex gap-[12px] '>
+          <div className='w-[80%] flex flex-col gap-[12px]'>
+            <label className='w-full mb-[4px]'>
+              <p className='mb-[2px]'>name</p>
+              <Input
+                type='text'
+                className='rounded-full bg-[#171717] border-none outline-none px-[16px]'
+                placeholder='Enter full name'
+                onChange={handleName}
+                required
+              />
+            </label>
+            <label className='w-full mb-[4px]'>
+              <p className='mb-[2px]'>Username</p>
+              <Input
+                type='text'
+                className='rounded-full bg-[#171717] border-none outline-none px-[16px]'
+                placeholder='Enter a unique username'
+                onChange={handleUsername}
+                required
+              />
+            </label>
+          </div>
+          <div className='rounded-full p-[12px] bg-slate-800 h-[100%] aspect-square  '>
+            <label className='w-full text-[12px]  h-full border-dashed border-2 border-slate-500 rounded-full flex items-center justify-center'>
+              Profile picture
+              <Input type="file" className='hidden h-0 w-0' required onChange={handleImageUpload} />
+            </label>
+          </div>
+        </div>
         <label className='w-full mb-[4px]'>
           <p className='mb-[2px]'>Enrollment No</p>
           <Input

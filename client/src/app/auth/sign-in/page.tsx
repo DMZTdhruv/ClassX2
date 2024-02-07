@@ -74,7 +74,7 @@ function SignInPage() {
   }
 
   return (
-    <div
+    <section
       className={`flex p-[36px]  items-center gap-[8px] justify-center flex-col gradient`}
     >
       <Image
@@ -116,8 +116,9 @@ function SignInPage() {
           </button>
         </label>
         <Button
-          className='rounded-full text-white px-[24px] py-[3px]'
+          className='rounded-full text-white px-[24px] py-[3px] transition-all'
           type='submit'
+          disabled={isLoading}
         >
           {isLoading ? 'Signing in...' : 'Sign in '}
         </Button>
@@ -132,13 +133,13 @@ function SignInPage() {
           Success: <span className='text-green-500'> {message}</span>
         </p>
       )}
-      <p className='text-center  error_message'>
+      <div className='text-center  error_message'>
         Don't have an account?{' '}
         <Link href={'/auth/sign-up'} className='mt-[10px]'>
           <span className='text-[#891DCC]'>Sign up</span>
         </Link>
-      </p>
-    </div>
+      </div>
+    </section>
   )
 }
 

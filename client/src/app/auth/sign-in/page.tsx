@@ -12,7 +12,6 @@ import { useRouter } from 'next/navigation'
 
 function SignInPage() {
   const navigate = useRouter()
-
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string>('')

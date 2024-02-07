@@ -5,6 +5,7 @@ export const validateUserProfileInput = (
   userID,
   name,
   username,
+  userProfileImage,
   enrollmentNumber,
   branchName,
   semesterNumber,
@@ -20,6 +21,7 @@ export const validateUserProfileInput = (
     !user.userID || 
     !name ||
     !username ||
+    !userProfileImage ||
     !enrollmentNumber ||
     !branchName ||
     !semesterNumber ||

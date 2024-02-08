@@ -1,15 +1,21 @@
+'use client'
+
 import React from 'react'
 import { sideBarData } from '@/constants'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import './index.css'
 
 function SideBar(props: any) {
+  const pathname = usePathname()
   return (
-    <section className='h-[100vh] font-poppins  px-[40px] realtive  w-[304px] border-r-2 border-r-slate-800 '>
+    <section className='h-[100vh] sticky top-0  sidebars font-poppins  px-[40px] realtive w-auto  lg:w-[304px] border-r-2 border-r-slate-800 '>
       <div className='h-[150px] flex items-center'>
         <Image
           src={`/assets/ClassX.svg`}
+          className='hidden lg:block'
           height={25}
           width={0}
           alt='classX'
@@ -17,12 +23,23 @@ function SideBar(props: any) {
             width: 'auto',
           }}
         />
+        <Image
+          src={`/assets/Cx.svg`}
+          className='block lg:hidden'
+          height={45}
+          width={45}
+          alt='Responsive logo of cx'
+        />
       </div>
-      <div className='flex gap-[20px] translate-x-[-10px] flex-col'>
+      <div className='flex gap-[20px] lg:translate-x-[-10px] flex-col'>
         {sideBarData.map(links => {
+          const isActive =
+            pathname.includes(links.routes) || pathname === links.routes
           return (
             <Link
-              className='flex gap-[11px] py-[5px] px-[10px] rounded-md hover:bg-slate-900/80 transition-all cursor-pointer'
+              className={`flex ${
+                isActive ? 'bg-[#891DCC]' : 'hover:bg-[#891DCC]/20'
+              }  gap-[11px] py-[5px] px-[10px] rounded-md  transition-all cursor-pointer'`}
               href={links.routes}
               key={links.id}
             >
@@ -33,7 +50,7 @@ function SideBar(props: any) {
                 alt={links.name}
                 unoptimized
               />
-              <span className='font-semibold text-[20.42px]  '>
+              <span className='font-semibold text-[20.42px] hidden lg:block '>
                 {links.name}
               </span>
             </Link>
@@ -42,7 +59,7 @@ function SideBar(props: any) {
       </div>
       <Button
         type='button'
-        className='text-whte font-bold absolute bottom-[41px]'
+        className='text-white font-bold absolute left-[20px] lg:left-[35px]  bottom-[41px]'
       >
         Log out
       </Button>
@@ -51,4 +68,3 @@ function SideBar(props: any) {
 }
 
 export default SideBar
-

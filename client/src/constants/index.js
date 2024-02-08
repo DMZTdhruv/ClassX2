@@ -29,4 +29,39 @@ export const sideBarData = [
     icon: "classroom.svg",
     routes: "/classroom"
   },
+  {
+    id: 6,
+    name: "Profile",
+    icon: "profile.svg",
+    routes: "/profile"
+  },
+  
+]
+export const BottomBarData = [
+  {
+    id: 1,
+    icon: "house.svg",
+    routes: "/home"
+  },
+  {
+    id: 2,
+    icon: "explore.svg",
+    routes: "/search"
+  },
+  {
+    id: 3,
+    icon: "create.svg",
+    routes: "/upload-post"
+  },
+  {
+    id: 5,
+    icon: "classroom.svg",
+    routes: "/classroom"
+  },
+  {
+    id: 6,
+    icon: "profile.svg",
+    routes: "/profile"
+  },
+  
 ]

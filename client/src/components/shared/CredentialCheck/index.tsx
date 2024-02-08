@@ -1,27 +1,28 @@
 'use client'
+
 import { jwtDecode } from 'jwt-decode'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Cookies from 'js-cookie'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import useCoookieProvider from '@/hooks/useCoookieProvider'
 
 interface JwtPayload {
   userID: string
 }
 
 export default function CheckCredentials() {
+  const cookie = useCoookieProvider() || ''
   const router = useRouter()
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [profile, setProfile] = useState<boolean>(false)
   const [user, setUser] = useState<boolean>(false)
   const api = process.env.NEXT_PUBLIC_API
+
   useEffect(() => {
-    const userCookie = Cookies.get('classX_user_token') || ''
-    const { userID }: JwtPayload = jwtDecode(userCookie)
-    console.log(userID)
+    const { userID }: JwtPayload = jwtDecode(cookie)
     checkUser(userID)
   }, [])
 
@@ -35,7 +36,7 @@ export default function CheckCredentials() {
       setProfile(userProfile)
 
       if (user && userProfile) {
-        console.log("Hello from the router")
+        console.log('Hello from the router')
         router.push('/home')
       }
     } catch (error) {
@@ -44,6 +45,7 @@ export default function CheckCredentials() {
       setIsLoading(false)
     }
   }
+
   if (!user || !profile) {
     return (
       <section className='h-[100vh] top-0 left-0  fixed w-[100%] z-[1000] flex items-center justify-center gradient'>

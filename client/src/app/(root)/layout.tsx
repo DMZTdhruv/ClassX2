@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import '../globals.css'
 import SideBar from '@/components/shared/sidebar'
 import CheckCredentials from '@/components/shared/CredentialCheck'
+import BottomBar from '@/components/shared/BottomBar'
+import TopBar from '@/components/shared/TopBar'
 
 export const metadata: Metadata = {
   title: 'ClassX',
@@ -15,12 +17,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en' suppressHydrationWarning={true}>
-      <body className='dark flex'>
+      <body className='dark sm:flex sm:flex-col bg-[#0E0E0E]'>
         <CheckCredentials />
-        <main className='relative flex'>
+        <TopBar />
+        <main className='relative main-container w-[100%]  px-[16px] flex mainsection'>
           <SideBar />
-          {children}
+          <section className='flex-1 w-full'>
+            {children}
+          </section>
         </main>
+        <BottomBar />
       </body>
     </html>
   )

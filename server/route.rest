@@ -117,3 +117,5 @@ Content-Type: application/json
   "postedBy": "65c14a8c7f2ff4f179511177"
 }
 
+###
+GET http://localhost:3001/auth/check-user?userID

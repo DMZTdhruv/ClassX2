@@ -7,6 +7,10 @@ class UserRepository extends UserRepositoryInterface {
     return User.findOne({ _id: userID }).populate("userProfile");
   }
 
+  async findUserById(userID) {
+    return await User.findOne({_id: userID}, "_id");
+  }
+
   async findByEmail(email) {
     return User.findOne({ email });
   }

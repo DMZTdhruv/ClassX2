@@ -7,6 +7,10 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
     return UserProfile.findOne({ userID });
   }
 
+  async getUserData(userID) {
+    return await UserProfile.findOne({userID}, "_id")
+  }
+
   async findByEmail(email) {
     return UserProfile.findOne({ email });
   }

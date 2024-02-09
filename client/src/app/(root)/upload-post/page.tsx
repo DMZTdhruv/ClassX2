@@ -1,8 +1,14 @@
 'use client'
 
 import { AiOutlineCloudUpload } from 'react-icons/ai'
-import React, { FormEvent, useEffect, useState } from 'react'
-import { useUserProvider } from '@/hooks/useUserProvider'
+import React, {
+  ChangeEvent,
+  ChangeEventHandler,
+  FormEvent,
+  TextareaHTMLAttributes,
+  useEffect,
+  useState,
+} from 'react'
 import { useGenerateLink } from '@/hooks/useGenerateLink'
 import { SanityImageAssetDocument } from '@sanity/client'
 import Image from 'next/image'
@@ -11,8 +17,22 @@ import { useToast } from '@/components/ui/use-toast'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
+import useCoookieProvider from '@/hooks/useCoookieProvider'
+import { useRouter } from 'next/navigation'
+
+interface Post {
+  title: string
+  imageUrl: string | any
+  caption: string
+  location: string
+  category: string
+  postedBy: string
+}
 
 export default function index() {
+  const router = useRouter();
+  const { userID, cookie } = useCoookieProvider()
+
   const toast = useToast()
   const { generateUrl, getUrl } = useGenerateLink()
 
@@ -20,9 +40,10 @@ export default function index() {
   const [demoUploadImage, setDemoUploadImage] = useState<
     SanityImageAssetDocument | undefined
   >(undefined)
-
-  const url =
-    'https://pbs.twimg.com/media/GF2vpjyXkAAorQ5?format=jpg&name=4096x4096'
+  const [title, setTitle] = useState<string>('')
+  const [caption, setCaption] = useState<string>('')
+  const [location, setLocation] = useState<string>('')
+  const [category, setCategory] = useState<string>('')
 
   //loading states
   const [isUploadingImage, setIsUploadingImage] = useState<boolean>(false)
@@ -30,6 +51,25 @@ export default function index() {
 
   //error states
   const [errorMessage, setErrorMessage] = useState<string>('')
+
+  //handlers
+  const handleTitle = (e: ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value)
+  }
+
+  const handleCaption: ChangeEventHandler<HTMLTextAreaElement> = (
+    e: ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setCaption(e.target.value)
+  }
+
+  const handleLocation = (e: ChangeEvent<HTMLInputElement>) => {
+    setLocation(e.target.value)
+  }
+
+  const handleCategory = (e: ChangeEvent<HTMLInputElement>) => {
+    setCategory(e.target.value)
+  }
 
   const handleUploadFile = async (e: FormEvent<HTMLInputElement>) => {
     setIsUploadingImage(true)
@@ -41,9 +81,58 @@ export default function index() {
       setErrorMessage(err.message)
       setTimeout(() => {
         setErrorMessage('')
-      }, 2000)
+      }, 5000)
     } finally {
       setIsUploadingImage(false)
+    }
+  }
+
+  const handleFormSubmitEvent = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setIsPosting(true)
+    try {
+      if (!title || !demoUploadImage || !caption || !userID || !location) {
+        throw new Error('Invalid details')
+      }
+      const imageUrl = await getUrl(demoUploadImage)
+      const data = {
+        title: title,
+        imageUrl: imageUrl,
+        caption: caption,
+        location: location,
+        category: category,
+        postedBy: userID
+      }
+      console.log(data)
+      await submitDataToBackent(data)
+      router.push("/home")
+    } catch (err: any) {
+      console.log(err)
+      setErrorMessage(err.message)
+      setTimeout(() => {
+        setErrorMessage(err.message)
+      }, 5000)
+    } finally {
+      setIsPosting(false)
+    }
+  }
+
+  const submitDataToBackent = async (data: Post) => {
+    const api = process.env.NEXT_PUBLIC_API
+    try {
+      const response = await fetch(`${api}/post/create-post`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${cookie}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+
+      const result = await response.json()
+      console.log(result)
+    } catch (err: any) {
+      throw new Error(err.message)
     }
   }
 
@@ -102,14 +191,18 @@ export default function index() {
           <p className='text-center mt-3'>Upload images of type jpeg/png/gif</p>
         )}
 
-        <form className='w-full max-w-[548px] flex gap-3 flex-col'>
+        <form
+          className='w-full max-w-[548px] flex gap-3 flex-col'
+          onSubmit={handleFormSubmitEvent}
+        >
           <label className='w-full mb-[4px]'>
             <p className='mb-2'>Title</p>
             <Input
               type='text'
               className='rounded-xl  bg-[#171717] border-none outline-none px-[16px]'
               placeholder='Enter your post title'
-              onChange={() => {}}
+              onChange={handleTitle}
+              value={title}
               required
             />
           </label>
@@ -118,7 +211,8 @@ export default function index() {
             <Textarea
               className='rounded-xl bg-[#171717] border-none outline-none px-[16px]'
               placeholder='Enter your post description here'
-              onChange={() => {}}
+              onChange={handleCaption}
+              value={caption}
               required
             />
           </label>
@@ -128,7 +222,8 @@ export default function index() {
               type='text'
               className='rounded-xl  bg-[#171717] border-none outline-none px-[16px]'
               placeholder='Enter the location'
-              onChange={() => {}}
+              onChange={handleLocation}
+              value={location}
               required
             />
           </label>
@@ -138,14 +233,20 @@ export default function index() {
               type='text'
               className='rounded-xl  bg-[#171717] border-none outline-none px-[16px]'
               placeholder='Enter the category'
-              onChange={() => {}}
+              onChange={handleCategory}
+              value={category}
               required
             />
           </label>
-          <Button type='button' className='text-white' disabled={isPosting}>
+          <Button type='submit' className='text-white' disabled={isPosting}>
             {isPosting ? 'Posting...' : 'Post'}
           </Button>
         </form>
+        {errorMessage && (
+          <p className='text-center'>
+            Error: <span className='text-red-500'>{errorMessage}</span>
+          </p>
+        )}
       </div>
     </div>
   )

@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 const Post = () => {
   return (
-    <div className='w-full md:w-[584px] h-auto bg-[#171717] postSection'>
+    <div className='w-full md:w-[584px] h-auto rounded-xl  bg-[#171717] postSection'>
       <div className='h-[60px] px-[16px] flex items-center'>
         <div className='flex items-center gap-[11px]'>
           <Image

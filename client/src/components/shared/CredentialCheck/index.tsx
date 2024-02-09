@@ -13,7 +13,7 @@ interface JwtPayload {
 }
 
 export default function CheckCredentials() {
-  const cookie = useCoookieProvider() || ''
+  const { cookie } = useCoookieProvider() || ''
   const router = useRouter()
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -29,7 +29,6 @@ export default function CheckCredentials() {
 
   const checkUser = async (userId: string) => {
     try {
-      setPrevPage(document.referrer)
       const response = await fetch(`${api}/auth/check-user?userID=${userId}`, {
         method: 'GET',
       })
@@ -38,13 +37,7 @@ export default function CheckCredentials() {
       setProfile(userProfile)
 
       if (user && userProfile) {
-        console.log('Hello from the router')
-        console.log(prevPage)
-        if (prevPage) {
-          router.push(prevPage)
-        } else {
-          router.push('/upload-post')
-        }
+        router.push('/home')
       }
     } catch (error) {
       console.error('Error during fetch:', error)

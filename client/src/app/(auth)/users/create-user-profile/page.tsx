@@ -30,7 +30,7 @@ interface SemesterNumber {
 }
 
 function SignUpPage() {
-  const navigate = useRouter()
+  const router = useRouter()
   const { generateUrl, getUrl } = useGenerateLink();
 
   // all states of single value
@@ -184,6 +184,7 @@ function SignUpPage() {
       setTimeout(() => {
         setMessage('')
       }, 5000)
+      router.push('/home')
     } catch (err: any) {
       console.error(err.Message)
       setErrorMessage(err.Message)

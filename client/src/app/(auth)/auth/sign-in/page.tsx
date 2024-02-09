@@ -11,7 +11,7 @@ import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
 
 function SignInPage() {
-  const navigate = useRouter()
+  const router = useRouter()
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string>('')
@@ -63,7 +63,7 @@ function SignInPage() {
       setTimeout(() => {
         setMessage('')
       }, 5000)
-      navigate.push("/users/create-user-profile");
+      router.push("/home");
       Cookies.set('classX_user_token', existingUser.token, { expires: 30 })
     } catch (err: any) {
       console.error(err.message)

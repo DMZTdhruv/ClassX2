@@ -10,12 +10,12 @@ import './index.css'
 function index() {
   const pathname = usePathname()
   return (
-    <section className='fixed bottom-bar  bottom-0 w-full items-center flex justify-between h-[80px] px-[24px] bottom_bar-links  gap-[20px]'>
+    <section className='sticky bottom-0 bottom-bar opacity-50  w-full items-center flex justify-between h-[80px] px-[24px] bottom_bar-links  gap-[20px]'>
       {BottomBarData.map((links, index) => {
         const isActive =
           pathname.includes(links.routes) || pathname === links.routes
         return (
-          <Link href={links.routes}>
+          <Link href={links.routes} key={links.id}>
             <Image
               className={`${isActive && 'bg-[#891DCC]'} p-[5px] rounded-md `}
               src={`/assets/sidebar/${links.icon}`}

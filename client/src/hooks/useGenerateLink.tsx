@@ -4,7 +4,7 @@ export const useGenerateLink = () => {
   const generateUrl = async (e: any) => {
     const { type, name } = e.target.files[0];
 
-    if (type === 'image/jpeg' || type === 'image/png') {
+    if (type === 'image/jpeg' || type === 'image/png' || type === 'image/gif') {
       try {
         const file = await client.assets.upload('image', e.target.files[0], { contentType: type, filename: name });
         console.log(file.url)

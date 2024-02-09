@@ -19,6 +19,7 @@ export default function CheckCredentials() {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [profile, setProfile] = useState<boolean>(false)
   const [user, setUser] = useState<boolean>(false)
+  const [prevPage, setPrevPage] = useState<string | null>(null)
   const api = process.env.NEXT_PUBLIC_API
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function CheckCredentials() {
 
   const checkUser = async (userId: string) => {
     try {
+      setPrevPage(document.referrer)
       const response = await fetch(`${api}/auth/check-user?userID=${userId}`, {
         method: 'GET',
       })
@@ -37,7 +39,12 @@ export default function CheckCredentials() {
 
       if (user && userProfile) {
         console.log('Hello from the router')
-        router.push('/home')
+        console.log(prevPage)
+        if (prevPage) {
+          router.push(prevPage)
+        } else {
+          router.push('/upload-post')
+        }
       }
     } catch (error) {
       console.error('Error during fetch:', error)

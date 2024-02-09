@@ -1,10 +1,34 @@
-import React from 'react'
+'use client'
+
+import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import './index.css'
 
+
 function index() {
+
+  const navRef = useRef(null)
+  const [isNavHidden,setIsNavHidden] = useState<boolean>(false);
+
+  useEffect(() => {
+    let prevPosition = window.scrollY;
+    window.onscroll = () => {
+      let currentPosition = window.scrollY;
+      if(prevPosition< currentPosition){
+        setIsNavHidden(true);
+      } else {
+        setIsNavHidden(false);
+      }
+      prevPosition = currentPosition;
+    }
+  }, [])
+  
   return (
-    <section className='h-[50px] topbar  justify-between  px-[16px] flex items-center fixed top-0  w-full '>
+    <section
+    ref={navRef}
+      className={`h-[60px]  ${isNavHidden ? "translate-y-[-60px]" : "translate-y-[0px]"}   topbar  justify-between  px-[16px] flex items-center sticky top-0 
+    backdrop-blur-lg z-[100] border-b border-[#891DCC]  w-full transition-transform `}
+    >
       <Image
         src={`assets/classX.svg`}
         height={15}

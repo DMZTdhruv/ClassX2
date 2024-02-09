@@ -3,7 +3,7 @@ import Post from '@/components/cards/Post'
 
 function Home() {
   return (
-    <div className='w-full mt-[50px] flex flex-col gap-5 items-center'>
+    <div className='w-full flex flex-col gap-5 items-center'>
       <Post />
       <Post />
       <Post />
@@ -12,3 +12,7 @@ function Home() {
 }
 
 export default Home
+
+const getPostDetails = () => {
+
+}

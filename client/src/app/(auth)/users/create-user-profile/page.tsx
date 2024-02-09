@@ -40,8 +40,6 @@ function SignUpPage() {
   const [division, setDivision] = useState<string>('')
   const [userBranch, setUserBranch] = useState<string>('')
   const [userSemester, setUserSemester] = useState<number | undefined>(undefined)
-  const [imageAsset, setImageAsset] = useState<any>(null);
-  const [userProfileImageLink, setUserProfileImageLink] = useState<string>("");
   const [userProfileImageDemoLink, setUserProfileImageDemoLink] = useState<SanityImageAssetDocument | undefined>(undefined);
 
 

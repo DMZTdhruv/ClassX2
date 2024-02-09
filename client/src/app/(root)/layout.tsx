@@ -16,15 +16,13 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang='en' suppressHydrationWarning={true}>
+    <html lang='en'>
       <body className='dark sm:flex sm:flex-col bg-[#0E0E0E]'>
         <CheckCredentials />
         <TopBar />
-        <main className='relative main-container w-[100%]  px-[16px] flex mainsection'>
+        <main className='relative main-container w-[100%] flex mainsection'>
           <SideBar />
-          <section className='flex-1 w-full'>
-            {children}
-          </section>
+          <section className='flex-1 w-full sm:px-[16px]'>{children}</section>
         </main>
         <BottomBar />
       </body>

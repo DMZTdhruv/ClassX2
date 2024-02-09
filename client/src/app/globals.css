@@ -8,6 +8,12 @@
   }
 }
 
+html,
+body {
+  scroll-snap-type: mandatory;
+  scroll-snap-type: y mandatory;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -92,3 +98,6 @@
   width: 100%;
 }
 
+.postSection {
+  scroll-snap-align: top;
+}

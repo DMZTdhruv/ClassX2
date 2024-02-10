@@ -1,5 +1,5 @@
-export default async function page() {
+export default function Message() {
   return (
-    <p>This is the message page</p>
+    <section>This is a message page</section>
   )
 }

@@ -9,7 +9,7 @@ export const createPostController = async (req, res) => {
       caption,
       location,
       category,
-      postedBy, // client will send the userId
+      postedBy, // client will send the _id
     } = req.body
 
     const createdPost = await createPostService(
@@ -24,6 +24,7 @@ export const createPostController = async (req, res) => {
 
     res.status(201).json(createdPost)
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: err.message })
   }
 }

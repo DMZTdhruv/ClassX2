@@ -1,13 +1,55 @@
 import React from 'react'
 import Image from 'next/image'
 
-const Post = () => {
+interface IComments {
+  _id: string
+  commentText: string
+  postedBy: {
+    _id: string
+    username: string
+  }
+}
+
+interface IPost {
+  _id: string
+  title: string
+  imageUrl: string
+  caption: string
+  location: string
+  category: string
+  postedBy: {
+    _id: string
+    username: string
+    userProfileImage: string
+  }
+  likes: any
+  comments: IComments[]
+  createdAt: string
+}
+
+const Post: React.FC<IPost> = ({
+  _id,
+  title,
+  imageUrl,
+  caption,
+  location,
+  category,
+  postedBy,
+  likes,
+  comments,
+  createdAt,
+}) => {
+
+  if(comments.length !== 0 ) {
+    console.log(comments)
+  }
+
   return (
     <div className='w-full md:w-[584px] h-auto rounded-xl  bg-[#171717] postSection'>
       <div className='h-[60px] px-[16px] flex items-center'>
         <div className='flex items-center gap-[11px]'>
           <Image
-            src={`/assets/user.jpg`}
+            src={postedBy?.userProfileImage}
             width={30}
             height={30}
             alt='user jpg'
@@ -26,11 +68,11 @@ const Post = () => {
       </div>
       <div>
         <Image
-          src={`/post.jpg`}
+          src={imageUrl}
           width={384}
           height={0}
           alt={'post'}
-          style={{ height: 'auto', width: '584px', aspectRatio: "1" }}
+          style={{ height: 'auto', width: '584px', aspectRatio: '1' }}
           className='object-cover  md:w-[584px] md:h-[584px]'
           unoptimized
         />
@@ -63,9 +105,15 @@ const Post = () => {
           />
         </div>
         <div className='px-[15px] md:text-[15px] flex flex-col gap-[3px] text-[13px] font-semibold mb-[20px] '>
-          <span>52,052 likes</span>
-          <p>What do you guys think about this ai art which I made?</p>
-          <p className='text-neutral-500'>140 comments</p>
+          <span>{likes} likes</span>
+          <p>{caption}</p>
+          <p className='text-neutral-500'>view all {comments.length} comments</p>
+          {comments.length !== 0 && (
+            <p className='text-neutral-200'>
+              {comments[0]?.postedBy?.username}{" "}
+              {comments[0].commentText}
+            </p>
+          )}
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import DivisionRepository from '../../repositories/DivisionRepository.js'
 import { validateUserProfileInput } from '../../validations/userProfileValidation.js'
 import UserProfile from '../../models/user/userProfile.model.js'
 import UserRepository from '../../repositories/UserRepository.js'
+import jwt from "jsonwebtoken"
 
 const userProfileRepository = new UserProfileRepository()
 const userRepository = new UserRepository()
@@ -139,9 +140,14 @@ export const createUserProfile = async (
     //saving user profile
     await userProfileRepository.save(userProfileInstance)
 
+    const token = jwt.sign({ userID: user._id, userProfileId: userProfileInstance._id  }, process.env.JWT_SECRET, {
+      expiresIn: "30d",
+    });
+
     return {
       message: 'User Profile created successfully',
       userProfile: userProfileInstance,
+      token: token
     }
   } catch (error) {
     console.log(error);

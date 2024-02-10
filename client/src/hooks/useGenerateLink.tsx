@@ -7,21 +7,18 @@ export const useGenerateLink = () => {
     if (type === 'image/jpeg' || type === 'image/png' || type === 'image/gif') {
       try {
         const file = await client.assets.upload('image', e.target.files[0], { contentType: type, filename: name });
-        console.log(file.url)
         return file
 
       } catch (err: any) {
         console.log(err.message)
       }
     } else {
-      console.log("Hello from error")
       throw new Error("image type is not valid")
     }
 
   }
 
   const getUrl = async (file: any) => {
-    console.log(file._id)
     const doc = {
       _type: 'Image',
       image: {

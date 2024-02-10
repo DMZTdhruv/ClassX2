@@ -51,7 +51,6 @@ function SignUpPage() {
         }),
       })
       const savedUser = await createUser.json()
-      console.log(savedUser)
       if (!createUser.ok) {
         setErrorMessage(savedUser.message)
         setTimeout(() => {
@@ -59,7 +58,7 @@ function SignUpPage() {
         }, 5000)
         return;
       }
-      navigate.push("/users/create-user-profile");
+      navigate.push("/user/create-user-profile");
       Cookies.set('classX_user_token', savedUser.token, { expires: 30 })
     } catch (err: any) {
       console.error(err.message)

@@ -1,4 +1,5 @@
-export default async function UserProfile () {
-  return <p>Hello this is user profile</p>
+export default function Profile() {
+  return (
+    <section>This is a profile page</section>
+  )
 }
-

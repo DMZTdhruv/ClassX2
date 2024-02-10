@@ -1,12 +1,11 @@
 'use client'
 
 import React from 'react'
-import { sideBarData } from '@/constants'
+import { sideBarData } from '@/Constants'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import './index.css'
 
 function SideBar(props: any) {
   const pathname = usePathname()
@@ -33,8 +32,7 @@ function SideBar(props: any) {
       </div>
       <div className='flex gap-[20px] lg:translate-x-[-10px] flex-col'>
         {sideBarData.map(links => {
-          const isActive =
-            pathname.includes(links.routes) || pathname === links.routes
+          const isActive = pathname === links.routes
           return (
             <Link
               className={`flex ${

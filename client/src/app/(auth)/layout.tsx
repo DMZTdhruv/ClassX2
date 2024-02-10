@@ -3,7 +3,7 @@ import '../globals.css'
 
 export const metadata: Metadata = {
   title: 'ClassX',
-  description: 'This is a classX app made for the school',
+  description: 'This is a classX app made for the college',
 }
 
 export default function RootLayout({
@@ -12,9 +12,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang='en' suppressHydrationWarning={true}>
+    <html lang='en'>
       <body className='dark'>
-        
         <main>{children}</main>
       </body>
     </html>

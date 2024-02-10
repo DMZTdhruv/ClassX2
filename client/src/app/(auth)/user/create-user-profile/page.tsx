@@ -99,7 +99,6 @@ function SignUpPage() {
       const url = await generateUrl(e);
       setUserProfileImageDemoLink(url);
     } catch (err: any) {
-      console.log(err.message);
       setErrorMessage(err.message);
       setTimeout(() => {
         setErrorMessage("");
@@ -131,10 +130,10 @@ function SignUpPage() {
       setTimeout(() => {
         setErrorMessage('')
       }, 5000)
+      setIsLoading(false)
       return
     }
     const imageUrl = await getUrl(userProfileImageDemoLink);
-    console.log(imageUrl);
     if (!imageUrl) {
       setErrorMessage("There was an error in generating the user profile image")
       setTimeout(() => {
@@ -153,9 +152,8 @@ function SignUpPage() {
     }
 
     const api = `${process.env.NEXT_PUBLIC_API}/users/create-user-profile`
-    console.log(userDetails)
     try {
-      const createUser = await fetch(api, {
+      const response = await fetch(api, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -164,27 +162,28 @@ function SignUpPage() {
         body: JSON.stringify(userDetails),
       })
 
-      const user = await createUser.json()
-
-      if (!createUser.ok) {
+      const user = await response.json()
+      if (!response.ok) {
         console.error(
           `${user.message}`
-        )
-        setErrorMessage(
-          `${user.message}`
-        )
-        setTimeout(() => {
+          )
+          setErrorMessage(
+            `${user.message}`
+            )
+            setTimeout(() => {
           setErrorMessage('')
         }, 5000)
         return
       }
-
+      
       const { message } = await user
       setMessage(message)
       setTimeout(() => {
         setMessage('')
       }, 5000)
-      router.push('/home')
+      const {token} = await user;
+      Cookies.set("classX_user_token", token);
+      router.push('/')
     } catch (err: any) {
       console.error(err.Message)
       setErrorMessage(err.Message)
@@ -210,7 +209,6 @@ function SignUpPage() {
 
       const result = await branches.json()
       if (!branches.ok) {
-        console.log(result.Message)
         setErrorMessage(result.Message)
         setTimeout(() => {
           setErrorMessage('')
@@ -240,9 +238,6 @@ function SignUpPage() {
 
       if (!getSemester.ok) {
         const result = await getSemester.json()
-        console.log(
-          `${result.message}`
-        )
         setErrorMessage(
           `${result.message}`
         )
@@ -253,9 +248,7 @@ function SignUpPage() {
       }
 
       const result = await getSemester.json()
-      console.log(result)
       setSemesters(result.data.semesters)
-      console.log(semesters)
     } catch (err) {
       console.error(err)
     } finally {
@@ -318,7 +311,7 @@ function SignUpPage() {
                     <AiOutlineCloudUpload />
                     <p> {isUploadingImage ? "Uploading..." : "Upload image"}</p>
                   </div>
-                  <Input type="file" className='hidden h-0 w-0' required onChange={handleImageUpload} />
+                  <Input type="file" className='hidden h-0 w-0'  onChange={handleImageUpload} />
                 </label>
               </>
             )}

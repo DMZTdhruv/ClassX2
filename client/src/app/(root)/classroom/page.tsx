@@ -1,5 +1,5 @@
-export default async function page() {
+export default function Classroom() {
   return (
-    <p>This is the classroom  page</p>
+    <section>This is a classroom page</section>
   )
 }

@@ -1,9 +1,24 @@
+import Post from "../../models/post/post.model.js"
 
 
-export const getAllPostService = async paginatedResults => {
+export const getAllPostService = async (startIndex,itemsPerPage) => {
   try {
+    const response =await Post.find().skip(startIndex).limit(itemsPerPage).populate({
+      path:'postedBy',
+      model: 'UserProfile',
+      select: 'username userProfileImage'
+    }).populate({
+      path: 'comments',
+      model: 'Comment',
+      populate: [{
+        path: 'postedBy',
+        model: 'UserProfile',
+        select: 'username'
+      }],
+      select: 'commentText',
+    })
     return {
-      message: paginatedResults,
+      data: response
     }
   } catch (error) {
     console.log(error)

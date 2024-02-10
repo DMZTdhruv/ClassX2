@@ -2,8 +2,8 @@ POST http://localhost:3001/auth/signUp
 Content-Type: application/json
 
 {
-  "email" : "shruvparmar@gmail.com",
-  "password": "shruvDhruv"
+  "email" : "beyblade@gmail.com",
+  "password": "dhruvXyz"
 }
 
 ###
@@ -56,7 +56,7 @@ Content-Type: application/json
 
 ###
 GET http://localhost:3001/post/get-post?page=1&limit=10
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMwYmFjM2I3NzY4NWRlZDQ4MWZlNTQiLCJpYXQiOjE3MDcxNDAyMjUsImV4cCI6MTcwOTczMjIyNX0.MX-Hm7xJr5v9Gr7YeXSZbxaBvyTyHKmmnUPmLWgBHh8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWM0YTBhMDJlOWE5N2UzM2E5YTA0NjYiLCJpYXQiOjE3MDczODQ5OTIsImV4cCI6MTcwOTk3Njk5Mn0.FBG__DfuLbr-hrGdGt4qEpVFw3jP5hB1LxVUU3wF-VM
 
 
 
@@ -72,13 +72,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMwY
 
 ###
 POST http://localhost:3001/post/comment/create-comment
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMxMTcwMmRhY2E3ZjgyZTQ3NjFjY2YiLCJpYXQiOjE3MDcxNTcxOTQsImV4cCI6MTcwOTc0OTE5NH0.FTFVwW_5eHVtrfoAtWW0fv06E1CRwztebMxE0bWvHRA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWM3MzA2YjJhZmE1YjM2YzRlZmI2NjkiLCJ1c2VyUHJvZmlsZUlkIjoiNjVjNzMxNWIyYWZhNWIzNmM0ZWZiNjdjIiwiaWF0IjoxNzA3NTUzMTE1LCJleHAiOjE3MTAxNDUxMTV9.MYXhw87wj6VYLZto0QdXQ4KdQNk5fIUyo65Vkuyb3KY
 Content-Type: application/json
 
 {
-  "postId": "65c1276af85aafdfb2309f1c",
-  "commentText": "I wish I could marry her",
-  "postedBy": "65c11702daca7f82e4761ccf"
+  "postId": "65c61a7f49c30605c08ff23c",
+  "commentText": "Her>>>",
+  "postedBy": "65c4a0be2e9a97e33a9a0473"
 }
 
 ###
@@ -119,3 +119,8 @@ Content-Type: application/json
 
 ###
 GET http://localhost:3001/auth/check-user?userID
+
+
+###
+GET http://localhost:3001/users/get-user-profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWM0YTBhMDJlOWE5N2UzM2E5YTA0NjYiLCJpYXQiOjE3MDczODQ5OTIsImV4cCI6MTcwOTk3Njk5Mn0.FBG__DfuLbr-hrGdGt4qEpVFw3jP5hB1LxVUU3wF-VM

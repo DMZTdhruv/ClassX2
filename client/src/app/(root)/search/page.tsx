@@ -1,5 +1,5 @@
-export default async function page() {
+export default function Search() {
   return (
-    <p>This is the serach page</p>
+    <section>This is a search page</section>
   )
 }

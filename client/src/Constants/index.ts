@@ -3,7 +3,7 @@ export const sideBarData = [
     id: 1,
     name: "Home",
     icon: "house.svg",
-    routes: "/home"
+    routes: "/"
   },
   {
     id: 2,
@@ -41,7 +41,7 @@ export const BottomBarData = [
   {
     id: 1,
     icon: "house.svg",
-    routes: "/home"
+    routes: "/"
   },
   {
     id: 2,

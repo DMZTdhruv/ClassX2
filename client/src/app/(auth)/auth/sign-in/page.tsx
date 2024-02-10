@@ -51,7 +51,6 @@ function SignInPage() {
         }),
       })
       const existingUser = await checkUser.json()
-      console.log(existingUser)
       if (!checkUser.ok) {
         setErrorMessage(existingUser.message)
         setTimeout(() => {

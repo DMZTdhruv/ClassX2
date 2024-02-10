@@ -44,7 +44,6 @@ router.post(
 router.get(
   "/get-post",
   authenticateUserToken,
-  paginatedResults(Post),
   getPostController
 )
 

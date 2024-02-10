@@ -62,7 +62,7 @@ function SignInPage() {
       setTimeout(() => {
         setMessage('')
       }, 5000)
-      router.push("/home");
+      router.push("/");
       Cookies.set('classX_user_token', existingUser.token, { expires: 30 })
     } catch (err: any) {
       console.error(err.message)

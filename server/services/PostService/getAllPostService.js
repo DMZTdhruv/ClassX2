@@ -3,7 +3,7 @@ import Post from "../../models/post/post.model.js"
 
 export const getAllPostService = async (startIndex,itemsPerPage) => {
   try {
-    const response =await Post.find().skip(startIndex).limit(itemsPerPage).populate({
+    const response =await Post.find().sort({ createdAt: -1 }).skip(startIndex).limit(itemsPerPage).populate({
       path:'postedBy',
       model: 'UserProfile',
       select: 'username userProfileImage'

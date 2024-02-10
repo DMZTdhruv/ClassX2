@@ -18,6 +18,9 @@ const config = {
         phone: '500px',
       },
     },
+    fontFamily: {
+      poppins: 'Poppins'
+    },
     extend: {
       colors: {
         border: 'hsl(var(--border))',

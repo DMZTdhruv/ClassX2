@@ -3,6 +3,7 @@
 import useCookieProvider from '@/hooks/useCookieProvider'
 import Post from '@/components/cards/Post'
 import { useEffect, useState } from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface IComments {
   _id: string
@@ -76,6 +77,15 @@ export default function Home() {
 
     getPosts()
   }, [])
+
+  if (isLoading) {
+    return (
+      <div className='flex  flex-col space-y-3 px-[16x] mt-[40px] gap-5  items-center'>
+        <Skeleton className='h-[550px] w-full md:w-[584px] rounded-xl' />
+        <Skeleton className='h-[550px] w-full md:w-[584px] rounded-xl' />
+      </div>
+    )
+  }
   return (
     <section
       className={`w-full mt-[40px]  px-[16px] flex flex-col gap-5 items-center`}

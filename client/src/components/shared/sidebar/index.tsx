@@ -10,7 +10,7 @@ import { usePathname, useRouter } from 'next/navigation'
 function SideBar(props: any) {
   const pathname = usePathname()
   return (
-    <section className='h-[100vh] sticky top-0  sidebars font-poppins  px-[40px] realtive w-auto  lg:w-[304px] border-r-2 border-r-slate-800 '>
+    <section className='h-[100vh] sticky top-0 transition-all sidebars font-poppins  px-[40px] realtive w-auto  lg:w-[304px] border-r-2 border-r-slate-800 '>
       <div className='h-[150px] flex items-center'>
         <Image
           src={`/assets/ClassX.svg`}

@@ -36,6 +36,7 @@ export default function Home() {
   const [posts, setPosts] = useState<IPost[]>([])
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [isPostLiked, setIsPostLiked] = useState<boolean>(false)
 
   useEffect(() => {
     const api = process.env.NEXT_PUBLIC_API
@@ -86,6 +87,7 @@ export default function Home() {
       </div>
     )
   }
+
   return (
     <section
       className={`w-full mt-[40px]  px-[16px] flex flex-col gap-5 items-center`}
@@ -101,7 +103,7 @@ export default function Home() {
             location={post.location}
             category={post.category}
             postedBy={post.postedBy}
-            likes={post.likes.length}
+            likes={post.likes}
             comments={post.comments}
             createdAt={post.createdAt}
           />

@@ -16,6 +16,7 @@ interface IComments {
 interface IPost {
   _id: string
   title: string
+
   imageUrl: string
   caption: string
   location: string
@@ -25,7 +26,7 @@ interface IPost {
     username: string
     userProfileImage: string
   }
-  likes: any
+  likes: string[]
   comments: IComments[]
   createdAt: string
 }
@@ -44,11 +45,73 @@ const Post: React.FC<IPost> = ({
 }) => {
   const date = new Date(createdAt)
   const cookie = useCookieProvider()
-
+  const [numberOfLikes, setNumberOfLikes] = useState<number>(likes.length)
+  const [isLiked, setIsLiked] = useState<boolean>(
+    likes.filter(id => id === cookie?.userProfileId).length > 0
+  )
   //states
+
+  const likePost = async () => {
+    if (isLiked) return
+    setNumberOfLikes(numberOfLikes+1)
+    console.log('Post is liked')
+    const api = process.env.NEXT_PUBLIC_API
+    try {
+      const response = await fetch(`${api}/post/like-post`, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+          Authorization: `Bearer ${cookie?.cookie}`,
+        },
+        body: JSON.stringify({
+          userProfileID: cookie?.userProfileId,
+          postId: _id,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Error liking in post ')
+      }
+
+      const result = await response.json()
+      console.log(result)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const unlikePost = async () => {
+    if (!isLiked) return
+    setNumberOfLikes(numberOfLikes-1)
+    console.log('unliked post')
+    const api = process.env.NEXT_PUBLIC_API
+    try {
+      const response = await fetch(`${api}/post/unlike-post`, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+          Authorization: `Bearer ${cookie?.cookie}`,
+        },
+        body: JSON.stringify({
+          userProfileID: cookie?.userProfileId,
+          postId: _id,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Error unliking the post ')
+      }
+
+      const result = await response.json()
+      console.log(result)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   const [showFullcaption, setShowFullCaption] = useState<boolean>(false)
   return (
-    <div className='w-full md:w-[584px] h-auto rounded-xl font-poppins bg-[#171717] postSection'>
+    <div className='w-full md:w-[584px] h-auto rounded-xl border-b-2 border-[#171717] font-poppins  postSection'>
       <div className='h-[60px] px-[16px] flex items-center'>
         <div className='flex items-center gap-[11px]'>
           <Image
@@ -61,7 +124,7 @@ const Post: React.FC<IPost> = ({
               width: '30px',
               height: '30px',
             }}
-            quality={100}
+            unoptimized
           />
           <div className='flex font-semibold gap-3 items-center'>
             <p className='flex items-center gap-3'>
@@ -79,29 +142,47 @@ const Post: React.FC<IPost> = ({
           height={0}
           alt={'post'}
           style={{ height: 'auto', width: '584px', aspectRatio: '1' }}
-          className='object-cover  md:w-[584px] md:h-[584px]'
-          quality={99}
+          className='object-cover  md:w-[584px] md:h-[584px] border-2 border-[#171717]'
+          unoptimized
         />
       </div>
       <div>
         <div className='px-[12px] gap-[15px] md:h-[60px] h-[45px]  w-full flex items-center mt-[3px]'>
           <button
             onClick={() => {
-
+              setIsLiked(prev => !prev)
+              likePost()
+              unlikePost()
             }}
+            className='hover:scale-105'
           >
-            <Image
-              src={`/assets/heart.svg`}
-              width={30}
-              height={30}
-              alt='user jpg'
-              unoptimized
-              className='rounded-full object-cover '
-              style={{
-                width: '30px',
-                height: '30px',
-              }}
-            />
+            {isLiked ? (
+              <Image
+                src={`/assets/heart_filled.svg`}
+                width={30}
+                height={30}
+                alt='user jpg'
+                unoptimized
+                className='rounded-full object-cover active:scale-90 transition-all'
+                style={{
+                  width: '30px',
+                  height: '30px',
+                }}
+              />
+            ) : (
+              <Image
+                src={`/assets/heart.svg`}
+                width={30}
+                height={30}
+                alt='user jpg'
+                unoptimized
+                className='rounded-full object-cover active:scale-90 transition-all'
+                style={{
+                  width: '30px',
+                  height: '30px',
+                }}
+              />
+            )}
           </button>
           <Image
             src={`/assets/comment.svg`}
@@ -117,7 +198,7 @@ const Post: React.FC<IPost> = ({
           />
         </div>
         <div className='px-[15px] md:text-[15px] flex flex-col gap-[3px] text-[13px] font-semibold mb-[20px] '>
-          <span>{likes} likes</span>
+          <span>{numberOfLikes} likes</span>
           {caption.length > 85 ? (
             showFullcaption ? (
               <div>

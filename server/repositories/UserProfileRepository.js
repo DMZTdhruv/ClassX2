@@ -11,7 +11,11 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
   }
 
   async getUserData(userID) {
-    return await UserProfile.findOne({ userID }, '_id')
+    return await UserProfile.findOne({ userID }, '_id username')
+  }
+
+  async findById(_id) {
+    return await UserProfile.findById(_id);
   }
 
   async findByEmail(email) {

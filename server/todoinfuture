@@ -1,0 +1,1 @@
+1. do not send the post object after liking and unliking the post for performance

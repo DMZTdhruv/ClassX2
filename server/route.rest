@@ -124,3 +124,14 @@ GET http://localhost:3001/auth/check-user?userID
 ###
 GET http://localhost:3001/users/get-user-profile
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWM0YTBhMDJlOWE5N2UzM2E5YTA0NjYiLCJpYXQiOjE3MDczODQ5OTIsImV4cCI6MTcwOTk3Njk5Mn0.FBG__DfuLbr-hrGdGt4qEpVFw3jP5hB1LxVUU3wF-VM
+
+
+###
+POST http://localhost:3001/post/like-post
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWM3NzFiOWIwNmU5ZjMzNDVmMTRjNWQiLCJ1c2VyUHJvZmlsZUlkIjoiNjVjNzcyMDZiMDZlOWYzMzQ1ZjE0YzZhIiwiaWF0IjoxNzA3NTcwMzc4LCJleHAiOjE3MTAxNjIzNzh9.GE2Qi7FGdoGxy925wRkJaGdZfplOWG5NYUiwBc5u1rY
+Content-Type: application/json
+
+{
+  "userProfileID": "65c77206b06e9f3345f14c6a",
+  "postId": "65c7797f5b1f748a4a27d981"
+}

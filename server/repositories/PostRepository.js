@@ -18,6 +18,6 @@ export default class PostRepository extends PostRepositoryInterface {
   }
   
   async findPostById(postId){
-    await Post.findOne({_id: postId})
+    return await Post.findById(postId);
   }
 }

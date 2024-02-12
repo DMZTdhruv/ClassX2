@@ -1,9 +1,6 @@
-'use client'
-
-import useCookieProvider from '@/hooks/useCookieProvider'
 import Post from '@/components/cards/Post'
-import { useEffect, useState } from 'react'
-import { Skeleton } from '@/components/ui/skeleton'
+import { cookies } from 'next/headers'
+// import { Skeleton } from '@/components/ui/skeleton'
 
 interface IComments {
   _id: string
@@ -31,68 +28,97 @@ interface IPost {
   createdAt: string
 }
 
-export default function Home() {
-  const cookie = useCookieProvider()
-  const [posts, setPosts] = useState<IPost[]>([])
-  const [errorMessage, setErrorMessage] = useState<string>('')
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [isPostLiked, setIsPostLiked] = useState<boolean>(false)
+export default async function Home() {
+  const cookie = cookies()
+  // const cookie = useCookieProvider()
+  // const [posts, setPosts] = useState<IPost[]>([])
+  // const [errorMessage, setErrorMessage] = useState<string>('')
+  // const [isLoading, setIsLoading] = useState<boolean>(true)
+  // const [isPostLiked, setIsPostLiked] = useState<boolean>(false)
 
-  useEffect(() => {
-    const api = process.env.NEXT_PUBLIC_API
-    const getPosts = async () => {
-      setIsLoading(true)
-      try {
-        const response = await fetch(
-          `${api}/post/get-post?page=${1}&limit=${10}`,
-          {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${cookie?.cookie}`,
-            },
-          }
-        )
+  const token = cookie.get('classX_user_token')
+  const api = process.env.NEXT_PUBLIC_API
 
-        if (!response.ok) {
-          const result = await response.json()
-          try {
-            if (result.message) {
-              setErrorMessage(result.message)
-            } else {
-              setErrorMessage('There was an error in fetching posts')
-            }
-          } catch (err: any) {
-            console.log(err.message)
-          }
+  const getPosts = async () => {
+    try {
+      const response = await fetch(
+        `${api}/post/get-post?page=${1}&limit=${10}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token?.value}`,
+          },
         }
+      )
 
-        const { data } = await response.json()
-        setPosts(data)
-        console.log(data)
-      } catch (err: any) {
-        console.log(err.message)
-      } finally {
-        setIsLoading(false)
+      if (!response.ok) {
+        console.log('Failed to fetch data')
       }
+
+      const { data } = await response.json()
+      return data
+    } catch (err: any) {
+      console.log(err.message)
     }
-
-    getPosts()
-  }, [])
-
-  if (isLoading) {
-    return (
-      <div className='flex  flex-col space-y-3 px-[16x] mt-[40px] gap-5  items-center'>
-        <Skeleton className='h-[550px] w-full md:w-[584px] rounded-xl' />
-        <Skeleton className='h-[550px] w-full md:w-[584px] rounded-xl' />
-      </div>
-    )
   }
+
+  const posts: IPost[] = await getPosts()
+
+  // useEffect(() => {
+  //   const api = process.env.NEXT_PUBLIC_API
+  //   const getPosts = async () => {
+  //     setIsLoading(true)
+  //     try {
+  //       const response = await fetch(
+  //         `${api}/post/get-post?page=${1}&limit=${10}`,
+  //         {
+  //           method: 'GET',
+  //           headers: {
+  //             Authorization: `Bearer ${cookie?.cookie}`,
+  //           },
+  //         }
+  //       )
+
+  //       if (!response.ok) {
+  //         const result = await response.json()
+  //         try {
+  //           if (result.message) {
+  //             setErrorMessage(result.message)
+  //           } else {
+  //             setErrorMessage('There was an error in fetching posts')
+  //           }
+  //         } catch (err: any) {
+  //           console.log(err.message)
+  //         }
+  //       }
+
+  //       const { data } = await response.json()
+  //       setPosts(data)
+  //       console.log(data)
+  //     } catch (err: any) {
+  //       console.log(err.message)
+  //     } finally {
+  //       setIsLoading(false)
+  //     }
+  //   }
+
+  //   getPosts()
+  // }, [])
+
+  // if (isLoading) {
+  //   return (
+  //     <div className='flex  flex-col space-y-3 px-[16x] mt-[40px] gap-5  items-center'>
+  //       <Skeleton className='h-[550px] w-full md:w-[584px] rounded-xl' />
+  //       <Skeleton className='h-[550px] w-full md:w-[584px] rounded-xl' />
+  //     </div>
+  //   )
+  // }
 
   return (
     <section
       className={`w-full mt-[40px]  px-[16px] flex flex-col gap-5 items-center`}
     >
-      {posts.map(post => {
+      {posts?.map(post => {
         return (
           <Post
             key={post._id}

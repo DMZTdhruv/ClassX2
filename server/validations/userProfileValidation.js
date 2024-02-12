@@ -32,3 +32,9 @@ export const validateUserProfileInput = (
 
   return true;
 };
+
+export const userProfileIdValidator = (userId) => {
+  if(!userId) {
+    throw new Error("User profile ID is not present")
+  }
+}

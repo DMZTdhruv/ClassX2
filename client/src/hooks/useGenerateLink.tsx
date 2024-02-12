@@ -1,21 +1,28 @@
-import client from "../../client";
+import client from '../../client'
 
 export const useGenerateLink = () => {
   const generateUrl = async (e: any) => {
-    const { type, name } = e.target.files[0];
+    const { type, name } = e.target.files[0]
+    console.log(type)
 
-    if (type === 'image/jpeg' || type === 'image/png' || type === 'image/gif') {
+    if (
+      type === 'image/jpeg' ||
+      type === 'image/png' ||
+      type === 'image/gif' ||
+      type === 'image/svg+xml'
+    ) {
       try {
-        const file = await client.assets.upload('image', e.target.files[0], { contentType: type, filename: name });
+        const file = await client.assets.upload('image', e.target.files[0], {
+          contentType: type,
+          filename: name,
+        })
         return file
-
       } catch (err: any) {
         console.log(err.message)
       }
     } else {
-      throw new Error("image type is not valid")
+      throw new Error('image type is not valid')
     }
-
   }
 
   const getUrl = async (file: any) => {
@@ -25,15 +32,17 @@ export const useGenerateLink = () => {
         type: 'Image',
         asset: {
           _type: 'reference',
-          _ref: file._id
-        }
-      }
+          _ref: file._id,
+        },
+      },
     }
 
     try {
-      const createImage = await client.create(doc);
-      const url = await client.fetch(`*[_id == '${createImage.image.asset._ref}']{url}`);
-      return url[0].url;
+      const createImage = await client.create(doc)
+      const url = await client.fetch(
+        `*[_id == '${createImage.image.asset._ref}']{url}`
+      )
+      return url[0].url
     } catch (err) {
       console.log(err)
     }
@@ -41,6 +50,6 @@ export const useGenerateLink = () => {
 
   return {
     generateUrl,
-    getUrl
+    getUrl,
   }
 }

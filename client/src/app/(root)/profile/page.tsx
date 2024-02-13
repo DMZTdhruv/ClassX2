@@ -83,9 +83,11 @@ export default async function Profile() {
         isPrivate={userProfile.isPrivate}
       />
 
-      <div className='grid grid-cols-3  gap-[4px] md:gap-[8px] '>
+      <div className='grid grid-cols-3 relative gap-[4px] md:gap-[8px] '>
         {userPosts.length === 0 ? (
-          <p>Post something</p>
+          <p className='text-center absolute w-[200px] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'>
+            Post something
+          </p>
         ) : (
           userPosts?.map(user => {
             return (

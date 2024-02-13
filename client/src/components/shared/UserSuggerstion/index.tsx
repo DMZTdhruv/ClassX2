@@ -1,44 +1,75 @@
-'use client'
+import { cookies } from 'next/headers'
+import React from 'react'
+import UserCard from '@/components/cards/UserCard'
+import { shuffleArray } from '@/utils'
+import { jwtDecode } from 'jwt-decode'
 
-import React, { useEffect, useState } from 'react'
-import useCookieProvider from '@/hooks/useCookieProvider'
-
-interface SuggestedUsers {
-  _id: string,
+interface IUser {
+  _id: string
   name: string
   username: string
   userProfileImage: string
+  division: {
+    _id: string
+    divisionName: string
+  }
 }
 
-export default function index({children}: {children: React.ReactNode}) {
-  const [suggestedUsers,setSuggestedUsers] = useState<SuggestedUsers[]>([])
-  const cookie = useCookieProvider();
-  useEffect(() => {
-    const api = process.env.NEXT_PUBLIC_API;
-    const getUsers = async () => {
-      try {
-        const response = await fetch(`${api}/users/users-of-division`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${cookie?.cookie}`
-          }
-        })
+interface IDecodedTokem {
+  userID: string
+  userProfileId: string
+  username: string
+  email: string
+}
 
-        if(!response.ok) {
-          throw new Error("Failed to fetch users")
-        }
+export default async function index() {
+  const api = process.env.NEXt_PUBLIC_API
+  const cookie = cookies()
+  const token = cookie.get('classX_user_token')
+  const tokenValue = token?.value || ''
+  const decodedToken: IDecodedTokem = jwtDecode(tokenValue)
 
-        const {data} = await response.json();
-        setSuggestedUsers(data);
-      } catch (err: any) {
-        console.log(err.message)
+  const getUsers = async () => {
+    try {
+      const response = await fetch(`${api}/users/users-of-division`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token?.value}`,
+        },
+      })
+
+      if (!response.ok) {
+        console.log('Failed to fetch user suggestions')
       }
+
+      const { data } = await response.json()
+      return data
+    } catch (err) {
+      console.log(err)
     }
-    getUsers()
-  }, [])
+  }
 
-
+  const users: IUser[] = await getUsers()
+  const reccomendedUsers = shuffleArray(users)
+  const divisionName = users && users[0].division.divisionName
   return (
-    <div>{children}</div>
+    <div className='bg-[#171717] w-[90%] rounded-[20px] px-[14px] mt-[33px] pb-[10px]'>
+      <p className='py-[16.5px] font-semibold'>
+        Students from your division {divisionName}
+      </p>
+      {reccomendedUsers?.map((user: IUser) => {
+        if (user._id === decodedToken.userProfileId) {
+          return
+        }
+        return (
+          <UserCard
+            key={user._id}
+            name={user.name}
+            username={user.username}
+            userImageUrl={user.userProfileImage}
+          />
+        )
+      })}
+    </div>
   )
 }

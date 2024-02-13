@@ -35,4 +35,9 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
   async findUserByDivisionId(divisionId) {
     await UserProfile.find({division: divisionId})
   }
+  
+  async getUserPosts(userId) {
+    const posts = await UserProfile.find({_id: userId}).select('posts').populate('posts')
+    return posts
+  }
 }

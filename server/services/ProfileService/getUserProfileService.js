@@ -17,3 +17,4 @@ export const  getUserProfileService = async (user) => {
     throw new Error(err.message);
   } 
 } 
+

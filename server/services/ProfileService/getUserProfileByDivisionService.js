@@ -11,7 +11,7 @@ export default async function getUserProfileByDivisionService(userProfileId) {
       throw new Error("This user has no division")
     }
 
-    const users = await UserProfile.find({division: division}).select('name username userProfileImage')
+    const users = await UserProfile.find({division: division}).select('name username userProfileImage division').populate('division')
     console.log(users);
 
     return {

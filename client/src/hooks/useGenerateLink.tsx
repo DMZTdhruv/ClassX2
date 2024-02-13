@@ -3,7 +3,6 @@ import client from '../../client'
 export const useGenerateLink = () => {
   const generateUrl = async (e: any) => {
     const { type, name } = e.target.files[0]
-    console.log(type)
 
     if (
       type === 'image/jpeg' ||

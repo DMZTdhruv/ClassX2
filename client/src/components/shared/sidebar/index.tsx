@@ -1,18 +1,16 @@
+'use client'
 
 import React from 'react'
 import { sideBarData } from '@/Constants'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { cookies } from 'next/headers'
+import { usePathname } from 'next/navigation'
 
 function SideBar(props: any) {
-  const nextCookie = cookies();
-  const nextCookieAuth = nextCookie.get('classX_user_token')
-  console.log(nextCookieAuth);
-  const pathname = {};
+  const pathname = usePathname()
   return (
-    <section className='h-[100vh] sticky top-0 transition-all sidebars font-poppins  px-[40px] realtive w-auto  lg:w-[304px] border-r-2 border-r-slate-800 '>
+    <section className='h-[100vh] sticky top-0 transition-all sidebars font-poppins  px-[40px] realtive w-auto lg:w-[304px] border-r-2 border-r-slate-800 '>
       <div className='h-[150px] flex items-center'>
         <Image
           src={`/assets/ClassX.svg`}

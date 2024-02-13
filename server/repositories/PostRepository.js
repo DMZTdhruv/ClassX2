@@ -12,7 +12,7 @@ export default class PostRepository extends PostRepositoryInterface {
   }
 
   async pushPostInUserProfile(userID, postId) {
-    const userProfile = await this.getUserProfile(userID)
+    const userProfile = await UserProfile.findOne({_id: userID})
      userProfile.posts.push(postId)
     return userProfile.save()
   }

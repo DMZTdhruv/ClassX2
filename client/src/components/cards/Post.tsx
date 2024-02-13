@@ -55,7 +55,6 @@ const Post: React.FC<IPost> = ({
   const likePost = async () => {
     if (isLiked) return
     setNumberOfLikes(numberOfLikes + 1)
-    console.log('Post is liked')
     const api = process.env.NEXT_PUBLIC_API
     try {
       const response = await fetch(`${api}/post/like-post`, {
@@ -75,7 +74,6 @@ const Post: React.FC<IPost> = ({
       }
 
       const result = await response.json()
-      console.log(result)
     } catch (err) {
       console.log(err)
     }
@@ -84,7 +82,6 @@ const Post: React.FC<IPost> = ({
   const unlikePost = async () => {
     if (!isLiked) return
     setNumberOfLikes(numberOfLikes - 1)
-    console.log('unliked post')
     const api = process.env.NEXT_PUBLIC_API
     try {
       const response = await fetch(`${api}/post/unlike-post`, {
@@ -104,7 +101,6 @@ const Post: React.FC<IPost> = ({
       }
 
       const result = await response.json()
-      console.log(result)
     } catch (err) {
       console.log(err)
     }
@@ -112,7 +108,7 @@ const Post: React.FC<IPost> = ({
 
   const [showFullcaption, setShowFullCaption] = useState<boolean>(false)
   return (
-    <div className='w-full md:w-[584px] h-auto rounded-xl border-b-2 border-[#171717] font-poppins  postSection'>
+    <div className='w-full lg:w-[584px] h-auto rounded-xl border-b-2 border-[#171717] font-poppins  postSection'>
       <div className='h-[60px] px-[16px] flex items-center'>
         <div className='flex items-center gap-[11px]'>
           <Image
@@ -144,7 +140,7 @@ const Post: React.FC<IPost> = ({
           alt={'post'}
           style={{ height: 'auto', width: '584px', aspectRatio: '1' }}
           className='object-cover  md:w-[584px] md:h-[584px] border-2 border-[#171717]'
-          unoptimized
+          quality={100}
         />
       </div>
       <div>

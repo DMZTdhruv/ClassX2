@@ -7,9 +7,9 @@ export const sideBarData = [
   },
   {
     id: 2,
-    name: "Search",
+    name: "Explore",
     icon: "explore.svg",
-    routes: "/search"
+    routes: "/explore"
   },
   {
     id: 3,
@@ -46,7 +46,7 @@ export const BottomBarData = [
   {
     id: 2,
     icon: "explore.svg",
-    routes: "/search"
+    routes: "/explore"
   },
   {
     id: 3,

@@ -90,7 +90,13 @@ export default function index() {
     e.preventDefault()
     setIsPosting(true)
     try {
-      if (!title || !demoUploadImage || !caption || !cookie?.userProfileId || !location) {
+      if (
+        !title ||
+        !demoUploadImage ||
+        !caption ||
+        !cookie?.userProfileId ||
+        !location
+      ) {
         throw new Error('Invalid details')
       }
       const imageUrl = await getUrl(demoUploadImage)
@@ -102,7 +108,6 @@ export default function index() {
         category: category,
         postedBy: cookie?.userProfileId,
       }
-      console.log(data)
       await submitDataToBackent(data)
       router.push('/')
     } catch (err: any) {
@@ -129,7 +134,6 @@ export default function index() {
       })
 
       const result = await response.json()
-      console.log(result)
     } catch (err: any) {
       throw new Error(err.message)
     }
@@ -141,7 +145,9 @@ export default function index() {
         <p className='text-[18px] font-semibold text-center'>
           Enter post details
         </p>
-        <div className={`w-full max-w-[548px] min-h-[300px] rounded-xl p-5 bg-[#171717]`}>
+        <div
+          className={`w-full max-w-[548px] min-h-[300px] rounded-xl p-5 bg-[#171717]`}
+        >
           {demoUploadImage?.url ? (
             <div className='w-full relative'>
               <Image

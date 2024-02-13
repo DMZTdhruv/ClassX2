@@ -15,7 +15,8 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
   }
 
   async findById(_id) {
-    return await UserProfile.findById(_id);
+    console.log("This is the id from repo: " + _id)
+    return await UserProfile.findById(_id)
   }
 
   async findByEmail(email) {
@@ -29,5 +30,14 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
   async findSemester(semesterNumber) {}
   async findByUsername(username) {
     return await UserProfile.findOne({ username: username })
+  }
+
+  async findUserByDivisionId(divisionId) {
+    await UserProfile.find({division: divisionId})
+  }
+  
+  async getUserPosts(userId) {
+    const posts = await UserProfile.find({_id: userId}).select('posts').populate('posts')
+    return posts
   }
 }

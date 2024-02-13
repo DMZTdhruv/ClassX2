@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import useCookieProvider from '@/hooks/useCookieProvider'
+import { formatDate } from '@/utils'
 
 interface IComments {
   _id: string
@@ -53,8 +54,7 @@ const Post: React.FC<IPost> = ({
 
   const likePost = async () => {
     if (isLiked) return
-    setNumberOfLikes(numberOfLikes+1)
-    console.log('Post is liked')
+    setNumberOfLikes(numberOfLikes + 1)
     const api = process.env.NEXT_PUBLIC_API
     try {
       const response = await fetch(`${api}/post/like-post`, {
@@ -74,7 +74,6 @@ const Post: React.FC<IPost> = ({
       }
 
       const result = await response.json()
-      console.log(result)
     } catch (err) {
       console.log(err)
     }
@@ -82,8 +81,7 @@ const Post: React.FC<IPost> = ({
 
   const unlikePost = async () => {
     if (!isLiked) return
-    setNumberOfLikes(numberOfLikes-1)
-    console.log('unliked post')
+    setNumberOfLikes(numberOfLikes - 1)
     const api = process.env.NEXT_PUBLIC_API
     try {
       const response = await fetch(`${api}/post/unlike-post`, {
@@ -103,7 +101,6 @@ const Post: React.FC<IPost> = ({
       }
 
       const result = await response.json()
-      console.log(result)
     } catch (err) {
       console.log(err)
     }
@@ -111,7 +108,7 @@ const Post: React.FC<IPost> = ({
 
   const [showFullcaption, setShowFullCaption] = useState<boolean>(false)
   return (
-    <div className='w-full md:w-[584px] h-auto rounded-xl border-b-2 border-[#171717] font-poppins  postSection'>
+    <div className='w-full lg:w-[584px] h-auto rounded-xl border-b-2 border-[#171717] font-poppins  postSection'>
       <div className='h-[60px] px-[16px] flex items-center'>
         <div className='flex items-center gap-[11px]'>
           <Image
@@ -143,7 +140,7 @@ const Post: React.FC<IPost> = ({
           alt={'post'}
           style={{ height: 'auto', width: '584px', aspectRatio: '1' }}
           className='object-cover  md:w-[584px] md:h-[584px] border-2 border-[#171717]'
-          unoptimized
+          quality={100}
         />
       </div>
       <div>
@@ -158,11 +155,10 @@ const Post: React.FC<IPost> = ({
           >
             {isLiked ? (
               <Image
-                src={`/assets/heart_filled.svg`}
+                src={`bxs_heart.svg`}
                 width={30}
                 height={30}
                 alt='user jpg'
-                unoptimized
                 className='rounded-full object-cover active:scale-90 transition-all'
                 style={{
                   width: '30px',
@@ -171,11 +167,10 @@ const Post: React.FC<IPost> = ({
               />
             ) : (
               <Image
-                src={`/assets/heart.svg`}
+                src={`heart.svg`}
                 width={30}
                 height={30}
                 alt='user jpg'
-                unoptimized
                 className='rounded-full object-cover active:scale-90 transition-all'
                 style={{
                   width: '30px',
@@ -243,23 +238,3 @@ const Post: React.FC<IPost> = ({
 }
 
 export default Post
-
-const formatDate = (date: Date) => {
-  const now = new Date()
-  const diffInMilliseconds = now.getTime() - date.getTime()
-
-  const seconds = Math.floor(diffInMilliseconds / 1000)
-  const minutes = Math.floor(seconds / 60)
-  const hours = Math.floor(minutes / 60)
-  const days = Math.floor(hours / 24)
-
-  if (seconds < 60) {
-    return `${seconds} seconds ago`
-  } else if (minutes < 60) {
-    return `${minutes} minutes ago`
-  } else if (hours < 24) {
-    return `${hours} hours ago`
-  } else {
-    return `${days} days ago`
-  }
-}

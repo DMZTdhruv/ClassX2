@@ -19,4 +19,8 @@ export default class DivisionRepository extends DivisionRepositoryInterface {
 
     return division;
   }
+
+  async findDivisionByName(divisionName) {
+    await Division.findOne({divisionName})
+  }
 }

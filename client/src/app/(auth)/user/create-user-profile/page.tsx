@@ -16,8 +16,15 @@ import {
 import Image from 'next/image'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
-import { useState, ChangeEvent, FormEvent, useEffect } from 'react'
+import {
+  useState,
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  ChangeEventHandler,
+} from 'react'
 import { SanityImageAssetDocument } from '@sanity/client'
+import { Textarea } from '@/components/ui/textarea'
 
 interface Branch {
   _id: string
@@ -36,6 +43,7 @@ function SignUpPage() {
   // all states of single value
   const [name, setName] = useState<string>('')
   const [username, setUsername] = useState<string>('')
+  const [bio, setBio] = useState<string>('')
   const [enrollmentNo, setEnrollmentNo] = useState<string>('')
   const [division, setDivision] = useState<string>('')
   const [userBranch, setUserBranch] = useState<string>('')
@@ -69,6 +77,12 @@ function SignUpPage() {
 
   const handleUsername = (e: ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value)
+  }
+
+  const handleBio: ChangeEventHandler<HTMLTextAreaElement> = (
+    e: ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setBio(e.target.value)
   }
 
   const handleEnrollmentNo = (e: ChangeEvent<HTMLInputElement>) => {
@@ -144,6 +158,7 @@ function SignUpPage() {
     const userDetails = {
       name: name,
       username: username,
+      about: bio,
       userProfileImage: imageUrl,
       enrollmentNumber: enrollmentNo,
       branchName: userBranch,
@@ -151,6 +166,7 @@ function SignUpPage() {
       divisionName: division,
       isPrivate: isPrivate,
     }
+    console.log(userDetails);
 
     const api = `${process.env.NEXT_PUBLIC_API}/users/create-user-profile`
     try {
@@ -328,6 +344,16 @@ function SignUpPage() {
             className='rounded-full bg-[#171717] border-none outline-none px-[16px]'
             placeholder='Enrollment No'
             onChange={handleEnrollmentNo}
+            required
+          />
+        </label>
+        <label className='w-full mb-[4px]'>
+          <p className='mb-2'>Bio</p>
+          <Textarea
+            className='rounded-xl bg-[#171717] border-none outline-none px-[16px]'
+            placeholder='Enter your post description here'
+            onChange={handleBio}
+            value={bio}
             required
           />
         </label>

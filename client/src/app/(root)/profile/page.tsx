@@ -70,7 +70,7 @@ export default async function Profile() {
   const userPosts: Ipost[] = await getUserPosts()
   console.log(userPosts)
   return (
-    <section>
+    <section className='flex flex-col items-center gap-[60px]'>
       <UserHeader
         _id={userProfile._id}
         name={userProfile.name}
@@ -83,19 +83,21 @@ export default async function Profile() {
         isPrivate={userProfile.isPrivate}
       />
 
-      {userPosts.length === 0 ? (
-        <p>Post something</p>
-      ) : (
-        userPosts?.map(user => {
-          return (
-            <NormalPost
-              imageUrl={user.imageUrl}
-              comments={user.comments.length}
-              likes={user.likes.length}
-            />
-          )
-        })
-      )}
+      <div className='grid grid-cols-3  gap-[4px] md:gap-[8px] '>
+        {userPosts.length === 0 ? (
+          <p>Post something</p>
+        ) : (
+          userPosts?.map(user => {
+            return (
+              <NormalPost
+                imageUrl={user.imageUrl}
+                comments={user.comments.length}
+                likes={user.likes.length}
+              />
+            )
+          })
+        )}
+      </div>
     </section>
   )
 }

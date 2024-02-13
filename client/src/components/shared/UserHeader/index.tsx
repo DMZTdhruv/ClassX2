@@ -25,7 +25,7 @@ export default function UserHeader({
   post,
 }: UserHeaderProps) {
   return (
-    <div className='flex flex-col items-center'>
+    <div className='flex flex-col items-center mt-[40px] font-semibold  font-poppins gap-[10px]'>
       <Image
         src={userProfileImage}
         alt={`${name} profile image`}
@@ -33,20 +33,25 @@ export default function UserHeader({
         height={124}
         className='rounded-full object-cover'
         style={{
-          width: '124px',
-          height: '124px',
+          minHeight: '124px',
+          minWidth: '124px',
+          aspectRatio: '1 / 1',
         }}
         unoptimized
       />
 
-      <div className='user-profile-info flex flex-col'>
+      <div className='user-profile-info items-center flex flex-col'>
         <span className='text-[28px]'>{name}</span>
-        <span className='bg-[#474747]'>@{username}</span>
+        <span className='text-[#474747]'>@{username}</span>
       </div>
-      <p>{about}</p>
-      <div className='user-interactions flex gap-[20px]'>
-        <Button className='rounded-full text-white'>Message</Button>
-        <Button className='rounded-full text-white'>Follow</Button>
+      <p className='w-[75%] text-center text-[14px]'>{about}</p>
+      <div className='user-interactions flex gap-[20px] mt-[8px]'>
+        <Button className='rounded-full px-[30px] h-[25px] text-white'>
+          Message
+        </Button>
+        <Button className='rounded-full px-[30px] h-[25px] text-white'>
+          Follow
+        </Button>
       </div>
     </div>
   )

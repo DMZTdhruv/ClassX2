@@ -9,16 +9,18 @@ interface IPostProps {
 
 export default function NormalPost({ imageUrl, likes, comments }: IPostProps) {
   return (
-    <div className='realtive'>
+    <div className='relative group'>
       <Image
         src={imageUrl}
-        alt='User-post'
-        height={300}
-        width={300}
-        unoptimized
+        width={384}
+        height={0}
+        alt={'user-post'}
+        style={{ height: 'auto', width: '300px', aspectRatio: '1' }}
+        className='object-cover  md:w-[300px] md:h-[300px] border-2 border-[#171717]'
+        quality={100}
       />
-      <div className='flex'>
-        <div>
+      <div className='flex gap-[5px] absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] opacity-0  group-hover:opacity-100'>
+        <div className='flex'>
           <Image
             src={'/heart.svg'}
             height={24}
@@ -28,14 +30,16 @@ export default function NormalPost({ imageUrl, likes, comments }: IPostProps) {
           />
           <span>{likes}</span>
         </div>
-        <Image
-          src={'/assets/comment.svg'}
-          height={24}
-          width={24}
-          alt='likes'
-          unoptimized
-        />
-        <span>{comments}</span>
+        <div className='flex'>
+          <Image
+            src={'/assets/comment.svg'}
+            height={24}
+            width={24}
+            alt='likes'
+            unoptimized
+          />
+          <span>{comments}</span>
+        </div>
       </div>
     </div>
   )

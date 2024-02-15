@@ -20,14 +20,14 @@ export const replyCommentService = async (
     )
 
     const userProfile = new UserProfileRepository()
-    const commentRepo = new CommentRepository();
+    const commentRepo = new CommentRepository()
 
     //getting the comment
-    const parentComment = await commentRepo.findCommentById(parentCommentId);
+    const parentComment = await commentRepo.findCommentById(parentCommentId)
 
     // getting the user details
-    const user = await userProfile.findByUserID(repliedUserId);
-    console.log(user); 
+    const user = await userProfile.findByUserID(repliedUserId)
+    console.log(user)
     // editing the original comment
     const repliedComment = `@${user.username} ${commentText}`
 
@@ -41,19 +41,19 @@ export const replyCommentService = async (
     })
 
     // saving the new reply
-    const saveReply = await newReply.save();
+    const saveReply = await newReply.save()
 
     //pushing the saveReply to the main parent comment
-    parentComment.commentReplies.push(saveReply._id);
+    parentComment.commentReplies.push(saveReply._id)
 
-    await parentComment.save();
+    await parentComment.save()
 
     return {
       message: saveReply,
-      parentComment: parentComment
+      parentComment: parentComment,
     }
   } catch (err) {
-    console.log(err);
+    console.log(err.message)
     throw new Error(err.message)
   }
 }

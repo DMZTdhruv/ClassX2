@@ -64,28 +64,62 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
     }
   }
 
+  async unfollowUser(userId, userToFollowId) {
+    const user = await UserProfile.findById(userId)
+    user.following.remove(userToFollowId)
+    const currentUser = await user.save()
+
+    const userToFollow = await UserProfile.findById(userToFollowId)
+    userToFollow.followers.remove(userId)
+    const followingUser = await userToFollow.save()
+
+    return {
+      currentUser,
+      followingUser,
+    }
+  }
+
   async checkUserFollowStatus(userId, userToFollowId) {
     const checkCurrentUserFollowingId = await UserProfile.findOne({
       _id: userId,
       following: userToFollowId,
     })
 
-    console.log(checkCurrentUserFollowingId);
-
-    if (checkCurrentUserFollowingId) {
-      return true
-    }
-
     const checkFollowingUsersCurrentUserId = await UserProfile.findOne({
       _id: userToFollowId,
       followers: userId,
     })
 
-    if (checkFollowingUsersCurrentUserId) {
+    if (checkFollowingUsersCurrentUserId && checkCurrentUserFollowingId) {
       return true
     }
 
-    return false;
+    return false
+  }
+
+  async checkUserUnFollowStatus(userId, userToUnfollowId) {
+    console.log({
+      userId,
+      userToUnfollowId,
+    })
+
+    const checkCurrentUserUnFollowingId = await UserProfile.findOne({
+      _id: userId,
+      following: userToUnfollowId,
+    })
+
+    console.log(checkCurrentUserUnFollowingId)
+
+    const checkUnFollowingUsersCurrentUserId = await UserProfile.findOne({
+      _id: userToUnfollowId,
+      followers: userId,
+    })
+
+    if (checkCurrentUserUnFollowingId && checkUnFollowingUsersCurrentUserId) {
+      return true
+    }
+
+    return false
   }
 
   async checkIfUserIsAlreadyFollowing(userId, userToFollowId) {

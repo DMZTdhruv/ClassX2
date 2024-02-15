@@ -7,7 +7,6 @@ export default async function unlikePostService(userProfileID, postId) {
     validateUserUnlikedPost(userProfileID, postId)
     const userProfileRepo = new UserProfileRepository()
     const userExists = await userProfileRepo.findById(userProfileID)
-    console.log(userExists)
     
     // if user doesn't exist throw error
     if (!userExists) {
@@ -16,7 +15,6 @@ export default async function unlikePostService(userProfileID, postId) {
   
     const postRepo = new PostRepository()
     const postExists = await postRepo.findPostById(postId)
-    console.log(postExists)
   
     if (!postExists) {
       throw new Error("Either the post is deleted by user or doesn't exist")

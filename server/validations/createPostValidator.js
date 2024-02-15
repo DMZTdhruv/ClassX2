@@ -8,9 +8,8 @@ export const validateCreatePostInput = (
   category,
   postedBy
 ) => {
-  console.log(title, imageUrl, caption, location, category, postedBy);
   if (!title || !imageUrl || !caption || !category || !postedBy) {
     throw new Error('Incomplete post details')
   }
-  return true;
+  return true
 }

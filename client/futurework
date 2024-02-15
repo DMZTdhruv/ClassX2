@@ -1,3 +1,9 @@
 username in usersuggestion interactive and open userprofile page
 
 Don't forget to use cors origin in the server to protect the api
+
+if following dont put the users in suggestion
+
+make sure the user is not following the same person again or liking the same post again
+
+elimate the current user from the search functionality

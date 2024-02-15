@@ -8,7 +8,6 @@ export const  getUserProfileService = async (user) => {
     if(!user) {
       throw new Error("No user profile found")
     }
-    console.log(user);
     return {
       message: user
     }

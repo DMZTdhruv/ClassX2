@@ -15,6 +15,7 @@ interface UserProfileProps {
 }
 
 interface Ipost {
+  _id: string
   imageUrl: string
   likes: string[]
   comments: string[]
@@ -70,7 +71,7 @@ export default async function Profile() {
   const userPosts: Ipost[] = await getUserPosts()
   console.log(userPosts)
   return (
-    <section className='flex flex-col items-center gap-[60px]'>
+    <section className='flex flex-col items-center gap-[60px] mb-[20px]'>
       <UserHeader
         _id={userProfile._id}
         name={userProfile.name}
@@ -92,6 +93,7 @@ export default async function Profile() {
           userPosts?.map(user => {
             return (
               <NormalPost
+                key={user._id}
                 imageUrl={user.imageUrl}
                 comments={user.comments.length}
                 likes={user.likes.length}

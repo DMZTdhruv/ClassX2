@@ -2,7 +2,6 @@ import { getUserProfileService } from "../../services/ProfileService/getUserProf
 
 export const getUserProfileController = async (req,res) => {
   const user = req.user;
-  console.log(user);
   try {
     const result = await getUserProfileService(user);
     res.status(200).json(result);

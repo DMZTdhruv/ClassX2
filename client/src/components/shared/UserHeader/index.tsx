@@ -1,5 +1,11 @@
 import { Button } from '@/components/ui/button'
+import { jwtDecode } from 'jwt-decode'
+import { cookies } from 'next/headers'
 import Image from 'next/image'
+
+interface Token {
+  userProfileId: string
+}
 
 interface UserHeaderProps {
   _id: string
@@ -24,6 +30,10 @@ export default function UserHeader({
   followers,
   post,
 }: UserHeaderProps) {
+  const cookie = cookies()
+  const token = cookie.get('classX_user_token')
+  const { userProfileId }:Token = jwtDecode(token?.value || '')
+  console.log(userProfileId, _id)
   return (
     <div className='flex flex-col items-center mt-[40px] font-semibold  font-poppins gap-[10px]'>
       <Image
@@ -45,14 +55,16 @@ export default function UserHeader({
         <span className='text-[#474747]'>@{username}</span>
       </div>
       <p className='w-[75%] text-center text-[14px]'>{about}</p>
-      <div className='user-interactions flex gap-[20px] mt-[8px]'>
-        <Button className='rounded-full px-[30px] h-[25px] text-white'>
-          Message
-        </Button>
-        <Button className='rounded-full px-[30px] h-[25px] text-white'>
-          Follow
-        </Button>
-      </div>
+      {_id !== userProfileId && (
+        <div className='user-interactions flex gap-[20px] mt-[8px]'>
+          <Button className='rounded-full px-[30px] h-[25px] text-white'>
+            Message
+          </Button>
+          <Button className='rounded-full px-[30px] h-[25px] text-white'>
+            Follow
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

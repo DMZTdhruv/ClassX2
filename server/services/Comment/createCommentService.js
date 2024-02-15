@@ -14,7 +14,6 @@ export const createComment = async (postId,commentText,postedBy) => {
 
     const newComment = await commentRepository.createNewComment(postId,commentText,postedBy);
     const saveComment = await commentRepository.pushComment(postId,newComment._id);
-    console.log(saveComment);
     return {
       message: saveComment
     }

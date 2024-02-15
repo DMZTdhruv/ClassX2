@@ -25,7 +25,6 @@ export const signIn = async (email, password) => {
 
     const userProfileRepo = new UserProfilerepository()
     const userProfile = await userProfileRepo.getUserData(user._id)
-    console.log(userProfile)
     if (userProfile) {
       const token = jwt.sign(
         {

@@ -15,7 +15,6 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
   }
 
   async findById(_id) {
-    console.log('This is the id from repo: ' + _id)
     return await UserProfile.findById(_id)
   }
 
@@ -66,26 +65,41 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
   }
 
   async checkUserFollowStatus(userId, userToFollowId) {
-    const checkCurrentUserFollowingId = UserProfile.findOne({
+    const checkCurrentUserFollowingId = await UserProfile.findOne({
       _id: userId,
       following: userToFollowId,
     })
 
+    console.log(checkCurrentUserFollowingId);
+
     if (checkCurrentUserFollowingId) {
-      throw new Error(
-        `Current user: ${userId} is already following ${userToFollowId}`
-      )
+      return true
     }
 
-    const checkFollowingUsersCurrentUserId = UserProfile.findOne({
+    const checkFollowingUsersCurrentUserId = await UserProfile.findOne({
       _id: userToFollowId,
       followers: userId,
     })
-    
+
     if (checkFollowingUsersCurrentUserId) {
-      throw new Error(
-        `UserId with ${userToFollowId} is already followed by ${userId}`
-      )
+      return true
+    }
+
+    return false;
+  }
+
+  async checkIfUserIsAlreadyFollowing(userId, userToFollowId) {
+    const isAlreadyFollowing = await UserProfile.findOne({
+      _id: userId,
+      following: userToFollowId,
+    })
+    if (isAlreadyFollowing) {
+      return {
+        isFollowing: true,
+      }
+    }
+    return {
+      isFollowing: false,
     }
   }
 }

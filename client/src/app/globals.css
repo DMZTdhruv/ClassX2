@@ -17,6 +17,7 @@
 /* Track */
 ::-webkit-scrollbar-track {
   background: #1e1e1e;
+  border-radius: 5px;
 }
 
 /* Handle */
@@ -28,12 +29,6 @@
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #414141;
-}
-
-html,
-body {
-  scroll-snap-type: mandatory;
-  scroll-snap-type: y mandatory;
 }
 
 @layer base {

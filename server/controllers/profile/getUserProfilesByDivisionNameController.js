@@ -6,7 +6,6 @@ export default async function getUserProfilesByDivisionNameController(
   res
 ) {
   const {userProfileId} = req.user;
-  console.log(userProfileId);
   try {
     userProfileIdValidator(userProfileId)
     const result = await getUserProfileByDivisionService(userProfileId)

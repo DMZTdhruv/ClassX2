@@ -15,7 +15,7 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
   }
 
   async findById(_id) {
-    console.log("This is the id from repo: " + _id)
+    console.log('This is the id from repo: ' + _id)
     return await UserProfile.findById(_id)
   }
 
@@ -27,17 +27,65 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
     return userProfile.save()
   }
 
-  async findSemester(semesterNumber) {}
   async findByUsername(username) {
-    return await UserProfile.findOne({ username: username })
+    return await UserProfile.findOne({
+      username: username,
+    })
+  }
+
+  async findByUsernameFilter(username) {
+    return await UserProfile.find({
+      username: { $regex: `^${username}` },
+    }).select('name username userProfileImage')
   }
 
   async findUserByDivisionId(divisionId) {
-    await UserProfile.find({division: divisionId})
+    await UserProfile.find({ division: divisionId })
   }
-  
+
   async getUserPosts(userId) {
-    const posts = await UserProfile.find({_id: userId}).select('posts').populate('posts')
+    const posts = await UserProfile.find({ _id: userId })
+      .select('posts')
+      .populate('posts')
     return posts
+  }
+
+  async followUser(userId, userToFollowId) {
+    const user = await UserProfile.findById(userId)
+    user.following.push(userToFollowId)
+    const currentUser = await user.save()
+
+    const userToFollow = await UserProfile.findById(userToFollowId)
+    userToFollow.followers.push(userId)
+    const followingUser = await userToFollow.save()
+
+    return {
+      currentUser,
+      followingUser,
+    }
+  }
+
+  async checkUserFollowStatus(userId, userToFollowId) {
+    const checkCurrentUserFollowingId = UserProfile.findOne({
+      _id: userId,
+      following: userToFollowId,
+    })
+
+    if (checkCurrentUserFollowingId) {
+      throw new Error(
+        `Current user: ${userId} is already following ${userToFollowId}`
+      )
+    }
+
+    const checkFollowingUsersCurrentUserId = UserProfile.findOne({
+      _id: userToFollowId,
+      followers: userId,
+    })
+    
+    if (checkFollowingUsersCurrentUserId) {
+      throw new Error(
+        `UserId with ${userToFollowId} is already followed by ${userId}`
+      )
+    }
   }
 }

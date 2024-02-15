@@ -1,19 +1,27 @@
 import Image from 'next/image'
 import FollowButton from '../shared/FollowButton/FollowButton'
+import useCookieProvider from '@/hooks/useCookieProviderServer'
+import { cookies } from 'next/headers'
+import { jwtDecode } from 'jwt-decode'
 
 interface UserCardProps {
+  currentUser: string
+  _id: string
   username: string
   userImageUrl: string
   name: string
 }
 
+
 export default function UserCard({
+  currentUser,
+  _id,
   username,
   userImageUrl,
   name,
 }: UserCardProps) {
   return (
-    <div className='flex  items-center h-[68px] justify-between'>
+    <div className='flex w-full items-center h-[68px] justify-between'>
       <div className='flex items-center'>
         <Image
           src={userImageUrl}
@@ -34,7 +42,7 @@ export default function UserCard({
           <span className='text-[#474747]'>@{username}</span>
         </div>
       </div>
-      <FollowButton />
+      <FollowButton _id={currentUser} userToFollowId={_id} />
     </div>
   )
 }

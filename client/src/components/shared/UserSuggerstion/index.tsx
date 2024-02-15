@@ -64,6 +64,8 @@ export default async function index() {
         return (
           <UserCard
             key={user._id}
+            currentUser={decodedToken.userProfileId}
+            _id={user._id}
             name={user.name}
             username={user.username}
             userImageUrl={user.userProfileImage}

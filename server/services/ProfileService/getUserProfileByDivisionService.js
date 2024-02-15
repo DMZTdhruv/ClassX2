@@ -12,7 +12,6 @@ export default async function getUserProfileByDivisionService(userProfileId) {
     }
 
     const users = await UserProfile.find({division: division}).select('name username userProfileImage division').populate('division')
-    console.log(users);
 
     return {
       data: users,

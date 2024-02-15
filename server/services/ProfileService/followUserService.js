@@ -6,6 +6,8 @@ export default async function followUserService(userId, userToFollowId) {
     validateFollow(userId, userToFollowId)
 
     const userRepo = new UserProfileRepository()
+
+
     //checking users
     checkUsers(userId, userToFollowId)
 
@@ -16,9 +18,9 @@ export default async function followUserService(userId, userToFollowId) {
       throw new Error("Already following")
     }
 
-    const result = await userRepo.followUser(userId, userToFollowId)
+    await userRepo.followUser(userId, userToFollowId)
     return {
-      data: result,
+      message: `${userId} is now following ${userToFollowId}`
     }
   } catch (err) {
     throw new Error(err.message)

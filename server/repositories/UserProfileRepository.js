@@ -65,16 +65,18 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
   }
 
   async checkUserFollowStatus(userId, userToFollowId) {
-    const checkCurrentUserFollowingId = UserProfile.findOne({
+    const checkCurrentUserFollowingId = await UserProfile.findOne({
       _id: userId,
       following: userToFollowId,
     })
+
+    console.log(checkCurrentUserFollowingId);
 
     if (checkCurrentUserFollowingId) {
       return true
     }
 
-    const checkFollowingUsersCurrentUserId = UserProfile.findOne({
+    const checkFollowingUsersCurrentUserId = await UserProfile.findOne({
       _id: userToFollowId,
       followers: userId,
     })

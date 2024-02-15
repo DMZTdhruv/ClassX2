@@ -162,3 +162,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWNiM
   "userId": "65cb2eacb8be06b7dd50272f",
   "userToFollowId": "65cb4a773919333aa3807228"
 }
+
+
+###
+GET http://localhost:3001/users/isFollowing?userId=65cb2eacb8be06b7dd50272f&userToFollowId=65cb4a773919333aa3807228
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWNiMmIzNjNlYjVlZDJlZDYyNzgwNDciLCJ1c2VyUHJvZmlsZUlkIjoiNjVjYjJlYWNiOGJlMDZiN2RkNTAyNzJmIiwidXNlcm5hbWUiOiJ5YWVEaHJ1diIsImVtYWlsIjoic2hydXZwYXJtYXJAZ21haWwuY29tIiwiaWF0IjoxNzA3OTA4NDk1LCJleHAiOjE3MTA1MDA0OTV9.YrTa0hcBfbC5VU3w_KENTAOnWZfse369diak6FaRj5s

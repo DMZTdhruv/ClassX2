@@ -10,10 +10,13 @@ export default async function followUserService(userId, userToFollowId) {
     checkUsers(userId, userToFollowId)
 
     // checking if the current user is already following
-    userRepo.checkUserFollowStatus(userId,userToFollowId);
+    const isAlreadyFollowingEachOther = await userRepo.checkUserFollowStatus(userId,userToFollowId);
+
+    if(isAlreadyFollowingEachOther){
+      throw new Error("Already following")
+    }
 
     const result = await userRepo.followUser(userId, userToFollowId)
-    console.log(result)
     return {
       data: result,
     }

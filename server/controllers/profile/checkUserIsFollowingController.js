@@ -1,12 +1,18 @@
-import checkIfUserFollowsService from "../../services/ProfileService/checkIfUserFollowsService.js";
+import checkIfUserFollowsService from '../../services/ProfileService/checkIfUserFollowsService.js'
 
-export default async function checkIfUserIsFollowingController(req,res){
-  const {userId, userToFollowId} = req.query;
-  console.log(userId, userToFollowId);
+export default async function checkIfUserIsFollowingController(req, res) {
+  const { userToFollowId } = req.query
+  const { userProfileId } = req.user
   try {
-    const result = await checkIfUserFollowsService(userId,userToFollowId);
-    res.status(200).json(result);
-  } catch (err){ 
-    res.status(500).json({message: err.message})
-  } 
+    if (!userProfileId || !userToFollowId) {
+      return res.status(400).json({ message: 'incomplete details' })
+    }
+    const result = await checkIfUserFollowsService(
+      userProfileId,
+      userToFollowId
+    )
+    res.status(200).json(result)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
 }

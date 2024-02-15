@@ -12,60 +12,49 @@ import checkIfUserIsFollowingController from "../../controllers/profile/checkUse
 const router = express.Router();
 
 //User profile routes
+router.post(
+  "/create-user-profile",
+  authenticateUserToken,
+  createUserProfileController
+);
 
-  // Post routes
+router.get(
+  "/get-user-profile",
+  authenticateUserToken,
+  getUserProfileController
+)
 
-  router.post(
-    "/create-user-profile",
-    authenticateUserToken,
-    createUserProfileController
-  );
+router.get(
+  "/get-user-posts",
+  authenticateUserToken,
+  getUserPostsController
+)
 
-  // Get routes
+router.get(
+  "/users-of-division",
+  authenticateUserToken,
+  getUserProfilesByDivisionNameController
+) 
 
-  router.get(
-    "/get-user-profile",
-    authenticateUserToken,
-    getUserProfileController
-  )
-  
-  router.get(
-    "/get-user-posts",
-    authenticateUserToken,
-    getUserPostsController
-  )
-  
-  router.get(
-    "/users-of-division",
-    authenticateUserToken,
-    getUserProfilesByDivisionNameController
-  ) 
-  
-  router.get(
-    "/userprofile",
-    authenticateUserToken,
-    GetUserProfileByUsernameController
-  )
+router.get(
+  "/userprofile",
+  authenticateUserToken,
+  GetUserProfileByUsernameController
+)
 
 
 // following routes
+router.post(
+  "/follow",
+  authenticateUserToken,
+  followUserController
+)
 
-  // Post routes
-
-  router.post(
-    "/follow",
-    authenticateUserToken,
-    followUserController
-  )
-
-  // Get routes
-  
-  router.get(
-    "isFollowing",
-    authenticateUserToken,
-    checkIfUserIsFollowingController
-  )
-
+router.get(
+  "/isFollowing",
+  authenticateUserToken,
+  checkIfUserIsFollowingController
+)
 
 
 export default router;

@@ -1,26 +1,29 @@
 import UserProfileRepository from '../../repositories/UserProfileRepository.js'
-import {validateFollow} from '../../validations/FollowUserValidator.js'
+import {validateUnFollow} from '../../validations/FollowUserValidator.js'
 
-export default async function followUserService(userId, userToFollowId) {
+export default async function unFollowUserService(userId, userToFollowId) {
   try {
-    validateFollow(userId, userToFollowId)
-
+    validateUnFollow(userId, userToFollowId)
+    
     const userRepo = new UserProfileRepository()
-
 
     //checking users
     checkUsers(userId, userToFollowId)
 
     // checking if the current user is already following
-    const isAlreadyFollowingEachOther = await userRepo.checkUserFollowStatus(userId,userToFollowId);
+    const isAlreadyFollowingEachOther = await userRepo.checkUserUnFollowStatus(userId,userToFollowId);
 
-    if(isAlreadyFollowingEachOther){
-      throw new Error("Already following")
+    console.log(isAlreadyFollowingEachOther)
+
+    if(!isAlreadyFollowingEachOther){
+      throw new Error("Cannot unfollow a user which is not followed by user: " + userId)
     }
 
-    await userRepo.followUser(userId, userToFollowId)
+    const result = await userRepo.unfollowUser(userId, userToFollowId)
+    console.log(result);
+
     return {
-      message: `${userId} is now following ${userToFollowId}`
+      message: `${userId} is now unfollowing ${userToFollowId}`
     }
   } catch (err) {
     throw new Error(err.message)

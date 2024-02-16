@@ -17,7 +17,7 @@ export default async function checkIfUserFollowsService(
       data: result,
     }
   } catch (err) {
-    console.log(err)
+    console.log(err.message)
     throw new Error(err.message)
   }
 }
@@ -39,4 +39,3 @@ const checkUsers = (userId, userToFollowId) => {
     console.log(err.message)
   }
 }
-

@@ -7,15 +7,15 @@ export default async function unlikePostService(userProfileID, postId) {
     validateUserUnlikedPost(userProfileID, postId)
     const userProfileRepo = new UserProfileRepository()
     const userExists = await userProfileRepo.findById(userProfileID)
-    
+
     // if user doesn't exist throw error
     if (!userExists) {
       throw new Error('User does not exits')
     }
-  
+
     const postRepo = new PostRepository()
     const postExists = await postRepo.findPostById(postId)
-  
+
     if (!postExists) {
       throw new Error("Either the post is deleted by user or doesn't exist")
     }
@@ -23,13 +23,13 @@ export default async function unlikePostService(userProfileID, postId) {
     // removing user like
     postExists.likes.remove(userProfileID)
 
-    const editedPost = await postExists.save({select: '_id likes'})
+    const editedPost = await postExists.save({ select: '_id likes' })
     return {
       message: 'Post Unliked',
       post: editedPost,
     }
   } catch (err) {
-    console.log(err)
+    console.log(err.message)
     throw new Error(err.message)
   }
 }

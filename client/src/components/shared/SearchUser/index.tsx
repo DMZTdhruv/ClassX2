@@ -121,6 +121,8 @@ export default function index() {
               users?.map((user: Iuser) => {
                 return (
                   <UserCard
+                    _id={user._id}
+                    currentUser={cookie?.userProfileId || ''}
                     key={user._id}
                     userImageUrl={user.userProfileImage}
                     username={user.username}

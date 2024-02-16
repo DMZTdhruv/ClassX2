@@ -35,7 +35,7 @@ export default async function likePostService(userProfileID, postId) {
       post: editedPost,
     }
   } catch (err) {
-    console.log(err)
+    console.log(err.message)
     throw new Error(err.message)
   }
 }

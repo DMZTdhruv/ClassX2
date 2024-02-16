@@ -13,18 +13,14 @@ export default function FollowButton({
   _id,
   userToFollowId,
 }: FollowButtonProps) {
+  const api = process.env.NEXT_PUBLIC_API
+
   const cookie = useCookieProvider()
   const [isFollowing, setIsFollowing] = useState<boolean>(false)
-
-  const followObj = {
-    userId: _id,
-    userToFollowId: userToFollowId,
-  }
 
   const handleFollow = async () => {
     if (isFollowing) return
     console.log('Is following')
-    const api = process.env.NEXT_PUBLIC_API
     try {
       const response = await fetch(`${api}/users/follow`, {
         method: 'POST',
@@ -32,7 +28,9 @@ export default function FollowButton({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${cookie?.cookie}`,
         },
-        body: JSON.stringify(followObj),
+        body: JSON.stringify({
+          userToFollowId: userToFollowId,
+        }),
       })
 
       if (!response.ok) {
@@ -51,33 +49,66 @@ export default function FollowButton({
   const handleUnfollow = async () => {
     if (!isFollowing) return
     console.log('Unfollwed user')
-    const api = process.env.NEXT_PUBLIC_API
     try {
-      const response = await fetch(`${api}/users/follow`, {
+      const response = await fetch(`${api}/users/unFollow`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${cookie?.cookie}`,
         },
-        body: JSON.stringify(followObj),
+        body: JSON.stringify({
+          userToUnfollowId: userToFollowId
+        }),
       })
 
       if (!response.ok) {
         console.log('Failed to follow User')
-        setIsFollowing(false)
+        setIsFollowing(true)
       }
 
       const result = await response.json()
       console.log(result)
     } catch (err: any) {
-      setIsFollowing(false)
+      setIsFollowing(true)
       console.log(err.message)
     }
   }
 
+  const handleIsFollowing = async () => {
+    try {
+      const response = await fetch(
+        `${api}/users/isFollowing?userToFollowId=${userToFollowId}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${cookie?.cookie}`,
+          },
+        }
+      )
+
+      if (!response.ok) {
+        setIsFollowing(false)
+        console.error('Failed to check the userFollowing')
+      }
+
+      const { data: result } = await response.json()
+      if (result?.isFollowing) {
+        setIsFollowing(true)
+      } else {
+        setIsFollowing(false)
+      }
+    } catch (err: any) {
+      console.log(err.message)
+    }
+  }
+
+  useEffect(() => {
+    handleIsFollowing()
+  }, [])
+
   return (
     <Button
-      className='text-white rounded-full'
+      className={`text-white rounded-full`}
       onClick={() => {
         setIsFollowing(prev => !prev)
         handleFollow()

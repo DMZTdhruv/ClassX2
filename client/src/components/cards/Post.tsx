@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import useCookieProvider from '@/hooks/useCookieProvider'
 import { formatDate } from '@/utils'
+import Link from 'next/link'
 
 interface IComments {
   _id: string
@@ -109,7 +110,7 @@ const Post: React.FC<IPost> = ({
   const [showFullcaption, setShowFullCaption] = useState<boolean>(false)
   return (
     <div className='w-full lg:w-[584px] h-auto rounded-xl border-b-2 border-[#171717] font-poppins  postSection'>
-      <div className='h-[60px] px-[16px] flex items-center'>
+      <div className='h-[60px] px-[16px] flex items-center text-[15px]'>
         <div className='flex items-center gap-[11px]'>
           <Image
             src={postedBy?.userProfileImage}
@@ -179,18 +180,20 @@ const Post: React.FC<IPost> = ({
               />
             )}
           </button>
-          <Image
-            src={`/assets/comment.svg`}
-            width={30}
-            height={30}
-            alt='user jpg'
-            unoptimized
-            className='rounded-full object-cover '
-            style={{
-              width: '30px',
-              height: '30px',
-            }}
-          />
+          <Link href={'/post/1'}>
+            <Image
+              src={`/assets/comment.svg`}
+              width={30}
+              height={30}
+              alt='user jpg'
+              unoptimized
+              className='rounded-full object-cover '
+              style={{
+                width: '30px',
+                height: '30px',
+              }}
+            />
+          </Link>
         </div>
         <div className='px-[15px] md:text-[15px] flex flex-col gap-[3px] text-[13px] font-semibold mb-[20px] '>
           <span>{numberOfLikes} likes</span>

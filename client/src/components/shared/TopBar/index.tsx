@@ -29,7 +29,7 @@ function index() {
     backdrop-blur-lg z-[100] border-b border-neutral-800  w-full transition-transform `}
     >
       <Image
-        src={`assets/classX.svg`}
+        src={`/assets/classX.svg`}
         height={15}
         width={0}
         alt={'classX logo'}
@@ -40,7 +40,7 @@ function index() {
       />
 
       <Image
-        src={`assets/sidebar/message.svg`}
+        src={`/assets/sidebar/message.svg`}
         height={15}
         width={0}
         alt={'classX logo'}

@@ -137,3 +137,7 @@
     display: none;
   }
 }
+
+.flexCenter {
+  @apply flex items-center justify-center;
+}

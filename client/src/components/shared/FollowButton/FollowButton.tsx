@@ -7,11 +7,13 @@ import React, { useEffect, useState } from 'react'
 interface FollowButtonProps {
   _id: string
   userToFollowId: string
+  classes?: string
 }
 
 export default function FollowButton({
   _id,
   userToFollowId,
+  classes
 }: FollowButtonProps) {
   const api = process.env.NEXT_PUBLIC_API
 
@@ -108,7 +110,7 @@ export default function FollowButton({
 
   return (
     <Button
-      className={`text-white rounded-full`}
+      className={`text-white rounded-full ${classes}`}
       onClick={() => {
         setIsFollowing(prev => !prev)
         handleFollow()

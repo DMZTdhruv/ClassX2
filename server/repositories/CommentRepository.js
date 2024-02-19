@@ -9,9 +9,15 @@ export default class CommentRepository extends CommentRepositoryInterface {
       commentText: commentText,
       postedBy: userId,
     })
-    return await newComment.save()
+
+    const result = (await newComment.save()).populate({
+      path: 'postedBy',
+      model: 'UserProfile',
+      select: 'username userProfileImage',
+    })
+    return await result
   }
-  
+
   async pushComment(postId, commentId) {
     const post = await Post.findOne({ _id: postId })
     post.comments.push(commentId)
@@ -22,9 +28,9 @@ export default class CommentRepository extends CommentRepositoryInterface {
     return await Comment.findOne({ _id: commentId })
   }
 
-  async pushLike(commentId,userID) {
-    const comment = await this.findCommentById(commentId);
-    comment.likes.push(userID);
-    return await comment.save();
+  async pushLike(commentId, userID) {
+    const comment = await this.findCommentById(commentId)
+    comment.likes.push(userID)
+    return await comment.save()
   }
 }

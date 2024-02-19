@@ -11,7 +11,6 @@ export async function middleware(req: NextRequest) {
   if(!verifedToken) {
     return NextResponse.redirect(new URL(api + '/auth/sign-up'))
   }
-  console.log(verifedToken)
   const { user, userProfile } = verifedToken
 
   if (!user) {

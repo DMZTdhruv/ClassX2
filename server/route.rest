@@ -70,16 +70,6 @@ GET http://localhost:3001/branches/get-semester?branchName=cse
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWMwYmFjM2I3NzY4NWRlZDQ4MWZlNTQiLCJpYXQiOjE3MDcxNDAyMjUsImV4cCI6MTcwOTczMjIyNX0.MX-Hm7xJr5v9Gr7YeXSZbxaBvyTyHKmmnUPmLWgBHh8
 
 
-###
-POST http://localhost:3001/post/comment/create-comment
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWM3MzA2YjJhZmE1YjM2YzRlZmI2NjkiLCJ1c2VyUHJvZmlsZUlkIjoiNjVjNzMxNWIyYWZhNWIzNmM0ZWZiNjdjIiwiaWF0IjoxNzA3NTUzMTE1LCJleHAiOjE3MTAxNDUxMTV9.MYXhw87wj6VYLZto0QdXQ4KdQNk5fIUyo65Vkuyb3KY
-Content-Type: application/json
-
-{
-  "postId": "65c61a7f49c30605c08ff23c",
-  "commentText": "Her>>>",
-  "postedBy": "65c4a0be2e9a97e33a9a0473"
-}
 
 ###
 POST http://localhost:3001/post/comment/like-comment
@@ -176,4 +166,21 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWNiM
 
 {
   "userToUnfollowId": "65cc9cc009364e2017d5e126"
+}
+
+
+###
+GET http://localhost:3001/post?postId=65cb2f35b8be06b7dd502741
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWNiMmIzNjNlYjVlZDJlZDYyNzgwNDciLCJ1c2VyUHJvZmlsZUlkIjoiNjVjYjJlYWNiOGJlMDZiN2RkNTAyNzJmIiwidXNlcm5hbWUiOiJ5YWVEaHJ1diIsImVtYWlsIjoic2hydXZwYXJtYXJAZ21haWwuY29tIiwiaWF0IjoxNzA4MDE5MjUwLCJleHAiOjE3MTA2MTEyNTB9.4nKvRqcTRmiRoNWO2G3OsXPh1rLVPXLQEGZfbnHKSkU
+
+
+###
+POST http://localhost:3001/post/comment/create-comment
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWM3MzA2YjJhZmE1YjM2YzRlZmI2NjkiLCJ1c2VyUHJvZmlsZUlkIjoiNjVjNzMxNWIyYWZhNWIzNmM0ZWZiNjdjIiwiaWF0IjoxNzA3NTUzMTE1LCJleHAiOjE3MTAxNDUxMTV9.MYXhw87wj6VYLZto0QdXQ4KdQNk5fIUyo65Vkuyb3KY
+Content-Type: application/json
+
+{
+  "postId": "65cb5a577af3c38b30193f3b",
+  "commentText": "Y'all stay away she's my valentine for webdevelopment",
+  "postedBy": "65cb2eacb8be06b7dd50272f"
 }

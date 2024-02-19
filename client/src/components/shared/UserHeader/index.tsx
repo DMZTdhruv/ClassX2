@@ -33,7 +33,6 @@ export default function UserHeader({
   const cookie = cookies()
   const token = cookie.get('classX_user_token')
   const { userProfileId }:Token = jwtDecode(token?.value || '')
-  console.log(userProfileId, _id)
   return (
     <div className='flex flex-col items-center mt-[40px] font-semibold  font-poppins gap-[10px]'>
       <Image

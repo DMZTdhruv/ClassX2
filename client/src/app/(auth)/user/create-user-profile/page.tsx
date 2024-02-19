@@ -166,7 +166,6 @@ function SignUpPage() {
       divisionName: division,
       isPrivate: isPrivate,
     }
-    console.log(userDetails);
 
     const api = `${process.env.NEXT_PUBLIC_API}/users/create-user-profile`
     try {

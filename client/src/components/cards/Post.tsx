@@ -5,6 +5,7 @@ import Image from 'next/image'
 import useCookieProvider from '@/hooks/useCookieProvider'
 import { formatDate } from '@/utils'
 import Link from 'next/link'
+import { likePost, unlikePost } from '@/utils/LikeFunctions'
 
 interface IComments {
   _id: string
@@ -51,61 +52,6 @@ const Post: React.FC<IPost> = ({
   const [isLiked, setIsLiked] = useState<boolean>(
     likes.filter(id => id === cookie?.userProfileId).length > 0
   )
-  //states
-
-  const likePost = async () => {
-    if (isLiked) return
-    setNumberOfLikes(numberOfLikes + 1)
-    const api = process.env.NEXT_PUBLIC_API
-    try {
-      const response = await fetch(`${api}/post/like-post`, {
-        method: 'POST',
-        headers: {
-          'Content-type': 'application/json',
-          Authorization: `Bearer ${cookie?.cookie}`,
-        },
-        body: JSON.stringify({
-          userProfileID: cookie?.userProfileId,
-          postId: _id,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Error liking in post ')
-      }
-
-      const result = await response.json()
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  const unlikePost = async () => {
-    if (!isLiked) return
-    setNumberOfLikes(numberOfLikes - 1)
-    const api = process.env.NEXT_PUBLIC_API
-    try {
-      const response = await fetch(`${api}/post/unlike-post`, {
-        method: 'POST',
-        headers: {
-          'Content-type': 'application/json',
-          Authorization: `Bearer ${cookie?.cookie}`,
-        },
-        body: JSON.stringify({
-          userProfileID: cookie?.userProfileId,
-          postId: _id,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Error unliking the post ')
-      }
-
-      const result = await response.json()
-    } catch (err) {
-      console.log(err)
-    }
-  }
 
   const [showFullcaption, setShowFullCaption] = useState<boolean>(false)
   return (
@@ -142,6 +88,7 @@ const Post: React.FC<IPost> = ({
           style={{ height: 'auto', width: '584px', aspectRatio: '1' }}
           className='object-cover  md:w-[584px] md:h-[584px] border-2 border-[#171717]'
           quality={100}
+          unoptimized
         />
       </div>
       <div>
@@ -149,8 +96,22 @@ const Post: React.FC<IPost> = ({
           <button
             onClick={() => {
               setIsLiked(prev => !prev)
-              likePost()
-              unlikePost()
+              likePost({
+                _id,
+                isLiked,
+                setNumberOfLikes,
+                numberOfLikes,
+                cookie,
+                endPoint:"post/like-post",
+              })
+              unlikePost({
+                _id,
+                isLiked,
+                setNumberOfLikes,
+                numberOfLikes,
+                endPoint: "post/like-post",
+                cookie,
+              })
             }}
             className='hover:scale-105'
           >
@@ -180,7 +141,7 @@ const Post: React.FC<IPost> = ({
               />
             )}
           </button>
-          <Link href={'/post/1'}>
+          <Link href={`/post/${_id}`}>
             <Image
               src={`/assets/comment.svg`}
               width={30}
@@ -192,7 +153,7 @@ const Post: React.FC<IPost> = ({
                 width: '30px',
                 height: '30px',
               }}
-            />
+          />
           </Link>
         </div>
         <div className='px-[15px] md:text-[15px] flex flex-col gap-[3px] text-[13px] font-semibold mb-[20px] '>

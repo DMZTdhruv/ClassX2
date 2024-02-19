@@ -89,7 +89,7 @@ export default function PostSection() {
 
   return (
     <div
-      className={`xl:w-[60%] w-full  mt-[40px]  px-[16px] flex flex-col gap-5 items-center`}
+      className={`xl:w-[60%] w-full  sm:mt-[40px]  px-[16px] flex flex-col gap-5 items-center`}
     >
       {posts?.map(post => {
         return (

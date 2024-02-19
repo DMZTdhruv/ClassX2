@@ -12,12 +12,29 @@ export default class PostRepository extends PostRepositoryInterface {
   }
 
   async pushPostInUserProfile(userID, postId) {
-    const userProfile = await UserProfile.findOne({_id: userID})
-     userProfile.posts.push(postId)
+    const userProfile = await UserProfile.findOne({ _id: userID })
+    userProfile.posts.push(postId)
     return userProfile.save()
   }
-  
-  async findPostById(postId){
-    return await Post.findById(postId);
+
+  async findPostById(postId) {
+    return await Post.findById(postId)
+      .populate({
+        path: 'postedBy',
+        model: 'UserProfile',
+        select: 'username userProfileImage',
+      })
+      .populate({
+        path: 'comments',
+        model: 'Comment',
+        options: { sort: { createdAt: -1 } },
+        populate: [
+          {
+            path: 'postedBy',
+            model: 'UserProfile',
+            select: 'username userProfileImage',
+          },
+        ],
+      })
   }
 }

@@ -69,7 +69,6 @@ export default async function Profile() {
   // variables
   const userProfile: UserProfileProps = await getUserProfile()
   const userPosts: Ipost[] = await getUserPosts()
-  console.log(userPosts)
   return (
     <section className='flex flex-col items-center gap-[60px] mb-[20px]'>
       <UserHeader

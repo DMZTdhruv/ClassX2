@@ -22,7 +22,6 @@ export default function FollowButton({
 
   const handleFollow = async () => {
     if (isFollowing) return
-    console.log('Is following')
     try {
       const response = await fetch(`${api}/users/follow`, {
         method: 'POST',
@@ -41,7 +40,6 @@ export default function FollowButton({
       }
 
       const result = await response.json()
-      console.log(result)
     } catch (err: any) {
       setIsFollowing(false)
       console.log(err.message)
@@ -50,7 +48,6 @@ export default function FollowButton({
 
   const handleUnfollow = async () => {
     if (!isFollowing) return
-    console.log('Unfollwed user')
     try {
       const response = await fetch(`${api}/users/unFollow`, {
         method: 'POST',
@@ -69,7 +66,6 @@ export default function FollowButton({
       }
 
       const result = await response.json()
-      console.log(result)
     } catch (err: any) {
       setIsFollowing(true)
       console.log(err.message)

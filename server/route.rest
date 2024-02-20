@@ -184,3 +184,8 @@ Content-Type: application/json
   "commentText": "Y'all stay away she's my valentine for webdevelopment",
   "postedBy": "65cb2eacb8be06b7dd50272f"
 }
+
+
+###
+GET http://localhost:3001/post/comment/sub-comment?parentCommentId=65d3436763d7983f7924ed7d
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWNiMmIzNjNlYjVlZDJlZDYyNzgwNDciLCJ1c2VyUHJvZmlsZUlkIjoiNjVjYjJlYWNiOGJlMDZiN2RkNTAyNzJmIiwidXNlcm5hbWUiOiJ5YWVEaHJ1diIsImVtYWlsIjoic2hydXZwYXJtYXJAZ21haWwuY29tIiwiaWF0IjoxNzA4MzQ0MjE4LCJleHAiOjE3MTA5MzYyMTh9.LDEMnJ2QF9k4fstlwC0F5o4o1-YYtH3SrjcMfMtz8kE

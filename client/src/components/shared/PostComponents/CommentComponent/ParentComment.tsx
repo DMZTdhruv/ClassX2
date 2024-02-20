@@ -7,14 +7,23 @@ import { type ReplyComment } from '@/lib/demoApi'
 import { useState } from 'react'
 import useCookieProvider from '@/hooks/useCookieProvider'
 
+interface UpdateReplyCommentData {
+  parentCommentId: string
+  repliedUserId: string
+}
+
 interface Comment {
+  postId: string
   _id: string
   parentCommentImage: string
+  parentCommentUserId: string
   parentCommentUsername: string
   parentCommentCommentText: string
   parentCommentPostedDate: string
   parentCommentTotalLikes: string[]
   parentTotalCommentReplies: number
+  updateUsername: (name: string) => void
+  updateReplyCommentData: (data: UpdateReplyCommentData) => void
 }
 
 interface Cookie {
@@ -37,12 +46,16 @@ interface PostLikes {
 export default function ParentComment({
   _id,
   parentCommentImage,
+  parentCommentUserId,
   parentCommentUsername,
   parentCommentCommentText,
   parentCommentPostedDate,
   parentCommentTotalLikes,
   parentTotalCommentReplies,
+  updateUsername,
+  updateReplyCommentData,
 }: Comment) {
+  console.log(parentTotalCommentReplies)
   const date = new Date(parentCommentPostedDate)
   const formatedDate = formatDate(date)
   const cookie = useCookieProvider()
@@ -182,7 +195,17 @@ export default function ParentComment({
           <div className='text-[12px] text-neutral-500 flex gap-[10px] '>
             <p suppressHydrationWarning={true}>{formatedDate}</p>
             <p>{numberOfLikes} likes</p>
-            <button>Reply</button>
+            <button
+              onClick={() => {
+                updateUsername(parentCommentUsername)
+                updateReplyCommentData({
+                  parentCommentId: _id,
+                  repliedUserId: parentCommentUserId,
+                })
+              }}
+            >
+              Reply
+            </button>
           </div>
           {parentTotalCommentReplies > 0 && (
             <div className='text-[13px] flex flex-col items-start gap-[10px]'>
@@ -193,7 +216,7 @@ export default function ParentComment({
                     setOpenRepliedComments(prev => !prev)
                   }}
                 >
-                  View replies ({commentReplies.length})
+                  View replies ({parentTotalCommentReplies})
                 </button>
               </div>
               {openRepliedComments && (

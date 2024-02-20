@@ -29,7 +29,17 @@ export default class CommentRepository extends CommentRepositoryInterface {
   }
 
   async subCommentsOfParentComment(commentId) {
-    return await Comment.findOne({_id: commentId}).populate('commentReplies')
+    return await Comment.findOne({_id: commentId}).populate({
+      path: 'commentReplies',
+      model: 'ReplyComment',
+      populate: [
+        {
+          path: 'postedBy',
+          model: 'UserProfile',
+          select: 'username userProfileImage'
+        }
+      ]
+    })
   }
 
   async pushLike(commentId, userID) {

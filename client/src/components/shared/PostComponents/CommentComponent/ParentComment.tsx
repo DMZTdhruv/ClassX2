@@ -6,6 +6,7 @@ import SubComment from './SubComment'
 import { type ReplyComment } from '@/lib/demoApi'
 import { useState } from 'react'
 import useCookieProvider from '@/hooks/useCookieProvider'
+import { Api } from '@/Constants'
 
 interface UpdateReplyCommentData {
   parentCommentId: string
@@ -55,12 +56,13 @@ export default function ParentComment({
   updateUsername,
   updateReplyCommentData,
 }: Comment) {
-  console.log(parentTotalCommentReplies)
   const date = new Date(parentCommentPostedDate)
   const formatedDate = formatDate(date)
   const cookie = useCookieProvider()
 
   // states
+  const [isOpeningRepliedComments, setIsOpeningRepliedComments] =
+    useState<boolean>(false)
   const [openRepliedComments, setOpenRepliedComments] = useState<boolean>(false)
   const [repliedComments, setRepliedComments] = useState([])
   const [isLiked, setIsLiked] = useState<boolean>(
@@ -71,14 +73,40 @@ export default function ParentComment({
   const [numberOfLikes, setNumberOfLikes] = useState<number>(
     parentCommentTotalLikes.length
   )
-  const [commentReplies, setCommentReplies] = useState<string[]>([])
+
+  const getRepliedComments = async () => {
+    if (repliedComments.length > 0) return
+    setIsOpeningRepliedComments(true)
+    try {
+      const response = await fetch(
+        `${Api}/post/comment/sub-comment?parentCommentId=${_id}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${cookie?.cookie}`,
+          },
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('There was an error in getting the replied comments')
+      }
+
+      const { data: result } = await response.json()
+      console.log(result)
+      setRepliedComments(result)
+    } catch (error: any) {
+      console.error(error.message)
+    } finally {
+      setIsOpeningRepliedComments(false)
+    }
+  }
 
   const likePost = async () => {
     if (isLiked) return
     setNumberOfLikes(numberOfLikes + 1)
-    const api = process.env.NEXT_PUBLIC_API
     try {
-      const response = await fetch(`${api}/post/comment/like-comment`, {
+      const response = await fetch(`${Api}/post/comment/like-comment`, {
         method: 'POST',
         headers: {
           'Content-type': 'application/json',
@@ -98,17 +126,16 @@ export default function ParentComment({
 
       const result = await response.json()
     } catch (err) {
-      console.log(err)
+      console.error(err)
     }
   }
 
   const unlikePost = async () => {
     if (!isLiked) return
     setNumberOfLikes(numberOfLikes - 1)
-    const api = process.env.NEXT_PUBLIC_API
 
     try {
-      const response = await fetch(`${api}/post/comment/unlike`, {
+      const response = await fetch(`${Api}/post/comment/unlike`, {
         method: 'POST',
         headers: {
           'Content-type': 'application/json',
@@ -128,7 +155,7 @@ export default function ParentComment({
 
       const result = await response.json()
     } catch (err) {
-      console.log(err)
+      console.error(err)
     }
   }
 
@@ -209,31 +236,36 @@ export default function ParentComment({
           </div>
           {parentTotalCommentReplies > 0 && (
             <div className='text-[13px] flex flex-col items-start gap-[10px]'>
-              <div className='flex items-center gap-[10px] justify-start'>
-                <span className='w-[20px] h-[2px] bg-neutral-400 rounded-[2px] '></span>
+              <div className='flex items-center gap-[10px] justify-start mt-3'>
+                <span className='w-[20px] h-[2px] bg-neutral-400 rounded-[2px] mt-[] '></span>
                 <button
+                  className=' text-neutral-500'
                   onClick={() => {
                     setOpenRepliedComments(prev => !prev)
+                    getRepliedComments()
                   }}
                 >
-                  View replies ({parentTotalCommentReplies})
+                  {openRepliedComments ? 'Hide replies' : 'View replies'} (
+                  {parentTotalCommentReplies})
                 </button>
               </div>
               {openRepliedComments && (
-                <div className='flex flex-col'>
-                  {repliedComments.map((comment: ReplyComment) => {
-                    return (
-                      <SubComment
-                        key={comment.id}
-                        _id={comment.id}
-                        subCommentImage={'/il.png'}
-                        subCommentUsername={comment.postedBy.username}
-                        subCommentCommentText={comment.commentText}
-                        subCommentPostedDate={'2024-02-13T10:52:47.423+00:00'}
-                        subCommentTotalLikes={comment.likes.length}
-                      />
-                    )
-                  })}
+                <div className='flex flex-col w-full'>
+                  {isOpeningRepliedComments
+                    ? 'loading...'
+                    : repliedComments.map((comment: ReplyComment) => {
+                        return (
+                          <SubComment
+                            key={comment._id}
+                            _id={comment._id}
+                            subCommentImage={comment.postedBy.userProfileImage}
+                            subCommentUsername={comment.postedBy.username}
+                            subCommentCommentText={comment.commentText}
+                            subCommentPostedDate={comment.createdAt}
+                            subCommentTotalLikes={comment.likes}
+                          />
+                        )
+                      })}
                 </div>
               )}
             </div>

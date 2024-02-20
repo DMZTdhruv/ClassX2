@@ -1,9 +1,11 @@
 'use client'
 
+import { webUrl } from '@/Constants'
 import useCookieProvider from '@/hooks/useCookieProvider'
 import { formatDate } from '@/utils'
 import { likePost, unlikePost } from '@/utils/LikeFunctions'
 import Image from 'next/image'
+import Link from 'next/link'
 import React, { useState } from 'react'
 interface SubComments {
   _id: string
@@ -11,7 +13,7 @@ interface SubComments {
   subCommentUsername: string
   subCommentCommentText: string
   subCommentPostedDate: string
-  subCommentTotalLikes: number
+  subCommentTotalLikes: string[]
 }
 
 export default function SubComment({
@@ -26,29 +28,39 @@ export default function SubComment({
   const date = new Date(subCommentPostedDate)
   const formatedDate = formatDate(date)
   const [isLiked, setIsLiked] = useState<boolean>(false)
-  const [numberOfLikes, setNumberOfLikes] =
-    useState<number>(subCommentTotalLikes)
+  const [numberOfLikes, setNumberOfLikes] = useState<number>(
+    subCommentTotalLikes.length
+  )
+  const user = subCommentCommentText.split(' ')[0]
+  const userComment = subCommentCommentText.split(' ').slice(1).join(' ')
+  console.log({ user, userComment })
   return (
-    <div className='flex py-[12px] pl-[15px] items-start gap-[10px]'>
+    <div className='flex py-[12px] px-[15px] gap-3 items-start'>
       <Image
         src={subCommentImage}
         alt={subCommentCommentText}
         width={30}
         height={30}
-      style={{
+        style={{
           width: '30px',
           height: '30px',
         }}
         unoptimized
         className='aspect-square object-cover rounded-full'
       />
-      <div className='flex flex-1 flex-col'>
+      <div className='flex flex-1 flex-col gap-3'>
         <p>
           <span className='font-semibold text-[14px] lg:text-[15px]'>
             {subCommentUsername} &nbsp;
           </span>
           <span className='text-[13px] lg:text-[15px]'>
-            {subCommentCommentText}
+            <Link
+              className='text-slate-400'
+              href={`${webUrl}/user-profile/${user}`}
+            >
+              {user}
+            </Link>{' '}
+            {userComment}
           </span>
         </p>
         <div className='text-[12px] text-neutral-500 flex gap-[10px] '>

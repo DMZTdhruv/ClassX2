@@ -65,3 +65,6 @@ export const BottomBarData = [
   },
   
 ]
+
+export const Api = process.env.NEXT_PUBLIC_API;
+export const webUrl = process.env.NEXT_PUBLIC_WEBURL;

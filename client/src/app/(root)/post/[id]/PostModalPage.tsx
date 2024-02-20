@@ -68,7 +68,6 @@ export default function PostModalPage({
   postId: string
 }) {
 
-  console.log(postData);
   // Constants
   const api = process.env.NEXT_PUBLIC_API
   const cookie = useCookieProvider()
@@ -150,7 +149,6 @@ export default function PostModalPage({
       }
 
       const result = await response.json()
-      console.log(result)
     } catch (error: any) {
       console.log(error.message)
     }

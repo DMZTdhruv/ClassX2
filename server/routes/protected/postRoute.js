@@ -11,6 +11,7 @@ import {
   unLikePostController
 } from "../../controllers/post/index.js"
 import { getPostByIdController } from '../../controllers/post/getPostController.js'
+import getSubCommentsController from '../../controllers/post/getSubCommentsController.js'
 
 const router = express.Router()
 
@@ -38,6 +39,12 @@ router.post(
   '/comment/reply-comment',
   authenticateUserToken,
   replyCommentController
+)
+
+router.get(
+  '/comment/sub-comment',
+  authenticateUserToken,
+  getSubCommentsController
 )
 
 //Get routes

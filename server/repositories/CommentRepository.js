@@ -28,6 +28,10 @@ export default class CommentRepository extends CommentRepositoryInterface {
     return await Comment.findOne({ _id: commentId })
   }
 
+  async subCommentsOfParentComment(commentId) {
+    return await Comment.findOne({_id: commentId}).populate('commentReplies')
+  }
+
   async pushLike(commentId, userID) {
     const comment = await this.findCommentById(commentId)
     comment.likes.push(userID)

@@ -26,10 +26,10 @@ export const replyCommentService = async (
     const parentComment = await commentRepo.findCommentById(parentCommentId)
 
     // getting the user details
-    const user = await userProfile.findByUserID(repliedUserId)
+    const user = await userProfile.findById(repliedUserId);
     console.log(user)
     // editing the original comment
-    const repliedComment = `@${user.username} ${commentText}`
+    const repliedComment = `${commentText}`
 
     //creating new reply comment
     const newReply = new ReplyComment({

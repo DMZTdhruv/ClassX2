@@ -22,7 +22,7 @@ const commentSchema = new Schema({
   }],
   commentReplies: [{
     type: Schema.Types.ObjectId,
-    ref: 'repliedComment',
+    ref: 'ReplyComment',
   }]
 }, {timestamps: true})
 

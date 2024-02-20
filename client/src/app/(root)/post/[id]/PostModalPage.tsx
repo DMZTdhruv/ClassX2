@@ -1,78 +1,129 @@
 'use client'
 
-import { Input } from '@/components/ui/input'
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useState,
+  useRef,
+  useEffect,
+} from 'react'
 import Image from 'next/image'
-import React, { ChangeEvent, FormEvent, useState, useRef } from 'react'
+import { useRouter } from 'next/navigation'
+import { Input } from '@/components/ui/input'
+import { IComments, IPost, UpdateReplyCommentData } from '../types'
 import FollowButton from '@/components/shared/FollowButton/FollowButton'
-import Link from 'next/link'
 import useCookieProvider from '@/hooks/useCookieProvider'
 import { likePost, unlikePost } from '@/utils/LikeFunctions'
 import ParentComment from '@/components/shared/PostComponents/CommentComponent/ParentComment'
-import { useRouter } from 'next/navigation'
+import { formatDate } from '@/utils'
 
-interface IComments {
-  _id: string
-  commentText: string
-  postedBy: {
-    _id: string
-    username: string
-    userProfileImage: string
-  }
+interface HeaderProps {
+  username: string
+  userProfileImage: string
   createdAt: string
-  likes: string[]
-  commentReplies: string[]
 }
 
-interface IPost {
-  _id: string
-  title: string
+function Header({ username, userProfileImage, createdAt }: HeaderProps) {
+  return (
+    <header className='flex flex-col py-[18px] px-[15px] space-y-2 justify-center'>
+      <div className='flex font-semibold items-center gap-3  '>
+        <Image
+          src={userProfileImage}
+          alt=''
+          width={30}
+          height={30}
+          style={{ width: '30px', height: '30px' }}
+          unoptimized
+          className=' aspect-square object-cover rounded-full'
+        />
+        <h5 className=''>{username} &nbsp;</h5>
+        <span className=' text-white/50 '>{createdAt}</span>
+      </div>
+    </header>
+  )
+}
+
+interface ImageDisplayProps {
   imageUrl: string
-  caption: string
-  location: string
-  category: string
-  postedBy: {
-    _id: string
-    username: string
-    userProfileImage: string
-  }
-  likes: any[]
-  comments: IComments[]
-  createdAt: string
 }
 
-const PostModalPage = ({
+function ImageDisplay({ imageUrl }: ImageDisplayProps) {
+  return (
+    <Image
+      src={imageUrl}
+      alt=''
+      width={400}
+      height={300}
+      style={{ width: '100%', height: 'auto' }}
+      className='xl:max-w-[400px] hidden md:block object-contain'
+    />
+  )
+}
+
+export default function PostModalPage({
   postData,
   postId,
 }: {
   postData: IPost
   postId: string
-}) => {
+}) {
 
+  console.log(postData);
   // Constants
   const api = process.env.NEXT_PUBLIC_API
   const cookie = useCookieProvider()
   const router = useRouter()
+  const postedDate = formatDate(new Date(postData.createdAt))
 
-  //refs
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // loading states
   const [loading, setLoading] = useState<boolean>(false)
-
-  // Post states
   const [numberOfLikes, setNumberOfLikes] = useState<number>(0)
   const [isLiked, setIsLiked] = useState<boolean>(false)
-
-  // comment states
-  const [comment, setComment] = useState<string>('')
   const [allComments, setAllComments] = useState<IComments[]>(postData.comments)
+  const [replyUsername, setReplyUsername] = useState<string>('')
+  const [comment, setComment] = useState<string>('')
+  const [replyCommentData, setReplyCommentData] = useState({
+    parentCommentId: '',
+    postId: '',
+    repliedUserId: '',
+    commentText: '',
+    postedBy: '',
+  })
 
-  // handling states
   const handleComment = (e: ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value)
   }
 
+  const handleReplyUsername = (name: string) => {
+    setReplyUsername(name)
+    setComment(`@${name} `)
+  }
+
+  const handleReplyUserComment = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!(comment.length >= replyUsername.length + 1)) {
+      return
+    }
+    setComment(`${e.target.value}`)
+    setReplyCommentData({ ...replyCommentData, commentText: e.target.value })
+  }
+
+  const updateReplyCommentData = ({
+    parentCommentId,
+    repliedUserId,
+  }: UpdateReplyCommentData) => {
+    setReplyCommentData({
+      parentCommentId,
+      postId: postData._id,
+      repliedUserId,
+      commentText: comment,
+      postedBy: cookie?.userProfileId!,
+    })
+  }
+
   const focusInput = () => {
+    setComment('')
+    setReplyUsername('')
     if (inputRef.current) {
       inputRef.current.focus()
     }
@@ -81,9 +132,36 @@ const PostModalPage = ({
   const goBack = () => {
     router.back()
   }
-
   // Creating comment
+  const replyComment = async () => {
+    try {
+      const response = await fetch(`${api}/post/comment/reply-comment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${cookie?.cookie}`,
+        },
+        body: JSON.stringify(replyCommentData),
+      })
+
+      if (!response.ok) {
+        console.error("Couldn't not post comment")
+        return
+      }
+
+      const result = await response.json()
+      console.log(result)
+    } catch (error: any) {
+      console.log(error.message)
+    }
+  }
+
   const submitComment = async (e: FormEvent) => {
+    e.preventDefault()
+    if (replyUsername) {
+      replyComment()
+      return
+    }
     setLoading(true)
     e.preventDefault()
     try {
@@ -132,44 +210,16 @@ const PostModalPage = ({
   return (
     <section className='w-full flexCenter h-full '>
       <div className='sm:w-auto sm:min-h-[85vh] max-w-[90%] sm:min-w-[80%] md:border border-slate-600 flex flex-col xl:flex-row'>
-        <Image
-          src={postData?.imageUrl!}
-          alt=''
-          width={400}
-          height={300}
-          style={{
-            width: '100%',
-            height: 'auto',
-          }}
-          className='xl:max-w-[400px] hidden md:block object-contain'
-        />
+        <ImageDisplay imageUrl={postData.imageUrl} />
         <div className='top-0 sticky md:hidden block'>
           <button onClick={goBack}>hlwao</button>
         </div>
         <div className='flex flex-col flex-1 md:h-auto border-l  border-slate-600'>
-          <header className='flex flex-col py-[18px] px-[15px] space-y-2 justify-center'>
-            <div className='flex font-semibold items-center gap-3  '>
-              <Image
-                src={postData?.postedBy.userProfileImage!}
-                alt=''
-                width={30}
-                height={30}
-                style={{
-                  width: '30px',
-                  height: '30px',
-                }}
-                unoptimized
-                className=' aspect-square object-cover rounded-full'
-              />
-              <h5 className=''>{postData?.postedBy.username!} &nbsp;</h5>
-              <span className=' text-white/50 '>- 1w</span>
-              {/* <FollowButton
-              _id='s'
-              userToFollowId='s'
-              classes='h-[30px] bg-transparent ml-[20px] hover:bg-transparent text-[#891DCC] hover:text-[#891DCC]/50 transition-all font-bold w-[60px]'
-            /> */}
-            </div>
-          </header>
+          <Header
+            userProfileImage={postData?.postedBy.userProfileImage!}
+            username={postData?.postedBy.username!}
+            createdAt={postedDate}
+          />
           <div className='flex-1 border-t md:border-b border-slate-600 h-full w-full overflow-y-auto md:max-h-[425px] '>
             <div className='flex py-[18px] px-[15px] space-y-2 justify-start'>
               <div className='flex items-start gap-3  '>
@@ -196,14 +246,18 @@ const PostModalPage = ({
             {allComments?.map((comment: IComments) => {
               return (
                 <ParentComment
+                  postId={postData._id}
                   key={comment._id}
                   _id={comment._id}
                   parentCommentImage={comment.postedBy.userProfileImage}
+                  parentCommentUserId={comment.postedBy._id}
                   parentCommentUsername={comment.postedBy.username}
                   parentCommentCommentText={comment.commentText}
                   parentCommentPostedDate={comment.createdAt}
                   parentCommentTotalLikes={comment.likes}
                   parentTotalCommentReplies={comment.commentReplies.length}
+                  updateUsername={handleReplyUsername}
+                  updateReplyCommentData={updateReplyCommentData}
                 />
               )
             })}
@@ -287,8 +341,8 @@ const PostModalPage = ({
               type='text'
               className='bg-[#171717] md:font-semibold h-full border-none rounded-xl'
               placeholder='Type your comment'
-              value={loading ? 'Sending comment' : comment}
-              onChange={handleComment}
+              value={comment}
+              onChange={replyUsername ? handleReplyUserComment : handleComment}
             />
             <button
               className='text-[#891DCC] bg-[#171717] absolute right-[30px] top-[50%] translate-y-[-50%] font-semibold rounded-[15px]'
@@ -302,5 +356,3 @@ const PostModalPage = ({
     </section>
   )
 }
-
-export default PostModalPage

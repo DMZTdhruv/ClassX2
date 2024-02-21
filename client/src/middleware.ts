@@ -3,12 +3,15 @@ import { verifyAuth } from './lib/auth'
 
 export async function middleware(req: NextRequest) {
   const token = req.cookies.get('classX_user_token')?.value || ''
+  const api = process.env.NEXT_PUBLIC_WEBURL
+  if (!token) {
+    return NextResponse.redirect(new URL(api + '/auth/sign-in'))
+  }
   const verifedToken = await verifyAuth(token).catch(err => {
     console.log(err)
   })
 
-  const api = process.env.NEXT_WEBURL;
-  if(!verifedToken) {
+  if (!verifedToken) {
     return NextResponse.redirect(new URL(api + '/auth/sign-up'))
   }
   const { user, userProfile } = verifedToken

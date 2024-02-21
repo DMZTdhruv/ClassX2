@@ -141,3 +141,8 @@
 .flexCenter {
   @apply flex items-center justify-center;
 }
+
+
+.commentSection {
+  min-height: calc(100% - 80px);
+}

@@ -35,7 +35,7 @@ export default function SubComment({
   const userComment = subCommentCommentText.split(' ').slice(1).join(' ')
   console.log({ user, userComment })
   return (
-    <div className='flex py-[12px] px-[15px] gap-3 items-start'>
+    <div className='flex py-[12px] pr-[7.5px] gap-3 items-start'>
       <Image
         src={subCommentImage}
         alt={subCommentCommentText}

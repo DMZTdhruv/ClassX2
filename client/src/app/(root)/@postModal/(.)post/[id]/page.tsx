@@ -2,7 +2,9 @@
 
 import PostModalPage from '@/components/shared/PostModalPage'
 import useCookieProvider from '@/hooks/useCookieProvider'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { HiMiniXMark } from 'react-icons/hi2'
 
 interface IComments {
   _id: string
@@ -35,6 +37,7 @@ interface IPost {
 }
 
 export default function PostModal({ params }: { params: { id: string } }) {
+  const router = useRouter()
   const cookie = useCookieProvider()
   const api = process.env.NEXT_PUBLIC_API
   const [postData, setPostData] = useState<IPost>()
@@ -69,5 +72,16 @@ export default function PostModal({ params }: { params: { id: string } }) {
     return <>Loading...</>
   }
 
-  return <PostModalPage postData={postData} postId={params.id} />
+  const goBack = () => {
+    router.back()
+  }
+
+  return (
+    <div className='fixed top-[50%] left-[50%] translate-x-[-50%] h-[100vh] bg-neutral-900/90 translate-y-[-50%] w-full'>
+      <button onClick={goBack}>
+        <HiMiniXMark className='fixed top-[5%] right-[5%]' size={30} />
+      </button>
+      <PostModalPage postData={postData} postId={params.id} />
+    </div>
+  )
 }

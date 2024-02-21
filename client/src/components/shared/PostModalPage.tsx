@@ -10,7 +10,7 @@ import React, {
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
-import { IComments, IPost, UpdateReplyCommentData } from '../types'
+import { IComments, IPost, UpdateReplyCommentData } from '@/Constants'
 import FollowButton from '@/components/shared/FollowButton/FollowButton'
 import useCookieProvider from '@/hooks/useCookieProvider'
 import { likePost, unlikePost } from '@/utils/LikeFunctions'
@@ -67,7 +67,6 @@ export default function PostModalPage({
   postData: IPost
   postId: string
 }) {
-
   // Constants
   const api = process.env.NEXT_PUBLIC_API
   const cookie = useCookieProvider()
@@ -206,8 +205,8 @@ export default function PostModalPage({
   }
 
   return (
-    <section className='w-full flexCenter h-full '>
-      <div className='sm:w-auto sm:min-h-[85vh] max-w-[90%] sm:min-w-[80%] md:border border-slate-600 flex flex-col xl:flex-row'>
+    <section className='w-full flexCenter h-full'>
+      <div className='sm:w-auto sm:min-h-[85vh] max-w-[90%] sm:min-w-[80%] md:border  bg-[#0E0E0E]  border-slate-600 flex flex-col xl:flex-row'>
         <ImageDisplay imageUrl={postData.imageUrl} />
         <div className='top-0 sticky md:hidden block'>
           <button onClick={goBack}>hlwao</button>

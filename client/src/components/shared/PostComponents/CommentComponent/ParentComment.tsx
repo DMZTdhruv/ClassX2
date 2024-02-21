@@ -237,7 +237,7 @@ export default function ParentComment({
           {parentTotalCommentReplies > 0 && (
             <div className='text-[13px] flex flex-col items-start gap-[10px]'>
               <div className='flex items-center gap-[10px] justify-start mt-3'>
-                <span className='w-[20px] h-[2px] bg-neutral-400 rounded-[2px] mt-[] '></span>
+                <span className='w-[25px] h-[2px] bg-neutral-400 rounded-[2px] mt-[] '></span>
                 <button
                   className=' text-neutral-500'
                   onClick={() => {
@@ -245,12 +245,13 @@ export default function ParentComment({
                     getRepliedComments()
                   }}
                 >
-                  {openRepliedComments ? 'Hide replies' : 'View replies'} (
-                  {parentTotalCommentReplies})
+                  {openRepliedComments
+                    ? 'Hide replies'
+                    : `View replies (${parentTotalCommentReplies})`}
                 </button>
               </div>
               {openRepliedComments && (
-                <div className='flex flex-col w-full'>
+                <div className='flex flex-col w-full justify-start'>
                   {isOpeningRepliedComments
                     ? 'loading...'
                     : repliedComments.map((comment: ReplyComment) => {

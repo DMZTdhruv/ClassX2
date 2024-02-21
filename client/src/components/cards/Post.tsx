@@ -141,7 +141,7 @@ const Post: React.FC<IPost> = ({
               />
             )}
           </button>
-          <Link href={`/post/${_id}`}>
+          <Link href={`/post/${_id}`} scroll={false}>
             <Image
               src={`/assets/comment.svg`}
               width={30}

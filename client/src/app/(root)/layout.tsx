@@ -19,13 +19,11 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className='dark sm:flex sm:flex-col bg-[#0E0E0E] font-poppins'>
+        {postModal}
         <TopBar />
         <main className='relative main-container w-[100%] text-[13px] lg:text-[15px] flex mainsection'>
           <SideBar />
-          <section className='flex-1 w-full sm:px-[16px]'>
-            {children}
-            {postModal}
-          </section>
+          <section className='flex-1 w-full sm:px-[16px]'>{children}</section>
         </main>
         <BottomBar />
       </body>

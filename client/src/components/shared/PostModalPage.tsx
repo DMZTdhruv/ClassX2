@@ -25,7 +25,7 @@ interface HeaderProps {
 
 function Header({ username, userProfileImage, createdAt }: HeaderProps) {
   return (
-    <header className='flex flex-col py-[18px] px-[15px] space-y-2 justify-center'>
+    <header className='flex flex-col h-[60px] px-[15px] space-y-2 justify-center'>
       <div className='flex font-semibold items-center gap-3  '>
         <Image
           src={userProfileImage}
@@ -55,7 +55,8 @@ function ImageDisplay({ imageUrl }: ImageDisplayProps) {
       width={400}
       height={300}
       style={{ width: '100%', height: 'auto' }}
-      className='xl:max-w-[400px] hidden md:block object-contain'
+      className='max-w-[400px] h-full hidden md:block object-contain'
+      unoptimized
     />
   )
 }
@@ -206,18 +207,18 @@ export default function PostModalPage({
 
   return (
     <section className='w-full flexCenter h-full'>
-      <div className='sm:w-auto sm:min-h-[85vh] max-w-[90%] sm:min-w-[80%] md:border  bg-[#0E0E0E]  border-slate-600 flex flex-col xl:flex-row'>
+      <div className='sm:w-auto sm:min-h-[90vh] max-w-[90%] sm:min-w-[90%] md:border  bg-[#0E0E0E]  border-slate-600 flex flex-col xl:flex-row'>
         <ImageDisplay imageUrl={postData.imageUrl} />
         <div className='top-0 sticky md:hidden block'>
           <button onClick={goBack}>hlwao</button>
         </div>
-        <div className='flex flex-col flex-1 md:h-auto border-l  border-slate-600'>
+        <div className='flex flex-col flex-1 md:h-full border-l  border-slate-600 '>
           <Header
             userProfileImage={postData?.postedBy.userProfileImage!}
             username={postData?.postedBy.username!}
             createdAt={postedDate}
-          />
-          <div className='flex-1 border-t md:border-b border-slate-600 h-full w-full overflow-y-auto md:max-h-[425px] '>
+          ></Header>
+          <div className='flex-1 border-t md:border-b border-slate-600 w-full min-h-[60vh] max-h-[45vh] overflow-y-auto '>
             <div className='flex py-[18px] px-[15px] space-y-2 justify-start'>
               <div className='flex items-start gap-3  '>
                 <Image
@@ -331,12 +332,12 @@ export default function PostModalPage({
           </div>
           <form
             onSubmit={submitComment}
-            className='flex border-t border-b md:border-b-0 border-slate-600 h-[80px] justify-center p-3 md:relative'
+            className='flex border-t border-b md:border-b-0 border-slate-600 min-h-[80px] justify-center p-3 md:relative'
           >
             <Input
               ref={inputRef}
               type='text'
-              className='bg-[#171717] md:font-semibold h-full border-none rounded-xl'
+              className='bg-[#171717] md:font-semibold min-h-[78px] border-none rounded-xl'
               placeholder='Type your comment'
               value={comment}
               onChange={replyUsername ? handleReplyUserComment : handleComment}

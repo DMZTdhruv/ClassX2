@@ -1,10 +1,13 @@
 'use client'
 
-import PostModalPage from '@/components/shared/PostModalPage'
-import useCookieProvider from '@/hooks/useCookieProvider'
+import React, { Suspense, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
 import { HiMiniXMark } from 'react-icons/hi2'
+import useCookieProvider from '@/hooks/useCookieProvider'
+const LazyPostModalPage = React.lazy(
+  () => import('@/components/shared/PostModalPage')
+)
+
 
 interface IComments {
   _id: string
@@ -36,11 +39,13 @@ interface IPost {
   createdAt: string
 }
 
+
 export default function PostModal({ params }: { params: { id: string } }) {
   const router = useRouter()
+  const [postData, setPostData] = useState<IPost>()
   const cookie = useCookieProvider()
   const api = process.env.NEXT_PUBLIC_API
-  const [postData, setPostData] = useState<IPost>()
+
   const getPost = async () => {
     try {
       const response = await fetch(`${api}/post?postId=${params.id}`, {
@@ -53,7 +58,7 @@ export default function PostModal({ params }: { params: { id: string } }) {
 
       if (!response.ok) {
         console.log('Failed to fetch the post')
-        return
+        return Promise.reject('Failed to fetch the post')
       }
 
       const { data } = await response.json()
@@ -61,27 +66,49 @@ export default function PostModal({ params }: { params: { id: string } }) {
       return data
     } catch (err: any) {
       console.log(err.message)
+      return Promise.reject(err.message)
     }
   }
 
   useEffect(() => {
-    getPost()
-  }, [])
+    const body = document.getElementsByTagName('body')[0]
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY
+      // Use scrollPosition as needed
+      console.log('Vertical Scroll Position:', scrollPosition)
+    }
 
-  if (!postData) {
-    return <>Loading...</>
-  }
+    body.style.overflow = 'hidden'
+    getPost()
+
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      body.style.overflow = 'auto'
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   const goBack = () => {
     router.back()
   }
 
+  function LoadingSkeleton() {
+    return <div>Loading...</div>
+  }
+
   return (
-    <div className='fixed top-[50%] left-[50%] translate-x-[-50%] h-[100vh] bg-neutral-900/90 translate-y-[-50%] w-full'>
-      <button onClick={goBack}>
-        <HiMiniXMark className='fixed top-[5%] right-[5%]' size={30} />
-      </button>
-      <PostModalPage postData={postData} postId={params.id} />
+    <div className='fixed z-[100] top-[50%] left-[50%] flexCenter translate-x-[-50%] h-[100vh] overflow-hidden bg-neutral-900/90 translate-y-[-50%] w-full'>
+      <Suspense fallback={<LoadingSkeleton />}>
+        <button onClick={goBack}>
+          <HiMiniXMark className='fixed top-[5%] right-[5%]' size={30} />
+        </button>
+        <div className='w-[80%] flexCenter h-full'>
+          {postData && (
+            <LazyPostModalPage postData={postData} postId={params.id} />
+          )}
+        </div>
+      </Suspense>
     </div>
   )
 }

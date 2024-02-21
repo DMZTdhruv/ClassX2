@@ -6,9 +6,17 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import Cookies from 'js-cookie'
+import { useRouter } from 'next/navigation'
 
 function SideBar(props: any) {
   const pathname = usePathname()
+
+  const router = useRouter()
+  const logout = () => {
+    Cookies.remove('classX_user_token')
+    router.push('/auth/sign-in')
+  }
   return (
     <section className='h-[100vh] sticky top-0 transition-all sidebars font-poppins  px-[40px] realtive w-auto lg:w-[304px] border-r-2 border-r-slate-800 '>
       <div className='h-[150px] flex items-center'>
@@ -58,6 +66,7 @@ function SideBar(props: any) {
       <Button
         type='button'
         className='text-white font-bold absolute left-[20px] lg:left-[35px]  bottom-[41px]'
+        onClick={logout}
       >
         Log out
       </Button>

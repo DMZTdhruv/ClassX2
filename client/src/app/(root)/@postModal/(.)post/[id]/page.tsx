@@ -1,13 +1,19 @@
 'use client'
 
-import React, { Suspense, useEffect, useState } from 'react'
+import React, {
+  ChangeEvent,
+  MouseEventHandler,
+  Suspense,
+  useEffect,
+  useState,
+} from 'react'
 import { useRouter } from 'next/navigation'
+import { useRef } from 'react'
 import { HiMiniXMark } from 'react-icons/hi2'
 import useCookieProvider from '@/hooks/useCookieProvider'
 const LazyPostModalPage = React.lazy(
   () => import('@/components/shared/PostModalPage')
 )
-
 
 interface IComments {
   _id: string
@@ -39,8 +45,9 @@ interface IPost {
   createdAt: string
 }
 
-
 export default function PostModal({ params }: { params: { id: string } }) {
+  const modalRef = useRef<HTMLDivElement>(null)
+
   const router = useRouter()
   const [postData, setPostData] = useState<IPost>()
   const cookie = useCookieProvider()
@@ -70,22 +77,27 @@ export default function PostModal({ params }: { params: { id: string } }) {
     }
   }
 
-  useEffect(() => {
-    const body = document.getElementsByTagName('body')[0]
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY
-      // Use scrollPosition as needed
-      console.log('Vertical Scroll Position:', scrollPosition)
+  const closeModal = (event: React.MouseEvent<HTMLDivElement>) => {
+    const { left, right, top, bottom } =
+      modalRef.current?.getBoundingClientRect()!
+    const { clientX, clientY } = event
+    if (
+      clientX < left ||
+      clientX > right ||
+      clientY < top ||
+      clientY > bottom
+    ) {
+      router.back()
     }
+  }
 
-    body.style.overflow = 'hidden'
+  useEffect(() => {
     getPost()
 
-    window.addEventListener('scroll', handleScroll)
-
+    const body = document.getElementsByTagName('body')[0]
+    body.style.overflow = 'hidden'
     return () => {
       body.style.overflow = 'auto'
-      window.removeEventListener('scroll', handleScroll)
     }
   }, [])
 
@@ -98,12 +110,15 @@ export default function PostModal({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className='fixed z-[100] top-[50%] left-[50%] flexCenter translate-x-[-50%] h-[100vh] overflow-hidden bg-neutral-900/90 translate-y-[-50%] w-full'>
+    <div
+      className='fixed z-[100] top-[50%] left-[50%] flexCenter translate-x-[-50%] h-[100vh] overflow-hidden bg-neutral-900/90 translate-y-[-50%] w-full'
+      onClick={closeModal}
+    >
       <Suspense fallback={<LoadingSkeleton />}>
-        <button onClick={goBack}>
+        <button>
           <HiMiniXMark className='fixed top-[5%] right-[5%]' size={30} />
         </button>
-        <div className='w-[80%] flexCenter h-full'>
+        <div className='w-[80%] flexCenter h-auto ' ref={modalRef}>
           {postData && (
             <LazyPostModalPage postData={postData} postId={params.id} />
           )}

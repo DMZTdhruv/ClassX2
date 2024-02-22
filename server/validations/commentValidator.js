@@ -13,7 +13,14 @@ export const validateComment = (
 
 export const validateCommentLike = (commentId, userID) => {
   if(!userID || !commentId) {
-    throw new Error('Incomplete post details')
+    throw new Error('Incomplete comment details')
+  }
+  return true;
+}
+
+export const validateCommentunLike = (commentId, userID) => {
+  if(!userID || !commentId) {
+    throw new Error('Incomplete comment details')
   }
   return true;
 }

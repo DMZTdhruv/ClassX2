@@ -1,6 +1,7 @@
 import Post from '../models/post/post.model.js'
 import CommentRepositoryInterface from '../interfaces/CommentRepositoryInterface.js'
 import Comment from '../models/comment/comment.model.js'
+import ReplyComment from '../models/comment/repliedComment.model.js'
 
 export default class CommentRepository extends CommentRepositoryInterface {
   async createNewComment(postId, commentText, userId) {
@@ -28,6 +29,10 @@ export default class CommentRepository extends CommentRepositoryInterface {
     return await Comment.findOne({ _id: commentId })
   }
 
+  async findSubCommentById(commentId) {
+    return await ReplyComment.findOne({ _id: commentId })
+  }
+
   async subCommentsOfParentComment(commentId) {
     return await Comment.findOne({_id: commentId}).populate({
       path: 'commentReplies',
@@ -42,9 +47,4 @@ export default class CommentRepository extends CommentRepositoryInterface {
     })
   }
 
-  async pushLike(commentId, userID) {
-    const comment = await this.findCommentById(commentId)
-    comment.likes.push(userID)
-    return await comment.save()
-  }
 }

@@ -1,39 +1,110 @@
 'use client'
 
-import { webUrl } from '@/Constants'
+import { Api, webUrl } from '@/Constants'
 import useCookieProvider from '@/hooks/useCookieProvider'
 import { formatDate } from '@/utils'
 import { likePost, unlikePost } from '@/utils/LikeFunctions'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
+
+interface UpdateReplyCommentData {
+  parentCommentId: string
+  repliedUserId: string
+}
 interface SubComments {
+  postId: string
   _id: string
   subCommentImage: string
   subCommentUsername: string
   subCommentCommentText: string
   subCommentPostedDate: string
   subCommentTotalLikes: string[]
+  updateUsername: (name: string) => void
+  updateReplyCommentData: (data: UpdateReplyCommentData) => void
 }
 
 export default function SubComment({
+  postId,
   _id,
   subCommentImage,
   subCommentUsername,
   subCommentCommentText,
   subCommentPostedDate,
   subCommentTotalLikes,
+  updateUsername,
+  updateReplyCommentData,
 }: SubComments) {
   const cookie = useCookieProvider()
   const date = new Date(subCommentPostedDate)
   const formatedDate = formatDate(date)
-  const [isLiked, setIsLiked] = useState<boolean>(false)
+  const [isLiked, setIsLiked] = useState<boolean>(
+    subCommentTotalLikes.filter(id => id === cookie?.userProfileId).length > 0
+  )
   const [numberOfLikes, setNumberOfLikes] = useState<number>(
     subCommentTotalLikes.length
   )
   const user = subCommentCommentText.split(' ')[0]
   const userComment = subCommentCommentText.split(' ').slice(1).join(' ')
   console.log({ user, userComment })
+
+  const likeComment = async () => {
+    if (isLiked) return
+    setNumberOfLikes(numberOfLikes + 1)
+    try {
+      const response = await fetch(`${Api}/post/comment/sub/like-comment`, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+          Authorization: `Bearer ${cookie?.cookie}`,
+        },
+        body: JSON.stringify({
+          commentId: _id,
+          userID: cookie?.userProfileId,
+        }),
+      })
+
+      if (!response.ok) {
+        setIsLiked(false)
+        setNumberOfLikes(numberOfLikes)
+        throw new Error('Error liking in post ')
+      }
+
+      const result = await response.json()
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const unlikeComment = async () => {
+    if (!isLiked) return
+    setNumberOfLikes(numberOfLikes - 1)
+
+    try {
+      const response = await fetch(`${Api}/post/comment/sub/unlike-comment`, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+          Authorization: `Bearer ${cookie?.cookie}`,
+        },
+        body: JSON.stringify({
+          userID: cookie?.userProfileId,
+          commentId: _id,
+        }),
+      })
+
+      if (!response.ok) {
+        setIsLiked(false)
+        setNumberOfLikes(numberOfLikes)
+        throw new Error('Error unliking the post ')
+      }
+
+      const result = await response.json()
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   return (
     <div className='flex py-[12px] pr-[7.5px] gap-3 items-start'>
       <Image
@@ -73,24 +144,8 @@ export default function SubComment({
         className='hover:scale-105  flexCenter w-auto'
         onClick={() => {
           setIsLiked(prev => !prev)
-          likePost({
-            _id,
-            isLiked,
-            setNumberOfLikes,
-            numberOfLikes,
-            cookie,
-            endPoint: '',
-            isDevMode: true,
-          })
-          unlikePost({
-            _id,
-            isLiked,
-            setNumberOfLikes,
-            numberOfLikes,
-            cookie,
-            endPoint: '',
-            isDevMode: true,
-          })
+          likeComment()
+          unlikeComment()
         }}
       >
         {isLiked ? (

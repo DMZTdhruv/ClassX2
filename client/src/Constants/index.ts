@@ -67,6 +67,25 @@ export const BottomBarData = [
 ]
 
 
+
+interface IPost {
+  _id: string
+  title: string
+
+  imageUrl: string
+  caption: string
+  location: string
+  category: string
+  postedBy: {
+    _id: string
+    username: string
+    userProfileImage: string
+  }
+  likes: string[]
+  comments: IComments[]
+  createdAt: string
+}
+
 interface IComments {
   _id: string
   commentText: string
@@ -80,22 +99,6 @@ interface IComments {
   commentReplies: string[]
 }
 
-interface IPost {
-  _id: string
-  title: string
-  imageUrl: string
-  caption: string
-  location: string
-  category: string
-  postedBy: {
-    _id: string
-    username: string
-    userProfileImage: string
-  }
-  likes: any[]
-  comments: IComments[]
-  createdAt: string
-}
 
 interface UpdateReplyCommentData {
   parentCommentId: string

@@ -93,6 +93,7 @@ export default async function Profile() {
             return (
               <NormalPost
                 key={user._id}
+                _id={user._id}
                 imageUrl={user.imageUrl}
                 comments={user.comments.length}
                 likes={user.likes.length}

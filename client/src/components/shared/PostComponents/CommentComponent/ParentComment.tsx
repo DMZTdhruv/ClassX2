@@ -45,6 +45,7 @@ interface PostLikes {
 //implement a reply button
 
 export default function ParentComment({
+  postId,
   _id,
   parentCommentImage,
   parentCommentUserId,
@@ -102,7 +103,7 @@ export default function ParentComment({
     }
   }
 
-  const likePost = async () => {
+  const likeComment = async () => {
     if (isLiked) return
     setNumberOfLikes(numberOfLikes + 1)
     try {
@@ -130,20 +131,20 @@ export default function ParentComment({
     }
   }
 
-  const unlikePost = async () => {
+  const unlikeComment = async () => {
     if (!isLiked) return
     setNumberOfLikes(numberOfLikes - 1)
 
     try {
-      const response = await fetch(`${Api}/post/comment/unlike`, {
+      const response = await fetch(`${Api}/post/comment/unlike-comment`, {
         method: 'POST',
         headers: {
           'Content-type': 'application/json',
           Authorization: `Bearer ${cookie?.cookie}`,
         },
         body: JSON.stringify({
-          userProfileID: cookie?.userProfileId,
-          postId: _id,
+          userID: cookie?.userProfileId,
+          commentId: _id,
         }),
       })
 
@@ -188,8 +189,8 @@ export default function ParentComment({
               className='hover:scale-105 p-2 flexCenter w-auto'
               onClick={() => {
                 setIsLiked(prev => !prev)
-                likePost()
-                unlikePost()
+                likeComment()
+                unlikeComment()
               }}
             >
               {isLiked ? (
@@ -257,6 +258,7 @@ export default function ParentComment({
                     : repliedComments.map((comment: ReplyComment) => {
                         return (
                           <SubComment
+                            postId={postId}
                             key={comment._id}
                             _id={comment._id}
                             subCommentImage={comment.postedBy.userProfileImage}
@@ -264,6 +266,8 @@ export default function ParentComment({
                             subCommentCommentText={comment.commentText}
                             subCommentPostedDate={comment.createdAt}
                             subCommentTotalLikes={comment.likes}
+                            updateUsername={updateUsername}
+                            updateReplyCommentData={updateReplyCommentData}
                           />
                         )
                       })}

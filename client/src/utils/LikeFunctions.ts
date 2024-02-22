@@ -7,6 +7,7 @@ interface PostLikes {
   _id: string
   isLiked: boolean
   setNumberOfLikes: (newNumberOfLikes: number) => void
+  setIsLiked: (newValueOfLike: boolean) => void
   numberOfLikes: number
   cookie?: Cookie | null
   endPoint: string
@@ -17,11 +18,14 @@ export const likePost = async ({
   _id,
   isLiked,
   setNumberOfLikes,
+  setIsLiked,
   numberOfLikes,
   cookie,
   endPoint,
   isDevMode,
 }: PostLikes) => {
+  console.log(isLiked)
+
   if (isLiked) return
   setNumberOfLikes(numberOfLikes + 1)
   const api = process.env.NEXT_PUBLIC_API
@@ -43,6 +47,8 @@ export const likePost = async ({
     })
 
     if (!response.ok) {
+      setNumberOfLikes(numberOfLikes)
+      setIsLiked(false)
       throw new Error('Error liking in post ')
     }
 
@@ -56,12 +62,14 @@ export const unlikePost = async ({
   _id,
   isLiked,
   setNumberOfLikes,
+  setIsLiked,
   numberOfLikes,
   cookie,
   endPoint,
   isDevMode,
 }: PostLikes) => {
   if (!isLiked) return
+  console.log('You are unliking the post')
   setNumberOfLikes(numberOfLikes - 1)
   const api = process.env.NEXT_PUBLIC_API
   const unlikeApi = `${api}/${endPoint}`
@@ -81,6 +89,8 @@ export const unlikePost = async ({
     })
 
     if (!response.ok) {
+      setNumberOfLikes(numberOfLikes)
+      setIsLiked(true)
       throw new Error('Error unliking the post ')
     }
 

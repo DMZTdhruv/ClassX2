@@ -5,34 +5,8 @@ import Image from 'next/image'
 import useCookieProvider from '@/hooks/useCookieProvider'
 import { formatDate } from '@/utils'
 import Link from 'next/link'
+import { IComments, IPost } from '@/Constants'
 import { likePost, unlikePost } from '@/utils/LikeFunctions'
-
-interface IComments {
-  _id: string
-  commentText: string
-  postedBy: {
-    _id: string
-    username: string
-  }
-}
-
-interface IPost {
-  _id: string
-  title: string
-
-  imageUrl: string
-  caption: string
-  location: string
-  category: string
-  postedBy: {
-    _id: string
-    username: string
-    userProfileImage: string
-  }
-  likes: string[]
-  comments: IComments[]
-  createdAt: string
-}
 
 const Post: React.FC<IPost> = ({
   _id,
@@ -100,16 +74,18 @@ const Post: React.FC<IPost> = ({
                 _id,
                 isLiked,
                 setNumberOfLikes,
+                setIsLiked,
                 numberOfLikes,
                 cookie,
-                endPoint:"post/like-post",
+                endPoint: 'post/like-post',
               })
               unlikePost({
                 _id,
                 isLiked,
                 setNumberOfLikes,
+                setIsLiked,
                 numberOfLikes,
-                endPoint: "post/like-post",
+                endPoint: 'post/unlike-post',
                 cookie,
               })
             }}
@@ -153,7 +129,7 @@ const Post: React.FC<IPost> = ({
                 width: '30px',
                 height: '30px',
               }}
-          />
+            />
           </Link>
         </div>
         <div className='px-[15px] md:text-[15px] flex flex-col gap-[3px] text-[13px] font-semibold mb-[20px] '>

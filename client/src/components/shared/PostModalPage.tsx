@@ -77,8 +77,10 @@ export default function PostModalPage({
   const inputRef = useRef<HTMLInputElement>(null)
 
   const [loading, setLoading] = useState<boolean>(false)
-  const [numberOfLikes, setNumberOfLikes] = useState<number>(0)
-  const [isLiked, setIsLiked] = useState<boolean>(false)
+  const [numberOfLikes, setNumberOfLikes] = useState<number>(postData.likes.length)
+  const [isLiked, setIsLiked] = useState<boolean>(
+    postData.likes.filter(id => id === cookie?.userProfileId).length > 0
+  )
   const [allComments, setAllComments] = useState<IComments[]>(postData.comments)
   const [replyUsername, setReplyUsername] = useState<string>('')
   const [comment, setComment] = useState<string>('')
@@ -207,7 +209,7 @@ export default function PostModalPage({
 
   return (
     <section className='w-full flexCenter h-full'>
-      <div className='sm:w-auto sm:min-h-[90vh] max-w-[90%] sm:min-w-[90%] md:border  bg-[#0E0E0E]  border-slate-600 flex flex-col xl:flex-row'>
+      <div className='sm:w-auto sm:min-h-[90vh] max-w-[90%] sm:min-w-[100%] md:min-w-[95%] xl:min-w-[90%] md:border  bg-[#0E0E0E]  border-slate-600 flex flex-col md:flex-row'>
         <ImageDisplay imageUrl={postData.imageUrl} />
         <div className='top-0 sticky md:hidden block'>
           <button onClick={goBack}>hlwao</button>
@@ -267,21 +269,21 @@ export default function PostModalPage({
                   setIsLiked(prev => !prev)
                   likePost({
                     _id: postId,
-                    isLiked,
+                    isLiked: isLiked,
                     setNumberOfLikes,
+                    setIsLiked,
                     numberOfLikes,
                     cookie,
-                    isDevMode: true,
                     endPoint: 'post/like-post',
                   })
                   unlikePost({
                     _id: postId,
-                    isLiked,
+                    isLiked: isLiked,
                     setNumberOfLikes,
+                    setIsLiked,
                     numberOfLikes,
                     cookie,
-                    isDevMode: true,
-                    endPoint: 'post/like-post',
+                    endPoint: 'post/unlike-post',
                   })
                 }}
                 className='hover:scale-105'
@@ -328,7 +330,9 @@ export default function PostModalPage({
                 />
               </button>
             </div>
-            <p className='text-[13px]'>{numberOfLikes} likes</p>
+            <p className='text-[13px] pl-[2px]'>
+              {numberOfLikes} likes
+            </p>
           </div>
           <form
             onSubmit={submitComment}
@@ -337,7 +341,7 @@ export default function PostModalPage({
             <Input
               ref={inputRef}
               type='text'
-              className='bg-[#171717] md:font-semibold min-h-[78px] border-none rounded-xl'
+              className='bg-[#171717] outline-none focus-visible:ring-0  md:font-semibold min-h-[78px] border-none rounded-xl'
               placeholder='Type your comment'
               value={comment}
               onChange={replyUsername ? handleReplyUserComment : handleComment}

@@ -1,32 +1,25 @@
-import UserProfileRepository from '../../repositories/UserProfileRepository.js'
 import { validateUserUnlikedPost } from '../../validations/postValidators.js'
 import PostRepository from '../../repositories/PostRepository.js'
 
 export default async function unlikePostService(userProfileID, postId) {
   try {
     validateUserUnlikedPost(userProfileID, postId)
-    const userProfileRepo = new UserProfileRepository()
-    const userExists = await userProfileRepo.findById(userProfileID)
-
-    // if user doesn't exist throw error
-    if (!userExists) {
-      throw new Error('User does not exits')
-    }
 
     const postRepo = new PostRepository()
     const postExists = await postRepo.findPostById(postId)
 
     if (!postExists) {
-      throw new Error("Either the post is deleted by user or doesn't exist")
+      throw new Error(
+        'Either the post ' + postId + " is deleted by user or doesn't exist"
+      )
     }
 
     // removing user like
     postExists.likes.remove(userProfileID)
-
-    const editedPost = await postExists.save({ select: '_id likes' })
+    const unlikedPost = await postExists.save({ select: '_id likes' })
     return {
       message: 'Post Unliked',
-      post: editedPost,
+      post: unlikedPost,
     }
   } catch (err) {
     console.log(err.message)

@@ -4,6 +4,10 @@ import Post from '@/components/cards/Post'
 import { Skeleton } from '@/components/ui/skeleton'
 import useCookieProvider from '@/hooks/useCookieProvider'
 import { useEffect, useState } from 'react'
+import axios from 'axios'
+import { Api } from '@/Constants'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 
 interface IComments {
   _id: string
@@ -11,7 +15,11 @@ interface IComments {
   postedBy: {
     _id: string
     username: string
+    userProfileImage: string
   }
+  createdAt: string
+  likes: string[]
+  commentReplies: string[]
 }
 
 interface IPost {
@@ -32,51 +40,50 @@ interface IPost {
 }
 
 export default function PostSection() {
-  const cookie = useCookieProvider()
   const [posts, setPosts] = useState<IPost[]>([])
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [isPostLiked, setIsPostLiked] = useState<boolean>(false)
+  const cookie = useCookieProvider()
 
   useEffect(() => {
-    const api = process.env.NEXT_PUBLIC_API
     const getPosts = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(
-          `${api}/post/get-post?page=${1}&limit=${10}`,
+        const { data } = await axios.get(
+          `${Api}/post/get-post?page=${1}&limit=${10}`,
           {
-            method: 'GET',
             headers: {
               Authorization: `Bearer ${cookie?.cookie}`,
             },
           }
         )
-
-        if (!response.ok) {
-          const result = await response.json()
-          try {
-            if (result.message) {
-              setErrorMessage(result.message)
-            } else {
-              setErrorMessage('There was an error in fetching posts')
-            }
-          } catch (err: any) {
-            console.log(err.message)
-          }
+        const { data: result } = data
+        setPosts(result)
+      } catch (error: any) {
+        const { message } = error.response.data
+        if (error.response.status === 401) {
+          setErrorMessage('Unauthorized please sign in')
+          return
         }
-
-        const { data } = await response.json()
-        setPosts(data)
-      } catch (err: any) {
-        console.log(err.message)
+        setErrorMessage(message)
+        console.error(message)
       } finally {
         setIsLoading(false)
       }
     }
-
     getPosts()
   }, [])
+
+  if (errorMessage) {
+    return (
+      <div className='xl:w-[60%]  w-full  justify-center h-screen flex flex-col gap-5 items-center'>
+        {errorMessage}
+        <Button className='text-white'>
+          <Link href='/auth/sign-in'>Sign in</Link>
+        </Button>
+      </div>
+    )
+  }
 
   if (isLoading) {
     return (

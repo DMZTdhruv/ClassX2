@@ -13,8 +13,10 @@ interface UpdateReplyCommentData {
   repliedUserId: string
 }
 interface SubComments {
-  postId: string
   _id: string
+  postId: string
+  parentCommentId: string
+  subCommentUserId: string
   subCommentImage: string
   subCommentUsername: string
   subCommentCommentText: string
@@ -25,8 +27,10 @@ interface SubComments {
 }
 
 export default function SubComment({
-  postId,
   _id,
+  postId,
+  parentCommentId,
+  subCommentUserId,
   subCommentImage,
   subCommentUsername,
   subCommentCommentText,
@@ -46,7 +50,6 @@ export default function SubComment({
   )
   const user = subCommentCommentText.split(' ')[0]
   const userComment = subCommentCommentText.split(' ').slice(1).join(' ')
-  console.log({ user, userComment })
 
   const likeComment = async () => {
     if (isLiked) return
@@ -137,7 +140,17 @@ export default function SubComment({
         <div className='text-[12px] text-neutral-500 flex gap-[10px] '>
           <p>{formatedDate}</p>
           <p>{numberOfLikes} likes</p>
-          <button>Reply</button>
+          <button
+            onClick={() => {
+              updateUsername(subCommentUsername)
+              updateReplyCommentData({
+                parentCommentId: parentCommentId,
+                repliedUserId: subCommentUserId,
+              })
+            }}
+          >
+            Reply
+          </button>
         </div>
       </div>
       <button
@@ -150,7 +163,7 @@ export default function SubComment({
       >
         {isLiked ? (
           <Image
-            src={`/bxs_heart.svg`}
+            src={`/assets/filledHeart.svg`}
             width={15}
             height={15}
             alt='user jpg'
@@ -162,7 +175,7 @@ export default function SubComment({
           />
         ) : (
           <Image
-            src={`/heart.svg`}
+            src={`/assets/heart.svg`}
             width={15}
             height={15}
             alt='user jpg'

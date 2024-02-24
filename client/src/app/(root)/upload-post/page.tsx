@@ -28,7 +28,7 @@ interface Post {
   postedBy: string | null | undefined
 }
 
-export default function index() {
+export default function UploadPost() {
   const router = useRouter()
   const cookie = useCookieProvider()
 

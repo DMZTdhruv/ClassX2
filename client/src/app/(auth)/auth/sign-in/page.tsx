@@ -37,7 +37,7 @@ function SignInPage() {
   }
 
   const signInUser = async () => {
-    const api = `${process.env.NEXT_PUBLIC_API}/auth/signIn `
+    const api = `${process.env.NEXT_PUBLIC_API}/auth/signIn`
     setIsLoading(true)
     try {
       const checkUser = await fetch(api, {
@@ -62,8 +62,11 @@ function SignInPage() {
       setTimeout(() => {
         setMessage('')
       }, 5000)
-      router.push("/");
-      Cookies.set('classX_user_token', existingUser.token, { expires: 30 })
+
+      Cookies.set('classX_user_token', existingUser.token, {
+        expires: 30,
+      })
+      router.push('/')
     } catch (err: any) {
       console.error(err.message)
     } finally {
@@ -132,8 +135,8 @@ function SignInPage() {
         </p>
       )}
       <div className='text-center  error_message'>
-        Don't have an account?{' '}
-        <Link href={'/auth/sign-up'} className='mt-[10px]'>
+        Don&apos;t have an account?
+        <Link href={'/auth/sign-up'} className='mt-[10px] ml-[5px]'>
           <span className='text-[#891DCC]'>Sign up</span>
         </Link>
       </div>

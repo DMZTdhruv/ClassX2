@@ -6,7 +6,7 @@ interface jwtInterface {
 
 export const verifyAuth = async (token: string ) => {
   const api = process.env.NEXT_PUBLIC_API;
-  const {userID}:jwtInterface = jwtDecode(token);
+  const {userID}:jwtInterface = jwtDecode(token || '');
   try {
     const checkUserExists = `${api}/auth/check-user?userID=${userID}`
     const response = await fetch(checkUserExists, {

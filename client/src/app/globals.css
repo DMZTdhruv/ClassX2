@@ -132,17 +132,42 @@
   }
 }
 
-@media screen and (min-width: 501px) {
-  .topbar {
-    display: none;
-  }
-}
-
 .flexCenter {
   @apply flex items-center justify-center;
 }
 
-
 .commentSection {
   min-height: calc(100% - 80px);
+}
+
+@media screen and (max-width: 768px) {
+  .imageResponive {
+    max-height: 60vh;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .responiveModal {
+    height: 100vh;
+  }
+}
+
+.loader {
+  background: transparent;
+  width: 20px;
+  height: 20px;
+  border-top: 4px solid rgba(255, 255, 255, 0.135);
+  border-right: 4px solid rgba(255, 255, 255, 0.135);
+  border-bottom: 4px solid rgba(255, 255, 255, 0.135);
+  border-left: 4px solid #891DCC;
+  border-radius: 50%;
+  animation: spin 1s ease infinite;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

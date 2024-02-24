@@ -16,16 +16,48 @@ import useCookieProvider from '@/hooks/useCookieProvider'
 import { likePost, unlikePost } from '@/utils/LikeFunctions'
 import ParentComment from '@/components/shared/PostComponents/CommentComponent/ParentComment'
 import { formatDate } from '@/utils'
+import { HiMiniXMark } from 'react-icons/hi2'
+
+// all interfacess
+interface ImageDisplayProps {
+  // Image interface
+  imageUrl: string
+}
 
 interface HeaderProps {
+  // Header interface
   username: string
   userProfileImage: string
   createdAt: string
 }
 
+interface SubCommentProps {
+  _id: string
+  parentCommentId: string
+  postId: string
+  repliedUserId: string
+  commentText: string
+  postedBy: string
+}
+
+interface GetSubComment {
+  _id: string
+  parentCommentId: string
+  postId: string
+  repliedUserId: string
+  commentText: string
+  postedBy: {
+    userProfileImage: string
+    username: string
+    _id: string
+  }
+  likes: string[]
+  createdAt: string
+}
+
 function Header({ username, userProfileImage, createdAt }: HeaderProps) {
   return (
-    <header className='flex flex-col h-[60px] px-[15px] space-y-2 justify-center'>
+    <header className='flex text-[13px] sm:text-[15px]  flex-col h-[60px] px-[15px] space-y-2 justify-center'>
       <div className='flex font-semibold items-center gap-3  '>
         <Image
           src={userProfileImage}
@@ -36,15 +68,11 @@ function Header({ username, userProfileImage, createdAt }: HeaderProps) {
           unoptimized
           className=' aspect-square object-cover rounded-full'
         />
-        <h5 className=''>{username} &nbsp;</h5>
+        <h5 className=''>{username}</h5>
         <span className=' text-white/50 '>{createdAt}</span>
       </div>
     </header>
   )
-}
-
-interface ImageDisplayProps {
-  imageUrl: string
 }
 
 function ImageDisplay({ imageUrl }: ImageDisplayProps) {
@@ -55,8 +83,8 @@ function ImageDisplay({ imageUrl }: ImageDisplayProps) {
       width={400}
       height={300}
       style={{ width: '100%', height: 'auto' }}
-      className='max-w-[400px] h-full hidden md:block object-contain'
-      unoptimized
+      className='md:max-w-[400px] border-y  border-[#212936] sm:h-full imageResponive object-contain'
+      quality={100}
     />
   )
 }
@@ -69,19 +97,21 @@ export default function PostModalPage({
   postId: string
 }) {
   // Constants
+  const modalRef = useRef<HTMLDivElement>(null)
   const api = process.env.NEXT_PUBLIC_API
   const cookie = useCookieProvider()
   const router = useRouter()
   const postedDate = formatDate(new Date(postData.createdAt))
-
   const inputRef = useRef<HTMLInputElement>(null)
-
-  const [loading, setLoading] = useState<boolean>(false)
-  const [numberOfLikes, setNumberOfLikes] = useState<number>(postData.likes.length)
+  const [isPendingComment, setIsPendingComment] = useState<boolean>(false)
+  const [numberOfLikes, setNumberOfLikes] = useState<number>(
+    postData.likes.length
+  )
   const [isLiked, setIsLiked] = useState<boolean>(
     postData.likes.filter(id => id === cookie?.userProfileId).length > 0
   )
   const [allComments, setAllComments] = useState<IComments[]>(postData.comments)
+
   const [replyUsername, setReplyUsername] = useState<string>('')
   const [comment, setComment] = useState<string>('')
   const [replyCommentData, setReplyCommentData] = useState({
@@ -92,7 +122,22 @@ export default function PostModalPage({
     postedBy: '',
   })
 
+  const [repliedSubComments, setRepliedSubComments] = useState<GetSubComment[]>(
+    []
+  )
+
+  useEffect(() => {
+    const body = document.getElementsByTagName('body')[0]
+
+    body.style.overflow = 'hidden'
+
+    return () => {
+      body.style.overflow = 'auto'
+    }
+  }, [])
+
   const handleComment = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log("hello")
     setComment(e.target.value)
   }
 
@@ -102,10 +147,19 @@ export default function PostModalPage({
   }
 
   const handleReplyUserComment = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!(comment.length >= replyUsername.length + 1)) {
+    if (e.target.value === '') {
+      setReplyUsername('')
+      setComment('')
       return
     }
-    setComment(`${e.target.value}`)
+    if (comment.length < replyUsername.length + 2) {
+      if (e.target.value === `@${replyUsername} `) {
+        setComment(e.target.value)
+      } else {
+        return
+      }
+    }
+    setComment(e.target.value)
     setReplyCommentData({ ...replyCommentData, commentText: e.target.value })
   }
 
@@ -122,6 +176,7 @@ export default function PostModalPage({
     })
   }
 
+
   const focusInput = () => {
     setComment('')
     setReplyUsername('')
@@ -130,11 +185,17 @@ export default function PostModalPage({
     }
   }
 
+  const updateRepliedComments = () => {
+    setRepliedSubComments([])
+  }
+
   const goBack = () => {
     router.back()
   }
   // Creating comment
   const replyComment = async () => {
+    setIsPendingComment(true)
+    console.log(replyCommentData)
     try {
       const response = await fetch(`${api}/post/comment/reply-comment`, {
         method: 'POST',
@@ -150,20 +211,27 @@ export default function PostModalPage({
         return
       }
 
-      const result = await response.json()
+      const { message: result } = await response.json()
+      console.log(result)
+
+      setRepliedSubComments(prev => {
+        return [...prev, result]
+      })
     } catch (error: any) {
       console.log(error.message)
+    } finally {
+      setIsPendingComment(false)
     }
   }
 
   const submitComment = async (e: FormEvent) => {
     e.preventDefault()
+    console.log("Submitting main comment")
     if (replyUsername) {
       replyComment()
       return
     }
-    setLoading(true)
-    e.preventDefault()
+    setIsPendingComment(true)
     try {
       const response = await fetch(`${api}/post/comment/create-comment`, {
         method: 'POST',
@@ -179,7 +247,7 @@ export default function PostModalPage({
       })
 
       if (!response.ok) {
-        console.log('Failed to create comment')
+        console.error('Failed to create comment')
         return
       }
 
@@ -200,28 +268,80 @@ export default function PostModalPage({
       setAllComments(prev => {
         return [userComment, ...prev]
       })
+      setComment('')
     } catch (err: any) {
-      console.log(err.message)
+      console.error(err.message)
     } finally {
-      setLoading(false)
+      setIsPendingComment(false)
+    }
+  }
+
+  function handleModalClose(event: any) {
+    if (
+      event.type === 'click' ||
+      (event.type === 'keydown' && event.key === 'Enter')
+    ) {
+      if (modalRef.current) {
+        const { left, right, top, bottom } =
+          modalRef.current.getBoundingClientRect()
+        const { clientX, clientY, target } = event
+        const isClickOrEnterInsideForm =
+          target instanceof HTMLElement && target.closest('form')
+
+        if (
+          !isClickOrEnterInsideForm &&
+          (clientX < left ||
+            clientX > right ||
+            clientY < top ||
+            clientY > bottom)
+        ) {
+          router.back()
+        }
+
+        if (event.type === 'keydown' && !isClickOrEnterInsideForm) {
+          event.preventDefault()
+        }
+      }
     }
   }
 
   return (
-    <section className='w-full flexCenter h-full'>
-      <div className='sm:w-auto sm:min-h-[90vh] max-w-[90%] sm:min-w-[100%] md:min-w-[95%] xl:min-w-[90%] md:border  bg-[#0E0E0E]  border-slate-600 flex flex-col md:flex-row'>
-        <ImageDisplay imageUrl={postData.imageUrl} />
-        <div className='top-0 sticky md:hidden block'>
-          <button onClick={goBack}>hlwao</button>
+    <section
+      className='w-full min-h-[100vh] responiveModal flexCenter border md:h-full overflow-y-auto bg-[#0E0E0E] md:bg-transparent'
+      onClick={handleModalClose}
+    >
+      <button>
+        <HiMiniXMark
+          className='fixed hidden md:block top-[5%] right-[5%]'
+          size={30}
+        />
+      </button>
+      <div
+        className='w-full h-full overflow-y-auto sm:h-full sm:max-w-[80%] sm:min-w-[100%] md:min-w-[80%] md:min-h-[90vh] xl:max-w-[70%] md:border  bg-[#0E0E0E]  border-[#212936] flex flex-col md:flex-row border'
+        ref={modalRef}
+      >
+        <div className='top-0 border-b  border-[#212936] py-[20px] sticky md:hidden px-[16px] flex items-center bg-[#0E0E0E] '>
+          <button onClick={goBack}>Post</button>
         </div>
-        <div className='flex flex-col flex-1 md:h-full border-l  border-slate-600 '>
+        <div className='md:hidden block'>
           <Header
             userProfileImage={postData?.postedBy.userProfileImage!}
             username={postData?.postedBy.username!}
             createdAt={postedDate}
           ></Header>
-          <div className='flex-1 border-t md:border-b border-slate-600 w-full min-h-[60vh] max-h-[45vh] overflow-y-auto '>
-            <div className='flex py-[18px] px-[15px] space-y-2 justify-start'>
+        </div>
+        <ImageDisplay imageUrl={postData.imageUrl} />
+
+        <div className='flex flex-col flex-1 md:h-full md:border-l  border-[#212936] '>
+          <div className='md:block hidden'>
+            <Header
+              userProfileImage={postData?.postedBy.userProfileImage!}
+              username={postData?.postedBy.username!}
+              createdAt={postedDate}
+            ></Header>
+          </div>
+          <div className='flex-1 md:border-t md:border-b border-[#212936] w-full min-h-[60vh] md:max-h-[45vh] overflow-y-auto '>
+            <div className='flex py-[18px] px-[15px] space-y-2 justify-start '>
               <div className='flex items-start gap-3  '>
                 <Image
                   src={postData?.postedBy.userProfileImage!}
@@ -235,7 +355,7 @@ export default function PostModalPage({
                   unoptimized
                   className=' aspect-square object-cover rounded-full'
                 />
-                <div>
+                <div className=' text-[13px] sm:text-[15px]'>
                   <span className='font-semibold'>
                     {postData?.postedBy.username!}
                   </span>{' '}
@@ -246,8 +366,8 @@ export default function PostModalPage({
             {allComments?.map((comment: IComments) => {
               return (
                 <ParentComment
-                  postId={postData._id}
                   key={comment._id}
+                  postId={postData._id}
                   _id={comment._id}
                   parentCommentImage={comment.postedBy.userProfileImage}
                   parentCommentUserId={comment.postedBy._id}
@@ -258,11 +378,13 @@ export default function PostModalPage({
                   parentTotalCommentReplies={comment.commentReplies.length}
                   updateUsername={handleReplyUsername}
                   updateReplyCommentData={updateReplyCommentData}
+                  userRepliedComments={repliedSubComments}
+                  updateRepliedComments={updateRepliedComments}
                 />
               )
             })}
           </div>
-          <div className='md:flex hidden border-t md:border-t-0 border-slate-600 flex-col justify-center gap-[9px] p-[15px]'>
+          <div className='md:flex hidden border-t md:border-t-0 border-[#212936] flex-col justify-center gap-[9px] p-[15px]'>
             <div className='flex items-center gap-[10px] '>
               <button
                 onClick={() => {
@@ -290,7 +412,7 @@ export default function PostModalPage({
               >
                 {isLiked ? (
                   <Image
-                    src={`/bxs_heart.svg`}
+                    src={`/assets/filledHeart.svg`}
                     width={25}
                     height={25}
                     alt='user jpg'
@@ -302,7 +424,7 @@ export default function PostModalPage({
                   />
                 ) : (
                   <Image
-                    src={`/heart.svg`}
+                    src={`/assets/heart.svg`}
                     width={25}
                     height={25}
                     alt='user jpg'
@@ -330,18 +452,24 @@ export default function PostModalPage({
                 />
               </button>
             </div>
-            <p className='text-[13px] pl-[2px]'>
-              {numberOfLikes} likes
-            </p>
+            <p className='text-[13px] pl-[2px]'>{numberOfLikes} likes</p>
           </div>
           <form
             onSubmit={submitComment}
-            className='flex border-t border-b md:border-b-0 border-slate-600 min-h-[80px] justify-center p-3 md:relative'
+            onKeyDown={handleModalClose}
+            className='border-t bg-[#0E0E0E] sticky  border-b md:border-b-0 border-[#212936] sm:min-h-[80px] justify-center p-3 bottom-0 md:relative'
           >
+            {isPendingComment && (
+              <div className='bg-[#171717] w-[80%] outline-none focus-visible:ring-0 min-h-[48px] md:font-semibold sm:min-h-[78px] border-none rounded-xl absolute top-[12px] left-[12px] gap-3 flexCenter  '>
+                <span className='animate-pulse'>Uploading comment..</span>
+                <div className='loader '></div>
+              </div>
+            )}
+
             <Input
               ref={inputRef}
               type='text'
-              className='bg-[#171717] outline-none focus-visible:ring-0  md:font-semibold min-h-[78px] border-none rounded-xl'
+              className={`bg-[#171717]  outline-none focus-visible:ring-0 min-h-[48px] md:font-semibold sm:min-h-[78px] border-none rounded-xl pr-[70px]`}
               placeholder='Type your comment'
               value={comment}
               onChange={replyUsername ? handleReplyUserComment : handleComment}

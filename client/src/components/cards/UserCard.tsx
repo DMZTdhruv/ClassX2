@@ -1,8 +1,5 @@
 import Image from 'next/image'
 import FollowButton from '../shared/FollowButton/FollowButton'
-import useCookieProvider from '@/hooks/useCookieProviderServer'
-import { cookies } from 'next/headers'
-import { jwtDecode } from 'jwt-decode'
 
 interface UserCardProps {
   currentUser: string
@@ -11,7 +8,6 @@ interface UserCardProps {
   userImageUrl: string
   name: string
 }
-
 
 export default function UserCard({
   currentUser,

@@ -23,10 +23,12 @@ interface Ipost {
 
 export default async function Profile() {
   const cookie = cookies()
-  const token = cookie.get('classX_user_token')
+  // const token = cookie.get('classX_user_token')
   const api = process.env.NEXT_PUBLIC_API
-
-  // functions
+  const token = {
+    value: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWNiMmIzNjNlYjVlZDJlZDYyNzgwNDciLCJ1c2VyUHJvZmlsZUlkIjoiNjVjYjJlYWNiOGJlMDZiN2RkNTAyNzJmIiwidXNlcm5hbWUiOiJ5YWVEaHJ1diIsImVtYWlsIjoic2hydXZwYXJtYXJAZ21haWwuY29tIiwiaWF0IjoxNzA4NjAwMDY0LCJleHAiOjE3MTExOTIwNjR9.ix9R8k-tAbKgcqe0kqyyRC81Iy-pw5ujYyUn3UObucU'
+  }
+  // functions  
   const getUserProfile = async () => {
     const userProfileApi = `${api}/users/get-user-profile`
     try {
@@ -84,7 +86,7 @@ export default async function Profile() {
       />
 
       <div className='grid grid-cols-3 relative gap-[4px] md:gap-[8px] '>
-        {userPosts.length === 0 ? (
+        {userPosts?.length === 0 ? (
           <p className='text-center absolute w-[200px] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'>
             Post something
           </p>

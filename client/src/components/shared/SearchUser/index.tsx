@@ -14,7 +14,7 @@ interface Iuser {
   name: string
 }
 
-export default function index() {
+export default function SearchUser() {
   const [userName, setUserName] = useState<string>('')
   const [isSearching, setIsSearching] = useState<boolean>(true)
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {

@@ -24,7 +24,15 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(api + '/user/create-user-profile'))
   }
 }
-
 export const config = {
-  matcher: ['/', '/upload-post', '/message', '/explore', '/classroom'],
+  matcher: [
+    '/',
+    '/upload-post',
+    '/message',
+    '/explore',
+    '/classroom',
+    '/post',
+    '/post/:path*',
+    '/profile',
+  ],
 }

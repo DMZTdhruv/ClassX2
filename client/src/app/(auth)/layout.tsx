@@ -2,8 +2,11 @@ import type { Metadata } from 'next'
 import '../globals.css'
 
 export const metadata: Metadata = {
-  title: 'ClassX',
-  description: 'This is a classX app made for the college',
+  title: 'classX app',
+  description:
+    'An app for students of the college to enhance the student expericene',
+  manifest: '/manifest.json',
+  icons: { apple: '/icon.png' },
 }
 
 export default function RootLayout({
@@ -13,10 +16,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
+      <head>
+        <meta name='mobile-web-app-capable' content='yes' />
+        <meta name="theme-color" content="#0E0E0E" />
+      </head>
       <body className='dark'>
         <main>{children}</main>
       </body>
     </html>
   )
 }
-

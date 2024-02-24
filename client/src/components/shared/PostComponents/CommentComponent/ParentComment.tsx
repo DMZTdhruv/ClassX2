@@ -4,27 +4,13 @@ import { formatDate } from '@/utils'
 import Image from 'next/image'
 import SubComment from './SubComment'
 import { type ReplyComment } from '@/lib/demoApi'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import useCookieProvider from '@/hooks/useCookieProvider'
 import { Api } from '@/Constants'
 
 interface UpdateReplyCommentData {
   parentCommentId: string
   repliedUserId: string
-}
-
-interface Comment {
-  postId: string
-  _id: string
-  parentCommentImage: string
-  parentCommentUserId: string
-  parentCommentUsername: string
-  parentCommentCommentText: string
-  parentCommentPostedDate: string
-  parentCommentTotalLikes: string[]
-  parentTotalCommentReplies: number
-  updateUsername: (name: string) => void
-  updateReplyCommentData: (data: UpdateReplyCommentData) => void
 }
 
 interface Cookie {
@@ -44,6 +30,37 @@ interface PostLikes {
 
 //implement a reply button
 
+interface GetSubComment {
+  _id: string
+  parentCommentId: string
+  postId: string
+  repliedUserId: string
+  commentText: string
+  postedBy: {
+    userProfileImage: string
+    username: string
+    _id: string
+  }
+  likes: string[]
+  createdAt: string
+}
+
+interface Comment {
+  postId: string
+  _id: string
+  parentCommentImage: string
+  parentCommentUserId: string
+  parentCommentUsername: string
+  parentCommentCommentText: string
+  parentCommentPostedDate: string
+  parentCommentTotalLikes: string[]
+  parentTotalCommentReplies: number
+  updateUsername: (name: string) => void
+  updateReplyCommentData: (data: UpdateReplyCommentData) => void
+  userRepliedComments: GetSubComment[]
+  updateRepliedComments: () => void
+}
+
 export default function ParentComment({
   postId,
   _id,
@@ -56,11 +73,12 @@ export default function ParentComment({
   parentTotalCommentReplies,
   updateUsername,
   updateReplyCommentData,
+  userRepliedComments,
+  updateRepliedComments,
 }: Comment) {
   const date = new Date(parentCommentPostedDate)
   const formatedDate = formatDate(date)
   const cookie = useCookieProvider()
-
   // states
   const [isOpeningRepliedComments, setIsOpeningRepliedComments] =
     useState<boolean>(false)
@@ -70,10 +88,16 @@ export default function ParentComment({
     parentCommentTotalLikes.filter(id => id === cookie?.userProfileId).length >
       0
   )
-
   const [numberOfLikes, setNumberOfLikes] = useState<number>(
     parentCommentTotalLikes.length
   )
+  const [userRepliedCommentsLength, setUserRepliedCommentsLength] =
+    useState<number>(userRepliedComments.length)
+
+  useEffect(() => {
+    setUserRepliedCommentsLength(userRepliedComments.length)
+  }, [userRepliedComments])
+  // loading states
 
   const getRepliedComments = async () => {
     if (repliedComments.length > 0) return
@@ -95,6 +119,7 @@ export default function ParentComment({
 
       const { data: result } = await response.json()
       console.log(result)
+      updateRepliedComments()
       setRepliedComments(result)
     } catch (error: any) {
       console.error(error.message)
@@ -195,7 +220,7 @@ export default function ParentComment({
             >
               {isLiked ? (
                 <Image
-                  src={`/bxs_heart.svg`}
+                  src={`/assets/filledHeart.svg`}
                   width={15}
                   height={15}
                   alt='user jpg'
@@ -207,7 +232,7 @@ export default function ParentComment({
                 />
               ) : (
                 <Image
-                  src={`/heart.svg`}
+                  src={`/assets/heart.svg`}
                   width={15}
                   height={15}
                   alt='user jpg'
@@ -240,7 +265,7 @@ export default function ParentComment({
               <div className='flex items-center gap-[10px] justify-start mt-3'>
                 <span className='w-[25px] h-[2px] bg-neutral-400 rounded-[2px] mt-[] '></span>
                 <button
-                  className=' text-neutral-500'
+                  className=' text-neutral-500 flex items-center gap-3'
                   onClick={() => {
                     setOpenRepliedComments(prev => !prev)
                     getRepliedComments()
@@ -249,32 +274,77 @@ export default function ParentComment({
                   {openRepliedComments
                     ? 'Hide replies'
                     : `View replies (${parentTotalCommentReplies})`}
+
+                  {isOpeningRepliedComments && <div className='loader '></div>}
                 </button>
               </div>
               {openRepliedComments && (
                 <div className='flex flex-col w-full justify-start'>
-                  {isOpeningRepliedComments
-                    ? 'loading...'
-                    : repliedComments.map((comment: ReplyComment) => {
-                        return (
-                          <SubComment
-                            postId={postId}
-                            key={comment._id}
-                            _id={comment._id}
-                            subCommentImage={comment.postedBy.userProfileImage}
-                            subCommentUsername={comment.postedBy.username}
-                            subCommentCommentText={comment.commentText}
-                            subCommentPostedDate={comment.createdAt}
-                            subCommentTotalLikes={comment.likes}
-                            updateUsername={updateUsername}
-                            updateReplyCommentData={updateReplyCommentData}
-                          />
-                        )
-                      })}
+                  {repliedComments?.map((comment: ReplyComment) => (
+                    <SubComment
+                      key={comment._id}
+                      _id={comment._id}
+                      postId={postId}
+                      parentCommentId={_id}
+                      subCommentUserId={comment.postedBy._id}
+                      subCommentImage={comment.postedBy.userProfileImage}
+                      subCommentUsername={comment.postedBy.username}
+                      subCommentCommentText={comment.commentText}
+                      subCommentPostedDate={comment.createdAt}
+                      subCommentTotalLikes={comment.likes}
+                      updateUsername={updateUsername}
+                      updateReplyCommentData={updateReplyCommentData}
+                    />
+                  ))}
                 </div>
               )}
             </div>
           )}
+          {userRepliedCommentsLength > 0 &&
+            userRepliedComments[0].parentCommentId === _id && (
+              <div className='text-[13px] flex flex-col items-start gap-[10px]'>
+                <div className='flex items-center gap-[10px] justify-start mt-3'>
+                  <span className='w-[25px] h-[2px] bg-neutral-400 rounded-[2px] mt-[] '></span>
+                  <button
+                    className=' text-neutral-500 flex items-center gap-3'
+                    onClick={() => {
+                      setOpenRepliedComments(prev => !prev)
+                      getRepliedComments()
+                    }}
+                  >
+                    {parentTotalCommentReplies > 0
+                      ? `View replies (${parentTotalCommentReplies})`
+                      : `Hide replies`}
+
+                    {isOpeningRepliedComments && (
+                      <div className='loader '></div>
+                    )}
+                  </button>
+                </div>
+                <div className='w-full'>
+                  {userRepliedComments?.map((comment: GetSubComment) => {
+                    if (_id === comment.parentCommentId) {
+                      return (
+                        <SubComment
+                          key={comment._id}
+                          _id={comment._id}
+                          postId={comment.postId}
+                          parentCommentId={comment.parentCommentId}
+                          subCommentUserId={comment.postedBy._id}
+                          subCommentImage={comment.postedBy.userProfileImage}
+                          subCommentUsername={comment.postedBy.username}
+                          subCommentCommentText={comment.commentText}
+                          subCommentPostedDate={comment.createdAt}
+                          subCommentTotalLikes={comment.likes}
+                          updateUsername={updateUsername}
+                          updateReplyCommentData={updateReplyCommentData}
+                        />
+                      )
+                    }
+                  })}
+                </div>
+              </div>
+            )}
         </div>
       </div>
     </div>

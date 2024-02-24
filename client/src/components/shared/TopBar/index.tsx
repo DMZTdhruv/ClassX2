@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 
-function index() {
+function TopBar() {
   const navRef = useRef(null)
   const [isNavHidden, setIsNavHidden] = useState<boolean>(false)
 
@@ -25,7 +25,7 @@ function index() {
       ref={navRef}
       className={`h-[60px]  ${
         isNavHidden ? 'translate-y-[-60px]' : 'translate-y-[0px]'
-      }   topbar  justify-between  px-[16px] flex items-center sticky top-0 
+      } sm:hidden flex  justify-between  px-[16px] items-center sticky top-0 
     backdrop-blur-lg z-[100] border-b border-neutral-800  w-full transition-transform `}
     >
       <Image
@@ -53,4 +53,4 @@ function index() {
   )
 }
 
-export default index
+export default TopBar

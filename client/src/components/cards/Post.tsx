@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import useCookieProvider from '@/hooks/useCookieProvider'
 import { formatDate } from '@/utils'
@@ -23,11 +23,13 @@ const Post: React.FC<IPost> = ({
   const date = new Date(createdAt)
   const cookie = useCookieProvider()
   const [numberOfLikes, setNumberOfLikes] = useState<number>(likes.length)
-  const [isLiked, setIsLiked] = useState<boolean>(
-    likes.filter(id => id === cookie?.userProfileId).length > 0
-  )
-
+  const [isLiked, setIsLiked] = useState<boolean>(false)
   const [showFullcaption, setShowFullCaption] = useState<boolean>(false)
+
+  useEffect(() => {
+    setIsLiked(likes.filter(id => id === cookie?.userProfileId).length > 0)
+  }, [])
+
   return (
     <div className='w-full lg:w-[584px] h-auto rounded-xl border-b-2 border-[#171717] font-poppins  postSection'>
       <div className='h-[60px] px-[16px] flex items-center text-[15px]'>
@@ -62,7 +64,6 @@ const Post: React.FC<IPost> = ({
           style={{ height: 'auto', width: '584px', aspectRatio: '1' }}
           className='object-cover  md:w-[584px] md:h-[584px] border-2 border-[#171717]'
           quality={100}
-          unoptimized
         />
       </div>
       <div>
@@ -93,11 +94,11 @@ const Post: React.FC<IPost> = ({
           >
             {isLiked ? (
               <Image
-                src={`bxs_heart.svg`}
+                src={`/assets/filledHeart.svg`}
                 width={30}
                 height={30}
                 alt='user jpg'
-                className='rounded-full object-cover active:scale-90 transition-all'
+                className='rounded-full sm:opacity-100 sm:hover:opacity-80 focus:scale-105 object-cover active:scale-90 transition-all'
                 style={{
                   width: '30px',
                   height: '30px',
@@ -105,11 +106,11 @@ const Post: React.FC<IPost> = ({
               />
             ) : (
               <Image
-                src={`heart.svg`}
+                src={`/assets/heart.svg`}
                 width={30}
                 height={30}
                 alt='user jpg'
-                className='rounded-full object-cover active:scale-90 transition-all'
+                className='rounded-full sm:opacity-100 sm:hover:opacity-80 focus:scale-105 object-cover active:scale-90 transition-all'
                 style={{
                   width: '30px',
                   height: '30px',
@@ -124,7 +125,7 @@ const Post: React.FC<IPost> = ({
               height={30}
               alt='user jpg'
               unoptimized
-              className='rounded-full object-cover '
+              className='rounded-full transition-all sm:opacity-100 sm:hover:opacity-80 focus:scale-105 object-cover active:scale-90 '
               style={{
                 width: '30px',
                 height: '30px',

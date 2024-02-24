@@ -27,7 +27,7 @@ export default async function index() {
   const cookie = cookies()
   const token = cookie.get('classX_user_token')
   const tokenValue = token?.value || ''
-  const decodedToken: IDecodedTokem = jwtDecode(tokenValue)
+  const decodedToken: IDecodedTokem = jwtDecode(tokenValue || '') 
 
   const getUsers = async () => {
     try {

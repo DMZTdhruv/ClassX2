@@ -6,12 +6,12 @@ import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 
-function index() {
+function BottomBar() {
   const pathname = usePathname()
   return (
-    <section className='sticky bottom-0 bottom-bar opacity-50  w-full items-center flex justify-between h-[80px] px-[24px] bottom_bar-links  gap-[20px]'>
+    <section className='sticky bottom-0 bottom-bar opacity-50  w-full items-center flex sm:hidden justify-between h-[80px] px-[24px]  gap-[20px]'>
       {BottomBarData.map((links, index) => {
-       const isActive = pathname === links.routes
+        const isActive = pathname === links.routes
         return (
           <Link href={links.routes} key={links.id}>
             <Image
@@ -29,4 +29,4 @@ function index() {
   )
 }
 
-export default index
+export default BottomBar

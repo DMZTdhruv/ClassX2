@@ -1,8 +1,6 @@
-'use client'
-
-import PostModalPage from '@/components/shared/PostModalPage'
-import useCookieProvider from '@/hooks/useCookieProvider'
-import { useEffect, useState } from 'react'
+import { Api } from '@/Constants'
+import PagePostModal from '@/components/cards/PagePostModal'
+import { cookies } from 'next/headers'
 
 interface IComments {
   _id: string
@@ -34,40 +32,44 @@ interface IPost {
   createdAt: string
 }
 
-export default function PostModal({ params }: { params: { id: string } }) {
-  const cookie = useCookieProvider()
-  const api = process.env.NEXT_PUBLIC_API
-  const [postData, setPostData] = useState<IPost>()
-  const getPost = async () => {
-    try {
-      const response = await fetch(`${api}/post?postId=${params.id}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${cookie?.cookie}`,
-        },
-        cache: 'no-cache',
-      })
+export default async function PostModal({
+  params,
+}: {
+  params: { id: string }
+}) {
+  const cookie = cookies()
+  const token = cookie.get('classX_user_token')
+  const posts = await getPost(params.id, token?.value!)
 
-      if (!response.ok) {
-        console.log('Failed to fetch the post')
-        return
-      }
+  if (!posts) {
+    return <div>Loading...</div>
+  }
 
-      const { data } = await response.json()
-      setPostData(data)
-      return data
-    } catch (err: any) {
-      console.log(err.message)
+  return (
+    <div className='flexCenter min-h-screen w-full'>
+      <PagePostModal />
+    </div>
+  )
+}
+
+const getPost = async (id: string, cookie: string) => {
+  try {
+    const response = await fetch(`${Api}/post?postId=${id}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${cookie}`,
+      },
+      cache: 'no-cache',
+    })
+
+    if (!response.ok) {
+      console.log('Failed to fetch the post')
+      return
     }
+
+    const { data } = await response.json()
+    return data
+  } catch (err: any) {
+    console.log(err.message)
   }
-
-  useEffect(() => {
-    getPost()
-  }, [])
-
-  if (!postData) {
-    return <>Loading...</>
-  }
-
-  return <PostModalPage postData={postData} postId={params.id} />
 }

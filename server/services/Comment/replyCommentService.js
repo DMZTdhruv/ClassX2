@@ -29,28 +29,26 @@ export const replyCommentService = async (
     const user = await userProfile.findById(repliedUserId);
     console.log(user)
     // editing the original comment
-    const repliedComment = `${commentText}`
 
     //creating new reply comment
     const newReply = new ReplyComment({
       parentCommentId,
       postId: parentComment.postId,
       repliedUserId,
-      commentText: repliedComment,
+      commentText: commentText,
       postedBy,
     })
 
     // saving the new reply
     const saveReply = await newReply.save()
-
+    const repliedComment = await saveReply.populate('postedBy');
     //pushing the saveReply to the main parent comment
     parentComment.commentReplies.push(saveReply._id)
 
     await parentComment.save()
 
     return {
-      message: saveReply,
-      parentComment: parentComment,
+      message: repliedComment,
     }
   } catch (err) {
     console.log(err.message)

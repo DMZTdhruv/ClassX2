@@ -59,7 +59,7 @@ const getPost = async (id: string, cookie: string) => {
       headers: {
         Authorization: `Bearer ${cookie}`,
       },
-      cache: 'no-cache',
+      cache: 'no-store',
     })
 
     if (!response.ok) {

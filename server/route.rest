@@ -200,3 +200,7 @@ Content-Type: application/json
   "commentId": "65d61fc314428a0b8a8b4a3f",
   "userID": "65cb2eacb8be06b7dd50272f" 
 }
+
+###
+DELETE http://localhost:3001/post/comment/delete-comment/65db360609ab1d3e042b0997
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWNiNDlmZjM5MTkzMzNhYTM4MDcyMWIiLCJ1c2VyUHJvZmlsZUlkIjoiNjVjYjRhNzczOTE5MzMzYWEzODA3MjI4IiwidXNlcm5hbWUiOiJ5YWVNaWtvIiwiZW1haWwiOiJ5YWVtaWtvQGdtYWlsLmNvbSIsImlhdCI6MTcwODg2NjUyNCwiZXhwIjoxNzExNDU4NTI0fQ.iQfAqmjTpeGOs8SVc4-_C3UbWSDhKQm0OZHefXrCpzY

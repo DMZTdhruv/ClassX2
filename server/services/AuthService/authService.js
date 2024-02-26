@@ -5,6 +5,7 @@ import UserRepository from '../../repositories/UserRepository.js'
 import { generateSaltAndHashPassword } from '../../utils/passwordUtils.js'
 import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
+import crypto from 'crypto'
 dotenv.config()
 
 const userRepository = new UserRepository()
@@ -26,19 +27,28 @@ export const signIn = async (email, password) => {
     const userProfileRepo = new UserProfilerepository()
     const userProfile = await userProfileRepo.getUserData(user._id)
     if (userProfile) {
-      const token = jwt.sign(
+      const authToken = jwt.sign(
         {
           userID: user._id,
-          userProfileId: userProfile._id,
-          username: userProfile.username,
-          email: user.email,
         },
         process.env.JWT_SECRET,
         {
           expiresIn: '30d',
         }
       )
-      return { message: 'Successful logged in', token }
+
+      const token = jwt.sign(
+        {
+          userID: user._id,
+          userProfileId: userProfile._id,
+          username: userProfile.username,
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: '30d',
+        }
+      )
+      return { message: 'Successful logged in', authToken, token }
     } else {
       const token = jwt.sign({ userID: user._id }, process.env.JWT_SECRET, {
         expiresIn: '30d',

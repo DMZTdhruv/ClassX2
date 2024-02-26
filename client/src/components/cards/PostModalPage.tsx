@@ -10,13 +10,21 @@ import React, {
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
-import { IComments, IPost, UpdateReplyCommentData } from '@/Constants'
+import { Api, IComments, IPost, UpdateReplyCommentData } from '@/Constants'
 import FollowButton from '@/components/shared/FollowButton/FollowButton'
 import useCookieProvider from '@/hooks/useCookieProvider'
 import { likePost, unlikePost } from '@/utils/LikeFunctions'
-import ParentComment from '@/components/shared/PostComponents/CommentComponent/ParentComment'
+import Styles from './styles.module.css'
+
+const ParentComment = React.lazy(
+  () =>
+    import('@/components/shared/PostComponents/CommentComponent/ParentComment')
+)
 import { formatDate } from '@/utils'
 import { HiMiniXMark } from 'react-icons/hi2'
+import axios from 'axios'
+import { BsThreeDots } from 'react-icons/bs'
+import DeleteComponent from '../shared/DeleteComponent/Delete'
 
 // all interfacess
 interface ImageDisplayProps {
@@ -29,6 +37,7 @@ interface HeaderProps {
   username: string
   userProfileImage: string
   createdAt: string
+  handleModal: (data: boolean) => void
 }
 
 interface SubCommentProps {
@@ -55,9 +64,14 @@ interface GetSubComment {
   createdAt: string
 }
 
-function Header({ username, userProfileImage, createdAt }: HeaderProps) {
+function Header({
+  username,
+  userProfileImage,
+  createdAt,
+  handleModal,
+}: HeaderProps) {
   return (
-    <header className='flex text-[13px] sm:text-[15px]  flex-col h-[60px] px-[15px] space-y-2 justify-center'>
+    <header className='flex text-[13px] sm:text-[15px]  h-[60px] px-[15px] space-y-2 items-center justify-between'>
       <div className='flex font-semibold items-center gap-3  '>
         <Image
           src={userProfileImage}
@@ -71,6 +85,12 @@ function Header({ username, userProfileImage, createdAt }: HeaderProps) {
         <h5 className=''>{username}</h5>
         <span className=' text-white/50 '>{createdAt}</span>
       </div>
+      <button
+        className={`flex space-x-[2px] items-center`}
+        onClick={() => handleModal(true)}
+      >
+        <BsThreeDots size={18} />
+      </button>
     </header>
   )
 }
@@ -97,8 +117,13 @@ export default function PostModalPage({
   postId: string
 }) {
   // Constants
+
+  const [openModal, setOpenModal] = useState<boolean>(false)
+
+  function handleModal(value: boolean) {
+    setOpenModal(value)
+  }
   const modalRef = useRef<HTMLDivElement>(null)
-  const api = process.env.NEXT_PUBLIC_API
   const cookie = useCookieProvider()
   const router = useRouter()
   const postedDate = formatDate(new Date(postData.createdAt))
@@ -126,6 +151,36 @@ export default function PostModalPage({
     []
   )
 
+  const likeSubComment = (_id: string) => {
+    setRepliedSubComments(prevComments => {
+      const subCommentIndex = prevComments.findIndex(
+        comment => comment._id === _id
+      )
+
+      if (subCommentIndex !== -1) {
+        prevComments[subCommentIndex].likes.push(cookie?.userProfileId!)
+      }
+
+      return [...prevComments]
+    })
+  }
+
+  const unlikeSubComment = (_id: string) => {
+    setRepliedSubComments(prevComments => {
+      const subCommentIndex = prevComments.findIndex(
+        comment => comment._id === _id
+      )
+
+      if (subCommentIndex !== -1) {
+        prevComments[subCommentIndex].likes = prevComments[
+          subCommentIndex
+        ].likes.filter(id => id !== cookie?.userProfileId)
+      }
+
+      return [...prevComments]
+    })
+  }
+
   useEffect(() => {
     const body = document.getElementsByTagName('body')[0]
 
@@ -137,7 +192,6 @@ export default function PostModalPage({
   }, [])
 
   const handleComment = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log("hello")
     setComment(e.target.value)
   }
 
@@ -176,7 +230,6 @@ export default function PostModalPage({
     })
   }
 
-
   const focusInput = () => {
     setComment('')
     setReplyUsername('')
@@ -192,33 +245,29 @@ export default function PostModalPage({
   const goBack = () => {
     router.back()
   }
-  // Creating comment
+
   const replyComment = async () => {
     setIsPendingComment(true)
-    console.log(replyCommentData)
+
     try {
-      const response = await fetch(`${api}/post/comment/reply-comment`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${cookie?.cookie}`,
-        },
-        body: JSON.stringify(replyCommentData),
-      })
+      const response = await axios.post(
+        `${Api}/post/comment/reply-comment`,
+        replyCommentData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${cookie?.cookie}`,
+          },
+        }
+      )
 
-      if (!response.ok) {
-        console.error("Couldn't not post comment")
-        return
-      }
-
-      const { message: result } = await response.json()
-      console.log(result)
+      const { message: result } = response.data
 
       setRepliedSubComments(prev => {
         return [...prev, result]
       })
     } catch (error: any) {
-      console.log(error.message)
+      console.error(error.message)
     } finally {
       setIsPendingComment(false)
     }
@@ -226,32 +275,30 @@ export default function PostModalPage({
 
   const submitComment = async (e: FormEvent) => {
     e.preventDefault()
-    console.log("Submitting main comment")
     if (replyUsername) {
       replyComment()
       return
     }
+
     setIsPendingComment(true)
+
     try {
-      const response = await fetch(`${api}/post/comment/create-comment`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${cookie?.cookie}`,
-        },
-        body: JSON.stringify({
+      const response = await axios.post(
+        `${Api}/post/comment/create-comment`,
+        {
           postId: postId,
           commentText: comment,
           postedBy: cookie?.userProfileId,
-        }),
-      })
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${cookie?.cookie}`,
+          },
+        }
+      )
 
-      if (!response.ok) {
-        console.error('Failed to create comment')
-        return
-      }
-
-      const { message } = await response.json()
+      const { message } = response.data
       const userComment: IComments = {
         _id: message?._id,
         commentText: message?.commentText,
@@ -310,6 +357,14 @@ export default function PostModalPage({
       className='w-full min-h-[100vh] responiveModal flexCenter border md:h-full overflow-y-auto bg-[#0E0E0E] md:bg-transparent'
       onClick={handleModalClose}
     >
+      {openModal && (
+        <DeleteComponent
+          userId=':1d'
+          deleteId='sda'
+          endPoint='sda'
+          handleModal={handleModal}
+        />
+      )}
       <button>
         <HiMiniXMark
           className='fixed hidden md:block top-[5%] right-[5%]'
@@ -317,7 +372,7 @@ export default function PostModalPage({
         />
       </button>
       <div
-        className='w-full h-full overflow-y-auto sm:h-full sm:max-w-[80%] sm:min-w-[100%] md:min-w-[80%] md:min-h-[90vh] xl:max-w-[70%] md:border  bg-[#0E0E0E]  border-[#212936] flex flex-col md:flex-row border'
+        className='w-full h-full overflow-y-auto sm:h-full sm:max-w-[80%] sm:min-w-[100%] md:min-w-[80%] md:min-h-[90vh] xl:min-w-[75%] xl:max-w-[50%]  md:border  bg-[#0E0E0E]  border-[#212936] flex flex-col md:flex-row border'
         ref={modalRef}
       >
         <div className='top-0 border-b  border-[#212936] py-[20px] sticky md:hidden px-[16px] flex items-center bg-[#0E0E0E] '>
@@ -328,16 +383,18 @@ export default function PostModalPage({
             userProfileImage={postData?.postedBy.userProfileImage!}
             username={postData?.postedBy.username!}
             createdAt={postedDate}
+            handleModal={handleModal}
           ></Header>
         </div>
         <ImageDisplay imageUrl={postData.imageUrl} />
 
-        <div className='flex flex-col flex-1 md:h-full md:border-l  border-[#212936] '>
+        <div className='flex flex-col flex-1 md:h-full md:border-l border-[#212936] '>
           <div className='md:block hidden'>
             <Header
               userProfileImage={postData?.postedBy.userProfileImage!}
               username={postData?.postedBy.username!}
               createdAt={postedDate}
+              handleModal={handleModal}
             ></Header>
           </div>
           <div className='flex-1 md:border-t md:border-b border-[#212936] w-full min-h-[60vh] md:max-h-[45vh] overflow-y-auto '>
@@ -380,6 +437,9 @@ export default function PostModalPage({
                   updateReplyCommentData={updateReplyCommentData}
                   userRepliedComments={repliedSubComments}
                   updateRepliedComments={updateRepliedComments}
+                  likeSubComment={likeSubComment}
+                  unlikeSubComment={unlikeSubComment}
+                  handleModal={handleModal}
                 />
               )
             })}

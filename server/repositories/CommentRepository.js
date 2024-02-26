@@ -47,4 +47,8 @@ export default class CommentRepository extends CommentRepositoryInterface {
     })
   }
 
+  async deleteComment(_id) {
+    await Comment.deleteOne({_id});
+  }
+
 }

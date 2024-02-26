@@ -38,7 +38,10 @@ export default function UserCard({
           <span className='text-[#474747]'>@{username}</span>
         </div>
       </div>
-      <FollowButton _id={currentUser} userToFollowId={_id} />
+      <FollowButton
+        _id={currentUser}
+        userToFollowId={_id}
+      />
     </div>
   )
 }

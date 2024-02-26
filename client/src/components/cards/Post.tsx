@@ -7,6 +7,8 @@ import { formatDate } from '@/utils'
 import Link from 'next/link'
 import { IComments, IPost } from '@/Constants'
 import { likePost, unlikePost } from '@/utils/LikeFunctions'
+import { BsThreeDots } from 'react-icons/bs'
+import Style from './styles.module.css'
 
 const Post: React.FC<IPost> = ({
   _id,
@@ -32,27 +34,35 @@ const Post: React.FC<IPost> = ({
 
   return (
     <div className='w-full lg:w-[584px] h-auto rounded-xl border-b-2 border-[#171717] font-poppins  postSection'>
-      <div className='h-[60px] px-[16px] flex items-center text-[15px]'>
-        <div className='flex items-center gap-[11px]'>
-          <Image
-            src={postedBy?.userProfileImage}
-            width={30}
-            height={30}
-            alt='user jpg'
-            className='rounded-full object-cover '
-            style={{
-              width: '30px',
-              height: '30px',
-            }}
-            unoptimized
-          />
-          <div className='flex font-semibold gap-3 items-center'>
-            <p className='flex items-center gap-3'>
-              {postedBy?.username}{' '}
-              <span className=' h-1 w-2 bg-neutral-600 rounded-full'></span>
-            </p>
-            <span className='text-neutral-500'> {formatDate(date)}</span>
+      <div className='h-[60px] px-[16px] flex items-center justify-between text-[15px]'>
+        <div className='flex items-center justify-between w-full gap-[11px]'>
+          <div className='flex items-center gap-[11px]'>
+            <Image
+              src={postedBy?.userProfileImage}
+              width={30}
+              height={30}
+              alt='user jpg'
+              className='rounded-full object-cover '
+              style={{
+                width: '30px',
+                height: '30px',
+              }}
+              unoptimized
+            />
+            <div className='flex font-semibold gap-3 items-center'>
+              <p className='flex items-center gap-3'>
+                {postedBy?.username}{' '}
+                <span className=' h-1 w-1 bg-neutral-600 rounded-full'></span>
+              </p>
+              <span className='text-neutral-500'> {formatDate(date)}</span>
+            </div>
           </div>
+          <button
+            className={`active:scale-75 active:opacity-75 transition-all flex space-x-[2px] items-center`}
+            onClick={() => {}}
+          >
+            <BsThreeDots size={18} />
+          </button>
         </div>
       </div>
       <div>

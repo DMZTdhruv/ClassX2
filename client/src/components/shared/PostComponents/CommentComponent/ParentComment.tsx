@@ -46,6 +46,11 @@ interface ISubComment {
   createdAt: string
 }
 
+interface DeleteCommentDetails {
+  userId: string
+  deleteId: string
+}
+
 interface Comment {
   postId: string
   _id: string
@@ -63,6 +68,7 @@ interface Comment {
   likeSubComment: (_id: string) => void
   unlikeSubComment: (_id: string) => void
   handleModal: (data: boolean) => void
+  setDeleteCommentDetails: (data: DeleteCommentDetails) => void
 }
 
 interface BackendData {
@@ -86,6 +92,7 @@ export default function ParentComment({
   likeSubComment,
   unlikeSubComment,
   handleModal,
+  setDeleteCommentDetails,
 }: Comment) {
   const date = new Date(parentCommentPostedDate)
   const formatedDate = formatDate(date)
@@ -299,7 +306,13 @@ export default function ParentComment({
               </button>
               <button
                 className={`${Styles.parentCommentButton} lg:hidden space-x-[2px] items-center`}
-                onClick={() => handleModal(true)}
+                onClick={() => {
+                  handleModal(true)
+                  setDeleteCommentDetails({
+                    userId: parentCommentUserId,
+                    deleteId: _id,
+                  })
+                }}
               >
                 <BsThreeDots size={18} />
               </button>

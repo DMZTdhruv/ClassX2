@@ -14,16 +14,15 @@ export default async function likePostService(userProfileID, postId) {
     }
 
     //check if like already exists or not
-    const likeExists = postExists.likes.includes(userProfileID);
+    const likeExists = postExists.likes.includes(userProfileID)
     if (!!likeExists) {
       throw new Error('User has already liked the post')
     }
 
     postExists.likes.push(userProfileID)
-    const likedPost = await postExists.save()
+    await postExists.save()
     return {
       message: 'Post liked. ' + postId,
-      post: likedPost,
     }
   } catch (err) {
     console.log(err.message)

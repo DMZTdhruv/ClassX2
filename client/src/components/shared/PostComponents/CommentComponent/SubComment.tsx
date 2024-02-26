@@ -7,6 +7,8 @@ import { likePost, unlikePost } from '@/utils/LikeFunctions'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
+import { BsThreeDots } from 'react-icons/bs'
+import Styles from './styles.module.css'
 
 interface UpdateReplyCommentData {
   parentCommentId: string
@@ -24,6 +26,9 @@ interface SubComments {
   subCommentTotalLikes: string[]
   updateUsername: (name: string) => void
   updateReplyCommentData: (data: UpdateReplyCommentData) => void
+  clientComment?: boolean
+  likeSubComment?: (_id: string) => void
+  unlikeSubComment?: (_id: string) => void
 }
 
 export default function SubComment({
@@ -38,6 +43,9 @@ export default function SubComment({
   subCommentTotalLikes,
   updateUsername,
   updateReplyCommentData,
+  clientComment,
+  likeSubComment,
+  unlikeSubComment,
 }: SubComments) {
   const cookie = useCookieProvider()
   const date = new Date(subCommentPostedDate)
@@ -53,6 +61,7 @@ export default function SubComment({
 
   const likeComment = async () => {
     if (isLiked) return
+    clientComment && likeSubComment?.(_id)
     setNumberOfLikes(numberOfLikes + 1)
     try {
       const response = await fetch(`${Api}/post/comment/sub/like-comment`, {
@@ -82,7 +91,7 @@ export default function SubComment({
   const unlikeComment = async () => {
     if (!isLiked) return
     setNumberOfLikes(numberOfLikes - 1)
-
+    clientComment && unlikeSubComment?.(_id)
     try {
       const response = await fetch(`${Api}/post/comment/sub/unlike-comment`, {
         method: 'POST',
@@ -109,7 +118,9 @@ export default function SubComment({
   }
 
   return (
-    <div className='flex py-[12px] pr-[7.5px] gap-3 items-start'>
+    <div
+      className={`flex py-[12px] pr-[7.5px] gap-3 items-start ${Styles.subComment}`}
+    >
       <Image
         src={subCommentImage}
         alt={subCommentCommentText}
@@ -124,10 +135,10 @@ export default function SubComment({
       />
       <div className='flex flex-1 flex-col gap-3'>
         <p>
-          <span className='font-semibold text-[14px] lg:text-[15px]'>
+          <span className='font-semibold text-[12px] lg:text-[14px]'>
             {subCommentUsername} &nbsp;
           </span>
-          <span className='text-[13px] lg:text-[15px]'>
+          <span className='text-[12px] lg:text-[14px]'>
             <Link
               className='text-slate-400'
               href={`${webUrl}/user-profile/${user}`}
@@ -150,6 +161,11 @@ export default function SubComment({
             }}
           >
             Reply
+          </button>
+          <button
+            className={`${Styles.subCommentButton} lg:hidden space-x-[2px] items-center`}
+          >
+            <BsThreeDots size={18} />
           </button>
         </div>
       </div>

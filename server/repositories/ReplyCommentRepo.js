@@ -12,6 +12,14 @@ class ReplyCommentRepo extends ReplyCommentRepoInterface{
     })
     return await replyComment.save();
   }
+
+  async findCommentById(_id){
+    return await ReplyComment.findOne({_id});
+  }
+
+  async deleteCommentByParentCommentId(commentId){
+    await ReplyComment.deleteMany({parentCommentId: commentId});
+  }
 }
 
 export default ReplyCommentRepo;

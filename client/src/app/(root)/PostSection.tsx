@@ -8,6 +8,7 @@ import axios from 'axios'
 import { Api } from '@/Constants'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import DeleteComponent from '@/components/shared/DeleteComponent/Delete'
 
 interface IComments {
   _id: string
@@ -98,6 +99,9 @@ export default function PostSection() {
     <div
       className={`xl:w-[60%] w-full  sm:mt-[40px]  px-[16px] flex flex-col gap-5 items-center`}
     >
+      {/* <DeleteComponent 
+        
+      /> */}
       {posts?.map(post => {
         return (
           <Post

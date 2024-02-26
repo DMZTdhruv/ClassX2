@@ -1,0 +1,21 @@
+.parentComment .parentCommentButton:active {
+  transform: scale(0.8);
+  opacity: 0.8;
+  display: flex;
+  transition: all;
+}
+
+.parentComment:hover .parentCommentButton {
+  display: flex;
+}
+
+.subComment .subCommentButton:active {
+  transform: scale(0.8);
+  opacity: 0.8;
+  display: flex;
+  transition: all;
+}
+
+.subComment:hover .subCommentButton {
+  display: flex;
+}

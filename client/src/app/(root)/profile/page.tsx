@@ -25,10 +25,8 @@ export default async function Profile() {
   const cookie = cookies()
   // const token = cookie.get('classX_user_token')
   const api = process.env.NEXT_PUBLIC_API
-  const token = {
-    value: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NWNiMmIzNjNlYjVlZDJlZDYyNzgwNDciLCJ1c2VyUHJvZmlsZUlkIjoiNjVjYjJlYWNiOGJlMDZiN2RkNTAyNzJmIiwidXNlcm5hbWUiOiJ5YWVEaHJ1diIsImVtYWlsIjoic2hydXZwYXJtYXJAZ21haWwuY29tIiwiaWF0IjoxNzA4NjAwMDY0LCJleHAiOjE3MTExOTIwNjR9.ix9R8k-tAbKgcqe0kqyyRC81Iy-pw5ujYyUn3UObucU'
-  }
-  // functions  
+  const token = cookie.get('classX_user_token')
+  // functions
   const getUserProfile = async () => {
     const userProfileApi = `${api}/users/get-user-profile`
     try {

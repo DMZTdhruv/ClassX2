@@ -4,6 +4,8 @@ import { replyCommentController } from './replyCommentController.js'
 import unlikeCommentController from './ParentComment/unlikeCommentController.js'
 import { likeSubCommentController } from './subComment/likeSubCommentController.js'
 import { unlikeSubCommentController } from './subComment/unlikeSubCommentController.js'
+import deleteParentComment from './ParentComment/deleteParentCommentController.js'
+
 
 export {
   createCommentController,
@@ -12,4 +14,5 @@ export {
   unlikeCommentController,
   likeSubCommentController,
   unlikeSubCommentController,
+  deleteParentComment
 }

@@ -7,6 +7,7 @@ import {
   unlikeCommentController,
   likeSubCommentController,
   unlikeSubCommentController,
+  deleteParentComment
 } from "../../controllers/comment/index.js"
 import {
   createPostController,
@@ -16,6 +17,7 @@ import {
   getPostByIdController,
   getSubCommentsController,
 } from '../../controllers/post/index.js';
+
 
 const router = express.Router();
 
@@ -40,5 +42,12 @@ router.post('/comment/reply-comment', authenticateUserToken, replyCommentControl
 router.get('/get-post', authenticateUserToken, getPostController);
 router.get('/', authenticateUserToken, getPostByIdController);
 router.get('/comment/sub-comment', authenticateUserToken, getSubCommentsController);
+
+// Delete routes
+// Delete routes for comments
+router.delete('/comment/delete-comment/:commentId',
+  authenticateUserToken,
+  deleteParentComment
+);
 
 export default router;

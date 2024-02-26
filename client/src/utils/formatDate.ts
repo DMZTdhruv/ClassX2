@@ -8,12 +8,12 @@ export const formatDate = (date: Date) => {
   const days = Math.floor(hours / 24)
 
   if (seconds < 60) {
-    return `${seconds} seconds ago`
+    return `${seconds} s`
   } else if (minutes < 60) {
-    return `${minutes} minutes ago`
+    return `${minutes} m`
   } else if (hours < 24) {
-    return `${hours} hours ago`
+    return `${hours} h`
   } else {
-    return `${days} days ago`
+    return `${days} d`
   }
 }

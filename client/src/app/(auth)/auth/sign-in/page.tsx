@@ -49,6 +49,7 @@ function SignInPage() {
           email,
           password,
         }),
+        credentials: 'include',
       })
       const existingUser = await checkUser.json()
       if (!checkUser.ok) {
@@ -62,9 +63,11 @@ function SignInPage() {
       setTimeout(() => {
         setMessage('')
       }, 5000)
-
+      console.log(existingUser.token)
       Cookies.set('classX_user_token', existingUser.token, {
         expires: 30,
+        secure: true,
+        httpOnly: true,
       })
       router.push('/')
     } catch (err: any) {

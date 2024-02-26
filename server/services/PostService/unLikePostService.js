@@ -16,10 +16,9 @@ export default async function unlikePostService(userProfileID, postId) {
 
     // removing user like
     postExists.likes.remove(userProfileID)
-    const unlikedPost = await postExists.save({ select: '_id likes' })
+    await postExists.save()
     return {
       message: 'Post Unliked',
-      post: unlikedPost,
     }
   } catch (err) {
     console.log(err.message)

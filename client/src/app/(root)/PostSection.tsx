@@ -8,7 +8,7 @@ import axios from 'axios'
 import { Api } from '@/Constants'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import DeleteComponent from '@/components/shared/DeleteComponent/Delete'
+import DeleteComponent from '@/components/shared/DeleteComponent/DeleteComment'
 
 interface IComments {
   _id: string

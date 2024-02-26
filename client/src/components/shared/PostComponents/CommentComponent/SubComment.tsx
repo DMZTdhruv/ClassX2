@@ -142,6 +142,7 @@ export default function SubComment({
             <Link
               className='text-slate-400'
               href={`${webUrl}/user-profile/${user}`}
+              prefetch={false}
             >
               {user}
             </Link>{' '}

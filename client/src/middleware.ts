@@ -4,7 +4,6 @@ import { verifyAuth } from './lib/auth'
 export async function middleware(req: NextRequest) {
   const token = req.cookies.get('classX')?.value || ''
   const api = process.env.NEXT_PUBLIC_WEBURL
-  console.log(token)
   if (!token) {
     return NextResponse.redirect(new URL(api + '/auth/sign-in'))
   }

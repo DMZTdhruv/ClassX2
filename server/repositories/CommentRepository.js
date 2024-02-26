@@ -29,6 +29,10 @@ export default class CommentRepository extends CommentRepositoryInterface {
     return await Comment.findOne({ _id: commentId })
   }
 
+  async findCommentByIdWithPostedBy(commentId){
+    return await Comment.findOne({ _id: commentId }).populate('postedBy')
+  }
+
   async findSubCommentById(commentId) {
     return await ReplyComment.findOne({ _id: commentId })
   }

@@ -24,7 +24,8 @@ import { formatDate } from '@/utils'
 import { HiMiniXMark } from 'react-icons/hi2'
 import axios from 'axios'
 import { BsThreeDots } from 'react-icons/bs'
-import DeleteComponent from '../shared/DeleteComponent/Delete'
+import DeleteCommentComponent from '../shared/DeleteComponent/DeleteComment'
+import DeletePostModal from '../shared/DeleteComponent/DeletePost'
 
 // all interfacess
 interface ImageDisplayProps {
@@ -64,6 +65,11 @@ interface GetSubComment {
   createdAt: string
 }
 
+interface DeleteCommentDetails {
+  userId: string
+  deleteId: string
+}
+
 function Header({
   username,
   userProfileImage,
@@ -86,7 +92,7 @@ function Header({
         <span className=' text-white/50 '>{createdAt}</span>
       </div>
       <button
-        className={`flex space-x-[2px] items-center`}
+        className={`flex space-x-[2px] items-center active:scale-75 active:opacity-75 transition-all`}
         onClick={() => handleModal(true)}
       >
         <BsThreeDots size={18} />
@@ -118,11 +124,19 @@ export default function PostModalPage({
 }) {
   // Constants
 
-  const [openModal, setOpenModal] = useState<boolean>(false)
-
+  const [openDeleteCommentModal, setOpenDeleteCommentModal] =
+    useState<boolean>(false)
   function handleModal(value: boolean) {
-    setOpenModal(value)
+    setOpenDeleteCommentModal(value)
   }
+
+  const [openDeletePostModal, setOpenDeletePostModal] = useState<boolean>(false)
+  const [deleteCommentDetails, setDeleteCommentDetails] =
+    useState<DeleteCommentDetails | null>(null)
+  function handleDeletePostModal(value: boolean) {
+    setOpenDeletePostModal(value)
+  }
+
   const modalRef = useRef<HTMLDivElement>(null)
   const cookie = useCookieProvider()
   const router = useRouter()
@@ -136,7 +150,12 @@ export default function PostModalPage({
     postData.likes.filter(id => id === cookie?.userProfileId).length > 0
   )
   const [allComments, setAllComments] = useState<IComments[]>(postData.comments)
-
+  const handleDeleteComment = (commentId: string) => {
+    setAllComments(prev => {
+      const comments = prev.filter(comment => comment._id !== commentId)
+      return comments
+    })
+  }
   const [replyUsername, setReplyUsername] = useState<string>('')
   const [comment, setComment] = useState<string>('')
   const [replyCommentData, setReplyCommentData] = useState({
@@ -357,14 +376,26 @@ export default function PostModalPage({
       className='w-full min-h-[100vh] responiveModal flexCenter border md:h-full overflow-y-auto bg-[#0E0E0E] md:bg-transparent'
       onClick={handleModalClose}
     >
-      {openModal && (
-        <DeleteComponent
-          userId=':1d'
-          deleteId='sda'
-          endPoint='sda'
+      {openDeleteCommentModal && (
+        <DeleteCommentComponent
+          userId={deleteCommentDetails?.userId!}
+          deleteId={deleteCommentDetails?.deleteId!}
+          userProfileId={postData.postedBy._id}
+          handleDeleteComment={handleDeleteComment}
           handleModal={handleModal}
         />
       )}
+
+      {openDeletePostModal && (
+        <DeletePostModal
+          userId=':1d'
+          deleteId='sda'
+          userProfileId={postData.postedBy._id}
+          endPoint='sda'
+          handleModal={handleDeletePostModal}
+        />
+      )}
+
       <button>
         <HiMiniXMark
           className='fixed hidden md:block top-[5%] right-[5%]'
@@ -383,7 +414,7 @@ export default function PostModalPage({
             userProfileImage={postData?.postedBy.userProfileImage!}
             username={postData?.postedBy.username!}
             createdAt={postedDate}
-            handleModal={handleModal}
+            handleModal={handleDeletePostModal}
           ></Header>
         </div>
         <ImageDisplay imageUrl={postData.imageUrl} />
@@ -394,7 +425,7 @@ export default function PostModalPage({
               userProfileImage={postData?.postedBy.userProfileImage!}
               username={postData?.postedBy.username!}
               createdAt={postedDate}
-              handleModal={handleModal}
+              handleModal={handleDeletePostModal}
             ></Header>
           </div>
           <div className='flex-1 md:border-t md:border-b border-[#212936] w-full min-h-[60vh] md:max-h-[45vh] overflow-y-auto '>
@@ -440,6 +471,7 @@ export default function PostModalPage({
                   likeSubComment={likeSubComment}
                   unlikeSubComment={unlikeSubComment}
                   handleModal={handleModal}
+                  setDeleteCommentDetails={setDeleteCommentDetails}
                 />
               )
             })}

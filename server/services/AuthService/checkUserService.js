@@ -12,7 +12,6 @@ export const checkUserService = async (userID) => {
   try {
     const userRepo = new UserRepository();
     const user = await userRepo.findUserById(userID);
-    console.log(user);
     // Check userProfile:
     const userProfileRepo = new UserProfileRepository();
     const userProfile = await userProfileRepo.getUserData(userID);

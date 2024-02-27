@@ -2,37 +2,37 @@
 
 import { Api } from '@/Constants'
 import useCookieProvider from '@/hooks/useCookieProvider'
+import Style from './styles.module.css'
 
-interface DeletComponent {
+interface DeleteComment {
   userId: string
   deleteId: string
-  userProfileId: string
   handleModal: (data: boolean) => void
   className?: string
   handleDeleteComment: (data: string) => void
+  type: string
 }
 
 export default function DeleteCommentComponent({
   userId,
   deleteId,
-  userProfileId,
   handleModal,
   className,
   handleDeleteComment,
-}: DeletComponent) {
+  type,
+}: DeleteComment) {
   const cookie = useCookieProvider()
-
+  console.log(handleDeleteComment);
   const deleteComment = async () => {
+    const CommentApi = `${Api}/post/comment/delete-comment/${deleteId}`
+    const SubCommentApi = `${Api}/post/comment/subComment/delete-comment/${deleteId}`
     try {
-      const response = await fetch(
-        `${Api}/post/comment/delete-comment/${deleteId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${cookie?.cookie}`,
-          },
-        }
-      )
+      const response = await fetch(`${type === 'Comment' ? CommentApi : SubCommentApi}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${cookie?.cookie}`,
+        },
+      })
 
       if (!response.ok) {
         const result = await response.json()
@@ -53,7 +53,8 @@ export default function DeleteCommentComponent({
       className={`fixed top-[50%] left-[50%] flex items-center justify-center gap-3 h-screen w-full bg-[#0E0E0E]/80 z-[1000000] translate-x-[-50%] translate-y-[-50%]`}
     >
       <div
-        className={`w-[336px] flex flex-col  bg-[#1E1E1E]/80 shadow-lg backdrop-blur-md py-[8px]  rounded-[22px] ${className}`}
+        className={`w-[336px]  flex flex-col bg-[#1E1E1E]/80 shadow-lg backdrop-blur-md py-[8px]  rounded-[22px] ${className}`}
+        style={{}}
       >
         {cookie?.userProfileId === userId ? (
           <button

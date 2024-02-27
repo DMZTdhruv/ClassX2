@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react'
 import useCookieProvider from '@/hooks/useCookieProvider'
 import { Api } from '@/Constants'
 import { BsThreeDots } from 'react-icons/bs'
+import DeleteCommentComponent from '../../DeleteComponent/DeleteComment'
 
 interface UpdateReplyCommentData {
   parentCommentId: string
@@ -49,6 +50,7 @@ interface ISubComment {
 interface DeleteCommentDetails {
   userId: string
   deleteId: string
+  clientComponent?: boolean
 }
 
 interface Comment {
@@ -69,6 +71,7 @@ interface Comment {
   unlikeSubComment: (_id: string) => void
   handleModal: (data: boolean) => void
   setDeleteCommentDetails: (data: DeleteCommentDetails) => void
+  deleteSubComment: (data: string) => void
 }
 
 interface BackendData {
@@ -93,6 +96,7 @@ export default function ParentComment({
   unlikeSubComment,
   handleModal,
   setDeleteCommentDetails,
+  deleteSubComment,
 }: Comment) {
   const date = new Date(parentCommentPostedDate)
   const formatedDate = formatDate(date)
@@ -100,33 +104,43 @@ export default function ParentComment({
   // states
   const [subComments, setSubComments] = useState<ISubComment[] | null>(null)
 
-  const [isOpeningRepliedComments, setIsOpeningRepliedComments] =
-    useState<boolean>(false)
+  const [isOpeningRepliedComments, setIsOpeningRepliedComments] = useState<boolean>(false)
   const [openRepliedComments, setOpenRepliedComments] = useState<boolean>(false)
-  const [openUserRepliedComments, setOpeningUserRepliedComments] =
-    useState<boolean>(true)
+  const [openUserRepliedComments, setOpeningUserRepliedComments] = useState<boolean>(true)
   const [repliedComments, setRepliedComments] = useState([])
   const [isLiked, setIsLiked] = useState<boolean>(
-    parentCommentTotalLikes.filter(id => id === cookie?.userProfileId).length >
-      0
+    parentCommentTotalLikes.filter(id => id === cookie?.userProfileId).length > 0
   )
-  const [numberOfLikes, setNumberOfLikes] = useState<number>(
-    parentCommentTotalLikes.length
+  const [numberOfLikes, setNumberOfLikes] = useState<number>(parentCommentTotalLikes.length)
+  const [userRepliedCommentsLength, setUserRepliedCommentsLength] = useState<number>(
+    userRepliedComments.length
   )
-  const [userRepliedCommentsLength, setUserRepliedCommentsLength] =
-    useState<number>(userRepliedComments.length)
+  const [totalCommentReplies, setTotalCommentReplies] = useState<number>(parentTotalCommentReplies)
 
-  const [isUserRepliedCommentsOpen, setIsUserRepliedCommentsOpen] =
-    useState<boolean>(userRepliedComments.length > 0)
+  const [deleteSubCommentDetails, setDeleteSubCommentDetails] =
+    useState<DeleteCommentDetails | null>(null)
+  const [openDeleteParentCommentModal, setOpenDeleteParentCommentModal] = useState<boolean>(false)
+  const handleParentDeleteModal = (value: boolean) => {
+    setOpenDeleteParentCommentModal(value)
+  }
+  const handleDeleteSubComment = (commentId: string) => {
+    setSubComments(prev => {
+      const comments = prev?.filter(comment => comment._id !== commentId)!
+      return comments
+    })
+    setTotalCommentReplies(prev => prev - 1)
+  }
 
-  const [totalCommentReplies, setTotalCommentReplies] = useState<number>(
-    parentTotalCommentReplies
-  )
+  const handleDeleteUserRepliedComments = (commentId: string) => {
+    deleteSubComment(commentId)
+  }
 
   useEffect(() => {
     setUserRepliedCommentsLength(userRepliedComments.length)
   }, [userRepliedComments])
 
+  console.log(userRepliedComments.length > 0 && totalCommentReplies === 0)
+  // get replies of the comments
   const getRepliedComments = async (parentCommentId: string) => {
     if (subComments?.length! >= totalCommentReplies) {
       return
@@ -228,10 +242,20 @@ export default function ParentComment({
 
   return (
     <div className='my-[10px]'>
-      <div className=''></div>
-      <div
-        className={`flex pt-[12px] px-[15px] gap-3 ${Styles.parentComment} items-start`}
-      >
+      {openDeleteParentCommentModal && (
+        <DeleteCommentComponent
+          userId={deleteSubCommentDetails?.userId!}
+          deleteId={deleteSubCommentDetails?.deleteId!}
+          handleDeleteComment={
+            deleteSubCommentDetails?.clientComponent
+              ? handleDeleteUserRepliedComments
+              : handleDeleteSubComment
+          }
+          handleModal={handleParentDeleteModal}
+          type='SubComment'
+        />
+      )}
+      <div className={`flex pt-[12px] px-[15px] gap-3 ${Styles.parentComment} items-start`}>
         <Image
           src={parentCommentImage}
           alt=''
@@ -251,9 +275,7 @@ export default function ParentComment({
                 <span className='font-semibold text-[12px] lg:text-[13px]'>
                   {parentCommentUsername} &nbsp;
                 </span>
-                <span className='text-[12px] lg:text-[13px]'>
-                  {parentCommentCommentText}
-                </span>
+                <span className='text-[12px] lg:text-[13px]'>{parentCommentCommentText}</span>
               </p>
               <button
                 className='hover:scale-105 p-2 flexCenter w-auto'
@@ -321,7 +343,7 @@ export default function ParentComment({
         </div>
       </div>
       <div className='w-full pl-[57px]'>
-        {parentTotalCommentReplies > 0 && (
+        {totalCommentReplies > 0 && (
           <div className='text-[12px] flex flex-col items-start gap-[10px]'>
             <div className='flex items-center gap-[10px] justify-start mt-3'>
               <span className='w-[25px] h-[2px] bg-neutral-400 rounded-[2px] '></span>
@@ -329,22 +351,15 @@ export default function ParentComment({
                 className=' text-neutral-500 flex items-center gap-3'
                 onClick={() => {
                   if (userRepliedComments.length > 0) {
-                    setSubComments(prev => [
-                      ...(prev || []),
-                      ...userRepliedComments,
-                    ])
-                    setTotalCommentReplies(
-                      prev => prev + userRepliedComments.length
-                    )
+                    setSubComments(prev => [...(prev || []), ...userRepliedComments])
+                    setTotalCommentReplies(prev => prev + userRepliedComments.length)
                     updateRepliedComments()
                   }
                   setOpenRepliedComments(prev => !prev)
                   getRepliedComments(_id)
                 }}
               >
-                {openRepliedComments
-                  ? 'Hide replies'
-                  : `View replies (${totalCommentReplies})`}
+                {openRepliedComments ? 'Hide replies' : `View replies (${totalCommentReplies})`}
 
                 {isOpeningRepliedComments && <div className='loader '></div>}
               </button>
@@ -365,35 +380,37 @@ export default function ParentComment({
                     subCommentTotalLikes={comment.likes}
                     updateUsername={updateUsername}
                     updateReplyCommentData={updateReplyCommentData}
+                    handleParentCommentModal={handleParentDeleteModal}
+                    setDeleteSubCommentDetails={setDeleteSubCommentDetails}
                   />
                 ))}
               </div>
             )}
           </div>
         )}
+
         {userRepliedComments &&
           userRepliedCommentsLength > 0 &&
-          userRepliedComments[0]?.parentCommentId === _id && (
+          userRepliedComments.find(
+            comment => comment.parentCommentId === _id //we need to find efficient implementation
+          ) && (
             <div className='text-[12px] flex flex-col items-start gap-[10px]'>
-              {userRepliedComments.length >= 1 &&
-                parentTotalCommentReplies === 0 && (
-                  <div className='flex items-center gap-[10px] justify-start mt-3'>
-                    <span className='w-[25px] h-[2px] bg-neutral-400 rounded-[2px]'></span>
-                    <button
-                      className=' text-neutral-500 flex items-center gap-3'
-                      onClick={() => {
-                        setOpeningUserRepliedComments(prev => !prev)
-                      }}
-                    >
-                      {openUserRepliedComments
-                        ? `Hide replies`
-                        : `View replies (${userRepliedComments.length})`}
-                      {isOpeningRepliedComments && (
-                        <div className='loader '></div>
-                      )}
-                    </button>
-                  </div>
-                )}
+              {userRepliedComments.length > 0 && totalCommentReplies === 0 && (
+                <div className='flex items-center gap-[10px] justify-start mt-3'>
+                  <span className='w-[25px] h-[2px] bg-neutral-400 rounded-[2px]'></span>
+                  <button
+                    className=' text-neutral-500 flex items-center gap-3'
+                    onClick={() => {
+                      setOpeningUserRepliedComments(prev => !prev)
+                    }}
+                  >
+                    {openUserRepliedComments
+                      ? `Hide replies`
+                      : `View replies (${userRepliedComments.length})`}
+                    {isOpeningRepliedComments && <div className='loader '></div>}
+                  </button>
+                </div>
+              )}
               {openUserRepliedComments && (
                 <div className='w-full'>
                   {userRepliedComments?.map((comment: ISubComment) => {
@@ -415,6 +432,9 @@ export default function ParentComment({
                           clientComment={true}
                           likeSubComment={likeSubComment}
                           unlikeSubComment={unlikeSubComment}
+                          handleParentCommentModal={handleParentDeleteModal}
+                          setDeleteSubCommentDetails={setDeleteSubCommentDetails}
+                          deleteSubComment={deleteSubComment}
                         />
                       )
                     }

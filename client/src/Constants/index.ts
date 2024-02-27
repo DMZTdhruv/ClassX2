@@ -67,7 +67,7 @@ export const BottomBarData = [
 ]
 
 
-
+// types
 interface IPost {
   _id: string
   title: string

@@ -98,17 +98,11 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
   }
 
   async checkUserUnFollowStatus(userId, userToUnfollowId) {
-    console.log({
-      userId,
-      userToUnfollowId,
-    })
-
     const checkCurrentUserUnFollowingId = await UserProfile.findOne({
       _id: userId,
       following: userToUnfollowId,
     })
 
-    console.log(checkCurrentUserUnFollowingId)
 
     const checkUnFollowingUsersCurrentUserId = await UserProfile.findOne({
       _id: userToUnfollowId,

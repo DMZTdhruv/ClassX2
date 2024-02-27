@@ -18,7 +18,6 @@ export const createComment = async (postId, commentText, postedBy) => {
       postedBy
     )
     await commentRepository.pushComment(postId, newComment._id)
-    console.log(newComment)
     return {
       message: newComment,
     }

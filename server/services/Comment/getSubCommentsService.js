@@ -13,7 +13,6 @@ export default async function getSubCommentsService(parentCommentId) {
     const { commentReplies } = await commentRepo.subCommentsOfParentComment(
       parentCommentId
     )
-    console.log(commentReplies)
     return {
       data: commentReplies,
     }

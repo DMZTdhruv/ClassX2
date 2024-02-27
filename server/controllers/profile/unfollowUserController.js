@@ -4,7 +4,6 @@ export default async function unfollowUserController(req, res) {
   const { userProfileId } = req.user
   const { userToUnfollowId } = req.body
 
-  console.log({userProfileId, userToUnfollowId})
   try {
     const result = await unFollowUserService(userProfileId, userToUnfollowId)
     res.status(201).json(result);

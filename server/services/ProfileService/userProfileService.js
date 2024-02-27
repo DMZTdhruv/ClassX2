@@ -29,7 +29,6 @@ export async function createUserProfileInstance(
   const existingUserProfile = await userProfileRepository.findByUserID(userID)
   const existingUsername = await userProfileRepository.findByUsername(username)
 
-  console.log(existingUsername);
 
   if (existingUsername) {
     throw new Error('This username already exists')

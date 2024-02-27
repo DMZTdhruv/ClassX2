@@ -4,7 +4,6 @@ export const replyCommentController = async (req, res) => {
   try {
     const { parentCommentId, postId, repliedUserId, commentText, postedBy } =
       req.body
-    console.log(req.body)
     const result = await replyCommentService(
       parentCommentId,
       postId,

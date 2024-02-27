@@ -3,7 +3,6 @@ import { validateCommentLike } from '../../../validations/commentValidator.js'
 
 export const likeCommentController = async (req, res) => {
   const { commentId, userID } = req.body
-  console.log(commentId, userID)
   try {
     validateCommentLike(commentId, userID)
     const result = await likeComment(commentId, userID)

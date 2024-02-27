@@ -6,7 +6,6 @@ export default async function getUserProfileByDivisionService(userProfileId) {
     
     const userProfileRepo = new UserProfileRepository();
     const {division} = await userProfileRepo.findById(userProfileId)
-    console.log(division);
     if(!division) {
       throw new Error("This user has no division")
     }

@@ -10,6 +10,12 @@ import React, { useState } from 'react'
 import { BsThreeDots } from 'react-icons/bs'
 import Styles from './styles.module.css'
 
+interface DeleteCommentDetails {
+  userId: string
+  deleteId: string
+  clientComponent?: boolean
+}
+
 interface UpdateReplyCommentData {
   parentCommentId: string
   repliedUserId: string
@@ -29,6 +35,9 @@ interface SubComments {
   clientComment?: boolean
   likeSubComment?: (_id: string) => void
   unlikeSubComment?: (_id: string) => void
+  handleParentCommentModal: (data: boolean) => void
+  setDeleteSubCommentDetails: (data: DeleteCommentDetails) => void
+  deleteSubComment?: (data: string) => void
 }
 
 export default function SubComment({
@@ -46,6 +55,9 @@ export default function SubComment({
   clientComment,
   likeSubComment,
   unlikeSubComment,
+  handleParentCommentModal,
+  setDeleteSubCommentDetails,
+  deleteSubComment,
 }: SubComments) {
   const cookie = useCookieProvider()
   const date = new Date(subCommentPostedDate)
@@ -53,9 +65,7 @@ export default function SubComment({
   const [isLiked, setIsLiked] = useState<boolean>(
     subCommentTotalLikes.filter(id => id === cookie?.userProfileId).length > 0
   )
-  const [numberOfLikes, setNumberOfLikes] = useState<number>(
-    subCommentTotalLikes.length
-  )
+  const [numberOfLikes, setNumberOfLikes] = useState<number>(subCommentTotalLikes.length)
   const user = subCommentCommentText.split(' ')[0]
   const userComment = subCommentCommentText.split(' ').slice(1).join(' ')
 
@@ -118,9 +128,7 @@ export default function SubComment({
   }
 
   return (
-    <div
-      className={`flex py-[12px] pr-[7.5px] gap-3 items-start ${Styles.subComment}`}
-    >
+    <div className={`flex py-[12px] pr-[7.5px] gap-3 items-start ${Styles.subComment}`}>
       <Image
         src={subCommentImage}
         alt={subCommentCommentText}
@@ -165,6 +173,21 @@ export default function SubComment({
           </button>
           <button
             className={`${Styles.subCommentButton} lg:hidden space-x-[2px] items-center`}
+            onClick={() => {
+              handleParentCommentModal(true)
+              if (clientComment) {
+                setDeleteSubCommentDetails({
+                  userId: subCommentUserId,
+                  deleteId: _id,
+                  clientComponent: true,
+                })
+              } else {
+                setDeleteSubCommentDetails({
+                  userId: subCommentUserId,
+                  deleteId: _id,
+                })
+              }
+            }}
           >
             <BsThreeDots size={18} />
           </button>

@@ -27,7 +27,6 @@ export const replyCommentService = async (
 
     // getting the user details
     const user = await userProfile.findById(repliedUserId);
-    console.log(user)
     // editing the original comment
 
     //creating new reply comment

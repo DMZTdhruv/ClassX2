@@ -13,14 +13,12 @@ export default async function unFollowUserService(userId, userToFollowId) {
     // checking if the current user is already following
     const isAlreadyFollowingEachOther = await userRepo.checkUserUnFollowStatus(userId,userToFollowId);
 
-    console.log(isAlreadyFollowingEachOther)
 
     if(!isAlreadyFollowingEachOther){
       throw new Error("Cannot unfollow a user which is not followed by user: " + userId)
     }
 
     const result = await userRepo.unfollowUser(userId, userToFollowId)
-    console.log(result);
 
     return {
       message: `${userId} is now unfollowing ${userToFollowId}`

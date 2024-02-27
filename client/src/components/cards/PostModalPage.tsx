@@ -1,12 +1,6 @@
 'use client'
 
-import React, {
-  ChangeEvent,
-  FormEvent,
-  useState,
-  useRef,
-  useEffect,
-} from 'react'
+import React, { ChangeEvent, FormEvent, useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
@@ -14,11 +8,9 @@ import { Api, IComments, IPost, UpdateReplyCommentData } from '@/Constants'
 import FollowButton from '@/components/shared/FollowButton/FollowButton'
 import useCookieProvider from '@/hooks/useCookieProvider'
 import { likePost, unlikePost } from '@/utils/LikeFunctions'
-import Styles from './styles.module.css'
 
 const ParentComment = React.lazy(
-  () =>
-    import('@/components/shared/PostComponents/CommentComponent/ParentComment')
+  () => import('@/components/shared/PostComponents/CommentComponent/ParentComment')
 )
 import { formatDate } from '@/utils'
 import { HiMiniXMark } from 'react-icons/hi2'
@@ -27,20 +19,7 @@ import { BsThreeDots } from 'react-icons/bs'
 import DeleteCommentComponent from '../shared/DeleteComponent/DeleteComment'
 import DeletePostModal from '../shared/DeleteComponent/DeletePost'
 
-// all interfacess
-interface ImageDisplayProps {
-  // Image interface
-  imageUrl: string
-}
-
-interface HeaderProps {
-  // Header interface
-  username: string
-  userProfileImage: string
-  createdAt: string
-  handleModal: (data: boolean) => void
-}
-
+// Interfaces
 interface SubCommentProps {
   _id: string
   parentCommentId: string
@@ -65,99 +44,37 @@ interface GetSubComment {
   createdAt: string
 }
 
-interface DeleteCommentDetails {
-  userId: string
-  deleteId: string
-}
-
-function Header({
-  username,
-  userProfileImage,
-  createdAt,
-  handleModal,
-}: HeaderProps) {
-  return (
-    <header className='flex text-[13px] sm:text-[15px]  h-[60px] px-[15px] space-y-2 items-center justify-between'>
-      <div className='flex font-semibold items-center gap-3  '>
-        <Image
-          src={userProfileImage}
-          alt=''
-          width={30}
-          height={30}
-          style={{ width: '30px', height: '30px' }}
-          unoptimized
-          className=' aspect-square object-cover rounded-full'
-        />
-        <h5 className=''>{username}</h5>
-        <span className=' text-white/50 '>{createdAt}</span>
-      </div>
-      <button
-        className={`flex space-x-[2px] items-center active:scale-75 active:opacity-75 transition-all`}
-        onClick={() => handleModal(true)}
-      >
-        <BsThreeDots size={18} />
-      </button>
-    </header>
-  )
-}
-
-function ImageDisplay({ imageUrl }: ImageDisplayProps) {
-  return (
-    <Image
-      src={imageUrl}
-      alt=''
-      width={400}
-      height={300}
-      style={{ width: '100%', height: 'auto' }}
-      className='md:max-w-[400px] border-y  border-[#212936] sm:h-full imageResponive object-contain'
-      quality={100}
-    />
-  )
-}
-
-export default function PostModalPage({
-  postData,
-  postId,
-}: {
-  postData: IPost
-  postId: string
-}) {
-  // Constants
-
-  const [openDeleteCommentModal, setOpenDeleteCommentModal] =
-    useState<boolean>(false)
-  function handleModal(value: boolean) {
-    setOpenDeleteCommentModal(value)
-  }
-
-  const [openDeletePostModal, setOpenDeletePostModal] = useState<boolean>(false)
-  const [deleteCommentDetails, setDeleteCommentDetails] =
-    useState<DeleteCommentDetails | null>(null)
-  function handleDeletePostModal(value: boolean) {
-    setOpenDeletePostModal(value)
-  }
-
-  const modalRef = useRef<HTMLDivElement>(null)
+export default function PostModalPage({ postData, postId }: { postData: IPost; postId: string }) {
+  //constants
   const cookie = useCookieProvider()
   const router = useRouter()
   const postedDate = formatDate(new Date(postData.createdAt))
+
+  // refs
+  const modalRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // loading states
   const [isPendingComment, setIsPendingComment] = useState<boolean>(false)
-  const [numberOfLikes, setNumberOfLikes] = useState<number>(
-    postData.likes.length
-  )
+
+  // Post data states
   const [isLiked, setIsLiked] = useState<boolean>(
     postData.likes.filter(id => id === cookie?.userProfileId).length > 0
   )
+  const [numberOfLikes, setNumberOfLikes] = useState<number>(postData.likes.length)
+  const [openDeletePostModal, setOpenDeletePostModal] = useState<boolean>(false)
+
+  // comment states
   const [allComments, setAllComments] = useState<IComments[]>(postData.comments)
-  const handleDeleteComment = (commentId: string) => {
-    setAllComments(prev => {
-      const comments = prev.filter(comment => comment._id !== commentId)
-      return comments
-    })
-  }
-  const [replyUsername, setReplyUsername] = useState<string>('')
+  const [openDeleteCommentModal, setOpenDeleteCommentModal] = useState<boolean>(false)
   const [comment, setComment] = useState<string>('')
+  const [deleteCommentDetails, setDeleteCommentDetails] = useState<DeleteCommentDetails | null>(
+    null
+  )
+
+  //subcomments states
+  const [repliedSubComments, setRepliedSubComments] = useState<GetSubComment[]>([])
+  const [replyUsername, setReplyUsername] = useState<string>('')
   const [replyCommentData, setReplyCommentData] = useState({
     parentCommentId: '',
     postId: '',
@@ -166,15 +83,68 @@ export default function PostModalPage({
     postedBy: '',
   })
 
-  const [repliedSubComments, setRepliedSubComments] = useState<GetSubComment[]>(
-    []
-  )
+  //use effects
+  useEffect(() => {
+    const body = document.getElementsByTagName('body')[0]
+    body.style.overflow = 'hidden'
+    return () => {
+      body.style.overflow = 'auto'
+    }
+  }, [])
+
+  // All handles
+
+  // modal handlers
+  function handleModal(value: boolean) {
+    setOpenDeleteCommentModal(value)
+  }
+
+  function handleDeletePostModal(value: boolean) {
+    setOpenDeletePostModal(value)
+  }
+
+  function hanldePostModalClose(event: any) {
+    if (event.type === 'click' || (event.type === 'keydown' && event.key === 'Enter')) {
+      if (modalRef.current) {
+        const { left, right, top, bottom } = modalRef.current.getBoundingClientRect()
+        const { clientX, clientY, target } = event
+        const isClickOrEnterInsideForm = target instanceof HTMLElement && target.closest('form')
+
+        if (
+          !isClickOrEnterInsideForm &&
+          (clientX < left || clientX > right || clientY < top || clientY > bottom)
+        ) {
+          router.back()
+        }
+
+        if (event.type === 'keydown' && !isClickOrEnterInsideForm) {
+          event.preventDefault()
+        }
+      }
+    }
+  }
+
+  // all comment handlers
+  const handleDeleteComment = (commentId: string) => {
+    setAllComments(prev => {
+      const comments = prev.filter(comment => comment._id !== commentId)
+      return comments
+    })
+  }
+
+  const handleComment = (e: ChangeEvent<HTMLInputElement>) => {
+    setComment(e.target.value)
+  }
+
+  // all sub/reply comments
+  const handleReplyUsername = (name: string) => {
+    setReplyUsername(name)
+    setComment(`@${name} `)
+  }
 
   const likeSubComment = (_id: string) => {
     setRepliedSubComments(prevComments => {
-      const subCommentIndex = prevComments.findIndex(
-        comment => comment._id === _id
-      )
+      const subCommentIndex = prevComments.findIndex(comment => comment._id === _id)
 
       if (subCommentIndex !== -1) {
         prevComments[subCommentIndex].likes.push(cookie?.userProfileId!)
@@ -186,37 +156,20 @@ export default function PostModalPage({
 
   const unlikeSubComment = (_id: string) => {
     setRepliedSubComments(prevComments => {
-      const subCommentIndex = prevComments.findIndex(
-        comment => comment._id === _id
-      )
+      const subCommentIndex = prevComments.findIndex(comment => comment._id === _id)
 
       if (subCommentIndex !== -1) {
-        prevComments[subCommentIndex].likes = prevComments[
-          subCommentIndex
-        ].likes.filter(id => id !== cookie?.userProfileId)
+        prevComments[subCommentIndex].likes = prevComments[subCommentIndex].likes.filter(
+          id => id !== cookie?.userProfileId
+        )
       }
 
       return [...prevComments]
     })
   }
 
-  useEffect(() => {
-    const body = document.getElementsByTagName('body')[0]
-
-    body.style.overflow = 'hidden'
-
-    return () => {
-      body.style.overflow = 'auto'
-    }
-  }, [])
-
-  const handleComment = (e: ChangeEvent<HTMLInputElement>) => {
-    setComment(e.target.value)
-  }
-
-  const handleReplyUsername = (name: string) => {
-    setReplyUsername(name)
-    setComment(`@${name} `)
+  const deleteSubComment = (commentId: string) => {
+    setRepliedSubComments(prev => prev.filter(comment => comment._id !== commentId))
   }
 
   const handleReplyUserComment = (e: ChangeEvent<HTMLInputElement>) => {
@@ -236,10 +189,7 @@ export default function PostModalPage({
     setReplyCommentData({ ...replyCommentData, commentText: e.target.value })
   }
 
-  const updateReplyCommentData = ({
-    parentCommentId,
-    repliedUserId,
-  }: UpdateReplyCommentData) => {
+  const updateReplyCommentData = ({ parentCommentId, repliedUserId }: UpdateReplyCommentData) => {
     setReplyCommentData({
       parentCommentId,
       postId: postData._id,
@@ -249,6 +199,11 @@ export default function PostModalPage({
     })
   }
 
+  const updateRepliedComments = () => {
+    setRepliedSubComments([])
+  }
+
+  // Normal important functions
   const focusInput = () => {
     setComment('')
     setReplyUsername('')
@@ -257,28 +212,22 @@ export default function PostModalPage({
     }
   }
 
-  const updateRepliedComments = () => {
-    setRepliedSubComments([])
-  }
-
   const goBack = () => {
     router.back()
   }
 
+  // Fetch functions
   const replyComment = async () => {
     setIsPendingComment(true)
 
     try {
-      const response = await axios.post(
-        `${Api}/post/comment/reply-comment`,
-        replyCommentData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${cookie?.cookie}`,
-          },
-        }
-      )
+      console.log(replyCommentData)
+      const response = await axios.post(`${Api}/post/comment/reply-comment`, replyCommentData, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${cookie?.cookie}`,
+        },
+      })
 
       const { message: result } = response.data
 
@@ -342,47 +291,18 @@ export default function PostModalPage({
     }
   }
 
-  function handleModalClose(event: any) {
-    if (
-      event.type === 'click' ||
-      (event.type === 'keydown' && event.key === 'Enter')
-    ) {
-      if (modalRef.current) {
-        const { left, right, top, bottom } =
-          modalRef.current.getBoundingClientRect()
-        const { clientX, clientY, target } = event
-        const isClickOrEnterInsideForm =
-          target instanceof HTMLElement && target.closest('form')
-
-        if (
-          !isClickOrEnterInsideForm &&
-          (clientX < left ||
-            clientX > right ||
-            clientY < top ||
-            clientY > bottom)
-        ) {
-          router.back()
-        }
-
-        if (event.type === 'keydown' && !isClickOrEnterInsideForm) {
-          event.preventDefault()
-        }
-      }
-    }
-  }
-
   return (
     <section
       className='w-full min-h-[100vh] responiveModal flexCenter border md:h-full overflow-y-auto bg-[#0E0E0E] md:bg-transparent'
-      onClick={handleModalClose}
+      onClick={hanldePostModalClose}
     >
       {openDeleteCommentModal && (
         <DeleteCommentComponent
           userId={deleteCommentDetails?.userId!}
           deleteId={deleteCommentDetails?.deleteId!}
-          userProfileId={postData.postedBy._id}
           handleDeleteComment={handleDeleteComment}
           handleModal={handleModal}
+          type='Comment'
         />
       )}
 
@@ -397,10 +317,7 @@ export default function PostModalPage({
       )}
 
       <button>
-        <HiMiniXMark
-          className='fixed hidden md:block top-[5%] right-[5%]'
-          size={30}
-        />
+        <HiMiniXMark className='fixed hidden md:block top-[5%] right-[5%]' size={30} />
       </button>
       <div
         className='w-full h-full overflow-y-auto sm:h-full sm:max-w-[80%] sm:min-w-[100%] md:min-w-[80%] md:min-h-[90vh] xl:min-w-[75%] xl:max-w-[50%]  md:border  bg-[#0E0E0E]  border-[#212936] flex flex-col md:flex-row border'
@@ -444,9 +361,7 @@ export default function PostModalPage({
                   className=' aspect-square object-cover rounded-full'
                 />
                 <div className=' text-[13px] sm:text-[15px]'>
-                  <span className='font-semibold'>
-                    {postData?.postedBy.username!}
-                  </span>{' '}
+                  <span className='font-semibold'>{postData?.postedBy.username!}</span>{' '}
                   <span>{postData.caption}</span>
                 </div>
               </div>
@@ -472,6 +387,7 @@ export default function PostModalPage({
                   unlikeSubComment={unlikeSubComment}
                   handleModal={handleModal}
                   setDeleteCommentDetails={setDeleteCommentDetails}
+                  deleteSubComment={deleteSubComment}
                 />
               )
             })}
@@ -548,7 +464,7 @@ export default function PostModalPage({
           </div>
           <form
             onSubmit={submitComment}
-            onKeyDown={handleModalClose}
+            onKeyDown={hanldePostModalClose}
             className='border-t bg-[#0E0E0E] sticky  border-b md:border-b-0 border-[#212936] sm:min-h-[80px] justify-center p-3 bottom-0 md:relative'
           >
             {isPendingComment && (
@@ -576,5 +492,61 @@ export default function PostModalPage({
         </div>
       </div>
     </section>
+  )
+}
+
+interface HeaderProps {
+  username: string
+  userProfileImage: string
+  createdAt: string
+  handleModal: (data: boolean) => void
+}
+
+interface DeleteCommentDetails {
+  userId: string
+  deleteId: string
+}
+
+function Header({ username, userProfileImage, createdAt, handleModal }: HeaderProps) {
+  return (
+    <header className='flex text-[13px] sm:text-[15px]  h-[60px] px-[15px] space-y-2 items-center justify-between'>
+      <div className='flex font-semibold items-center gap-3  '>
+        <Image
+          src={userProfileImage}
+          alt=''
+          width={30}
+          height={30}
+          style={{ width: '30px', height: '30px' }}
+          unoptimized
+          className=' aspect-square object-cover rounded-full'
+        />
+        <h5 className=''>{username}</h5>
+        <span className=' text-white/50 '>{createdAt}</span>
+      </div>
+      <button
+        className={`flex space-x-[2px] items-center active:scale-75 active:opacity-75 transition-all`}
+        onClick={() => handleModal(true)}
+      >
+        <BsThreeDots size={18} />
+      </button>
+    </header>
+  )
+}
+
+interface ImageDisplayProps {
+  imageUrl: string
+}
+
+function ImageDisplay({ imageUrl }: ImageDisplayProps) {
+  return (
+    <Image
+      src={imageUrl}
+      alt=''
+      width={400}
+      height={300}
+      style={{ width: '100%', height: 'auto' }}
+      className='md:max-w-[400px] border-y  border-[#212936] sm:h-full imageResponive object-contain'
+      quality={100}
+    />
   )
 }

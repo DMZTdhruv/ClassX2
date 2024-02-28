@@ -70,7 +70,7 @@ export default async function Profile() {
   const userProfile: UserProfileProps = await getUserProfile()
   const userPosts: Ipost[] = await getUserPosts()
   return (
-    <section className='flex flex-col items-center gap-[60px] mb-[20px]'>
+    <section className='flex mt-[80px] md:mt-[0px] sm:px-[16px] flex-col items-center gap-[60px] mb-[20px]'>
       <UserHeader
         _id={userProfile._id}
         name={userProfile.name}

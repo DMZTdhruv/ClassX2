@@ -2,10 +2,16 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 
 function TopBar() {
+  const pathname = usePathname()
   const navRef = useRef(null)
+  console.log(pathname)
+
   const [isNavHidden, setIsNavHidden] = useState<boolean>(false)
+  const onPath = pathname.startsWith('/post')
+  console.log('Top bar ' + onPath)
 
   useEffect(() => {
     let prevPosition = window.scrollY
@@ -18,15 +24,15 @@ function TopBar() {
       }
       prevPosition = currentPosition
     }
-  }, [])
+  })
 
   return (
     <section
       ref={navRef}
-      className={`h-[60px]  ${
+      className={`h-[60px] ${onPath && 'hidden'} ${
         isNavHidden ? 'translate-y-[-60px]' : 'translate-y-[0px]'
-      } sm:hidden flex  justify-between  px-[16px] items-center sticky top-0 
-    backdrop-blur-lg z-[100] border-b border-neutral-800  w-full transition-transform `}
+      } sm:hidden flex  justify-between  px-[16px] items-center fixed top-0 
+    backdrop-blur-lg z-[50] border-b border-neutral-800  w-full transition-transform `}
     >
       <Image
         src={`/assets/classX.svg`}

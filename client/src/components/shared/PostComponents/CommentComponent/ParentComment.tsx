@@ -327,7 +327,6 @@ export default function ParentComment({
                 Reply
               </button>
               <button
-                className={`${Styles.parentCommentButton} lg:hidden space-x-[2px] items-center`}
                 onClick={() => {
                   handleModal(true)
                   setDeleteCommentDetails({
@@ -336,7 +335,10 @@ export default function ParentComment({
                   })
                 }}
               >
-                <BsThreeDots size={18} />
+                <BsThreeDots
+                  size={18}
+                  className={`${Styles.parentCommentButton} lg:hidden space-x-[2px] items-center`}
+                />
               </button>
             </div>
           </div>

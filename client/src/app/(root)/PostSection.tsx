@@ -50,14 +50,11 @@ export default function PostSection() {
     const getPosts = async () => {
       setIsLoading(true)
       try {
-        const { data } = await axios.get(
-          `${Api}/post/get-post?page=${1}&limit=${10}`,
-          {
-            headers: {
-              Authorization: `Bearer ${cookie?.cookie}`,
-            },
-          }
-        )
+        const { data } = await axios.get(`${Api}/post/get-post?page=${1}&limit=${10}`, {
+          headers: {
+            Authorization: `Bearer ${cookie?.cookie}`,
+          },
+        })
         const { data: result } = data
         setPosts(result)
       } catch (error: any) {
@@ -97,11 +94,8 @@ export default function PostSection() {
 
   return (
     <div
-      className={`xl:w-[60%] w-full  sm:mt-[40px]  px-[16px] flex flex-col gap-5 items-center`}
+      className={`xl:w-[60%] mt-[80px] w-full sm:px-[16px] sm:mt-[40px]  px-[16px] flex flex-col gap-5 items-center`}
     >
-      {/* <DeleteComponent 
-        
-      /> */}
       {posts?.map(post => {
         return (
           <Post

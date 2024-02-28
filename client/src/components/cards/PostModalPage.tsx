@@ -320,10 +320,10 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
         <HiMiniXMark className='fixed hidden md:block top-[5%] right-[5%]' size={30} />
       </button>
       <div
-        className='w-full h-full overflow-y-auto sm:h-full sm:max-w-[80%] sm:min-w-[100%] md:min-w-[80%] md:min-h-[90vh] xl:min-w-[75%] xl:max-w-[50%]  md:border  bg-[#0E0E0E]  border-[#212936] flex flex-col md:flex-row border'
+        className='w-full h-full overflow-y-auto sm:h-full sm:max-w-[80%] sm:min-w-[100%] md:min-w-[80%] md:min-h-[463px] xl:min-w-[75%] xl:max-w-[50%]  md:border  bg-[#0E0E0E]  border-[#212936] flex flex-col md:flex-row border'
         ref={modalRef}
       >
-        <div className='top-0 border-b  border-[#212936] py-[20px] sticky md:hidden px-[16px] flex items-center bg-[#0E0E0E] '>
+        <div className='top-[-1px] border-b  border-[#212936] py-[20px] sticky md:hidden px-[16px] flex items-center bg-[#0E0E0E] '>
           <button onClick={goBack}>Post</button>
         </div>
         <div className='md:hidden block'>
@@ -465,7 +465,7 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
           <form
             onSubmit={submitComment}
             onKeyDown={hanldePostModalClose}
-            className='border-t bg-[#0E0E0E] sticky  border-b md:border-b-0 border-[#212936] sm:min-h-[80px] justify-center p-3 bottom-0 md:relative'
+            className='border-t bg-[#0E0E0E] sticky  border-b md:border-b-0 border-[#212936] sm:min-h-[80px] justify-center p-3 bottom-[0px] md:relative'
           >
             {isPendingComment && (
               <div className='bg-[#171717] w-[80%] outline-none focus-visible:ring-0 min-h-[48px] md:font-semibold sm:min-h-[78px] border-none rounded-xl absolute top-[12px] left-[12px] gap-3 flexCenter  '>

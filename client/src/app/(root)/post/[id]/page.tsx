@@ -1,6 +1,9 @@
+'use client'
+
 import { Api } from '@/Constants'
 import PagePostModal from '@/components/cards/PagePostModal'
-import { cookies } from 'next/headers'
+import useCookieProvider from '@/hooks/useCookieProvider'
+import { useEffect, useState } from 'react'
 
 interface IComments {
   _id: string
@@ -32,44 +35,46 @@ interface IPost {
   createdAt: string
 }
 
-export default async function PostModal({
-  params,
-}: {
-  params: { id: string }
-}) {
-  const cookie = cookies()
-  const token = cookie.get('classX_user_token')
-  const posts = await getPost(params.id, token?.value!)
+export default function PostModal({ params }: { params: { id: string } }) {
+  const [posts, setPosts] = useState(null)
+  const cookie = useCookieProvider()
+
+  useEffect(() => {
+    const getPost = async () => {
+      try {
+        const response = await fetch(`${Api}/post?postId=${params.id}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${cookie?.cookie}`,
+          },
+          cache: 'no-store',
+        })
+
+        if (!response.ok) {
+          console.log('Failed to fetch the post')
+          return
+        }
+
+        const { data } = await response.json()
+        setPosts(data)
+      } catch (err: any) {
+        console.log(err.message)
+      }
+    }
+    getPost()
+  }, [])
 
   if (!posts) {
     return <div>Loading...</div>
   }
 
   return (
-    <div className='flexCenter min-h-screen w-full'>
-      <PagePostModal />
+    <div
+      className={`flexCenter  ${
+        window.scrollY < 60 && 'translate-y-[-60px] sm:translate-y-[0px]'
+      } top-0 sticky h-screen z-[1111110]`}
+    >
+      <PagePostModal postData={posts} postId={params.id} />
     </div>
   )
-}
-
-const getPost = async (id: string, cookie: string) => {
-  try {
-    const response = await fetch(`${Api}/post?postId=${id}`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${cookie}`,
-      },
-      cache: 'no-store',
-    })
-
-    if (!response.ok) {
-      console.log('Failed to fetch the post')
-      return
-    }
-
-    const { data } = await response.json()
-    return data
-  } catch (err: any) {
-    console.log(err.message)
-  }
 }

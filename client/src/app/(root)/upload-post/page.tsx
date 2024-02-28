@@ -1,12 +1,7 @@
 'use client'
 
 import { AiOutlineCloudUpload } from 'react-icons/ai'
-import React, {
-  ChangeEvent,
-  ChangeEventHandler,
-  FormEvent,
-  useState,
-} from 'react'
+import React, { ChangeEvent, ChangeEventHandler, FormEvent, useState } from 'react'
 import { useGenerateLink } from '@/hooks/useGenerateLink'
 import { SanityImageAssetDocument } from '@sanity/client'
 import Image from 'next/image'
@@ -36,9 +31,9 @@ export default function UploadPost() {
   const { generateUrl, getUrl } = useGenerateLink()
 
   // states
-  const [demoUploadImage, setDemoUploadImage] = useState<
-    SanityImageAssetDocument | undefined
-  >(undefined)
+  const [demoUploadImage, setDemoUploadImage] = useState<SanityImageAssetDocument | undefined>(
+    undefined
+  )
   const [title, setTitle] = useState<string>('')
   const [caption, setCaption] = useState<string>('')
   const [location, setLocation] = useState<string>('')
@@ -90,13 +85,7 @@ export default function UploadPost() {
     e.preventDefault()
     setIsPosting(true)
     try {
-      if (
-        !title ||
-        !demoUploadImage ||
-        !caption ||
-        !cookie?.userProfileId ||
-        !location
-      ) {
+      if (!title || !demoUploadImage || !caption || !cookie?.userProfileId || !location) {
         throw new Error('Invalid details')
       }
       const imageUrl = await getUrl(demoUploadImage)
@@ -140,14 +129,10 @@ export default function UploadPost() {
   }
 
   return (
-    <div className='flex-col w-full flex p-[16px]'>
+    <div className='flex-col w-full flex p-[16px] mt-[80px] md:mt-[0px]'>
       <div className='flex flex-col items-center gap-3'>
-        <p className='text-[18px] font-semibold text-center'>
-          Enter post details
-        </p>
-        <div
-          className={`w-full max-w-[548px] min-h-[300px] rounded-xl p-5 bg-[#171717]`}
-        >
+        <p className='text-[18px] font-semibold text-center'>Enter post details</p>
+        <div className={`w-full max-w-[548px] min-h-[300px] rounded-xl p-5 bg-[#171717]`}>
           {demoUploadImage?.url ? (
             <div className='w-full relative'>
               <Image
@@ -174,9 +159,7 @@ export default function UploadPost() {
             >
               <div className='flex items-center flex-col gap-2  justify-center'>
                 <AiOutlineCloudUpload />
-                <p>
-                  {isUploadingImage ? 'Uploading image...' : 'upload image'}
-                </p>
+                <p>{isUploadingImage ? 'Uploading image...' : 'upload image'}</p>
                 {errorMessage && (
                   <p className='text-center'>
                     Error: <span className='text-red-500'>{errorMessage}</span>
@@ -196,10 +179,7 @@ export default function UploadPost() {
           <p className='text-center mt-3'>Upload images of type jpeg/png/gif</p>
         )}
 
-        <form
-          className='w-full max-w-[548px] flex gap-3 flex-col'
-          onSubmit={handleFormSubmitEvent}
-        >
+        <form className='w-full max-w-[548px] flex gap-3 flex-col' onSubmit={handleFormSubmitEvent}>
           <label className='w-full mb-[4px]'>
             <p className='mb-2'>Title</p>
             <Input

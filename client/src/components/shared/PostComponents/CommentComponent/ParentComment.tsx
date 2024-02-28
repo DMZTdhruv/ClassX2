@@ -272,10 +272,10 @@ export default function ParentComment({
           <div className='space-y-[5px] w-full'>
             <div className='flex justify-between flex-1 w-full'>
               <p className=' flex-1 w-full '>
-                <span className='font-semibold text-[12px] lg:text-[13px]'>
+                <span className='font-semibold text-[12px] lg:text-[12px]'>
                   {parentCommentUsername} &nbsp;
                 </span>
-                <span className='text-[12px] lg:text-[13px]'>{parentCommentCommentText}</span>
+                <span className='text-[12px] lg:text-[12px]'>{parentCommentCommentText}</span>
               </p>
               <button
                 className='hover:scale-105 p-2 flexCenter w-auto'

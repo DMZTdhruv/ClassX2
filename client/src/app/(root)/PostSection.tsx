@@ -85,7 +85,7 @@ export default function PostSection() {
 
   if (isLoading) {
     return (
-      <div className='xl:w-[60%]  w-full mt-[40px]  px-[16px] flex flex-col gap-5 items-center'>
+      <div className='xl:w-[60%] mt-[80px] md:mt-[40px] w-full  px-[16px] flex flex-col gap-5 items-center'>
         <Skeleton className='h-[550px] w-full md:w-[584px] rounded-xl' />
         <Skeleton className='h-[550px] w-full md:w-[584px] rounded-xl' />
       </div>

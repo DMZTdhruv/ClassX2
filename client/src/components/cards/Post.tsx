@@ -34,7 +34,7 @@ const Post: React.FC<IPost> = ({
 
   return (
     <div className='w-full lg:w-[584px] h-auto rounded-xl border-b-2 border-[#171717] font-poppins  postSection'>
-      <div className='h-[60px] px-[16px] flex items-center justify-between text-[15px]'>
+      <div className='h-[60px] px-[16px] flex items-center justify-between text-[14px]'>
         <div className='flex items-center justify-between w-full gap-[11px]'>
           <div className='flex items-center gap-[11px]'>
             <Image
@@ -51,8 +51,7 @@ const Post: React.FC<IPost> = ({
             />
             <div className='flex font-semibold gap-3 items-center'>
               <p className='flex items-center gap-3'>
-                {postedBy?.username}{' '}
-                <span className=' h-1 w-1 bg-neutral-600 rounded-full'></span>
+                {postedBy?.username} <span className=' h-1 w-1 bg-neutral-600 rounded-full'></span>
               </p>
               <span className='text-neutral-500'> {formatDate(date)}</span>
             </div>
@@ -143,7 +142,7 @@ const Post: React.FC<IPost> = ({
             />
           </Link>
         </div>
-        <div className='px-[15px] md:text-[15px] flex flex-col gap-[3px] text-[13px] font-semibold mb-[20px] '>
+        <div className='px-[15px] md:text-[14px] flex flex-col gap-[3px] text-[12px] font-semibold mb-[20px] '>
           <span>{numberOfLikes} likes</span>
           {caption.length > 85 ? (
             showFullcaption ? (
@@ -174,9 +173,7 @@ const Post: React.FC<IPost> = ({
           ) : (
             <p>{caption}</p>
           )}
-          <p className='text-neutral-500 inline-block'>
-            view all {comments.length} comments
-          </p>
+          <p className='text-neutral-500 inline-block'>view all {comments.length} comments</p>
           {comments.length !== 0 && (
             <p className='text-neutral-200'>
               {comments[0]?.postedBy?.username} {comments[0].commentText}

@@ -4,8 +4,8 @@
     "display": "standalone",
     "scope": "/",
     "start_url": "/",
-    "name": "ClassX Pwa",
-    "short_name": "ClassX pwa",
+    "name": "ClassX",
+    "short_name": "ClassX",
     "description": "This is a classx app",
     "icons": [
         {

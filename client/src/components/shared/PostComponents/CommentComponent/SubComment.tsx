@@ -128,7 +128,7 @@ export default function SubComment({
   }
 
   return (
-    <div className={`flex py-[12px] pr-[7.5px] gap-3 items-start ${Styles.subComment}`}>
+    <div className={`flex py-[12px] pr-[23px] gap-3 items-start ${Styles.subComment}`}>
       <Image
         src={subCommentImage}
         alt={subCommentCommentText}
@@ -172,7 +172,6 @@ export default function SubComment({
             Reply
           </button>
           <button
-            className={`${Styles.subCommentButton} lg:hidden space-x-[2px] items-center`}
             onClick={() => {
               handleParentCommentModal(true)
               if (clientComment) {
@@ -189,7 +188,10 @@ export default function SubComment({
               }
             }}
           >
-            <BsThreeDots size={18} />
+            <BsThreeDots
+              size={18}
+              className={`${Styles.subCommentButton} lg:hidden space-x-[2px] items-center`}
+            />
           </button>
         </div>
       </div>

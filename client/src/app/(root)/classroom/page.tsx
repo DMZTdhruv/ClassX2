@@ -1,5 +1,5 @@
 export default function Classroom() {
   return (
-    <section>This is a classroom page</section>
+    <section className=" mt-[80px] md:mt-[0px]">This is a classroom page</section>
   )
 }

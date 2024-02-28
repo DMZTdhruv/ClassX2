@@ -152,6 +152,16 @@
   }
 }
 
+@media screen and (max-width: 768px) {
+  .responiveModalPage {
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .responiveModalPage > div {
+    overflow-y: auto;
+  }
+}
+
 .loader {
   background: transparent;
   width: 20px;
@@ -159,7 +169,7 @@
   border-top: 4px solid rgba(255, 255, 255, 0.135);
   border-right: 4px solid rgba(255, 255, 255, 0.135);
   border-bottom: 4px solid rgba(255, 255, 255, 0.135);
-  border-left: 4px solid #891DCC;
+  border-left: 4px solid #891dcc;
   border-radius: 50%;
   animation: spin 1s ease infinite;
 }

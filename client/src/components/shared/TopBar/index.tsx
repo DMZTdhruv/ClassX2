@@ -35,7 +35,7 @@ function TopBar() {
     backdrop-blur-lg z-[50] border-b border-neutral-800  w-full transition-transform `}
     >
       <Image
-        src={`/assets/classX.svg`}
+        src={`/assets/ClassX.svg`}
         height={15}
         width={0}
         alt={'classX logo'}

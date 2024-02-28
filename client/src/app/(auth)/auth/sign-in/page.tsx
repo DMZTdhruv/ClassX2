@@ -49,8 +49,9 @@ function SignInPage() {
           email,
           password,
         }),
-        credentials: 'include',
       })
+
+
       const existingUser = await checkUser.json()
       if (!checkUser.ok) {
         setErrorMessage(existingUser.message)
@@ -59,6 +60,9 @@ function SignInPage() {
         }, 5000)
         return
       }
+      Cookies.set('classX_user_token', existingUser.token, {
+        expires: 30,
+      })
       setMessage(existingUser.message)
       setTimeout(() => {
         setMessage('')

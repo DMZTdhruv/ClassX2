@@ -2,13 +2,13 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { verifyAuth } from './lib/auth'
 
 export async function middleware(req: NextRequest) {
-  const token = req.cookies.get('classX')?.value || ''
+  const token = req.cookies.get('classX_user_token')?.value || ''
   const api = process.env.NEXT_PUBLIC_WEBURL
   if (!token) {
     return NextResponse.redirect(new URL(api + '/auth/sign-in'))
   }
   const verifedToken = await verifyAuth(token).catch(err => {
-    console.log(err)
+    console.log("Error : " + err)
   })
 
   if (!verifedToken) {

@@ -360,7 +360,7 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
                   unoptimized
                   className=' aspect-square object-cover rounded-full'
                 />
-                <div className=' text-[13px] sm:text-[15px]'>
+                <div className=' text-[12px] sm:text-[14px]'>
                   <span className='font-semibold'>{postData?.postedBy.username!}</span>{' '}
                   <span>{postData.caption}</span>
                 </div>
@@ -460,7 +460,7 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
                 />
               </button>
             </div>
-            <p className='text-[13px] pl-[2px]'>{numberOfLikes} likes</p>
+            <p className='text-[12px] pl-[2px]'>{numberOfLikes} likes</p>
           </div>
           <form
             onSubmit={submitComment}
@@ -509,7 +509,7 @@ interface DeleteCommentDetails {
 
 function Header({ username, userProfileImage, createdAt, handleModal }: HeaderProps) {
   return (
-    <header className='flex text-[13px] sm:text-[15px]  h-[60px] px-[15px] space-y-2 items-center justify-between'>
+    <header className='flex text-[12px] sm:text-[14px]  h-[60px] px-[15px] space-y-2 items-center justify-between'>
       <div className='flex font-semibold items-center gap-3  '>
         <Image
           src={userProfileImage}

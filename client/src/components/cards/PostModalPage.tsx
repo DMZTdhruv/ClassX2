@@ -2,16 +2,13 @@
 
 import React, { ChangeEvent, FormEvent, useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Api, IComments, IPost, UpdateReplyCommentData } from '@/Constants'
 import FollowButton from '@/components/shared/FollowButton/FollowButton'
 import useCookieProvider from '@/hooks/useCookieProvider'
 import { likePost, unlikePost } from '@/utils/LikeFunctions'
-
-const ParentComment = React.lazy(
-  () => import('@/components/shared/PostComponents/CommentComponent/ParentComment')
-)
+import ParentComment from '../shared/PostComponents/CommentComponent/ParentComment'
 import { formatDate } from '@/utils'
 import { HiMiniXMark } from 'react-icons/hi2'
 import axios from 'axios'
@@ -28,6 +25,13 @@ interface SubCommentProps {
   repliedUserId: string
   commentText: string
   postedBy: string
+}
+
+interface IDeletePostDetails {
+  deleteId: string
+  userProfileId: string
+  handleModal?: (data: boolean) => void
+  className?: string
 }
 
 interface GetSubComment {
@@ -49,6 +53,8 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
   //constants
   const cookie = useCookieProvider()
   const router = useRouter()
+  const isProfile = useSearchParams().get('isProfile')
+  console.log(isProfile)
   const postedDate = formatDate(new Date(postData.createdAt))
 
   // refs
@@ -63,6 +69,8 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
     postData.likes.filter(id => id === cookie?.userProfileId).length > 0
   )
   const [numberOfLikes, setNumberOfLikes] = useState<number>(postData.likes.length)
+
+  // Delete post states
   const [openDeletePostModal, setOpenDeletePostModal] = useState<boolean>(false)
 
   // comment states
@@ -222,7 +230,6 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
     setIsPendingComment(true)
 
     try {
-      console.log(replyCommentData)
       const response = await axios.post(`${Api}/post/comment/reply-comment`, replyCommentData, {
         headers: {
           'Content-Type': 'application/json',
@@ -307,15 +314,14 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
         />
       )}
 
-      {/* {openDeletePostModal && (
+      {openDeletePostModal && (
         <DeletePostModal
-          userId=':1d'
-          deleteId='sda'
-          userProfileId={postData.postedBy._id}
-          endPoint='sda'
+          userProfileId={cookie?.userProfileId!}
+          deleteId={postData._id}
           handleModal={handleDeletePostModal}
+          userPost={true}
         />
-      )} */}
+      )}
 
       <button>
         <HiMiniXMark className='fixed hidden md:block top-[5%] right-[5%]' size={30} />
@@ -337,6 +343,7 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
             username={postData?.postedBy.username!}
             createdAt={postedDate}
             handleModal={handleDeletePostModal}
+            isProfile={isProfile || 'false'}
           ></Header>
         </div>
         <ImageDisplay imageUrl={postData.imageUrl} />
@@ -348,6 +355,7 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
               username={postData?.postedBy.username!}
               createdAt={postedDate}
               handleModal={handleDeletePostModal}
+              isProfile={isProfile || 'false'}
             ></Header>
           </div>
           <div className='flex-1 md:border-t md:border-b border-[#212936] w-full min-h-[60vh] md:max-h-[45vh] overflow-y-auto '>
@@ -505,6 +513,7 @@ interface HeaderProps {
   userProfileImage: string
   createdAt: string
   handleModal: (data: boolean) => void
+  isProfile?: string
 }
 
 interface DeleteCommentDetails {
@@ -512,7 +521,7 @@ interface DeleteCommentDetails {
   deleteId: string
 }
 
-function Header({ username, userProfileImage, createdAt, handleModal }: HeaderProps) {
+function Header({ username, userProfileImage, createdAt, isProfile, handleModal }: HeaderProps) {
   return (
     <header className='flex text-[12px] sm:text-[14px]  h-[60px] px-[15px] space-y-2 items-center justify-between'>
       <div className='flex font-semibold items-center gap-3  '>
@@ -528,12 +537,14 @@ function Header({ username, userProfileImage, createdAt, handleModal }: HeaderPr
         <h5 className=''>{username}</h5>
         <span className=' text-white/50 '>{createdAt}</span>
       </div>
-      <button
-        className={`flex space-x-[2px] items-center active:scale-75 active:opacity-75 transition-all`}
-        onClick={() => handleModal(true)}
-      >
-        <BsThreeDots size={18} />
-      </button>
+      {isProfile === 'true' && (
+        <button
+          className={`flex space-x-[2px] items-center active:scale-75 active:opacity-75 transition-all`}
+          onClick={() => handleModal(true)}
+        >
+          <BsThreeDots size={18} />
+        </button>
+      )}
     </header>
   )
 }

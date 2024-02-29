@@ -7,11 +7,9 @@ import { usePathname } from 'next/navigation'
 function TopBar() {
   const pathname = usePathname()
   const navRef = useRef(null)
-  console.log(pathname)
 
   const [isNavHidden, setIsNavHidden] = useState<boolean>(false)
   const onPath = pathname.startsWith('/post')
-  console.log('Top bar ' + onPath)
 
   useEffect(() => {
     let prevPosition = window.scrollY

@@ -139,7 +139,6 @@ export default function ParentComment({
     setUserRepliedCommentsLength(userRepliedComments.length)
   }, [userRepliedComments])
 
-  console.log(userRepliedComments.length > 0 && totalCommentReplies === 0)
   // get replies of the comments
   const getRepliedComments = async (parentCommentId: string) => {
     if (subComments?.length! >= totalCommentReplies) {

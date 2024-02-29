@@ -24,7 +24,6 @@ export const likePost = async ({
   endPoint,
   isDevMode,
 }: PostLikes) => {
-  console.log(isLiked)
 
   if (isLiked) return
   setNumberOfLikes(numberOfLikes + 1)
@@ -69,7 +68,6 @@ export const unlikePost = async ({
   isDevMode,
 }: PostLikes) => {
   if (!isLiked) return
-  console.log('You are unliking the post')
   setNumberOfLikes(numberOfLikes - 1)
   const api = process.env.NEXT_PUBLIC_API
   const unlikeApi = `${api}/${endPoint}`

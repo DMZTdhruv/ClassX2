@@ -1,6 +1,7 @@
 import UserHeader from '@/components/shared/UserHeader'
 import NormalPost from '@/components/cards/NormalPost'
 import { cookies } from 'next/headers'
+import ProfilePosts from './ProfilePosts'
 
 interface UserProfileProps {
   _id: string
@@ -46,29 +47,8 @@ export default async function Profile() {
     } catch (err) {}
   }
 
-  const getUserPosts = async () => {
-    try {
-      const response = await fetch(`${api}/users/get-user-posts`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token?.value}`,
-        },
-      })
-
-      if (!response.ok) {
-        console.log('There was an error')
-      }
-
-      const { data: result } = await response.json()
-      return result[0].posts
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   // variables
   const userProfile: UserProfileProps = await getUserProfile()
-  const userPosts: Ipost[] = await getUserPosts()
   return (
     <section className='flex mt-[80px] md:mt-[0px] sm:px-[16px] flex-col items-center gap-[60px] mb-[20px]'>
       <UserHeader
@@ -82,26 +62,7 @@ export default async function Profile() {
         following={userProfile.following}
         isPrivate={userProfile.isPrivate}
       />
-
-      <div className='grid grid-cols-3 relative gap-[4px] md:gap-[8px] '>
-        {userPosts?.length === 0 ? (
-          <p className='text-center absolute w-[200px] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'>
-            Post something
-          </p>
-        ) : (
-          userPosts?.map(user => {
-            return (
-              <NormalPost
-                key={user._id}
-                _id={user._id}
-                imageUrl={user.imageUrl}
-                comments={user.comments.length}
-                likes={user.likes.length}
-              />
-            )
-          })
-        )}
-      </div>
+      <ProfilePosts userProfileId={userProfile._id} token={token?.value || ''} />
     </section>
   )
 }

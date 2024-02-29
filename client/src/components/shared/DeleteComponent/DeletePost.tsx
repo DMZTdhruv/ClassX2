@@ -1,7 +1,9 @@
 'use client'
 
+import deletePostFromUserPage from '@/app/(root)/serverActions'
 import { Api } from '@/Constants'
 import useCookieProvider from '@/hooks/useCookieProvider'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { IoWarningOutline } from 'react-icons/io5'
 
@@ -10,7 +12,8 @@ interface DeletComponent {
   userProfileId: string
   handleModal: (data: boolean) => void
   className?: string
-  handlePostState: (data: string) => void
+  handlePostState?: (data: string) => void
+  userPost?: boolean
 }
 
 export default function DeletePostModal({
@@ -19,12 +22,14 @@ export default function DeletePostModal({
   handleModal,
   className,
   handlePostState,
+  userPost,
 }: DeletComponent) {
+  const router = useRouter()
+  console.log(userPost)
   const cookie = useCookieProvider()
   const [isDeleting, setIsDeleting] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
   const deletePost = async () => {
-    console.log(deleteId, userProfileId)
     setIsDeleting(true)
     try {
       const response = await fetch(`${Api}/post/delete-post/${deleteId}`, {
@@ -44,12 +49,16 @@ export default function DeletePostModal({
         console.log('Failed to delete the post')
       }
 
-      const result = await response.json()
-      console.log(result)
-      handlePostState(deleteId)
-      setIsDeleting(false)
+      handlePostState?.(deleteId)
+      setTimeout(() => {
+        setIsDeleting(false)
+      }, 500)
       handleModal(false)
-      console.log(result)
+      // deletePostFromUserPage()
+      deletePostFromUserPage();
+      if (userPost) {
+        router.push('/profile')
+      }
     } catch (error: any) {
       console.log(error.message)
     }
@@ -68,7 +77,9 @@ export default function DeletePostModal({
       className={`fixed top-[50%] left-[50%] flex items-center justify-center gap-3 h-screen w-full bg-[#0E0E0E]/80 z-[1000000] translate-x-[-50%] translate-y-[-50%]`}
     >
       <div
-        className={`w-[336px] flex flex-col  bg-[#1E1E1E]/80 shadow-lg backdrop-blur-md py-[8px]  rounded-[22px] ${className}`}
+        className={`w-[336px] ${
+          isDeleting && 'pointer-events-none'
+        } flex flex-col  bg-[#1E1E1E]/80 shadow-lg backdrop-blur-md py-[8px]  rounded-[22px] ${className}`}
       >
         {cookie?.userProfileId === userProfileId ? (
           <button

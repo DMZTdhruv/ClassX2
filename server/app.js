@@ -16,7 +16,7 @@ app.use(morgan('common'))
 app.use(helmet())
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'https://class-x-client-no2p.vercel.app/'],
+    origin: ['http://localhost:3000', 'https://class-x-client-no2p.vercel.app'],
     credentials: true,
   })
 )

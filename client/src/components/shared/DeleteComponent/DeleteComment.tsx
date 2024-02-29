@@ -22,7 +22,6 @@ export default function DeleteCommentComponent({
   type,
 }: DeleteComment) {
   const cookie = useCookieProvider()
-  console.log(handleDeleteComment);
   const deleteComment = async () => {
     const CommentApi = `${Api}/post/comment/delete-comment/${deleteId}`
     const SubCommentApi = `${Api}/post/comment/subComment/delete-comment/${deleteId}`
@@ -41,13 +40,11 @@ export default function DeleteCommentComponent({
       }
 
       const result = await response.json()
-      console.log(result)
     } catch (error: any) {
       console.error(error.message)
     }
   }
 
-  console.log(cookie?.userProfileId === userId)
   return (
     <div
       className={`fixed top-[50%] left-[50%] flex items-center justify-center gap-3 h-screen w-full bg-[#0E0E0E]/80 z-[1000000] translate-x-[-50%] translate-y-[-50%]`}

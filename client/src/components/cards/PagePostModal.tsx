@@ -225,7 +225,6 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
     setIsPendingComment(true)
 
     try {
-      console.log(replyCommentData)
       const response = await axios.post(`${Api}/post/comment/reply-comment`, replyCommentData, {
         headers: {
           'Content-Type': 'application/json',
@@ -310,7 +309,7 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
         />
       )}
 
-      {openDeletePostModal && (
+      {/* {openDeletePostModal && (
         <DeletePostModal
           userId=':1d'
           deleteId='sda'
@@ -318,7 +317,7 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
           endPoint='sda'
           handleModal={handleDeletePostModal}
         />
-      )}
+      )} */}
 
       {/* <button>
         <HiMiniXMark className='fixed hidden md:block top-[5%] right-[5%]' size={30} />

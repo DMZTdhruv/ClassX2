@@ -1,6 +1,8 @@
 import PostRepositoryInterface from '../interfaces/PostRepositoryInterface.js'
 import UserProfile from '../models/user/userProfile.model.js'
 import Post from '../models/post/post.model.js'
+import Comment from '../models/comment/comment.model.js'
+import ReplyComment from '../models/comment/repliedComment.model.js'
 
 export default class PostRepository extends PostRepositoryInterface {
   async savePost(post) {
@@ -36,5 +38,28 @@ export default class PostRepository extends PostRepositoryInterface {
           },
         ],
       })
+  }
+
+  async findPostByIdWithPostedBy(postId) {
+    return await Post.findById(postId).populate({
+      path: 'postedBy',
+      model: 'UserProfile',
+      select: 'username userProfileImage',
+    })
+  }
+
+  async deletePostById(post, userProfileId) {
+    if (post.comments.length > 0) {
+      const comment = post.comments
+      for (let i = 0; i < comment.length; i++) {
+        const commentId = comment[i]
+        await ReplyComment.deleteMany({ parentCommentId: commentId })
+        await Comment.deleteOne(commentId)
+      }
+    }
+    const user = await UserProfile.findById(userProfileId)
+    await user.posts.remove(post._id)
+    await user.save()
+    await Post.deleteOne(post._id)
   }
 }

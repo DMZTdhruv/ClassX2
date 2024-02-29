@@ -18,6 +18,7 @@ import axios from 'axios'
 import { BsThreeDots } from 'react-icons/bs'
 import DeleteCommentComponent from '../shared/DeleteComponent/DeleteComment'
 import DeletePostModal from '../shared/DeleteComponent/DeletePost'
+import { FaArrowLeftLong } from 'react-icons/fa6'
 
 // Interfaces
 interface SubCommentProps {
@@ -293,7 +294,7 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
 
   return (
     <section
-      className='w-full min-h-[100vh] responiveModal flexCenter border md:h-full overflow-y-auto bg-[#0E0E0E] md:bg-transparent'
+      className='w-full min-h-[100vh] responiveModal flexCenter md:border md:h-full overflow-y-auto bg-[#0E0E0E] md:bg-transparent'
       onClick={hanldePostModalClose}
     >
       {openDeleteCommentModal && (
@@ -306,7 +307,7 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
         />
       )}
 
-      {openDeletePostModal && (
+      {/* {openDeletePostModal && (
         <DeletePostModal
           userId=':1d'
           deleteId='sda'
@@ -314,18 +315,22 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
           endPoint='sda'
           handleModal={handleDeletePostModal}
         />
-      )}
+      )} */}
 
       <button>
         <HiMiniXMark className='fixed hidden md:block top-[5%] right-[5%]' size={30} />
       </button>
       <div
-        className='w-full h-full overflow-y-auto sm:h-full sm:max-w-[80%] sm:min-w-[100%] md:min-w-[80%] md:min-h-[463px] xl:min-w-[75%] xl:max-w-[50%]  md:border  bg-[#0E0E0E]  border-[#212936] flex flex-col md:flex-row border'
+        className='w-full h-full overflow-y-auto sm:h-full sm:max-w-[80%] sm:min-w-[100%] md:min-w-[80%] md:min-h-[463px] xl:min-w-[75%] xl:max-w-[50%]  md:border  bg-[#0E0E0E]  md:border-[#212936] flex flex-col md:flex-row '
         ref={modalRef}
       >
-        <div className='top-[-1px] border-b  border-[#212936] py-[20px] sticky md:hidden px-[16px] flex items-center bg-[#0E0E0E] '>
-          <button onClick={goBack}>Post</button>
-        </div>
+        <button
+          className='top-[-1px] border-b group md:border-[#212936] py-[20px] sticky md:hidden px-[16px] flex items-center bg-[#0E0E0E] '
+          onClick={goBack}
+        >
+          <FaArrowLeftLong className=' group-active:scale-75 transition-all' />{' '}
+          <p className='ml-3'>Posts</p>
+        </button>
         <div className='md:hidden block'>
           <Header
             userProfileImage={postData?.postedBy.userProfileImage!}

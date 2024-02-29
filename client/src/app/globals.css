@@ -10,21 +10,32 @@
   }
 }
 
+
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 5px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
   background: #1e1e1e;
-  border-radius: 5px;
+  border-radius: 10px;
 }
 
-/* Handle */
 ::-webkit-scrollbar-thumb {
   background: #555;
   border-radius: 5px;
 }
+
+
+@media screen and (max-width: 768px) {
+  ::-webkit-scrollbar-track {
+    background: #1e1e1e;
+    border-radius: 5px;
+  }
+}
+
+
+/* Handle */
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
@@ -170,6 +181,18 @@
   border-right: 4px solid rgba(255, 255, 255, 0.135);
   border-bottom: 4px solid rgba(255, 255, 255, 0.135);
   border-left: 4px solid #891dcc;
+  border-radius: 50%;
+  animation: spin 1s ease infinite;
+}
+
+.dangerLoader {
+  background: transparent;
+  width: 20px;
+  height: 20px;
+  border-top: 4px solid rgba(255, 255, 255, 0.135);
+  border-right: 4px solid rgba(255, 255, 255, 0.135);
+  border-bottom: 4px solid rgba(255, 255, 255, 0.135);
+  border-left: 4px solid #cc1d1d;
   border-radius: 50%;
   animation: spin 1s ease infinite;
 }

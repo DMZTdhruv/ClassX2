@@ -8,7 +8,7 @@ import axios from 'axios'
 import { Api } from '@/Constants'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import DeleteComponent from '@/components/shared/DeleteComponent/DeleteComment'
+import DeletePostModal from '@/components/shared/DeleteComponent/DeletePost'
 
 interface IComments {
   _id: string
@@ -40,11 +40,20 @@ interface IPost {
   createdAt: string
 }
 
+interface IDeletePostDetails {
+  deleteId: string
+  userProfileId: string
+  handleModal?: (data: boolean) => void
+  className?: string
+}
+
 export default function PostSection() {
   const [posts, setPosts] = useState<IPost[]>([])
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const cookie = useCookieProvider()
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false)
+  const [deletePostDetails, setDeletePotDetails] = useState<IDeletePostDetails | null>(null)
 
   useEffect(() => {
     const getPosts = async () => {
@@ -92,10 +101,35 @@ export default function PostSection() {
     )
   }
 
+  // handlers
+  const handleDeleteModal = (value: boolean) => {
+    setIsOpenModal(value)
+  }
+
+  const handleDeletePostDetails = ({userProfileId, deleteId}: IDeletePostDetails) => {
+    setDeletePotDetails({
+      deleteId: deleteId,
+      userProfileId: userProfileId,
+      handleModal: handleDeleteModal,
+    })
+  }
+
+  const handlePostState = (postId: string) => {
+    setPosts(prev => prev.filter(post => post._id !== postId))
+  }
+
   return (
     <div
       className={`xl:w-[60%] mt-[80px] w-full sm:px-[16px] sm:mt-[40px]  px-[16px] flex flex-col gap-5 items-center`}
     >
+      {isOpenModal && (
+        <DeletePostModal
+          deleteId={deletePostDetails?.deleteId!}
+          userProfileId={deletePostDetails?.userProfileId!}
+          handleModal={handleDeleteModal}
+          handlePostState={handlePostState}
+        />
+      )}
       {posts?.map(post => {
         return (
           <Post
@@ -110,6 +144,8 @@ export default function PostSection() {
             likes={post.likes}
             comments={post.comments}
             createdAt={post.createdAt}
+            handleDeletePostDetails={handleDeletePostDetails}
+            handleDeleteModal={handleDeleteModal}
           />
         )
       })}

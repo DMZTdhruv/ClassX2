@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export default function Loading() {
   return (
-    <div className='flex flex-col mt-[80px] md:mt-[0px] px-[16px] space-y-3 mt-[30px] items-center'>
+    <div className='flex flex-col mt-[80px] md:mt-[30px] px-[16px] space-y-3  items-center'>
       <Skeleton
         className='rounded-full'
         style={{

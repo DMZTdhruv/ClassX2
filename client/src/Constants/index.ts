@@ -1,71 +1,75 @@
 export const sideBarData = [
   {
     id: 1,
-    name: "Home",
-    icon: "house.svg",
-    routes: "/"
+    name: 'Home',
+    icon: 'house.svg',
+    routes: '/',
   },
   {
     id: 2,
-    name: "Explore",
-    icon: "explore.svg",
-    routes: "/explore"
+    name: 'Explore',
+    icon: 'explore.svg',
+    routes: '/explore',
   },
   {
     id: 3,
-    name: "Upload",
-    icon: "create.svg",
-    routes: "/upload-post"
+    name: 'Upload',
+    icon: 'create.svg',
+    routes: '/upload-post',
   },
   {
     id: 4,
-    name: "Message",
-    icon: "message.svg",
-    routes: "/message",
+    name: 'Message',
+    icon: 'message.svg',
+    routes: '/message',
   },
   {
     id: 5,
-    name: "Classroom",
-    icon: "classroom.svg",
-    routes: "/classroom"
+    name: 'Classroom',
+    icon: 'classroom.svg',
+    routes: '/classroom',
   },
   {
     id: 6,
-    name: "Profile",
-    icon: "profile.svg",
-    routes: "/profile"
+    name: 'Profile',
+    icon: 'profile.svg',
+    routes: '/profile',
   },
-  
 ]
 export const BottomBarData = [
   {
     id: 1,
-    icon: "house.svg",
-    routes: "/"
+    icon: 'house.svg',
+    routes: '/',
   },
   {
     id: 2,
-    icon: "explore.svg",
-    routes: "/explore"
+    icon: 'explore.svg',
+    routes: '/explore',
   },
   {
     id: 3,
-    icon: "create.svg",
-    routes: "/upload-post"
+    icon: 'create.svg',
+    routes: '/upload-post',
   },
   {
     id: 5,
-    icon: "classroom.svg",
-    routes: "/classroom"
+    icon: 'classroom.svg',
+    routes: '/classroom',
   },
   {
     id: 6,
-    icon: "profile.svg",
-    routes: "/profile"
+    icon: 'profile.svg',
+    routes: '/profile',
   },
-  
 ]
 
+interface IDeletePostDetails {
+  deleteId: string
+  userProfileId: string
+  handleModal?: (data: boolean) => void
+  className?: string
+}
 
 // types
 interface IPost {
@@ -84,6 +88,8 @@ interface IPost {
   likes: string[]
   comments: IComments[]
   createdAt: string
+  handleDeletePostDetails: (data: IDeletePostDetails) => void
+  handleDeleteModal: (data: boolean) => void
 }
 
 interface IComments {
@@ -99,7 +105,6 @@ interface IComments {
   commentReplies: string[]
 }
 
-
 interface UpdateReplyCommentData {
   parentCommentId: string
   repliedUserId: string
@@ -112,6 +117,5 @@ interface Comment {
 
 export type { IComments, IPost, UpdateReplyCommentData, Comment }
 
-
-export const Api = process.env.NEXT_PUBLIC_API;
-export const webUrl = process.env.NEXT_PUBLIC_WEBURL;
+export const Api = process.env.NEXT_PUBLIC_API
+export const webUrl = process.env.NEXT_PUBLIC_WEBURL

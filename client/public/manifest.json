@@ -6,7 +6,7 @@
     "start_url": "/",
     "name": "ClassX",
     "short_name": "ClassX",
-    "description": "This is a classx app",
+    "description": "This is a ClassX web app",
     "icons": [
         {
             "src": "/icon-192x192.png",

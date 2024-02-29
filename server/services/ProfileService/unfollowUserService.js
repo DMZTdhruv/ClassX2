@@ -1,5 +1,5 @@
 import UserProfileRepository from '../../repositories/UserProfileRepository.js'
-import {validateUnFollow} from '../../validations/FollowUserValidator.js'
+import { validateUnFollow} from "../../validations/followUserValidator.js"
 
 export default async function unFollowUserService(userId, userToFollowId) {
   try {
@@ -41,3 +41,4 @@ const checkUsers = (userId, userToFollowId) => {
     throw new Error(`Failed to follow user with the id: ${userToFollowId}`)
   }
 }
+

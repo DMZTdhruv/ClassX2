@@ -21,6 +21,8 @@ const Post: React.FC<IPost> = ({
   likes,
   comments,
   createdAt,
+  handleDeletePostDetails,
+  handleDeleteModal,
 }) => {
   const date = new Date(createdAt)
   const cookie = useCookieProvider()
@@ -57,10 +59,18 @@ const Post: React.FC<IPost> = ({
             </div>
           </div>
           <button
-            className={`active:scale-75 active:opacity-75 transition-all flex space-x-[2px] items-center`}
-            onClick={() => {}}
+            onClick={() => {
+              handleDeleteModal(true)
+              handleDeletePostDetails({
+                userProfileId: postedBy._id,
+                deleteId: _id,
+              })
+            }}
           >
-            <BsThreeDots size={18} />
+            <BsThreeDots
+              size={18}
+              className={`active:scale-75  active:opacity-75 transition-all flex space-x-[2px] items-center`}
+            />
           </button>
         </div>
       </div>

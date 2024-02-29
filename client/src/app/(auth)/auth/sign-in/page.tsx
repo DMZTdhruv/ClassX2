@@ -67,7 +67,6 @@ function SignInPage() {
       setTimeout(() => {
         setMessage('')
       }, 5000)
-      console.log(existingUser.token)
       Cookies.set('classX_user_token', existingUser.token, {
         expires: 30,
         secure: true,

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import '../globals.css'
 import TopBar from '@/components/shared/TopBar'
 import BottomBar from '@/components/shared/BottomBar'
-import SideBar from '@/components/shared/SideBar'
+import SideBar from "@/components/shared/SideBar"
 
 export const metadata: Metadata = {
   title: 'classX app',

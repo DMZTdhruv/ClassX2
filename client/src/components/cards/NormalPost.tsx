@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -17,7 +19,7 @@ export default function NormalPost({
 }: IPostProps) {
   return (
     <div className='relative group'>
-      <Link href={`/post/${_id}`} scroll={false}>
+      <Link href={`/post/${_id}?isProfile=true`} scroll={false}>
         <Image
           src={imageUrl}
           width={384}

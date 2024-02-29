@@ -6,11 +6,7 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import cors from 'cors'
 import authRouter from './routes/unprotected/authRoutes.js'
-import {
-  branchRouter,
-  postRouter,
-  userProfileRouter,
-} from './routes/protected/index.js'
+import { branchRouter, postRouter, userProfileRouter } from './routes/protected/index.js'
 dotenv.config()
 
 const app = express()
@@ -20,7 +16,7 @@ app.use(morgan('common'))
 app.use(helmet())
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: ['http://localhost:3000', 'https://class-x-client-no2p.vercel.app'],
     credentials: true,
   })
 )

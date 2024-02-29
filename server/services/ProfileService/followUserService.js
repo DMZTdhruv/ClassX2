@@ -1,5 +1,5 @@
 import UserProfileRepository from '../../repositories/UserProfileRepository.js'
-import { validateFollow } from '../../validations/FollowUserValidator.js'
+import { validateFollow } from '../../validations/followUserValidator.js'
 
 export default async function followUserService(userId, userToFollowId) {
   try {
@@ -23,19 +23,5 @@ export default async function followUserService(userId, userToFollowId) {
     }
   } catch (err) {
     throw new Error(err.message)
-  }
-}
-
-const checkUsers = (userId, userToFollowId) => {
-  const userRepo = new UserProfileRepository()
-
-  const currentUserExists = userRepo.findById(userId)
-  if (!currentUserExists) {
-    throw new Error(`User with id: ${userId} doesn't exists`)
-  }
-
-  const userToFollowExists = userRepo.findById(userToFollowId)
-  if (!userToFollowExists) {
-    throw new Error(`Failed to follow user with the id: ${userToFollowId}`)
   }
 }

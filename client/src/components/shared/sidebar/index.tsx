@@ -9,9 +9,9 @@ import { usePathname } from 'next/navigation'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
 
-function SideBar(props: any) {
+export default function SideBar(props: any) {
   const pathname = usePathname()
-  const [isActive,setIsActive] = useState<string>("/");
+  const [isActive, setIsActive] = useState<string>('/')
   const router = useRouter()
   const logout = () => {
     Cookies.remove('classX_user_token')
@@ -44,7 +44,7 @@ function SideBar(props: any) {
           return (
             <Link
               className={`flex ${
-                (isActive === links.name || onPath) ? 'bg-[#891DCC]' : 'hover:bg-[#891DCC]/20'
+                isActive === links.name || onPath ? 'bg-[#891DCC]' : 'hover:bg-[#891DCC]/20'
               }  gap-[11px] py-[5px] px-[10px] rounded-md  transition-all cursor-pointer'`}
               href={links.routes}
               key={links.id}
@@ -56,9 +56,7 @@ function SideBar(props: any) {
                 alt={links.name}
                 unoptimized
               />
-              <span className='font-semibold text-[20.42px] hidden lg:block '>
-                {links.name}
-              </span>
+              <span className='font-semibold text-[20.42px] hidden lg:block '>{links.name}</span>
             </Link>
           )
         })}
@@ -73,5 +71,3 @@ function SideBar(props: any) {
     </section>
   )
 }
-
-export default SideBar

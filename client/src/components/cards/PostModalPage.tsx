@@ -54,7 +54,6 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
   const cookie = useCookieProvider()
   const router = useRouter()
   const isProfile = useSearchParams().get('isProfile')
-  console.log(isProfile)
   const postedDate = formatDate(new Date(postData.createdAt))
 
   // refs
@@ -483,7 +482,7 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
             {isPendingComment && (
               <div className='bg-[#171717] w-[80%] outline-none focus-visible:ring-0 min-h-[48px] md:font-semibold sm:min-h-[78px] border-none rounded-xl absolute top-[12px] left-[12px] gap-3 flexCenter  '>
                 <span className='animate-pulse'>Uploading comment..</span>
-                <div className='loader '></div>
+                <div className='loader'></div>
               </div>
             )}
 

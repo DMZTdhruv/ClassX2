@@ -1,5 +1,4 @@
 import UserHeader from '@/components/shared/UserHeader'
-import NormalPost from '@/components/cards/NormalPost'
 import { cookies } from 'next/headers'
 import ProfilePosts from './ProfilePosts'
 
@@ -24,10 +23,8 @@ interface Ipost {
 
 export default async function Profile() {
   const cookie = cookies()
-  // const token = cookie.get('classX_user_token')
   const api = process.env.NEXT_PUBLIC_API
   const token = cookie.get('classX_user_token')
-  // functions
   const getUserProfile = async () => {
     const userProfileApi = `${api}/users/get-user-profile`
     try {
@@ -44,13 +41,15 @@ export default async function Profile() {
 
       const { message: result } = await response.json()
       return result
-    } catch (err) {}
+    } catch (error: any) {
+      console.log(error.message)
+    }
   }
 
   // variables
   const userProfile: UserProfileProps = await getUserProfile()
   return (
-    <section className='flex mt-[80px] md:mt-[0px] sm:px-[16px] flex-col items-center gap-[60px] mb-[20px]'>
+    <section className='flex mt-[80px] sm:px-[16px] md:mt-[0px] sm:px-[16px] flex-col items-center gap-[60px] mb-[20px]'>
       <UserHeader
         _id={userProfile._id}
         name={userProfile.name}

@@ -55,7 +55,10 @@ const Post: React.FC<IPost> = ({
               <p className='flex items-center gap-3'>
                 {postedBy?.username} <span className=' h-1 w-1 bg-neutral-600 rounded-full'></span>
               </p>
-              <span className='text-neutral-500'> {formatDate(date)}</span>
+              <span className='text-neutral-500' suppressHydrationWarning={true}>
+                {' '}
+                {formatDate(date)}
+              </span>
             </div>
           </div>
           <button

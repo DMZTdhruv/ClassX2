@@ -18,8 +18,8 @@ const ProfilePosts = async ({ userProfileId, token }: { token: string; userProfi
           Authorization: `Bearer ${token}`,
         },
         next: {
-          tags: ['userPost']
-        }
+          tags: ['userPost'],
+        },
       })
 
       if (!response.ok) {
@@ -27,10 +27,9 @@ const ProfilePosts = async ({ userProfileId, token }: { token: string; userProfi
       }
 
       const { data: result } = await response.json()
-      
-      
+      console.log('user')
+      console.log(result[0].posts)
       return result[0].posts
-      
     } catch (error) {
       console.log(error)
     }
@@ -39,7 +38,7 @@ const ProfilePosts = async ({ userProfileId, token }: { token: string; userProfi
 
   if (!userPosts) {
     return (
-      <div className='grid grid-cols-3 relative gap-[4px] md:gap-[8px] '>
+      <div className='grid grid-cols-3 sm:px-[16px] relative gap-[4px] md:gap-[8px] '>
         <Skeleton className='h-auto min-h-[300px] w-[300px] rounded-xl' />
         <Skeleton className='h-auto min-h-[300px] w-[300px] rounded-xl' />
         <Skeleton className='h-auto min-h-[300px] w-[300px] rounded-xl' />
@@ -48,7 +47,7 @@ const ProfilePosts = async ({ userProfileId, token }: { token: string; userProfi
   }
 
   return (
-    <div className='grid grid-cols-3 relative gap-[4px] md:gap-[8px] '>
+    <div className='grid grid-cols-3 sm:px-[16px] relative gap-[4px] md:gap-[8px] '>
       {userPosts &&
         (userPosts?.length === 0 ? (
           <p className='text-center absolute w-[200px] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'>

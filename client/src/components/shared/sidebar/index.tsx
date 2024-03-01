@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { sideBarData } from '@/Constants'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
@@ -17,12 +17,17 @@ export default function SideBar(props: any) {
     Cookies.remove('classX_user_token')
     router.push('/auth/sign-in')
   }
+  const isMessageRoute = pathname.startsWith('/message')
   return (
-    <section className='h-[100vh] sticky top-0 transition-all hidden sm:block font-poppins  px-[40px] realtive w-auto lg:w-[304px] border-r-2 border-r-slate-800 '>
+    <section
+      className={`h-[100vh] sticky top-0 transition-all hidden sm:block font-poppins ${
+        isMessageRoute ? '' : 'lg:w-[304px]'
+      } px-[40px] realtive w-auto border-r-2 border-r-slate-800 `}
+    >
       <div className='h-[150px] flex items-center'>
         <Image
           src={`/assets/ClassX.svg`}
-          className='hidden lg:block'
+          className={`hidden ${!isMessageRoute && 'lg:block'}`}
           height={25}
           width={0}
           alt='classX'
@@ -32,20 +37,25 @@ export default function SideBar(props: any) {
         />
         <Image
           src={`/assets/Cx.svg`}
-          className='block lg:hidden'
+          className={`block ${!isMessageRoute && 'lg:hidden'}`}
           height={45}
           width={45}
           alt='Responsive logo of cx'
         />
       </div>
-      <div className='flex gap-[20px] lg:translate-x-[-10px] flex-col'>
+      <div
+        className={`flex ${isMessageRoute ? 'gap-[27px]' : 'gap-[20px]'}  ${
+          !isMessageRoute && 'lg:translate-x-[-10px]'
+        } flex-col`}
+      >
         {sideBarData.map(links => {
           const onPath = pathname === links.routes
+
           return (
             <Link
               className={`flex ${
-                isActive === links.name || onPath ? 'bg-[#891DCC]' : 'hover:bg-[#891DCC]/20'
-              }  gap-[11px] py-[5px] px-[10px] rounded-md  transition-all cursor-pointer'`}
+                isActive === links.name || onPath ? 'bg-[#891DCC] glow' : 'hover:bg-[#891DCC]/20'
+              }  gap-[11px] py-[5px] px-[10px] rounded-md  transition-all cursor-pointer '`}
               href={links.routes}
               key={links.id}
             >
@@ -56,14 +66,20 @@ export default function SideBar(props: any) {
                 alt={links.name}
                 unoptimized
               />
-              <span className='font-semibold text-[20.42px] hidden lg:block '>{links.name}</span>
+              <span
+                className={`font-semibold text-[20.42px] hidden ${!isMessageRoute && 'lg:block'} `}
+              >
+                {links.name}
+              </span>
             </Link>
           )
         })}
       </div>
       <Button
         type='button'
-        className='text-white font-bold absolute left-[20px] lg:left-[35px]  bottom-[41px]'
+        className={`text-white font-bold absolute ${
+          isMessageRoute ? 'left-[20px] lg:left-[20px]' : 'left-[20px] lg:left-[35px]'
+        } bottom-[41px] transition-all`}
         onClick={logout}
       >
         Log out

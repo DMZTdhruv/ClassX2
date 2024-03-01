@@ -2,6 +2,10 @@
 
 import { revalidateTag } from 'next/cache'
 
-export default async function deletePostFromUserPage() {
+export async function deletePostFromUserPage() {
   revalidateTag('userPost')
+}
+
+export async function updateFeed() {
+  revalidateTag('feedPost')
 }

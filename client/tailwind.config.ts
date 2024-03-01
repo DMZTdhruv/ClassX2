@@ -19,7 +19,7 @@ const config = {
       },
     },
     fontFamily: {
-      poppins: 'Poppins'
+      poppins: 'Poppins',
     },
     extend: {
       colors: {

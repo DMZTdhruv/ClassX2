@@ -47,66 +47,16 @@ interface IDeletePostDetails {
   className?: string
 }
 
-export default function PostSection() {
-  const [posts, setPosts] = useState<IPost[]>([])
-  const [errorMessage, setErrorMessage] = useState<string>('')
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-  const cookie = useCookieProvider()
+export default function PostSection({ postData }: { postData: IPost[] }) {
+  const [posts, setPosts] = useState<IPost[] | null>(postData)
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false)
   const [deletePostDetails, setDeletePotDetails] = useState<IDeletePostDetails | null>(null)
 
-  useEffect(() => {
-    const getPosts = async () => {
-      setIsLoading(true)
-      try {
-        const { data } = await axios.get(`${Api}/post/get-post?page=${1}&limit=${10}`, {
-          headers: {
-            Authorization: `Bearer ${cookie?.cookie}`,
-          },
-        })
-        const { data: result } = data
-        setPosts(result)
-      } catch (error: any) {
-        const { message } = error.response.data
-        if (error.response.status === 401) {
-          setErrorMessage('Unauthorized please sign in')
-          return
-        }
-        setErrorMessage(message)
-        console.error(message)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    getPosts()
-  }, [])
-
-  if (errorMessage) {
-    return (
-      <div className='xl:w-[60%]  w-full  justify-center h-screen flex flex-col gap-5 items-center'>
-        {errorMessage}
-        <Button className='text-white'>
-          <Link href='/auth/sign-in'>Sign in</Link>
-        </Button>
-      </div>
-    )
-  }
-
-  if (isLoading) {
-    return (
-      <div className='xl:w-[60%] mt-[80px] md:mt-[40px] w-full  px-[16px] flex flex-col gap-5 items-center'>
-        <Skeleton className='h-[550px] w-full md:w-[584px] rounded-xl' />
-        <Skeleton className='h-[550px] w-full md:w-[584px] rounded-xl' />
-      </div>
-    )
-  }
-
-  // handlers
   const handleDeleteModal = (value: boolean) => {
     setIsOpenModal(value)
   }
 
-  const handleDeletePostDetails = ({userProfileId, deleteId}: IDeletePostDetails) => {
+  const handleDeletePostDetails = ({ userProfileId, deleteId }: IDeletePostDetails) => {
     setDeletePotDetails({
       deleteId: deleteId,
       userProfileId: userProfileId,
@@ -115,8 +65,9 @@ export default function PostSection() {
   }
 
   const handlePostState = (postId: string) => {
-    setPosts(prev => prev.filter(post => post._id !== postId))
-  }
+    setPosts(prev => (prev ? prev.filter(post => post._id !== postId) : []));
+  };
+  
 
   return (
     <div

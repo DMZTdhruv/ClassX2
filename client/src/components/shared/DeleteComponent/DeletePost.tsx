@@ -1,6 +1,6 @@
 'use client'
 
-import deletePostFromUserPage from '@/app/(root)/serverActions'
+import { deletePostFromUserPage, updateFeed } from '@/app/(root)/serverActions'
 import { Api } from '@/Constants'
 import useCookieProvider from '@/hooks/useCookieProvider'
 import { useRouter } from 'next/navigation'
@@ -55,8 +55,9 @@ export default function DeletePostModal({
       }, 500)
       handleModal(false)
       // deletePostFromUserPage()
-      deletePostFromUserPage();
       if (userPost) {
+        deletePostFromUserPage()
+        updateFeed()
         router.push('/profile')
       }
     } catch (error: any) {

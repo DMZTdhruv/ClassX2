@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 
 import { useRouter } from 'next/navigation'
 import useCookieProvider from '@/hooks/useCookieProvider'
+import { updateFeed } from '../serverActions'
 
 interface Post {
   title: string
@@ -97,7 +98,8 @@ export default function UploadPost() {
         category: category,
         postedBy: cookie?.userProfileId,
       }
-      await submitDataToBackent(data)
+      updateFeed()
+      await submitDataToBackend(data)
       router.push('/')
     } catch (err: any) {
       console.log(err)
@@ -110,7 +112,7 @@ export default function UploadPost() {
     }
   }
 
-  const submitDataToBackent = async (data: Post) => {
+  const submitDataToBackend = async (data: Post) => {
     const api = process.env.NEXT_PUBLIC_API
     try {
       const response = await fetch(`${api}/post/create-post`, {
@@ -129,7 +131,7 @@ export default function UploadPost() {
   }
 
   return (
-    <div className='flex-col w-full flex p-[16px] mt-[80px] md:mt-[0px]'>
+    <div className='flex-col w-full sm:px-[16px] flex p-[16px] mt-[80px] md:mt-[0px]'>
       <div className='flex flex-col items-center gap-3'>
         <p className='text-[18px] font-semibold text-center'>Enter post details</p>
         <div className={`w-full max-w-[548px] min-h-[300px] rounded-xl p-5 bg-[#171717]`}>

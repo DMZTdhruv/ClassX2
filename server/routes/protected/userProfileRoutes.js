@@ -1,6 +1,6 @@
 // routes/protected/userProfileRoutes.js
 import express from 'express'
-import { authenticateUserToken } from '../../middlewares/authMiddleware.js'
+import { authenticateUserToken } from '../../middlewares/authenticateUser.js'
 import {
   createUserProfileController,
   getUserProfilesByDivisionNameController,

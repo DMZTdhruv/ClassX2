@@ -1,6 +1,6 @@
 // routes/protected/branchRoutes.js
 import express from "express";
-import { authenticateUserToken } from "../../middlewares/authMiddleware.js";
+import { authenticateUserToken } from "../../middlewares/authenticateUser.js";
 import { createBranchController } from "../../controllers/branch/index.js";
 import { getBranchController } from "../../controllers/branch/getBranchController.js";
 import { getSemesterNumberController } from "../../controllers/semesters/getSemesterController.js";

@@ -6,7 +6,12 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import cors from 'cors'
 import authRouter from './routes/unprotected/authRoutes.js'
-import { branchRouter, postRouter, userProfileRouter } from './routes/protected/index.js'
+import {
+  branchRouter,
+  postRouter,
+  userProfileRouter,
+  messageRouter,
+} from './routes/protected/index.js'
 dotenv.config()
 
 const app = express()
@@ -33,6 +38,7 @@ app.use('/auth', authRouter)
 app.use('/branches', branchRouter)
 app.use('/users', userProfileRouter)
 app.use('/post', postRouter)
+app.use('/message', messageRouter)
 mongoose.connect(process.env.DB_URL)
 const db = mongoose.connection
 

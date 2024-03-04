@@ -2,12 +2,12 @@
 
 import { deletePostFromUserPage, updateFeed } from '@/app/(root)/serverActions'
 import { Api } from '@/Constants'
-import useCookieProvider from '@/hooks/useCookieProvider'
+import { useAuthContext } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { IoWarningOutline } from 'react-icons/io5'
 
-interface DeletComponent {
+interface IDeleteComponent {
   deleteId: string
   userProfileId: string
   handleModal: (data: boolean) => void
@@ -23,10 +23,10 @@ export default function DeletePostModal({
   className,
   handlePostState,
   userPost,
-}: DeletComponent) {
+}: IDeleteComponent) {
   const router = useRouter()
-  console.log(userPost)
-  const cookie = useCookieProvider()
+  //@ts-ignore
+  const { authUser } = useAuthContext()
   const [isDeleting, setIsDeleting] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
   const deletePost = async () => {
@@ -34,9 +34,7 @@ export default function DeletePostModal({
     try {
       const response = await fetch(`${Api}/post/delete-post/${deleteId}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${cookie?.cookie}`,
-        },
+        credentials: 'include',
       })
 
       if (!response.ok) {
@@ -54,7 +52,6 @@ export default function DeletePostModal({
         setIsDeleting(false)
       }, 500)
       handleModal(false)
-      // deletePostFromUserPage()
       if (userPost) {
         deletePostFromUserPage()
         updateFeed()
@@ -82,7 +79,7 @@ export default function DeletePostModal({
           isDeleting && 'pointer-events-none'
         } flex flex-col  bg-[#1E1E1E]/80 shadow-lg backdrop-blur-md py-[8px]  rounded-[22px] ${className}`}
       >
-        {cookie?.userProfileId === userProfileId ? (
+        {authUser?.userProfileId === userProfileId ? (
           <button
             className='font-bold text-[#FF0000] py-[8px]  mx-[8px] active:scale-95 hover:bg-red-500/10 rounded-xl'
             onClick={deletePost}
@@ -140,7 +137,7 @@ export default function DeletePostModal({
           </p>
         )}
       </div>
-      {cookie?.userProfileId === userProfileId && (
+      {authUser?.userProfileId === userProfileId && (
         <div className='absolute bottom-5 text-center mx-6'>
           <div className='opacity-70 flex flex-col justify-center items-center gap-3'>
             <IoWarningOutline color='#ffcc00' className='opacity-60' size={16} />

@@ -18,7 +18,6 @@ const router = express.Router()
 //User profile routes
 router.post(
   '/create-user-profile',
-  authenticateUserToken,
   createUserProfileController
 )
 

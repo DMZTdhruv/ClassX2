@@ -1,45 +1,23 @@
 'use client'
 
 import React, { Suspense } from 'react'
-import { Api, IPost } from '@/Constants'
-const PostModalPage = React.lazy(
-  () => import('@/components/cards/PostModalPage')
-)
+import { IPost } from '@/Constants'
+const PostModalPage = React.lazy(() => import('@/components/cards/PostModalPage'))
 import { useEffect, useState } from 'react'
-import useCookieProvider from '@/hooks/useCookieProvider'
+import useGetPost from '@/hooks/posts/useGetPost'
 
 export const dynamic = 'force-dynamic'
 export default function PostModal({ params }: { params: { id: string } }) {
-  const cookies = useCookieProvider()
   const [postData, setPostData] = useState<IPost | null>(null)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const { loading, getPost } = useGetPost()
+
+  const setPost = (data: IPost) => {
+    setPostData(data);
+  }
 
   useEffect(() => {
-    getPost()
+    getPost(params.id, setPost)
   }, [])
-
-  const getPost = async () => {
-    try {
-      const response = await fetch(`${Api}/post?postId=${params.id}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${cookies?.cookie}`,
-        },
-        cache: 'no-store',
-      })
-
-      if (!response.ok) {
-        console.log('Failed to fetch the post')
-      }
-
-      const { data } = await response.json()
-      setPostData(data)
-    } catch (err: any) {
-      console.log(err.message)
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   function LoadingSkeleton() {
     return (
@@ -53,11 +31,8 @@ export default function PostModal({ params }: { params: { id: string } }) {
     <div className='fixed z-[10000] top-[50%] left-[50%] flexCenter translate-x-[-50%] h-[100vh] overflow-hidden bg-neutral-900/90 translate-y-[-50%] w-full'>
       <Suspense fallback={<LoadingSkeleton />}>
         <div className=' w-full flexCenter'>
-          {!isLoading && postData && (
-            <PostModalPage
-              postData={postData}
-              postId={params.id}
-            />
+          {!loading && postData && (
+            <PostModalPage postData={postData} postId={params.id} />
           )}
         </div>
       </Suspense>

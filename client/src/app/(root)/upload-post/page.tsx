@@ -10,10 +10,9 @@ import { useToast } from '@/components/ui/use-toast'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-
 import { useRouter } from 'next/navigation'
-import useCookieProvider from '@/hooks/useCookieProvider'
 import { updateFeed } from '../serverActions'
+import { useAuthContext } from '@/context/AuthContext'
 
 interface Post {
   title: string
@@ -26,15 +25,14 @@ interface Post {
 
 export default function UploadPost() {
   const router = useRouter()
-  const cookie = useCookieProvider()
-
-  const toast = useToast()
+  //@ts-ignore
+  const { authUser } = useAuthContext()
   const { generateUrl, getUrl } = useGenerateLink()
 
   // states
-  const [demoUploadImage, setDemoUploadImage] = useState<SanityImageAssetDocument | undefined>(
-    undefined
-  )
+  const [demoUploadImage, setDemoUploadImage] = useState<
+    SanityImageAssetDocument | undefined
+  >(undefined)
   const [title, setTitle] = useState<string>('')
   const [caption, setCaption] = useState<string>('')
   const [location, setLocation] = useState<string>('')
@@ -86,7 +84,7 @@ export default function UploadPost() {
     e.preventDefault()
     setIsPosting(true)
     try {
-      if (!title || !demoUploadImage || !caption || !cookie?.userProfileId || !location) {
+      if (!title || !demoUploadImage || !caption || !location) {
         throw new Error('Invalid details')
       }
       const imageUrl = await getUrl(demoUploadImage)
@@ -96,7 +94,7 @@ export default function UploadPost() {
         caption: caption,
         location: location,
         category: category,
-        postedBy: cookie?.userProfileId,
+        postedBy: authUser?.userProfileId,
       }
       updateFeed()
       await submitDataToBackend(data)
@@ -118,9 +116,9 @@ export default function UploadPost() {
       const response = await fetch(`${api}/post/create-post`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${cookie?.cookie}`,
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(data),
       })
 
@@ -134,7 +132,9 @@ export default function UploadPost() {
     <div className='flex-col w-full sm:px-[16px] flex p-[16px] mt-[80px] md:mt-[0px]'>
       <div className='flex flex-col items-center gap-3'>
         <p className='text-[18px] font-semibold text-center'>Enter post details</p>
-        <div className={`w-full max-w-[548px] min-h-[300px] rounded-xl p-5 bg-[#171717]`}>
+        <div
+          className={`w-full max-w-[548px] min-h-[300px] rounded-xl p-5 bg-[#171717]`}
+        >
           {demoUploadImage?.url ? (
             <div className='w-full relative'>
               <Image
@@ -181,7 +181,10 @@ export default function UploadPost() {
           <p className='text-center mt-3'>Upload images of type jpeg/png/gif</p>
         )}
 
-        <form className='w-full max-w-[548px] flex gap-3 flex-col' onSubmit={handleFormSubmitEvent}>
+        <form
+          className='w-full max-w-[548px] flex gap-3 flex-col'
+          onSubmit={handleFormSubmitEvent}
+        >
           <label className='w-full mb-[4px]'>
             <p className='mb-2'>Title</p>
             <Input

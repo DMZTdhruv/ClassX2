@@ -5,7 +5,7 @@ import React, { ChangeEvent, useEffect, useState } from 'react'
 import Image from 'next/image'
 import UserCard from '@/components/cards/UserCard'
 import { Skeleton } from '@/components/ui/skeleton'
-import useCookieProvider from '@/hooks/useCookieProvider'
+import { useAuthContext } from '@/context/AuthContext'
 
 interface Iuser {
   _id: string
@@ -21,7 +21,8 @@ export default function SearchUser() {
     setIsSearching(true)
     setUserName(e.target.value)
   }
-  const cookie = useCookieProvider()
+  // @ts-ignore
+  const {authUser} = useAuthContext();
   const [users, setUsers] = useState([])
 
   useEffect(() => {
@@ -34,9 +35,10 @@ export default function SearchUser() {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${cookie?.cookie}`,
             },
-          }
+            credentials: 'include'
+          },
+        
         )
 
         if (!response.ok) {
@@ -122,7 +124,7 @@ export default function SearchUser() {
                 return (
                   <UserCard
                     _id={user._id}
-                    currentUser={cookie?.userProfileId || ''}
+                    currentUser={authUser?.userProfileId || ''}
                     key={user._id}
                     userImageUrl={user.userProfileImage}
                     username={user.username}

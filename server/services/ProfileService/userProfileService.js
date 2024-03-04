@@ -1,4 +1,3 @@
-// services/userProfileService.js
 import UserProfileRepository from '../../repositories/UserProfileRepository.js'
 import BranchRepository from '../../repositories/BranchRepository.js'
 import SemesterRepository from '../../repositories/SemesterRepository.js'
@@ -11,7 +10,7 @@ import jwt from 'jsonwebtoken'
 const userProfileRepository = new UserProfileRepository()
 const userRepository = new UserRepository()
 
-export async function createUserProfileInstance(
+const createUserProfileInstance = async (
   userID,
   name,
   username,
@@ -24,49 +23,46 @@ export async function createUserProfileInstance(
   division,
   friends,
   posts,
-  groups
-) {
-  const existingUserProfile = await userProfileRepository.findByUserID(userID)
-  const existingUsername = await userProfileRepository.findByUsername(username)
+  groups,
+  res
+) => {
+  try {
+    const existingUserProfile = await userProfileRepository.findByUserID(userID)
+    const existingUsername = await userProfileRepository.findByUsername(
+      username
+    )
 
+    if (existingUsername) {
+      return res.status(400).json({ error: 'Username already exists' })
+    }
 
-  if (existingUsername) {
-    throw new Error('This username already exists')
+    if (existingUserProfile) {
+      return res.status(400).json({ error: 'User Profile already exists' })
+    }
+
+    return new UserProfile({
+      userID,
+      name,
+      username,
+      about,
+      userProfileImage,
+      enrollmentNumber,
+      branches,
+      isPrivate,
+      semesterNumber,
+      division,
+      friends,
+      posts,
+      groups,
+    })
+  } catch (error) {
+    console.error(error.message)
+    res.status(404).json({ error: error.message })
+    throw new Error(error.message)
   }
-
-  if (existingUserProfile) {
-    throw new Error('User Profile already exists')
-  }
-
-  const user = await userRepository.findByID(userID)
-  const userEmail = user.email
-  const existingUserProfileByEmail = await userProfileRepository.findByEmail(
-    userEmail
-  )
-
-  if (existingUserProfileByEmail) {
-    throw new Error('User Profile with the same email already exists')
-  }
-
-  return new UserProfile({
-    userID,
-    name,
-    username,
-    about,
-    userProfileImage,
-    enrollmentNumber,
-    branches,
-    isPrivate,
-    semesterNumber,
-    division,
-    friends,
-    posts,
-    groups,
-  })
 }
 
 export const createUserProfile = async (
-  currentUser,
   userID,
   name,
   username,
@@ -81,11 +77,11 @@ export const createUserProfile = async (
   posts,
   groups,
   email,
-  password
+  password,
+  res
 ) => {
   try {
     validateUserProfileInput(
-      currentUser,
       userID,
       name,
       username,
@@ -100,7 +96,8 @@ export const createUserProfile = async (
       posts,
       groups,
       email,
-      password
+      password,
+      res
     )
 
     const branchRepository = new BranchRepository()
@@ -119,7 +116,7 @@ export const createUserProfile = async (
     )
 
     const userProfileInstance = await createUserProfileInstance(
-      currentUser.userID,
+      userID,
       name,
       username,
       about,
@@ -131,25 +128,19 @@ export const createUserProfile = async (
       [division._id],
       friends,
       posts,
-      groups
+      groups,
+      res
     )
 
-    // get user
-    const user = await userRepository.findByID(currentUser.userID)
-    // adding ref of userProfile
+    const user = await userRepository.findByID(userID)
     user.userProfile = userProfileInstance._id
-
-    // saving user data and user profile
     await userRepository.save(user)
-
-    //saving user profile
     await userProfileRepository.save(userProfileInstance)
-    
+
     const token = jwt.sign(
       {
         userID: user._id,
         userProfileId: userProfileInstance._id,
-        username: userProfileInstance.username,
       },
       process.env.JWT_SECRET,
       {
@@ -157,13 +148,22 @@ export const createUserProfile = async (
       }
     )
 
-    return {
-      message: 'User Profile created successfully',
-      userProfile: userProfileInstance,
-      token: token,
-    }
+    res.cookie('classX_user_token', token, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      sameSite: 'None',
+      secure: false,
+    })
+
+    return res.status(201).json({
+      message: 'Successfully signed in',
+      userProfile: {
+        userID: user._id,
+        userProfileId: userProfileInstance._id,
+      },
+    })
   } catch (error) {
-    console.log(error)
-    throw new Error(error.message)
+    console.error(error)
+    throw new Error(error)
   }
 }

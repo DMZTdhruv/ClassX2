@@ -7,17 +7,15 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FaRegEye } from 'react-icons/fa6'
 import { FaRegEyeSlash } from 'react-icons/fa6'
-import Cookies from 'js-cookie'
-import { useRouter } from 'next/navigation'
+import useSignUpUser from '@/hooks/auth/useSignUpUser'
 
 function SignUpPage() {
-  const navigate = useRouter();
-
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
-  const [errorMessage, setErrorMessage] = useState<string>('')
   const [showPassword, setShowPassword] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [completeDetails, setCompleteDetails] = useState<string>('')
+
+  const { loading, message, errorMessage, signUp } = useSignUpUser()
 
   const handleEmail = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
@@ -27,44 +25,13 @@ function SignUpPage() {
     setPassword(e.target.value)
   }
 
-  const handleOnSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleOnSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!email || !password) {
-      setErrorMessage('Please enter the details')
+      setCompleteDetails('Please enter the details')
       return
     }
-    signUpUser()
-  }
-
-  const signUpUser = async () => {
-    const api = `${process.env.NEXT_PUBLIC_API}/auth/signUp `
-    setIsLoading(true)
-    try {
-      const createUser = await fetch(api, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      })
-      const savedUser = await createUser.json()
-      if (!createUser.ok) {
-        setErrorMessage(savedUser.message)
-        setTimeout(() => {
-          setErrorMessage('')
-        }, 5000)
-        return;
-      }
-      navigate.push("/user/create-user-profile");
-      Cookies.set('classX_user_token', savedUser.token, { expires: 30 })
-    } catch (err: any) {
-      console.error(err.message)
-    } finally {
-      setIsLoading(false)
-    }
+    await signUp(email, password)
   }
 
   return (
@@ -113,12 +80,16 @@ function SignUpPage() {
           className='rounded-full text-white px-[24px] py-[3px]'
           type='submit'
         >
-          {isLoading ? 'Creating account..' : 'Create account'}
+          {loading ? 'Creating account..' : 'Create account'}
         </Button>
       </form>
-      {errorMessage && (
+      {(errorMessage || completeDetails) && (
         <p className='text-center  error_message'>
-          Error: <span className='text-red-500'> {errorMessage}</span>
+          Error:{' '}
+          <span className='text-red-500'>
+            {' '}
+            {errorMessage || completeDetails}
+          </span>
         </p>
       )}
       <div className='text-center  error_message'>

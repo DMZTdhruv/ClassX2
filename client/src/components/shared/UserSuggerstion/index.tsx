@@ -37,7 +37,7 @@ export default async function index() {
         const response = await fetch(`${api}/users/users-of-division`, {
           method: 'GET',
           headers: {
-            Authorization: `Bearer ${token?.value}`,
+            Cookies: `classX_user_token=${tokenValue}`,
           },
         })
 
@@ -53,14 +53,14 @@ export default async function index() {
     }
 
     const users: IUser[] = await getUsers()
-    const reccomendedUsers = shuffleArray(users)
+    const recommendedUsers = shuffleArray(users)
     const divisionName = users && users[0].division.divisionName
     return (
       <div className='bg-[#171717] w-[90%] rounded-[20px] px-[14px] mt-[33px] pb-[10px]'>
         <p className='py-[16.5px] font-semibold'>
           Students from your division {divisionName}
         </p>
-        {reccomendedUsers?.map((user: IUser) => {
+        {recommendedUsers?.map((user: IUser) => {
           if (user._id === decodedToken.userProfileId) {
             return
           }
@@ -78,6 +78,10 @@ export default async function index() {
       </div>
     )
   } catch (err: any) {
-    return <Link className='mt-5' href={`${webUrl}/auth/sign-in`}>Sign in</Link>
+    return (
+      <Link className='mt-5' href={`${webUrl}/auth/sign-in`}>
+        Sign in
+      </Link>
+    )
   }
 }

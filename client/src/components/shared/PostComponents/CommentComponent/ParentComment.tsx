@@ -5,32 +5,15 @@ import { formatDate } from '@/utils'
 import Image from 'next/image'
 import SubComment from './SubComment'
 import React, { useEffect, useState } from 'react'
-import useCookieProvider from '@/hooks/useCookieProvider'
 import { Api } from '@/Constants'
 import { BsThreeDots } from 'react-icons/bs'
 import DeleteCommentComponent from '../../DeleteComponent/DeleteComment'
+import { useAuthContext } from '@/context/AuthContext'
 
 interface UpdateReplyCommentData {
   parentCommentId: string
   repliedUserId: string
 }
-
-interface Cookie {
-  userProfileId: string
-  cookie: string
-}
-
-interface PostLikes {
-  _id: string
-  isLiked: boolean
-  setNumberOfLikes: (newNumberOfLikes: number) => void
-  numberOfLikes: number
-  cookie?: Cookie | null
-  endPoint: string
-  isDevMode?: boolean | null
-}
-
-//implement a reply button
 
 interface ISubComment {
   _id: string
@@ -98,28 +81,38 @@ export default function ParentComment({
   setDeleteCommentDetails,
   deleteSubComment,
 }: Comment) {
+  // @ts-ignore
+  // context
+  const { authUser } = useAuthContext()
+
   const date = new Date(parentCommentPostedDate)
   const formatedDate = formatDate(date)
-  const cookie = useCookieProvider()
   // states
   const [subComments, setSubComments] = useState<ISubComment[] | null>(null)
 
-  const [isOpeningRepliedComments, setIsOpeningRepliedComments] = useState<boolean>(false)
+  const [isOpeningRepliedComments, setIsOpeningRepliedComments] =
+    useState<boolean>(false)
   const [openRepliedComments, setOpenRepliedComments] = useState<boolean>(false)
-  const [openUserRepliedComments, setOpeningUserRepliedComments] = useState<boolean>(true)
+  const [openUserRepliedComments, setOpeningUserRepliedComments] =
+    useState<boolean>(true)
   const [repliedComments, setRepliedComments] = useState([])
   const [isLiked, setIsLiked] = useState<boolean>(
-    parentCommentTotalLikes.filter(id => id === cookie?.userProfileId).length > 0
+    parentCommentTotalLikes.filter(id => id === authUser?.userProfileId).length > 0
   )
-  const [numberOfLikes, setNumberOfLikes] = useState<number>(parentCommentTotalLikes.length)
+  const [numberOfLikes, setNumberOfLikes] = useState<number>(
+    parentCommentTotalLikes.length
+  )
   const [userRepliedCommentsLength, setUserRepliedCommentsLength] = useState<number>(
     userRepliedComments.length
   )
-  const [totalCommentReplies, setTotalCommentReplies] = useState<number>(parentTotalCommentReplies)
+  const [totalCommentReplies, setTotalCommentReplies] = useState<number>(
+    parentTotalCommentReplies
+  )
 
   const [deleteSubCommentDetails, setDeleteSubCommentDetails] =
     useState<DeleteCommentDetails | null>(null)
-  const [openDeleteParentCommentModal, setOpenDeleteParentCommentModal] = useState<boolean>(false)
+  const [openDeleteParentCommentModal, setOpenDeleteParentCommentModal] =
+    useState<boolean>(false)
   const handleParentDeleteModal = (value: boolean) => {
     setOpenDeleteParentCommentModal(value)
   }
@@ -157,9 +150,7 @@ export default function ParentComment({
         `${Api}/post/comment/sub-comment?parentCommentId=${parentCommentId}`,
         {
           method: 'GET',
-          headers: {
-            Authorization: `Bearer ${cookie?.cookie}`,
-          },
+          credentials: 'include',
         }
       )
 
@@ -190,12 +181,12 @@ export default function ParentComment({
         method: 'POST',
         headers: {
           'Content-type': 'application/json',
-          Authorization: `Bearer ${cookie?.cookie}`,
         },
         body: JSON.stringify({
           commentId: _id,
-          userID: cookie?.userProfileId,
+          userID: authUser?.userProfileId,
         }),
+        credentials: 'include',
       })
 
       if (!response.ok) {
@@ -219,12 +210,12 @@ export default function ParentComment({
         method: 'POST',
         headers: {
           'Content-type': 'application/json',
-          Authorization: `Bearer ${cookie?.cookie}`,
         },
         body: JSON.stringify({
-          userID: cookie?.userProfileId,
+          userID: authUser?.userProfileId,
           commentId: _id,
         }),
+        credentials: 'include',
       })
 
       if (!response.ok) {
@@ -254,7 +245,9 @@ export default function ParentComment({
           type='SubComment'
         />
       )}
-      <div className={`flex pt-[12px] px-[15px] gap-3 ${Styles.parentComment} items-start`}>
+      <div
+        className={`flex pt-[12px] px-[15px] gap-3 ${Styles.parentComment} items-start`}
+      >
         <Image
           src={parentCommentImage}
           alt=''
@@ -274,7 +267,9 @@ export default function ParentComment({
                 <span className='font-semibold text-[12px] lg:text-[12px]'>
                   {parentCommentUsername} &nbsp;
                 </span>
-                <span className='text-[12px] lg:text-[12px]'>{parentCommentCommentText}</span>
+                <span className='text-[12px] lg:text-[12px]'>
+                  {parentCommentCommentText}
+                </span>
               </p>
               <button
                 className='hover:scale-105 p-2 flexCenter w-auto'
@@ -360,7 +355,9 @@ export default function ParentComment({
                   getRepliedComments(_id)
                 }}
               >
-                {openRepliedComments ? 'Hide replies' : `View replies (${totalCommentReplies})`}
+                {openRepliedComments
+                  ? 'Hide replies'
+                  : `View replies (${totalCommentReplies})`}
 
                 {isOpeningRepliedComments && <div className='loader '></div>}
               </button>

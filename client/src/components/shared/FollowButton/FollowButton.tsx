@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import useCookieProvider from '@/hooks/useCookieProvider'
+import { useAuthContext } from '@/context/AuthContext'
 import React, { useEffect, useState } from 'react'
 
 interface FollowButtonProps {
@@ -16,8 +16,8 @@ export default function FollowButton({
   classes
 }: FollowButtonProps) {
   const api = process.env.NEXT_PUBLIC_API
-
-  const cookie = useCookieProvider()
+  //@ts-ignore
+  const {authUser} = useAuthContext();
   const [isFollowing, setIsFollowing] = useState<boolean>(false)
 
   const handleFollow = async () => {
@@ -27,11 +27,11 @@ export default function FollowButton({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${cookie?.cookie}`,
         },
         body: JSON.stringify({
           userToFollowId: userToFollowId,
         }),
+        credentials: 'include'
       })
 
       if (!response.ok) {
@@ -53,15 +53,14 @@ export default function FollowButton({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${cookie?.cookie}`,
         },
         body: JSON.stringify({
           userToUnfollowId: userToFollowId
         }),
+        credentials: 'include'
       })
 
       if (!response.ok) {
-        console.log('Failed to follow User')
         setIsFollowing(true)
       }
 
@@ -78,9 +77,7 @@ export default function FollowButton({
         `${api}/users/isFollowing?userToFollowId=${userToFollowId}`,
         {
           method: 'GET',
-          headers: {
-            Authorization: `Bearer ${cookie?.cookie}`,
-          },
+          credentials: 'include'
         }
       )
 

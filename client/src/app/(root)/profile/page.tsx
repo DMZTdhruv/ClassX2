@@ -31,16 +31,16 @@ export default async function Profile() {
       const response = await fetch(userProfileApi, {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${token?.value}`,
+          Cookies: `classX_user_token=${token?.value}`,
         },
       })
 
-      if (!response.ok) {
+      const data = await response.json()
+      if (data.error) {
         console.log('Failed to fetch the user')
       }
 
-      const { message: result } = await response.json()
-      return result
+      return data.data
     } catch (error: any) {
       console.log(error.message)
     }
@@ -49,19 +49,19 @@ export default async function Profile() {
   // variables
   const userProfile: UserProfileProps = await getUserProfile()
   return (
-    <section className='flex mt-[80px] sm:px-[16px] md:mt-[0px] sm:px-[16px] flex-col items-center gap-[60px] mb-[20px]'>
+    <section className='flex mt-[80px]  md:mt-[0px] sm:px-[16px] flex-col items-center gap-[60px] mb-[20px]'>
       <UserHeader
-        _id={userProfile._id}
-        name={userProfile.name}
-        username={userProfile.username}
-        about={userProfile.about}
-        userProfileImage={userProfile.userProfileImage}
-        post={userProfile.post}
-        followers={userProfile.followers}
-        following={userProfile.following}
-        isPrivate={userProfile.isPrivate}
+        _id={userProfile?._id}
+        name={userProfile?.name}
+        username={userProfile?.username}
+        about={userProfile?.about}
+        userProfileImage={userProfile?.userProfileImage}
+        post={userProfile?.post}
+        followers={userProfile?.followers}
+        following={userProfile?.following}
+        isPrivate={userProfile?.isPrivate}
       />
-      <ProfilePosts userProfileId={userProfile._id} token={token?.value || ''} />
+      <ProfilePosts userProfileId={userProfile?._id} token={token?.value || ''} />
     </section>
   )
 }

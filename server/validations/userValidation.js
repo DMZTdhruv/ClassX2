@@ -1,8 +1,6 @@
-// validations/userValidation.js
-import { validateEmail } from "../utils/validationUtils.js";
 
-export const validateUserSignUp = (email, password) => {
-  if (!validateEmail(email)) {
-    throw new Error("Invalid email format");
+export const validateUserSignUp = (email, password,res) => {
+  if (!email || !password) {
+    return res.status(400).json({error: "Incomplete details"});
   }
 };

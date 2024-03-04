@@ -9,13 +9,19 @@ interface Posts {
   likes: string[]
 }
 
-const ProfilePosts = async ({ userProfileId, token }: { token: string; userProfileId: string }) => {
+const ProfilePosts = async ({
+  userProfileId,
+  token,
+}: {
+  token: string
+  userProfileId: string
+}) => {
   const getUserPosts = async () => {
     try {
       const response = await fetch(`${Api}/users/get-user-posts`, {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${token}`,
+          Cookies: `classX_user_token=${token}`,
         },
         next: {
           tags: ['userPost'],
@@ -27,8 +33,6 @@ const ProfilePosts = async ({ userProfileId, token }: { token: string; userProfi
       }
 
       const { data: result } = await response.json()
-      console.log('user')
-      console.log(result[0].posts)
       return result[0].posts
     } catch (error) {
       console.log(error)

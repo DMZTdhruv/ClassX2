@@ -1,8 +1,7 @@
 'use client'
 
 import { Api } from '@/Constants'
-import useCookieProvider from '@/hooks/useCookieProvider'
-import Style from './styles.module.css'
+import { useAuthContext } from '@/context/AuthContext'
 
 interface DeleteComment {
   userId: string
@@ -21,16 +20,15 @@ export default function DeleteCommentComponent({
   handleDeleteComment,
   type,
 }: DeleteComment) {
-  const cookie = useCookieProvider()
+  //@ts-ignore
+  const {authUser} = useAuthContext();
   const deleteComment = async () => {
     const CommentApi = `${Api}/post/comment/delete-comment/${deleteId}`
     const SubCommentApi = `${Api}/post/comment/subComment/delete-comment/${deleteId}`
     try {
       const response = await fetch(`${type === 'Comment' ? CommentApi : SubCommentApi}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${cookie?.cookie}`,
-        },
+        credentials: 'include'
       })
 
       if (!response.ok) {
@@ -53,7 +51,7 @@ export default function DeleteCommentComponent({
         className={`w-[336px]  flex flex-col bg-[#1E1E1E]/80 shadow-lg backdrop-blur-md py-[8px]  rounded-[22px] ${className}`}
         style={{}}
       >
-        {cookie?.userProfileId === userId ? (
+        {authUser?.userProfileId === userId ? (
           <button
             className='font-bold text-[#FF0000] py-[8px]  mx-[8px] active:scale-95 hover:bg-red-500/10 rounded-xl'
             onClick={() => {

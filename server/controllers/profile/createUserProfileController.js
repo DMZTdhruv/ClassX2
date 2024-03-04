@@ -1,10 +1,7 @@
-
-// controllers/profile/createUserProfileController.js
-import { createUserProfile } from "../../services/ProfileService/userProfileService.js";
+import { createUserProfile } from '../../services/ProfileService/userProfileService.js'
 
 export const createUserProfileController = async (req, res) => {
   try {
-    const currentUser = req.user;
     const {
       userID,
       name,
@@ -21,10 +18,9 @@ export const createUserProfileController = async (req, res) => {
       groups,
       email,
       password,
-    } = req.body;
+    } = req.body
 
-    const result = await createUserProfile(
-      currentUser,
+    await createUserProfile(
       userID,
       name,
       username,
@@ -39,11 +35,11 @@ export const createUserProfileController = async (req, res) => {
       posts,
       groups,
       email,
-      password
-    );
-      
-    res.status(201).json(result);
+      password,
+      res
+    )
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.log(error.message)
+    res.status(500).json({ message: error.message })
   }
-};
+}

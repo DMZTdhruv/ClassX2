@@ -1,18 +1,18 @@
 import UserProfileRepository from '../../repositories/UserProfileRepository.js'
 
-export const getUserProfileService = async user => {
-  const { userID } = user
+export const getUserProfileService = async (user, res) => {
+  const { userProfileId } = user
   try {
+    console.log(user)
     const userProfileRepo = new UserProfileRepository()
-    const user = await userProfileRepo.findByUserID(userID)
-    if (!user) {
-      throw new Error('No user profile found')
+    const userProfile = await userProfileRepo.findById(userProfileId);
+    if (!userProfile) {
+      return res.status(400).json({ error: `Failed to get the profile information` })
     }
-    return {
-      message: user,
-    }
+    return res.status(200).json({ data: userProfile })
   } catch (err) {
     console.log(err.message)
+
     throw new Error(err.message)
   }
 }

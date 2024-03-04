@@ -1,13 +1,7 @@
 'use client'
 
 import Post from '@/components/cards/Post'
-import { Skeleton } from '@/components/ui/skeleton'
-import useCookieProvider from '@/hooks/useCookieProvider'
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { Api } from '@/Constants'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { useState } from 'react'
 import DeletePostModal from '@/components/shared/DeleteComponent/DeletePost'
 
 interface IComments {
@@ -50,7 +44,9 @@ interface IDeletePostDetails {
 export default function PostSection({ postData }: { postData: IPost[] }) {
   const [posts, setPosts] = useState<IPost[] | null>(postData)
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false)
-  const [deletePostDetails, setDeletePotDetails] = useState<IDeletePostDetails | null>(null)
+  const [deletePostDetails, setDeletePotDetails] = useState<IDeletePostDetails | null>(
+    null
+  )
 
   const handleDeleteModal = (value: boolean) => {
     setIsOpenModal(value)
@@ -65,9 +61,8 @@ export default function PostSection({ postData }: { postData: IPost[] }) {
   }
 
   const handlePostState = (postId: string) => {
-    setPosts(prev => (prev ? prev.filter(post => post._id !== postId) : []));
-  };
-  
+    setPosts(prev => (prev ? prev.filter(post => post._id !== postId) : []))
+  }
 
   return (
     <div

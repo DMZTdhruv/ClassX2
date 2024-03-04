@@ -7,18 +7,18 @@ export const getPostController = async (req, res) => {
   const itemsPerPage = parseInt(limit) || 10
   const startIndex = (currentPage - 1) * itemsPerPage
   try {
-    const results = await getAllPostService(startIndex, itemsPerPage)
+    const results = await getAllPostService(startIndex, itemsPerPage, res)
     res.json(results)
   } catch (err) {
-    res.status(500).json(err.message)
+    res.status(500).json({ error: err.message })
   }
 }
 
 export const getPostByIdController = async (req, res) => {
   const { postId } = req.query
+  console.log(postId)
   try {
-    const results = await getPostByIdService(postId);
-    res.status(200).json(results);
+    await getPostByIdService(postId, res)
   } catch (err) {
     res.status(500).json(err.message)
   }

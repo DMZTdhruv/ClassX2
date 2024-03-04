@@ -1,14 +1,13 @@
 'use client'
 
 import { Api, webUrl } from '@/Constants'
-import useCookieProvider from '@/hooks/useCookieProvider'
 import { formatDate } from '@/utils'
-import { likePost, unlikePost } from '@/utils/LikeFunctions'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import { BsThreeDots } from 'react-icons/bs'
 import Styles from './styles.module.css'
+import { useAuthContext } from '@/context/AuthContext'
 
 interface DeleteCommentDetails {
   userId: string
@@ -59,11 +58,13 @@ export default function SubComment({
   setDeleteSubCommentDetails,
   deleteSubComment,
 }: SubComments) {
-  const cookie = useCookieProvider()
+
+  //@ts-ignore
+  const {authUser} = useAuthContext();
   const date = new Date(subCommentPostedDate)
   const formatedDate = formatDate(date)
   const [isLiked, setIsLiked] = useState<boolean>(
-    subCommentTotalLikes.filter(id => id === cookie?.userProfileId).length > 0
+    subCommentTotalLikes.filter(id => id === authUser?.userProfileId).length > 0
   )
   const [numberOfLikes, setNumberOfLikes] = useState<number>(subCommentTotalLikes.length)
   const user = subCommentCommentText.split(' ')[0]
@@ -78,12 +79,12 @@ export default function SubComment({
         method: 'POST',
         headers: {
           'Content-type': 'application/json',
-          Authorization: `Bearer ${cookie?.cookie}`,
         },
         body: JSON.stringify({
           commentId: _id,
-          userID: cookie?.userProfileId,
+          userID: authUser?.userProfileId,
         }),
+        credentials: 'include',
       })
 
       if (!response.ok) {
@@ -107,12 +108,12 @@ export default function SubComment({
         method: 'POST',
         headers: {
           'Content-type': 'application/json',
-          Authorization: `Bearer ${cookie?.cookie}`,
         },
         body: JSON.stringify({
-          userID: cookie?.userProfileId,
+          userID: authUser?.userProfileId,
           commentId: _id,
         }),
+        credentials: 'include'
       })
 
       if (!response.ok) {

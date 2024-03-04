@@ -8,13 +8,16 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
+import useLogOut from '@/hooks/auth/useLogout'
 
 export default function SideBar(props: any) {
   const pathname = usePathname()
   const [isActive, setIsActive] = useState<string>('/')
+  const { loading, logout } = useLogOut()
   const router = useRouter()
-  const logout = () => {
-    Cookies.remove('classX_user_token')
+  const logOutUser = async () => {
+    await logout()
+    localStorage.removeItem('classX_user')
     router.push('/auth/sign-in')
   }
   const isMessageRoute = pathname.startsWith('/message')
@@ -22,7 +25,7 @@ export default function SideBar(props: any) {
     <section
       className={`h-[100vh] sticky top-0 transition-all hidden sm:block font-poppins ${
         isMessageRoute ? '' : 'lg:w-[304px]'
-      } px-[40px] realtive w-auto border-r-2 border-r-slate-800 `}
+      } px-[40px] relative w-auto border-r-2 border-r-slate-800 `}
     >
       <div className='h-[150px] flex items-center'>
         <Image
@@ -54,7 +57,9 @@ export default function SideBar(props: any) {
           return (
             <Link
               className={`flex ${
-                isActive === links.name || onPath ? 'bg-[#891DCC] glow' : 'hover:bg-[#891DCC]/20'
+                isActive === links.name || onPath
+                  ? 'bg-[#891DCC] glow'
+                  : 'hover:bg-[#891DCC]/20'
               }  gap-[11px] py-[5px] px-[10px] rounded-md  transition-all cursor-pointer '`}
               href={links.routes}
               key={links.id}
@@ -67,7 +72,9 @@ export default function SideBar(props: any) {
                 unoptimized
               />
               <span
-                className={`font-semibold text-[20.42px] hidden ${!isMessageRoute && 'lg:block'} `}
+                className={`font-semibold text-[20.42px] hidden ${
+                  !isMessageRoute && 'lg:block'
+                } `}
               >
                 {links.name}
               </span>
@@ -80,9 +87,9 @@ export default function SideBar(props: any) {
         className={`text-white font-bold absolute ${
           isMessageRoute ? 'left-[20px] lg:left-[20px]' : 'left-[20px] lg:left-[35px]'
         } bottom-[41px] transition-all`}
-        onClick={logout}
+        onClick={logOutUser}
       >
-        Log out
+        {loading ? 'Logging out...' : 'log out'}
       </Button>
     </section>
   )

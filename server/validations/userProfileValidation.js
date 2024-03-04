@@ -1,7 +1,6 @@
 // validations/userProfileValidation.js
 
 export const validateUserProfileInput = (
-  user,
   userID,
   name,
   username,
@@ -16,27 +15,28 @@ export const validateUserProfileInput = (
   posts,
   groups,
   email,
-  password
+  password,
+  res
 ) => {
   if (
-    !user.userID || 
+    !userID ||
     !name ||
     !username ||
-    !about || 
+    !about ||
     !userProfileImage ||
     !enrollmentNumber ||
     !branchName ||
     !semesterNumber ||
     !divisionName
   ) {
-    throw new Error("Missing required input fields");
+    return res.status(400).json({ error: 'Missing required fields' })
   }
 
-  return true;
-};
+  return true
+}
 
-export const userProfileIdValidator = (userId) => {
-  if(!userId) {
-    throw new Error("User profile ID is not present")
+export const userProfileIdValidator = userId => {
+  if (!userId) {
+    throw new Error('User profile ID is not present')
   }
 }

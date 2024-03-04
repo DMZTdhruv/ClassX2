@@ -1,6 +1,5 @@
-interface Cookie {
+interface IAuthUser {
   userProfileId: string
-  cookie: string
 }
 
 interface PostLikes {
@@ -9,7 +8,7 @@ interface PostLikes {
   setNumberOfLikes: (newNumberOfLikes: number) => void
   setIsLiked: (newValueOfLike: boolean) => void
   numberOfLikes: number
-  cookie?: Cookie | null
+  authUser: IAuthUser
   endPoint: string
   isDevMode?: boolean | null
 }
@@ -20,11 +19,10 @@ export const likePost = async ({
   setNumberOfLikes,
   setIsLiked,
   numberOfLikes,
-  cookie,
+  authUser,
   endPoint,
   isDevMode,
 }: PostLikes) => {
-
   if (isLiked) return
   setNumberOfLikes(numberOfLikes + 1)
   const api = process.env.NEXT_PUBLIC_API
@@ -37,12 +35,12 @@ export const likePost = async ({
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
-        Authorization: `Bearer ${cookie?.cookie}`,
       },
       body: JSON.stringify({
-        userProfileID: cookie?.userProfileId,
+        userProfileID: authUser?.userProfileId,
         postId: _id,
       }),
+      credentials: 'include',
     })
 
     if (!response.ok) {
@@ -63,7 +61,7 @@ export const unlikePost = async ({
   setNumberOfLikes,
   setIsLiked,
   numberOfLikes,
-  cookie,
+  authUser,
   endPoint,
   isDevMode,
 }: PostLikes) => {
@@ -78,12 +76,12 @@ export const unlikePost = async ({
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
-        Authorization: `Bearer ${cookie?.cookie}`,
       },
       body: JSON.stringify({
-        userProfileID: cookie?.userProfileId,
+        userProfileID: authUser?.userProfileId,
         postId: _id,
       }),
+      credentials: 'include',
     })
 
     if (!response.ok) {
@@ -98,4 +96,4 @@ export const unlikePost = async ({
   }
 }
 
-export type { Cookie, PostLikes }
+export type { IAuthUser, PostLikes }

@@ -14,8 +14,6 @@ import {
 } from '@/components/ui/select'
 
 import Image from 'next/image'
-import Cookies from 'js-cookie'
-import { useRouter } from 'next/navigation'
 import {
   useState,
   ChangeEvent,
@@ -25,6 +23,8 @@ import {
 } from 'react'
 import { SanityImageAssetDocument } from '@sanity/client'
 import { Textarea } from '@/components/ui/textarea'
+import useCreateUserProfile from '@/hooks/user/useCreateUserProfile'
+import { Api } from '@/Constants'
 
 interface Branch {
   _id: string
@@ -37,8 +37,9 @@ interface SemesterNumber {
 }
 
 function SignUpPage() {
-  const router = useRouter()
   const { generateUrl, getUrl } = useGenerateLink()
+  const { loading, errorMessage, message, createUserProfile } =
+    useCreateUserProfile()
 
   // all states of single value
   const [name, setName] = useState<string>('')
@@ -54,15 +55,14 @@ function SignUpPage() {
     SanityImageAssetDocument | undefined
   >(undefined)
 
-  const [isPrivate, setIsPrivate] = useState<boolean | undefined>(undefined)
-  const [message, setMessage] = useState<string>('')
+  const [clientErrors, setClientErrors] = useState<string>('')
+  const [isPrivate, setIsPrivate] = useState<boolean>(false)
 
   // all states of array
   const [semesters, setSemesters] = useState<SemesterNumber[]>([])
   const [branchNames, setBranchNames] = useState<Branch[]>([])
 
   // all states of error
-  const [errorMessage, setErrorMessage] = useState<string>('')
 
   // all states of loading
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -114,9 +114,9 @@ function SignUpPage() {
       const url = await generateUrl(e)
       setUserProfileImageDemoLink(url)
     } catch (err: any) {
-      setErrorMessage(err.message)
+      setClientErrors(err.message)
       setTimeout(() => {
-        setErrorMessage('')
+        setClientErrors('')
       }, 5000)
     } finally {
       setIsUploadingImage(false)
@@ -127,143 +127,78 @@ function SignUpPage() {
     getBranchNames()
   }, [])
 
-  // handling fetches
-  const createUserProfile = async (e: FormEvent<HTMLFormElement>) => {
-    setIsLoading(true)
-    e.preventDefault()
-    if (
-      !name ||
-      !username ||
-      userProfileImageDemoLink === undefined ||
-      !enrollmentNo ||
-      !userBranch ||
-      !division ||
-      userSemester === undefined ||
-      isPrivate === undefined
-    ) {
-      setErrorMessage('Please enter all the details')
-      setTimeout(() => {
-        setErrorMessage('')
-      }, 5000)
-      setIsLoading(false)
-      return
-    }
-    const imageUrl = await getUrl(userProfileImageDemoLink)
-    if (!imageUrl) {
-      setErrorMessage('There was an error in generating the user profile image')
-      setTimeout(() => {
-        setErrorMessage('')
-      }, 5000)
-    }
-    const userDetails = {
-      name: name,
-      username: username,
-      about: bio,
-      userProfileImage: imageUrl,
-      enrollmentNumber: enrollmentNo,
-      branchName: userBranch,
-      semesterNumber: userSemester,
-      divisionName: division,
-      isPrivate: isPrivate,
-    }
-
-    const api = `${process.env.NEXT_PUBLIC_API}/users/create-user-profile`
-    try {
-      const response = await fetch(api, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${Cookies.get('classX_user_token')}`,
-        },
-        body: JSON.stringify(userDetails),
-      })
-
-      const user = await response.json()
-      if (!response.ok) {
-        console.error(`${user.message}`)
-        setErrorMessage(`${user.message}`)
-        setTimeout(() => {
-          setErrorMessage('')
-        }, 5000)
-        return
-      }
-
-      const { message } = await user
-      setMessage(message)
-      setTimeout(() => {
-        setMessage('')
-      }, 5000)
-      const { token } = await user
-      Cookies.set('classX_user_token', token)
-      router.push('/')
-    } catch (err: any) {
-      console.error(err.Message)
-      setErrorMessage(err.Message)
-      setTimeout(() => {
-        setErrorMessage('')
-      }, 5000)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   const getBranchNames = async () => {
-    const api = `${process.env.NEXT_PUBLIC_API}/branches/get-branch`
     setIsBranchLoading(true)
     try {
-      const branches = await fetch(api, {
+      const branches = await fetch(`${Api}/branches/get-branch`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${Cookies.get('classX_user_token')}`,
         },
+        credentials: 'include',
       })
 
       const result = await branches.json()
       if (!branches.ok) {
-        setErrorMessage(result.Message)
-        setTimeout(() => {
-          setErrorMessage('')
-        }, 5000)
-        return
+        throw new Error(result.message)
       }
 
       setBranchNames(result.data)
     } catch (err: any) {
       console.log(err.message)
+      setClientErrors(err.Message)
+      setTimeout(() => {
+        setClientErrors('')
+      }, 5000)
     } finally {
       setIsBranchLoading(false)
     }
   }
 
   const getSemesterOfBranch = async (branchName: string) => {
-    const api = `${process.env.NEXT_PUBLIC_API}/branches/get-semester?branchName=${branchName}`
     setIsSemesterLoading(true)
-
     try {
-      const getSemester = await fetch(api, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${Cookies.get('classX_user_token')}`,
-        },
-      })
-
-      if (!getSemester.ok) {
-        const result = await getSemester.json()
-        setErrorMessage(`${result.message}`)
-        setTimeout(() => {
-          setErrorMessage('')
-        }, 5000)
-        return
-      }
+      const getSemester = await fetch(
+        `${Api}/branches/get-semester?branchName=${branchName}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        }
+      )
 
       const result = await getSemester.json()
+      if (!getSemester.ok) {
+        throw new Error(result.message)
+      }
+
       setSemesters(result.data.semesters)
-    } catch (err) {
+    } catch (err: any) {
+      setClientErrors(`${err.message}`)
+      setTimeout(() => {
+        setClientErrors('')
+      }, 5000)
       console.error(err)
     } finally {
       setIsSemesterLoading(false)
     }
+  }
+
+  const createProfile = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    await createUserProfile(
+      name,
+      username,
+      bio,
+      userProfileImageDemoLink,
+      enrollmentNo,
+      userBranch,
+      division,
+      userSemester,
+      isPrivate,
+      getUrl
+    )
   }
 
   return (
@@ -279,7 +214,7 @@ function SignUpPage() {
       />
       <form
         className='flex items-center flex-col md:w-[30%] sm:w-[50%] w-[100%] gap-[12px]'
-        onSubmit={createUserProfile}
+        onSubmit={createProfile}
       >
         <div className='w-full flex gap-[12px] items-center'>
           <div className='w-[80%] flex flex-col gap-[12px] flex-grow-1'>
@@ -439,12 +374,12 @@ function SignUpPage() {
           className='rounded-full text-white px-[24px] py-[3px]'
           type='submit'
         >
-          {isLoading ? 'Submitting....' : 'Submit'}
+          {loading ? 'Submitting....' : 'Submit'}
         </Button>
       </form>
-      {errorMessage && (
+      {(errorMessage || clientErrors )&& (
         <p className='text-center  error_message'>
-          Error: <span className='text-red-500'> {errorMessage}</span>
+          Error: <span className='text-red-500'> {errorMessage || clientErrors}</span>
         </p>
       )}
       {message && (

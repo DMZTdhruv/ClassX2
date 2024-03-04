@@ -9,49 +9,63 @@ dotenv.config()
 
 const userRepository = new UserRepository()
 
-export const signIn = async (email, password) => {
+export const signIn = async (email, password, res) => {
   try {
     const user = await userRepository.findByEmail(email)
 
     if (!user) {
-      throw new Error('User not found')
+      return res.status(400).json({ error: 'User not found' })
     }
 
     const passwordMatch = bcrypt.compareSync(password, user.password)
 
     if (!passwordMatch) {
-      throw new Error('Invalid credentials')
+      return res.status(401).json({ error: 'Invalid credentials' })
     }
 
     const userProfileRepo = new UserProfilerepository()
     const userProfile = await userProfileRepo.getUserData(user._id)
 
-    if (!userProfile) throw new Error('User not found')
+    if (!userProfile) {
+      return res.status(400).json({ error: 'User does not exist' })
+    }
+
     const token = jwt.sign(
       {
         userID: user._id,
         userProfileId: userProfile._id,
-        username: userProfile.username,
       },
       process.env.JWT_SECRET,
       {
         expiresIn: '30d',
       }
     )
-    return { message: 'Successful logged in', token: token }
 
-    // Generate and return a JWT token
+    res.cookie('classX_user_token', token, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: process.env.NODE_ENV !== "development"
+    })
+
+    return res.status(201).json({
+      message: 'Successfully signed in',
+      userProfile: {
+        userID: user._id,
+        userProfileId: userProfile._id,
+      },
+    })
   } catch (error) {
     throw new Error(error.message)
   }
 }
 
-export const signUp = async (email, password) => {
+export const signUp = async (email, password, res) => {
   try {
     const alreadyUserExist = await userRepository.findByEmail(email)
 
     if (alreadyUserExist) {
-      throw new Error('User with the same email already exists')
+      return res.status(400).json({ error: 'User already exists' })
     }
 
     const hashedPassword = generateSaltAndHashPassword(password)
@@ -61,12 +75,10 @@ export const signUp = async (email, password) => {
       password: hashedPassword,
     })
 
-    // Generate and return a JWT token
-    const token = jwt.sign({ userID: newUser._id }, process.env.JWT_SECRET, {
-      expiresIn: '30d',
+    return res.status(201).json({
+      message: 'Successfully signed up',
+      userProfile: { userID: newUser._id },
     })
-
-    return { message: 'User is created', token }
   } catch (error) {
     throw new Error(error.message)
   }

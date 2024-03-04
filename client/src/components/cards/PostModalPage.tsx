@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Api, IComments, IPost, UpdateReplyCommentData } from '@/Constants'
 import FollowButton from '@/components/shared/FollowButton/FollowButton'
-import useCookieProvider from '@/hooks/useCookieProvider'
 import { likePost, unlikePost } from '@/utils/LikeFunctions'
 import ParentComment from '../shared/PostComponents/CommentComponent/ParentComment'
 import { formatDate } from '@/utils'
@@ -16,6 +15,7 @@ import { BsThreeDots } from 'react-icons/bs'
 import DeleteCommentComponent from '../shared/DeleteComponent/DeleteComment'
 import DeletePostModal from '../shared/DeleteComponent/DeletePost'
 import { FaArrowLeftLong } from 'react-icons/fa6'
+import { useAuthContext } from '@/context/AuthContext'
 
 // Interfaces
 interface SubCommentProps {
@@ -49,9 +49,18 @@ interface GetSubComment {
   createdAt: string
 }
 
-export default function PostModalPage({ postData, postId }: { postData: IPost; postId: string }) {
+export default function PostModalPage({
+  postData,
+  postId,
+}: {
+  postData: IPost
+  postId: string
+}) {
+  //@ts-ignore
+  //auth user
+  const { authUser } = useAuthContext()
+
   //constants
-  const cookie = useCookieProvider()
   const router = useRouter()
   const isProfile = useSearchParams().get('isProfile')
   const postedDate = formatDate(new Date(postData.createdAt))
@@ -65,7 +74,7 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
 
   // Post data states
   const [isLiked, setIsLiked] = useState<boolean>(
-    postData.likes.filter(id => id === cookie?.userProfileId).length > 0
+    postData.likes.filter(id => id === authUser?.userProfileId).length > 0
   )
   const [numberOfLikes, setNumberOfLikes] = useState<number>(postData.likes.length)
 
@@ -76,9 +85,8 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
   const [allComments, setAllComments] = useState<IComments[]>(postData.comments)
   const [openDeleteCommentModal, setOpenDeleteCommentModal] = useState<boolean>(false)
   const [comment, setComment] = useState<string>('')
-  const [deleteCommentDetails, setDeleteCommentDetails] = useState<DeleteCommentDetails | null>(
-    null
-  )
+  const [deleteCommentDetails, setDeleteCommentDetails] =
+    useState<DeleteCommentDetails | null>(null)
 
   //subcomments states
   const [repliedSubComments, setRepliedSubComments] = useState<GetSubComment[]>([])
@@ -116,7 +124,8 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
       if (modalRef.current) {
         const { left, right, top, bottom } = modalRef.current.getBoundingClientRect()
         const { clientX, clientY, target } = event
-        const isClickOrEnterInsideForm = target instanceof HTMLElement && target.closest('form')
+        const isClickOrEnterInsideForm =
+          target instanceof HTMLElement && target.closest('form')
 
         if (
           !isClickOrEnterInsideForm &&
@@ -155,7 +164,7 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
       const subCommentIndex = prevComments.findIndex(comment => comment._id === _id)
 
       if (subCommentIndex !== -1) {
-        prevComments[subCommentIndex].likes.push(cookie?.userProfileId!)
+        prevComments[subCommentIndex].likes.push(authUser?.userProfileId!)
       }
 
       return [...prevComments]
@@ -167,9 +176,9 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
       const subCommentIndex = prevComments.findIndex(comment => comment._id === _id)
 
       if (subCommentIndex !== -1) {
-        prevComments[subCommentIndex].likes = prevComments[subCommentIndex].likes.filter(
-          id => id !== cookie?.userProfileId
-        )
+        prevComments[subCommentIndex].likes = prevComments[
+          subCommentIndex
+        ].likes.filter(id => id !== authUser?.userProfileId)
       }
 
       return [...prevComments]
@@ -197,13 +206,16 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
     setReplyCommentData({ ...replyCommentData, commentText: e.target.value })
   }
 
-  const updateReplyCommentData = ({ parentCommentId, repliedUserId }: UpdateReplyCommentData) => {
+  const updateReplyCommentData = ({
+    parentCommentId,
+    repliedUserId,
+  }: UpdateReplyCommentData) => {
     setReplyCommentData({
       parentCommentId,
       postId: postData._id,
       repliedUserId,
       commentText: comment,
-      postedBy: cookie?.userProfileId!,
+      postedBy: authUser?.userProfileId!,
     })
   }
 
@@ -224,17 +236,20 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
     router.back()
   }
 
-  // Fetch functions
   const replyComment = async () => {
     setIsPendingComment(true)
 
     try {
-      const response = await axios.post(`${Api}/post/comment/reply-comment`, replyCommentData, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${cookie?.cookie}`,
-        },
-      })
+      const response = await axios.post(
+        `${Api}/post/comment/reply-comment`,
+        replyCommentData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+        }
+      )
 
       const { message: result } = response.data
 
@@ -263,13 +278,13 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
         {
           postId: postId,
           commentText: comment,
-          postedBy: cookie?.userProfileId,
+          postedBy: authUser?.userProfileId,
         },
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${cookie?.cookie}`,
           },
+          withCredentials: true,
         }
       )
 
@@ -315,7 +330,7 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
 
       {openDeletePostModal && (
         <DeletePostModal
-          userProfileId={cookie?.userProfileId!}
+          userProfileId={authUser?.userProfileId!}
           deleteId={postData._id}
           handleModal={handleDeletePostModal}
           userPost={true}
@@ -381,16 +396,16 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
             {allComments?.map((comment: IComments) => {
               return (
                 <ParentComment
-                  key={comment._id}
-                  postId={postData._id}
-                  _id={comment._id}
-                  parentCommentImage={comment.postedBy.userProfileImage}
-                  parentCommentUserId={comment.postedBy._id}
-                  parentCommentUsername={comment.postedBy.username}
-                  parentCommentCommentText={comment.commentText}
-                  parentCommentPostedDate={comment.createdAt}
-                  parentCommentTotalLikes={comment.likes}
-                  parentTotalCommentReplies={comment.commentReplies.length}
+                  key={comment?._id}
+                  postId={postData?._id}
+                  _id={comment?._id}
+                  parentCommentImage={comment?.postedBy?.userProfileImage}
+                  parentCommentUserId={comment?.postedBy?._id}
+                  parentCommentUsername={comment?.postedBy?.username}
+                  parentCommentCommentText={comment?.commentText}
+                  parentCommentPostedDate={comment?.createdAt}
+                  parentCommentTotalLikes={comment?.likes}
+                  parentTotalCommentReplies={comment?.commentReplies?.length}
                   updateUsername={handleReplyUsername}
                   updateReplyCommentData={updateReplyCommentData}
                   userRepliedComments={repliedSubComments}
@@ -415,7 +430,7 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
                     setNumberOfLikes,
                     setIsLiked,
                     numberOfLikes,
-                    cookie,
+                    authUser,
                     endPoint: 'post/like-post',
                   })
                   unlikePost({
@@ -424,7 +439,7 @@ export default function PostModalPage({ postData, postId }: { postData: IPost; p
                     setNumberOfLikes,
                     setIsLiked,
                     numberOfLikes,
-                    cookie,
+                    authUser,
                     endPoint: 'post/unlike-post',
                   })
                 }}
@@ -520,7 +535,13 @@ interface DeleteCommentDetails {
   deleteId: string
 }
 
-function Header({ username, userProfileImage, createdAt, isProfile, handleModal }: HeaderProps) {
+function Header({
+  username,
+  userProfileImage,
+  createdAt,
+  isProfile,
+  handleModal,
+}: HeaderProps) {
   return (
     <header className='flex text-[12px] sm:text-[14px]  h-[60px] px-[15px] space-y-2 items-center justify-between'>
       <div className='flex font-semibold items-center gap-3  '>

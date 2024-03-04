@@ -1,9 +1,8 @@
 'use client'
 
-import { Api } from '@/Constants'
 import PagePostModal from '@/components/cards/PagePostModal'
-import useCookieProvider from '@/hooks/useCookieProvider'
 import { useEffect, useState } from 'react'
+import useGetPost from '@/hooks/posts/useGetPost'
 
 interface IComments {
   _id: string
@@ -36,35 +35,26 @@ interface IPost {
 }
 
 export default function PostModal({ params }: { params: { id: string } }) {
-  const [posts, setPosts] = useState(null)
-  const cookie = useCookieProvider()
+  const [postData, setPostData] = useState<IPost | null>(null)
+  const { loading, getPost, errorMessage } = useGetPost()
+
+  const setPost = (data: IPost) => {
+    setPostData(data)
+  }
 
   useEffect(() => {
-    const getPost = async () => {
-      try {
-        const response = await fetch(`${Api}/post?postId=${params.id}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${cookie?.cookie}`,
-          },
-          cache: 'no-store',
-        })
-
-        if (!response.ok) {
-          console.log('Failed to fetch the post')
-          return
-        }
-
-        const { data } = await response.json()
-        setPosts(data)
-      } catch (err: any) {
-        console.log(err.message)
-      }
-    }
-    getPost()
+    getPost(params.id, setPost)
   }, [])
 
-  if (!posts) {
+  if (errorMessage) {
+    return (
+      <div className='flex-1 w-full h-screen flexCenter font-bold bg-gradient-to-r from-fuchsia-500 to-indigo-600 bg-clip-text text-transparent text-[23px]'>
+        {errorMessage}
+      </div>
+    )
+  }
+
+  if (!postData) {
     return <div>Loading...</div>
   }
 
@@ -74,7 +64,8 @@ export default function PostModal({ params }: { params: { id: string } }) {
         window.scrollY < 60 && 'translate-y-[-60px] sm:translate-y-[0px]'
       } top-0 sticky h-screen z-[1111110]`}
     >
-      <PagePostModal postData={posts} postId={params.id} />
+      {/* @ts-ignore */}
+      <PagePostModal postData={postData} postId={params.id} />
     </div>
   )
 }

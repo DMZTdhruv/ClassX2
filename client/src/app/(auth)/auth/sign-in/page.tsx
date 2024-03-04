@@ -7,77 +7,34 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FaRegEye } from 'react-icons/fa6'
 import { FaRegEyeSlash } from 'react-icons/fa6'
-import Cookies from 'js-cookie'
-import { useRouter } from 'next/navigation'
+import useSignInUser from '@/hooks/auth/useSignInUser'
 
 function SignInPage() {
-  const router = useRouter()
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
-  const [errorMessage, setErrorMessage] = useState<string>('')
   const [showPassword, setShowPassword] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [message, setMessage] = useState<string>('')
+  const [completeDetails, setCompleteDetails] = useState<string>('')
 
   const handleEmail = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
   }
 
+  const { loading, errorMessage, message, signInUser } = useSignInUser()
+
   const handlePassword = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value)
   }
 
-  const handleOnSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleOnSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!email || !password) {
-      setErrorMessage('Please enter the details')
+      setCompleteDetails('Please enter the details')
+      setTimeout(() => {
+        setCompleteDetails('')
+      }, 5000)
       return
     }
-    signInUser()
-  }
-
-  const signInUser = async () => {
-    const api = `${process.env.NEXT_PUBLIC_API}/auth/signIn`
-    setIsLoading(true)
-    try {
-      const checkUser = await fetch(api, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      })
-
-
-      const existingUser = await checkUser.json()
-      if (!checkUser.ok) {
-        setErrorMessage(existingUser.message)
-        setTimeout(() => {
-          setErrorMessage('')
-        }, 5000)
-        return
-      }
-      Cookies.set('classX_user_token', existingUser.token, {
-        expires: 30,
-      })
-      setMessage(existingUser.message)
-      setTimeout(() => {
-        setMessage('')
-      }, 5000)
-      Cookies.set('classX_user_token', existingUser.token, {
-        expires: 30,
-        secure: true,
-        httpOnly: true,
-      })
-      router.push('/')
-    } catch (err: any) {
-      console.error(err.message)
-    } finally {
-      setIsLoading(false)
-    }
+    await signInUser(email, password)
   }
 
   return (
@@ -125,14 +82,18 @@ function SignInPage() {
         <Button
           className='rounded-full text-white px-[24px] py-[3px] transition-all'
           type='submit'
-          disabled={isLoading}
+          disabled={loading}
         >
-          {isLoading ? 'Signing in...' : 'Sign in '}
+          {loading ? 'Signing in...' : 'Sign in '}
         </Button>
       </form>
-      {errorMessage && (
+      {(errorMessage || completeDetails) && (
         <p className='text-center  error_message'>
-          Error: <span className='text-red-500'> {errorMessage}</span>
+          Error:{' '}
+          <span className='text-red-500'>
+            {' '}
+            {errorMessage || completeDetails}
+          </span>
         </p>
       )}
       {message && (

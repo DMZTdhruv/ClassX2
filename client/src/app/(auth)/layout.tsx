@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import '../globals.css'
+import { AuthContextProvider } from '@/context/AuthContext'
+
 
 export const metadata: Metadata = {
   title: 'classX app',
@@ -18,10 +20,12 @@ export default function RootLayout({
     <html lang='en'>
       <head>
         <meta name='mobile-web-app-capable' content='yes' />
-        <meta name="theme-color" content="#0E0E0E" />
+        <meta name='theme-color' content='#0E0E0E' />
       </head>
       <body className='dark'>
-        <main>{children}</main>
+        <AuthContextProvider>
+          <main>{children}</main>
+        </AuthContextProvider>
       </body>
     </html>
   )

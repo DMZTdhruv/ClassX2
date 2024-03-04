@@ -3,6 +3,7 @@ import PostRepository from '../../repositories/PostRepository.js'
 
 export default async function likePostService(userProfileID, postId) {
   try {
+    console.log(userProfileID, postId);
     validateUserLikePost(userProfileID, postId)
 
     // finding post

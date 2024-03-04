@@ -2,13 +2,12 @@
 
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
-import useCookieProvider from '@/hooks/useCookieProvider'
 import { formatDate } from '@/utils'
 import Link from 'next/link'
-import { IComments, IPost } from '@/Constants'
+import { IPost } from '@/Constants'
 import { likePost, unlikePost } from '@/utils/LikeFunctions'
 import { BsThreeDots } from 'react-icons/bs'
-import Style from './styles.module.css'
+import { useAuthContext } from '@/context/AuthContext'
 
 const Post: React.FC<IPost> = ({
   _id,
@@ -25,14 +24,17 @@ const Post: React.FC<IPost> = ({
   handleDeleteModal,
 }) => {
   const date = new Date(createdAt)
-  const cookie = useCookieProvider()
+
+  //@ts-ignore
+  const { authUser } = useAuthContext()
+
   const [numberOfLikes, setNumberOfLikes] = useState<number>(likes.length)
   const [isLiked, setIsLiked] = useState<boolean>(false)
-  const [showFullcaption, setShowFullCaption] = useState<boolean>(false)
+  const [showFullCaption, setShowFullCaption] = useState<boolean>(false)
 
   useEffect(() => {
-    setIsLiked(likes.filter(id => id === cookie?.userProfileId).length > 0)
-  }, [])
+    setIsLiked(likes.filter(id => id === authUser?.userProfileId).length > 0)
+  }, [authUser])
 
   return (
     <div className='w-full lg:w-[584px] h-auto rounded-xl border-b-2 border-[#171717] font-poppins  postSection'>
@@ -53,7 +55,8 @@ const Post: React.FC<IPost> = ({
             />
             <div className='flex font-semibold gap-3 items-center'>
               <p className='flex items-center gap-3'>
-                {postedBy?.username} <span className=' h-1 w-1 bg-neutral-600 rounded-full'></span>
+                {postedBy?.username}{' '}
+                <span className=' h-1 w-1 bg-neutral-600 rounded-full'></span>
               </p>
               <span className='text-neutral-500' suppressHydrationWarning={true}>
                 {' '}
@@ -86,6 +89,7 @@ const Post: React.FC<IPost> = ({
           style={{ height: 'auto', width: '584px', aspectRatio: '1' }}
           className='object-cover  md:w-[584px] md:h-[584px] border-2 border-[#171717]'
           quality={100}
+          unoptimized
         />
       </div>
       <div>
@@ -99,7 +103,7 @@ const Post: React.FC<IPost> = ({
                 setNumberOfLikes,
                 setIsLiked,
                 numberOfLikes,
-                cookie,
+                authUser,
                 endPoint: 'post/like-post',
               })
               unlikePost({
@@ -108,8 +112,8 @@ const Post: React.FC<IPost> = ({
                 setNumberOfLikes,
                 setIsLiked,
                 numberOfLikes,
+                authUser,
                 endPoint: 'post/unlike-post',
-                cookie,
               })
             }}
             className='hover:scale-105'
@@ -158,7 +162,7 @@ const Post: React.FC<IPost> = ({
         <div className='px-[15px] md:text-[14px] flex flex-col gap-[3px] text-[12px] font-semibold mb-[20px] '>
           <span>{numberOfLikes} likes</span>
           {caption.length > 85 ? (
-            showFullcaption ? (
+            showFullCaption ? (
               <div>
                 {caption}
                 <button
@@ -186,7 +190,9 @@ const Post: React.FC<IPost> = ({
           ) : (
             <p>{caption}</p>
           )}
-          <p className='text-neutral-500 inline-block'>view all {comments.length} comments</p>
+          <p className='text-neutral-500 inline-block'>
+            view all {comments.length} comments
+          </p>
           {comments.length !== 0 && (
             <p className='text-neutral-200'>
               {comments[0]?.postedBy?.username} {comments[0].commentText}

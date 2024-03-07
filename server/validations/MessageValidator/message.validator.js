@@ -4,7 +4,7 @@ export const messageValidator = (message, senderId, receiverId, res) => {
   }
 }
 export const getMessageValidator = (senderId, receiverId, res) => {
-  if (!message || !senderId || !receiverId) {
+  if (!senderId || !receiverId) {
     return res.status(400).json({ error: 'Incomplete message details' })
   }
 }

@@ -3,7 +3,6 @@ import UserProfileRepository from '../../repositories/UserProfileRepository.js'
 export const getUserProfileService = async (user, res) => {
   const { userProfileId } = user
   try {
-    console.log(user)
     const userProfileRepo = new UserProfileRepository()
     const userProfile = await userProfileRepo.findById(userProfileId);
     if (!userProfile) {

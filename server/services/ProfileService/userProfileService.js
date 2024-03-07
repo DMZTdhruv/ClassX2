@@ -28,9 +28,7 @@ const createUserProfileInstance = async (
 ) => {
   try {
     const existingUserProfile = await userProfileRepository.findByUserID(userID)
-    const existingUsername = await userProfileRepository.findByUsername(
-      username
-    )
+    const existingUsername = await userProfileRepository.findByUsername(username)
 
     if (existingUsername) {
       return res.status(400).json({ error: 'Username already exists' })
@@ -135,7 +133,7 @@ export const createUserProfile = async (
     const user = await userRepository.findByID(userID)
     user.userProfile = userProfileInstance._id
     await userRepository.save(user)
-    await userProfileRepository.save(userProfileInstance)
+    const userProfile = await userProfileRepository.save(userProfileInstance)
 
     const token = jwt.sign(
       {
@@ -159,7 +157,9 @@ export const createUserProfile = async (
       message: 'Successfully signed in',
       userProfile: {
         userID: user._id,
-        userProfileId: userProfileInstance._id,
+        userProfileId: userProfile._id,
+        username: userProfile.username,
+        userProfileImage: userProfile.userProfileImage,
       },
     })
   } catch (error) {

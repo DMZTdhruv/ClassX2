@@ -4,6 +4,12 @@ import { createContext, useContext, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
+interface AuthContext {
+  userId: string
+  userProfileId: string
+  userProfileImage: string
+}
+
 // @ts-expect-error
 export const AuthContext = createContext()
 
@@ -11,13 +17,9 @@ export const useAuthContext = () => {
   return useContext(AuthContext)
 }
 
-export const AuthContextProvider = ({
-  children,
-}: {
-  children: React.ReactNode
-}) => {
+export const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter()
-  const [authUser, setAuthUser] = useState(null)
+  const [authUser, setAuthUser] = useState<AuthContext | null>(null)
   useEffect(() => {
     const storedUser = localStorage.getItem('classX_user')
 

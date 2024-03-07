@@ -8,8 +8,14 @@ import Link from 'next/link'
 
 function BottomBar() {
   const pathname = usePathname()
+  const isMessageRoute = pathname.startsWith(`/message`)
+
   return (
-    <section className='sticky bottom-0 bottom-bar opacity-50 w-full items-center flex sm:hidden justify-between h-[60px] px-[24px]  gap-[20px]'>
+    <section
+      className={`sticky bottom-0 ${
+        isMessageRoute && 'hidden'
+      } bottom-bar opacity-50 w-full items-center flex sm:hidden justify-between h-[60px] px-[24px]  gap-[20px]`}
+    >
       {BottomBarData.map((links, index) => {
         const isActive = pathname === links.routes
         return (

@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import { app, server } from './socket/socket.js'
 import express from 'express'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
@@ -12,9 +12,9 @@ import {
   userProfileRouter,
   messageRouter,
 } from './routes/protected/index.js'
+import connectToMongoDB from './config/db.js'
 dotenv.config()
 
-const app = express()
 app.use(cookieParser())
 app.use(express.json())
 app.use(morgan('common'))
@@ -39,10 +39,6 @@ app.use('/branches', branchRouter)
 app.use('/users', userProfileRouter)
 app.use('/post', postRouter)
 app.use('/message', messageRouter)
-mongoose.connect(process.env.DB_URL)
-const db = mongoose.connection
 
-db.on('open', () => console.log('Mongodb is connected'))
-db.on('error', () => console.log('Failed to create a connection with MongoDB'))
-
-export default app
+connectToMongoDB()
+server.listen(3001, () => console.log('Hello'))

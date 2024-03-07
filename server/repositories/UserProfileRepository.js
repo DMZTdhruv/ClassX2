@@ -11,7 +11,7 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
   }
 
   async getUserData(userID) {
-    return await UserProfile.findOne({ userID }, '_id username')
+    return await UserProfile.findOne({ userID }, '_id username userProfileImage')
   }
 
   async findById(_id) {
@@ -102,7 +102,6 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
       _id: userId,
       following: userToUnfollowId,
     })
-
 
     const checkUnFollowingUsersCurrentUserId = await UserProfile.findOne({
       _id: userToUnfollowId,

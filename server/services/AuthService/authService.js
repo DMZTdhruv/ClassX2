@@ -45,7 +45,7 @@ export const signIn = async (email, password, res) => {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
       sameSite: 'strict',
-      secure: process.env.NODE_ENV !== "development"
+      secure: process.env.NODE_ENV !== 'development',
     })
 
     return res.status(201).json({
@@ -53,6 +53,8 @@ export const signIn = async (email, password, res) => {
       userProfile: {
         userID: user._id,
         userProfileId: userProfile._id,
+        username: userProfile.username,
+        userProfileImage: userProfile.userProfileImage,
       },
     })
   } catch (error) {

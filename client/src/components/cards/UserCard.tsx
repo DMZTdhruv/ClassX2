@@ -34,14 +34,11 @@ export default function UserCard({
         />
 
         <div className='userInfo flex flex-col h-full font-semibold justify-center gap-[1px] pl-[10px]'>
-          <span className=' leading-none text-nowrap'>{name.slice(0, 10)}</span>
+          <span className=' leading-none text-nowrap'>{name?.slice(0, 10)}</span>
           <span className='text-[#474747]'>@{username}</span>
         </div>
       </div>
-      <FollowButton
-        _id={currentUser}
-        userToFollowId={_id}
-      />
+      <FollowButton _id={currentUser} userToFollowId={_id} />
     </div>
   )
 }

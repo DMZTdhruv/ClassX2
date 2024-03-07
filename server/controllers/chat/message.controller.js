@@ -1,5 +1,12 @@
-import { messageService, getMessageService } from '../../services/MessageService/message.service.js'
-import { getMessageValidator, messageValidator } from '../../validations/MessageValidator/message.validator.js'
+import UserProfile from '../../models/user/userProfile.model.js'
+import {
+  messageService,
+  getMessageService,
+} from '../../services/MessageService/message.service.js'
+import {
+  getMessageValidator,
+  messageValidator,
+} from '../../validations/MessageValidator/message.validator.js'
 
 export const sendMessage = async (req, res) => {
   try {
@@ -20,13 +27,40 @@ export const sendMessage = async (req, res) => {
 
 export const getMessage = async (req, res) => {
   try {
-    const {id: receiverId} = req.params.id;
-    const senderId = req.user.userProfileId;
+    const { id: receiverId } = req.params
+    const senderId = req.user.userProfileId
 
-    getMessageValidator(receiverId, senderId);
-    await getMessageService(senderId, receiverId);
+    getMessageValidator(receiverId, senderId, res)
+    await getMessageService(senderId, receiverId, res)
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.log(error.message)
+    res.status(500).json({ error: 'Internal Server Error' })
+  }
+}
+
+export const getUsersForSideBar = async (req, res) => {
+  const { userProfileId } = req.user
+  try {
+    const user = await UserProfile.findById(userProfileId)
+    // if (user.chatIds.length === 0) {
+    const followingUsers = await UserProfile.find({
+      _id: { $in: user.following },
+    }).select('username userProfileImage')
+
+    return res.status(200).json({
+      message: 'Follow some users or send messages to start conversation',
+      data: followingUsers,
+    })
+    // }
+
+    // const chatIdUsers = await UserProfile.find({
+    //   _id: { $in: user.chatIds },
+    // }).select('username userProfileImage')
+    // console.log(chatIdUsers)
+
+    // res.status(200).json({ data: chatIdUsers })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+    console.log(`Error in chat controller: ${error.message}`)
   }
 }

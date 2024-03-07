@@ -115,7 +115,27 @@ interface Comment {
   commentText: string
 }
 
-export type { IComments, IPost, UpdateReplyCommentData, Comment }
+interface MessageContextProps {
+  conversation: any
+  setConversation: React.Dispatch<React.SetStateAction<any>>
+  messages: any[]
+  setMessages: React.Dispatch<React.SetStateAction<any[]>>
+}
+
+interface AuthContext {
+  userId: string
+  userProfileId: string
+  userProfileImage: string
+}
+
+export type {
+  IComments,
+  IPost,
+  UpdateReplyCommentData,
+  Comment,
+  MessageContextProps,
+  AuthContext,
+}
 
 export const Api = process.env.NEXT_PUBLIC_API
 export const webUrl = process.env.NEXT_PUBLIC_WEBURL

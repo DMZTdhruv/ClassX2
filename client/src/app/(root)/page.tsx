@@ -9,24 +9,21 @@ export default async function HomeLayout() {
   const cookie = cookies().get('classX_user_token')?.value
   const getPosts = async () => {
     try {
-      const response = await fetch(
-        `${Api}/post/get-post?page=${1}&limit=${10}`,
-        {
-          method: 'GET',
-          headers: {
-            Cookies: `classX_user_token=${cookie}`,
-          },
-          cache: 'no-store',
-          next: {
-            tags: ['feedPost'],
-          },
-        }
-      )
-      if (!response.ok) {
-        throw new Error('Failed to get the data')
-      }
-      
+      const response = await fetch(`${Api}/post/get-post?page=${1}&limit=${10}`, {
+        method: 'GET',
+        headers: {
+          Cookies: `classX_user_token=${cookie}`,
+        },
+        cache: 'no-store',
+        next: {
+          tags: ['feedPost'],
+        },
+      })
+
       const { data } = await response.json()
+      if (data.error) {
+        throw new Error(data.error)
+      }
       return data
     } catch (error: any) {
       console.log(error.message)

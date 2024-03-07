@@ -16,7 +16,6 @@ export const getPostController = async (req, res) => {
 
 export const getPostByIdController = async (req, res) => {
   const { postId } = req.query
-  console.log(postId)
   try {
     await getPostByIdService(postId, res)
   } catch (err) {

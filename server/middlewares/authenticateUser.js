@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken'
 export const authenticateUserToken = async (req, res, next) => {
   try {
     const token = req.cookies.classX_user_token || req.headers.cookies?.split('=')[1]
-    console.log(token)
     if (!token) {
       return res.status(404).json({ error: 'Unauthorized' })
     }

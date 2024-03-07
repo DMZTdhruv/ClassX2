@@ -34,7 +34,7 @@ const useSignInUser = () => {
       setTimeout(() => {
         setMessage('')
       }, 5000)
-
+      console.log(data.userProfile)
       localStorage.setItem('classX_user', JSON.stringify(data.userProfile))
       router.push('/')
     } catch (error: any) {

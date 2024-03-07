@@ -208,3 +208,21 @@
     transform: rotate(360deg);
   }
 }
+
+.messageScreen {
+  max-height: 100vh;
+}
+
+@media screen and (max-width: 1024px) {
+  .messageSideBar {
+    /* min-width: 100%; */
+    position: fixed;
+    z-index: 1500;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .messageConversation {
+    min-width: 100%;
+  }
+}

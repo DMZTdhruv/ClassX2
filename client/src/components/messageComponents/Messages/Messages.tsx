@@ -16,7 +16,7 @@ interface MessageProps {
 const Messages = () => {
   const lastMessageRef = useRef(null)
   const { messages, loading } = useGetMessages()
-  const {conversation} = useMessageContext();
+  const { conversation } = useMessageContext()
   useListenNewMessages()
   useEffect(() => {
     console.log(messages)
@@ -25,7 +25,7 @@ const Messages = () => {
   }, [messages])
   // `}
   return (
-    <div className={` p-2 flex-1 border overflow-y-auto`}>
+    <div className={` p-2 flex-1 border-y overflow-y-auto`}>
       {!messages || loading ? (
         <p className='flexCenter'>Loading..</p>
       ) : (

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import '../globals.css'
 import TopBar from '@/components/shared/TopBar'
 import BottomBar from '@/components/shared/BottomBar'
-import SideBar from '@/components/shared/SideBar'
+import SideBar from '@/components/shared/sidebar'
 import NextTopLoader from 'nextjs-toploader'
 import { AuthContextProvider } from '@/context/AuthContext'
 import SocketContextProvider from '@/context/SocketContext'
@@ -26,6 +26,7 @@ export default function RootLayout({
       <head>
         <meta name='mobile-web-app-capable' content='yes' />
         <meta name='theme-color' content='#0E0E0E' />
+        <meta httpEquiv='ScreenOrientation' content='autoRotate:disabled'></meta>
       </head>
       <AuthContextProvider>
         <SocketContextProvider>

@@ -41,7 +41,7 @@ export default function MessageSideBar({
     >
       <Link href={'/'}>
         <div
-          className='h-[40px] sm:hidden shadow-sm border-b sticky top-0 flex items-center
+          className='h-[50px] sm:hidden shadow-sm border-b sticky top-0 flex items-center
        bg-[#0E0E0E] justify-start gap-[12px] px-[16px] z-[100]'
         >
           <FaArrowLeft />

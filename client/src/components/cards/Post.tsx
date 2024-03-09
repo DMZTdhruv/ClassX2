@@ -54,10 +54,10 @@ const Post: React.FC<IPost> = ({
               unoptimized
             />
             <div className='flex font-semibold gap-3 items-center'>
-              <p className='flex items-center gap-3'>
+              <Link href={`/profile/${postedBy._id}`} className='flex items-center gap-3'>
                 {postedBy?.username}{' '}
                 <span className=' h-1 w-1 bg-neutral-600 rounded-full'></span>
-              </p>
+              </Link>
               <span className='text-neutral-500' suppressHydrationWarning={true}>
                 {' '}
                 {formatDate(date)}

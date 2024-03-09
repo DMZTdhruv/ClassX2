@@ -2,7 +2,7 @@
 
 import React, { ChangeEvent, FormEvent, useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams, redirect } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Api, IComments, IPost, UpdateReplyCommentData } from '@/Constants'
 import FollowButton from '@/components/shared/FollowButton/FollowButton'
@@ -16,6 +16,7 @@ import DeleteCommentComponent from '../shared/DeleteComponent/DeleteComment'
 import DeletePostModal from '../shared/DeleteComponent/DeletePost'
 import { FaArrowLeftLong } from 'react-icons/fa6'
 import { useAuthContext } from '@/context/AuthContext'
+import Link from 'next/link'
 
 // Interfaces
 interface SubCommentProps {
@@ -356,7 +357,9 @@ export default function PostModalPage({
             userProfileImage={postData?.postedBy.userProfileImage!}
             username={postData?.postedBy.username!}
             createdAt={postedDate}
+            userId={postData?.postedBy._id}
             handleModal={handleDeletePostModal}
+            router={router}
             isProfile={isProfile || 'false'}
           ></Header>
         </div>
@@ -368,6 +371,8 @@ export default function PostModalPage({
               userProfileImage={postData?.postedBy.userProfileImage!}
               username={postData?.postedBy.username!}
               createdAt={postedDate}
+              router={router}
+              userId={postData?.postedBy._id}
               handleModal={handleDeletePostModal}
               isProfile={isProfile || 'false'}
             ></Header>
@@ -389,7 +394,7 @@ export default function PostModalPage({
                 />
                 <div className=' text-[12px] sm:text-[14px]'>
                   <span className='font-semibold'>{postData?.postedBy.username!}</span>{' '}
-                  <span>{postData.caption}</span>
+                  <span>{postData?.caption}</span>
                 </div>
               </div>
             </div>
@@ -526,6 +531,8 @@ interface HeaderProps {
   username: string
   userProfileImage: string
   createdAt: string
+  userId: string
+  router: any
   handleModal: (data: boolean) => void
   isProfile?: string
 }
@@ -539,7 +546,9 @@ function Header({
   username,
   userProfileImage,
   createdAt,
+  userId,
   isProfile,
+  router,
   handleModal,
 }: HeaderProps) {
   return (
@@ -554,7 +563,7 @@ function Header({
           unoptimized
           className=' aspect-square object-cover rounded-full'
         />
-        <h5 className=''>{username}</h5>
+        <Link href={`/profile/${userId}`}>{username}</Link>
         <span className=' text-white/50 '>{createdAt}</span>
       </div>
       {isProfile === 'true' && (

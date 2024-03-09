@@ -1,14 +1,17 @@
 import { useState } from 'react'
 import { useAuthContext } from '@/context/AuthContext'
+import { Api } from '@/Constants'
+import { useRouter } from 'next/navigation'
 
 const useLogOut = () => {
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   // @ts-ignore
   const { setAuthUser } = useAuthContext()
   const logout = async () => {
     setLoading(true)
     try {
-      const res = await fetch(`/auth/logout`, {
+      const res = await fetch(`${Api}/auth/logout`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
       })
@@ -18,6 +21,7 @@ const useLogOut = () => {
       }
       setAuthUser(null)
       localStorage.removeItem('chat-user')
+      router.push('/auth/sign-in')
     } catch (error: any) {
       console.log('Failed to log out')
     } finally {

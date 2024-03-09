@@ -58,15 +58,16 @@ export default function SubComment({
   setDeleteSubCommentDetails,
   deleteSubComment,
 }: SubComments) {
-
   //@ts-ignore
-  const {authUser} = useAuthContext();
+  const { authUser } = useAuthContext()
   const date = new Date(subCommentPostedDate)
   const formatedDate = formatDate(date)
   const [isLiked, setIsLiked] = useState<boolean>(
     subCommentTotalLikes.filter(id => id === authUser?.userProfileId).length > 0
   )
-  const [numberOfLikes, setNumberOfLikes] = useState<number>(subCommentTotalLikes.length)
+  const [numberOfLikes, setNumberOfLikes] = useState<number>(
+    subCommentTotalLikes.length
+  )
   const user = subCommentCommentText.split(' ')[0]
   const userComment = subCommentCommentText.split(' ').slice(1).join(' ')
 
@@ -113,7 +114,7 @@ export default function SubComment({
           userID: authUser?.userProfileId,
           commentId: _id,
         }),
-        credentials: 'include'
+        credentials: 'include',
       })
 
       if (!response.ok) {
@@ -144,9 +145,12 @@ export default function SubComment({
       />
       <div className='flex flex-1 flex-col gap-3'>
         <p>
-          <span className='font-semibold text-[12px] lg:text-[14px]'>
+          <Link
+            href={`/profile/${subCommentUserId}`}
+            className='font-semibold text-[12px] lg:text-[12px]'
+          >
             {subCommentUsername} &nbsp;
-          </span>
+          </Link>
           <span className='text-[12px] lg:text-[14px]'>
             <Link
               className='text-slate-400'

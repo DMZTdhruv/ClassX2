@@ -21,7 +21,7 @@ const MessageContainer = () => {
         </div>
       ) : (
         <>
-          <div className='flex flex-col h-full w-full'>
+          <div className='flex flex-col h-screen max-h-screen overflow-y-hidden w-full'>
             <MessageHeader userDetails={conversation} />
             <Messages />
             <MessageInput />

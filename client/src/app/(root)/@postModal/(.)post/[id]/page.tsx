@@ -5,14 +5,18 @@ import { IPost } from '@/Constants'
 const PostModalPage = React.lazy(() => import('@/components/cards/PostModalPage'))
 import { useEffect, useState } from 'react'
 import useGetPost from '@/hooks/posts/useGetPost'
+import { usePathname, useRouter } from 'next/navigation'
 
-export const dynamic = 'force-dynamic'
 export default function PostModal({ params }: { params: { id: string } }) {
+  const pathname = usePathname()
+  if (pathname.startsWith('/profile')) {
+    useRouter().refresh()
+  }
   const [postData, setPostData] = useState<IPost | null>(null)
   const { loading, getPost } = useGetPost()
 
   const setPost = (data: IPost) => {
-    setPostData(data);
+    setPostData(data)
   }
 
   useEffect(() => {

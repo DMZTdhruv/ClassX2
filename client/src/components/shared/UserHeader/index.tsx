@@ -2,6 +2,8 @@ import { Button } from '@/components/ui/button'
 import { jwtDecode } from 'jwt-decode'
 import { cookies } from 'next/headers'
 import Image from 'next/image'
+import LogOut from '../LogOut/LogOut'
+import FollowButton from '../FollowButton/FollowButton'
 
 interface Token {
   userProfileId: string
@@ -36,7 +38,10 @@ export default function UserHeader({
     ? jwtDecode(token?.value || '')
     : { userProfileId: '' }
   return (
-    <div className='flex flex-col items-center mt-[40px] font-semibold  font-poppins gap-[10px]'>
+    <div className='flex flex-col items-center relative mt-[40px] font-semibold  font-poppins gap-[10px]'>
+      <div className='absolute top-10 right-14 sm:hidden '>
+        <LogOut type='mobile' />
+      </div>
       <Image
         src={userProfileImage}
         alt={`${name} profile image`}
@@ -61,9 +66,11 @@ export default function UserHeader({
           <Button className='rounded-full px-[30px] h-[25px] text-white'>
             Message
           </Button>
-          <Button className='rounded-full px-[30px] h-[25px] text-white'>
-            Follow
-          </Button>
+          <FollowButton
+            _id={userProfileId}
+            userToFollowId={_id}
+            classes='h-[25px] px-[30px] rounded-full'
+          />
         </div>
       )}
     </div>

@@ -10,6 +10,7 @@ const MessageInput = () => {
   const handleSendMessage = async (e: FormEvent) => {
     e.preventDefault()
     await sendMessage(message)
+    setMessage('')
   }
 
   return (
@@ -17,6 +18,7 @@ const MessageInput = () => {
       <Textarea
         placeholder='Enter your message'
         className='bg-[#171717] min-h-[50px] h-auto outline-none focus-visible:ring-0 resize-none md:font-semibold border-none rounded-lg  py-[20px] pr-[60px]'
+        value={message}
         onChange={e => setMessage(e.target.value)}
       />
       <button

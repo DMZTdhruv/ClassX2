@@ -9,7 +9,7 @@ import { useAuthContext } from '@/context/AuthContext'
 import MessageSkeleton from '@/components/Skeletons/MessageSkeleton'
 import { Skeleton } from '@/components/ui/skeleton'
 
-const page = () => {
+const Message = () => {
   const { loading, conversation: chatFriends } = useGetConversations()
   // @ts-ignore
   const { authUser } = useAuthContext()
@@ -36,4 +36,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Message

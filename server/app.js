@@ -15,6 +15,7 @@ import {
 import connectToMongoDB from './config/db.js'
 dotenv.config()
 
+const port = process.env.PORT || 3001
 app.use(cookieParser())
 app.use(express.json())
 app.use(morgan('common'))
@@ -23,8 +24,7 @@ app.use(
   cors({
     origin: [
       'http://localhost:3000',
-      'https://class-x-client-no2p.vercel.app',
-      'https://class-x-client.vercel.app',
+      'https://classx2client-production.up.railway.app',
     ],
     credentials: true,
   })
@@ -41,4 +41,4 @@ app.use('/post', postRouter)
 app.use('/message', messageRouter)
 
 connectToMongoDB()
-server.listen(3001, () => console.log('Hello'))
+server.listen(port, '0.0.0.0', () => console.log(`Connected`))

@@ -21,7 +21,7 @@ const useSendMessage = () => {
         throw new Error(data.error)
       }
 
-      setMessages([...messages, data?.data])
+      setMessages(prev => [...prev, data.data])
       console.log(data)
     } catch (error: any) {
       console.log(error.message)

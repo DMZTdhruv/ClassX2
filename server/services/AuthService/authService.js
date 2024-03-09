@@ -44,6 +44,7 @@ export const signIn = async (email, password, res) => {
     res.cookie('classX_user_token', token, {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
+      domain: '.railway.app',
       sameSite: 'strict',
       secure: process.env.NODE_ENV !== 'development',
     })

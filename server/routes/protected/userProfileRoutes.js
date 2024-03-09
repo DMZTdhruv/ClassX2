@@ -12,8 +12,15 @@ import {
 
 import { getUserProfileController } from '../../controllers/profile/getUserProfileController.js'
 import getUserPostsController from '../../controllers/post/getUserPostsController.js'
+import getUserProfileDetailsController from '../../controllers/profile/getUserProfileDetails.controller.js'
 
 const router = express.Router()
+
+router.get(
+  '/',
+  authenticateUserToken,
+  getUserProfileDetailsController
+)
 
 //User profile routes
 router.post(
@@ -36,6 +43,8 @@ router.get(
   authenticateUserToken,
   GetUserProfileByUsernameController
 )
+
+
 
 // following routes
 router.post('/follow', authenticateUserToken, followUserController)

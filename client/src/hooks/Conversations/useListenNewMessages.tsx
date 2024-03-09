@@ -7,6 +7,7 @@ const useListenNewMessages = () => {
   const { socket } = useSocketContext()
   const { messages, setMessages } = useMessageContext()
 
+  // @ts-ignore
   useEffect(() => {
     console.log(`can you`)
     socket?.on('newMessage', newMessage => {

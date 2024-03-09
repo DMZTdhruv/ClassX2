@@ -4,7 +4,7 @@ import UserCard from '@/components/cards/UserCard'
 import { shuffleArray } from '@/utils'
 import { jwtDecode } from 'jwt-decode'
 import Link from 'next/link'
-import { webUrl } from '@/Constants'
+import { Api, webUrl } from '@/Constants'
 
 interface IUser {
   _id: string
@@ -26,7 +26,6 @@ interface IDecodedTokem {
 
 export default async function index() {
   try {
-    const api = process.env.NEXt_PUBLIC_API
     const cookie = cookies()
     const token = cookie.get('classX_user_token')
     const tokenValue = token?.value || ''
@@ -34,7 +33,7 @@ export default async function index() {
 
     const getUsers = async () => {
       try {
-        const response = await fetch(`${api}/users/users-of-division`, {
+        const response = await fetch(`${Api}/users/users-of-division`, {
           method: 'GET',
           headers: {
             Cookies: `classX_user_token=${tokenValue}`,

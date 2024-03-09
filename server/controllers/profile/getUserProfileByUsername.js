@@ -1,6 +1,6 @@
-import getUserProfileByUsernameService from "../../services/ProfileService/getUserProfileByUsernameService.js";
+import getUserProfileByUsernameService from "../../services/ProfileService/getUserProfile.js";
 
-export default async function GetUserProfileByUsernameController(req, res) {
+export default async function GetUserProfile(req, res) {
   const {username} = req.query;
   try {
     const result = await getUserProfileByUsernameService(username);

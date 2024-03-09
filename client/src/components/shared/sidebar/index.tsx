@@ -9,6 +9,7 @@ import { usePathname } from 'next/navigation'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/navigation'
 import useLogOut from '@/hooks/auth/useLogout'
+import LogOut from '../LogOut/LogOut'
 
 export default function SideBar(props: any) {
   const pathname = usePathname()
@@ -82,15 +83,13 @@ export default function SideBar(props: any) {
           )
         })}
       </div>
-      <Button
-        type='button'
+      <div
         className={`text-white font-bold absolute ${
-          isMessageRoute ? 'left-[20px] lg:left-[20px]' : 'left-[20px] lg:left-[35px]'
-        } bottom-[41px] transition-all`}
-        onClick={logOutUser}
+          isMessageRoute ? 'left-[20px] lg:left-[20px]' : 'left-[35px] lg:left-[35px]'
+        } bottom-[0px] transition-all`}
       >
-        {loading ? 'Logging out...' : 'log out'}
-      </Button>
+        <LogOut type='laptop' />
+      </div>
     </section>
   )
 }

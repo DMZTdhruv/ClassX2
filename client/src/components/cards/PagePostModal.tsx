@@ -348,6 +348,7 @@ export default function PostModalPage({
             userProfileImage={postData?.postedBy.userProfileImage!}
             username={postData?.postedBy.username!}
             createdAt={postedDate}
+            userId={postData?.postedBy._id}
             handleModal={handleDeletePostModal}
           ></Header>
         </div>
@@ -359,6 +360,7 @@ export default function PostModalPage({
               userProfileImage={postData?.postedBy.userProfileImage!}
               username={postData?.postedBy.username!}
               createdAt={postedDate}
+              userId={postData?.postedBy._id}
               handleModal={handleDeletePostModal}
             ></Header>
           </div>
@@ -516,6 +518,7 @@ interface HeaderProps {
   username: string
   userProfileImage: string
   createdAt: string
+  userId: string
   handleModal: (data: boolean) => void
 }
 
@@ -524,7 +527,13 @@ interface DeleteCommentDetails {
   deleteId: string
 }
 
-function Header({ username, userProfileImage, createdAt, handleModal }: HeaderProps) {
+function Header({
+  username,
+  userId,
+  userProfileImage,
+  createdAt,
+  handleModal,
+}: HeaderProps) {
   return (
     <header className='flex text-[12px] sm:text-[14px]  h-[60px] px-[15px] space-y-2 items-center justify-between'>
       <div className='flex font-semibold items-center gap-3  '>
@@ -537,7 +546,9 @@ function Header({ username, userProfileImage, createdAt, handleModal }: HeaderPr
           unoptimized
           className=' aspect-square object-cover rounded-full'
         />
-        <h5 className=''>{username}</h5>
+        <Link href={`/profile/${userId}`} className=''>
+          {username}
+        </Link>
         <span className=' text-white/50 '>{createdAt}</span>
       </div>
       <button

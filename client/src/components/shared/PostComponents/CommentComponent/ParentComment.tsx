@@ -9,6 +9,7 @@ import { Api } from '@/Constants'
 import { BsThreeDots } from 'react-icons/bs'
 import DeleteCommentComponent from '../../DeleteComponent/DeleteComment'
 import { useAuthContext } from '@/context/AuthContext'
+import Link from 'next/link'
 
 interface UpdateReplyCommentData {
   parentCommentId: string
@@ -264,9 +265,9 @@ export default function ParentComment({
           <div className='space-y-[5px] w-full'>
             <div className='flex justify-between flex-1 w-full'>
               <p className=' flex-1 w-full '>
-                <span className='font-semibold text-[12px] lg:text-[12px]'>
+                <Link href={`/profile/${parentCommentUserId}`} className='font-semibold text-[12px] lg:text-[12px]'>
                   {parentCommentUsername} &nbsp;
-                </span>
+                </Link>
                 <span className='text-[12px] lg:text-[12px]'>
                   {parentCommentCommentText}
                 </span>

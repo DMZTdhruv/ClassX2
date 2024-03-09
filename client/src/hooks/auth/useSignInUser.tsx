@@ -36,7 +36,7 @@ const useSignInUser = () => {
       }, 5000)
       console.log(data.userProfile)
       localStorage.setItem('classX_user', JSON.stringify(data.userProfile))
-      router.push('/')
+      // router.push('/')
     } catch (error: any) {
       console.error(error.message)
       setErrorMessage(error.message)

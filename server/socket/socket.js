@@ -7,11 +7,10 @@ const app = express()
 const server = http.createServer(app)
 const io = new Server(server, {
   cors: {
-<<<<<<< HEAD
-    origin: [`http://localhost:8080`],
-=======
-    origin: [`http://localhost:3000`, `https://classx2client-production.up.railway.app`],
->>>>>>> 5782d6450493d8ef2eba73bd7bc3dbad5dde7dfb
+    origin: [
+      `http://localhost:3000`,
+      `https://classx2client-production.up.railway.app`,
+    ],
     methods: ['GET', 'POST'],
   },
 })

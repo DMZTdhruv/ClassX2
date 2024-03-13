@@ -56,7 +56,7 @@ export default async function index() {
     const divisionName = users && users[0].division.divisionName
     return (
       <div className='bg-[#171717] w-[90%] rounded-[20px] px-[14px] mt-[33px] pb-[10px]'>
-        <p className='py-[16.5px] font-semibold'>
+        <p className='p-[16.5px] font-semibold'>
           Students from your division {divisionName}
         </p>
         {recommendedUsers?.map((user: IUser) => {

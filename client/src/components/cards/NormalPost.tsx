@@ -11,14 +11,9 @@ interface IPostProps {
   comments: number
 }
 
-export default function NormalPost({
-  _id,
-  imageUrl,
-  likes,
-  comments,
-}: IPostProps) {
+export default function NormalPost({ _id, imageUrl, likes, comments }: IPostProps) {
   return (
-    <div className='relative group'>
+    <div className='relative max-w-[300px]'>
       <Link href={`/post/${_id}?isProfile=true`} scroll={false}>
         <Image
           src={imageUrl}
@@ -30,7 +25,7 @@ export default function NormalPost({
           quality={100}
         />
       </Link>
-      <div className='flex gap-3 absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] opacity-0  group-hover:opacity-100'>
+      <div className='md:flex  gap-3 absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] opacity-0  group-hover:opacity-100'>
         <div className='flex items-center gap-1'>
           <Image
             src={'/assets/whiteFilledHeart.svg'}

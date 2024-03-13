@@ -18,6 +18,7 @@ const userProfileSchema = new mongoose.Schema(
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile' }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile' }],
     chatIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile' }],
+    classrooms: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Classroom' }],
     requestsId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile' }],
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
     medals: { type: Number, default: 0 },

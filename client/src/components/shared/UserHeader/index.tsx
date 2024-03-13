@@ -34,14 +34,12 @@ export default function UserHeader({
 }: UserHeaderProps) {
   const cookie = cookies()
   const token = cookie.get('classX_user_token')
-  const { userProfileId }: Token = cookie
+  const { userProfileId }: Token = token?.value
     ? jwtDecode(token?.value || '')
     : { userProfileId: '' }
   return (
     <div className='flex flex-col items-center relative mt-[40px] font-semibold  font-poppins gap-[10px]'>
-      <div className='absolute top-10 right-14 sm:hidden '>
-        <LogOut type='mobile' />
-      </div>
+      <div className='absolute top-10 right-14 sm:hidden '></div>
       <Image
         src={userProfileImage}
         alt={`${name} profile image`}
@@ -61,18 +59,21 @@ export default function UserHeader({
         <span className='text-[#474747]'>@{username}</span>
       </div>
       <p className='w-[75%] text-center text-[14px]'>{about}</p>
-      {_id !== userProfileId && (
-        <div className='user-interactions flex gap-[20px] mt-[8px]'>
-          <Button className='rounded-full px-[30px] h-[25px] text-white'>
-            Message
-          </Button>
+      <div className='user-interactions relative flex gap-[20px] mt-[8px]'>
+        {_id === userProfileId && (
+          <LogOut
+            type='pc'
+            className='top-0 bottom-0 h-[25px] left-[50%] translate-x-[-50%]'
+          />
+        )}
+        {_id !== userProfileId && (
           <FollowButton
             _id={userProfileId}
             userToFollowId={_id}
             classes='h-[25px] px-[30px] rounded-full'
           />
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }

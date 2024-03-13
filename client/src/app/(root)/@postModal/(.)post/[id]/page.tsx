@@ -9,8 +9,9 @@ import { usePathname, useRouter } from 'next/navigation'
 
 export default function PostModal({ params }: { params: { id: string } }) {
   const pathname = usePathname()
+  const router = useRouter()
   if (pathname.startsWith('/profile')) {
-    useRouter().refresh()
+    router.refresh()
   }
   const [postData, setPostData] = useState<IPost | null>(null)
   const { loading, getPost } = useGetPost()

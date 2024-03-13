@@ -33,7 +33,7 @@ const SocketContextProvider: React.FC<{ children: React.ReactNode }> = ({
   // @ts-ignore
   useEffect(() => {
     if (authUser) {
-      const socketInstance = io(`http://localhost:7082`, {
+      const socketInstance = io(`${Api}`, {
         query: {
           userId: authUser.userProfileId,
         },

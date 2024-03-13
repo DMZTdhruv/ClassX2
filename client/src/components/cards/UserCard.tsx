@@ -1,5 +1,8 @@
 import Image from 'next/image'
 import FollowButton from '../shared/FollowButton/FollowButton'
+import Link from 'next/link'
+import { cookies } from 'next/headers'
+import { jwtDecode } from 'jwt-decode'
 
 interface UserCardProps {
   currentUser: string
@@ -7,6 +10,7 @@ interface UserCardProps {
   username: string
   userImageUrl: string
   name: string
+  userId?: string
 }
 
 export default function UserCard({
@@ -15,10 +19,11 @@ export default function UserCard({
   username,
   userImageUrl,
   name,
+  userId,
 }: UserCardProps) {
   return (
-    <div className='flex w-full items-center h-[68px] justify-between'>
-      <div className='flex items-center'>
+    <div className='flex w-full hover:bg-neutral-900 transition-all  items-center h-[68px] rounded-md justify-between px-[20px]'>
+      <div className='flex items-center '>
         <Image
           src={userImageUrl}
           alt={name}
@@ -33,12 +38,15 @@ export default function UserCard({
           unoptimized
         />
 
-        <div className='userInfo flex flex-col h-full font-semibold justify-center gap-[1px] pl-[10px]'>
+        <Link
+          href={`/profile/${_id}`}
+          className='userInfo flex flex-col h-full font-semibold justify-center gap-[1px] pl-[10px]'
+        >
           <span className=' leading-none text-nowrap'>{name?.slice(0, 10)}</span>
           <span className='text-[#474747]'>@{username}</span>
-        </div>
+        </Link>
       </div>
-      <FollowButton _id={currentUser} userToFollowId={_id} />
+      {_id !== userId && <FollowButton _id={currentUser} userToFollowId={_id} />}
     </div>
   )
 }

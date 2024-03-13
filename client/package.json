@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 8080",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -19,12 +19,14 @@
     "axios": "^1.6.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "date-fns": "^3.4.0",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "next": "14.1.0",
     "next-pwa": "^5.6.0",
     "nextjs-toploader": "^1.6.6",
     "react": "^18",
+    "react-day-picker": "^8.10.0",
     "react-dom": "^18",
     "react-icons": "^5.0.1",
     "sass": "^1.71.1",

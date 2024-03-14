@@ -19,6 +19,7 @@ import {
 } from '../../controllers/post/index.js'
 import deleteSubCommentController from '../../controllers/comment/subComment/deleteSubCommentController.js'
 import deletePostController from '../../controllers/post/deletePostcontroller.js'
+import { getTotalPostCount } from '../../controllers/post/getPostController.js'
 
 const router = express.Router()
 
@@ -28,21 +29,9 @@ router.post('/like-post', authenticateUserToken, likePostController)
 router.post('/unlike-post', authenticateUserToken, unLikePostController)
 
 // Comment routes
-router.post(
-  '/comment/create-comment',
-  authenticateUserToken,
-  createCommentController
-)
-router.post(
-  '/comment/like-comment',
-  authenticateUserToken,
-  likeCommentController
-)
-router.post(
-  '/comment/unlike-comment',
-  authenticateUserToken,
-  unlikeCommentController
-)
+router.post('/comment/create-comment', authenticateUserToken, createCommentController)
+router.post('/comment/like-comment', authenticateUserToken, likeCommentController)
+router.post('/comment/unlike-comment', authenticateUserToken, unlikeCommentController)
 
 // Sub-comment routes
 router.post(
@@ -57,28 +46,17 @@ router.post(
 )
 
 // Reply comment route
-router.post(
-  '/comment/reply-comment',
-  authenticateUserToken,
-  replyCommentController
-)
+router.post('/comment/reply-comment', authenticateUserToken, replyCommentController)
 
 // Get routes
 router.get('/get-post', authenticateUserToken, getPostController)
 router.get('/', authenticateUserToken, getPostByIdController)
-router.get(
-  '/comment/sub-comment',
-  authenticateUserToken,
-  getSubCommentsController
-)
+router.get('/total-post', authenticateUserToken, getTotalPostCount)
+router.get('/comment/sub-comment', authenticateUserToken, getSubCommentsController)
 
 // Delete routes
 // Delete routes for post
-router.delete(
-  '/delete-post/:deletePostId',
-  authenticateUserToken,
-  deletePostController
-)
+router.delete('/delete-post/:deletePostId', authenticateUserToken, deletePostController)
 
 // Delete routes for comments
 router.delete(

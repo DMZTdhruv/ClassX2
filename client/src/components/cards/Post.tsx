@@ -54,7 +54,10 @@ const Post: React.FC<IPost> = ({
               unoptimized
             />
             <div className='flex font-semibold gap-3 items-center'>
-              <Link href={`/profile/${postedBy._id}`} className='flex items-center gap-3'>
+              <Link
+                href={`/profile/${postedBy._id}`}
+                className='flex items-center gap-3'
+              >
                 {postedBy?.username}{' '}
                 <span className=' h-1 w-1 bg-neutral-600 rounded-full'></span>
               </Link>
@@ -89,7 +92,6 @@ const Post: React.FC<IPost> = ({
           style={{ height: 'auto', width: '584px', aspectRatio: '1' }}
           className='object-cover  md:w-[584px] md:h-[584px] border-2 border-[#171717]'
           quality={100}
-          unoptimized
         />
       </div>
       <div>

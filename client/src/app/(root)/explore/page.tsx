@@ -1,9 +1,8 @@
 import SearchUser from '@/components/shared/SearchUser'
-import { getPosts } from '../page'
-import PostSection from '../PostSection'
 import { cookies } from 'next/headers'
 import NormalPost from '@/components/cards/NormalPost'
 import { jwtDecode } from 'jwt-decode'
+import { getPosts } from '../postActions'
 
 interface IPost {
   _id: string

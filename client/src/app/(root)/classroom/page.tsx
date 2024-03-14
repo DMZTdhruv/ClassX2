@@ -21,7 +21,6 @@ export default async function Classroom() {
       if (data.error) {
         throw new Error(`${data.error}`)
       }
-      console.log(data.data)
       return data.data
     } catch (error: any) {
       console.error(error.message)

@@ -22,7 +22,6 @@ export default function NormalPost({ _id, imageUrl, likes, comments }: IPostProp
           alt={'user-post'}
           style={{ height: 'auto', width: '300px', aspectRatio: '1' }}
           className='object-cover  md:w-[300px] md:h-[300px] border-2 border-[#171717] group-hover:opacity-70'
-          quality={100}
         />
       </Link>
       <div className='md:flex  gap-3 absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] opacity-0  group-hover:opacity-100'>

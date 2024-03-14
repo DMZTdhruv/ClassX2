@@ -2,32 +2,8 @@ import React from 'react'
 import PostSection from './PostSection'
 import SearchRightBar from '@/components/shared/SearchRightBar'
 import { cookies } from 'next/headers'
-import { Api } from '@/Constants'
 import { Skeleton } from '@/components/ui/skeleton'
-
-export const getPosts = async (cookie: string) => {
-  try {
-    const response = await fetch(`${Api}/post/get-post?page=${1}&limit=${10}`, {
-      method: 'GET',
-      headers: {
-        Cookies: `classX_user_token=${cookie}`,
-      },
-      cache: 'no-store',
-      next: {
-        tags: ['feedPost'],
-      },
-    })
-
-    const { data } = await response.json()
-    console.log(data)
-    if (data.error) {
-      throw new Error(data.error)
-    }
-    return data
-  } catch (error: any) {
-    console.log(error.message)
-  }
-}
+import { getPosts } from './postActions'
 
 export default async function HomeLayout() {
   const cookie = cookies().get('classX_user_token')?.value

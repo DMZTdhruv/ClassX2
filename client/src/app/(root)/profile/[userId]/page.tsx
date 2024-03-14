@@ -40,8 +40,6 @@ const ProfilePage = async ({ params }: { params: { userId: string } }) => {
     }
   }
 
-  const { userId } = params
-  console.log(userId)
   const userProfile: UserProfileProps = await getUserProfile()
 
   return (

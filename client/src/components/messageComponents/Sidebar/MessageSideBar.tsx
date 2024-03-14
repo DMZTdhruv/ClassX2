@@ -24,15 +24,6 @@ export default function MessageSideBar({
   sideBarUsers: IUserDetails[]
 }) {
   const { conversation } = useMessageContext()
-  const [name, setName] = useState('')
-  // @ts-ignore
-  const { authUser } = useAuthContext()
-
-  useEffect(() => {
-    console.log(authUser)
-    setName(authUser?.username)
-  }, [authUser])
-
   return (
     <div
       className={`messageSideBar justify-start lg:items-stretch sm:items-center flex flex-col xl:w-auto lg:w-auto sm:border-r sm:w-[100px] w-full h-screen bg-[#0E0E0E]  md:flex z-50 md:py-[31px] transition-all ${

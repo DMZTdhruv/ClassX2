@@ -30,12 +30,14 @@ const classroomSchema = new mongoose.Schema(
         ref: 'UserProfile',
       },
     ],
-    post: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'ClassroomPost',
-      },
-    ],
+    updates: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'ClassroomPost'
+    }],
+    classWork: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'ClassroomClasswork'
+    }],
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'UserProfile',

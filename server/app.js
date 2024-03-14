@@ -1,5 +1,5 @@
 import { app, server } from './socket/socket.js'
-import express from 'express'
+import express, { urlencoded } from 'express'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
 import morgan from 'morgan'
@@ -17,6 +17,7 @@ import classroomRoutes from './routes/protected/classroom.route.js'
 dotenv.config()
 
 const port = process.env.PORT || 3001
+app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(express.json())
 app.use(morgan('common'))

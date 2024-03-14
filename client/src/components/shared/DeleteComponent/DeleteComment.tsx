@@ -21,15 +21,18 @@ export default function DeleteCommentComponent({
   type,
 }: DeleteComment) {
   //@ts-ignore
-  const {authUser} = useAuthContext();
+  const { authUser } = useAuthContext()
   const deleteComment = async () => {
     const CommentApi = `${Api}/post/comment/delete-comment/${deleteId}`
     const SubCommentApi = `${Api}/post/comment/subComment/delete-comment/${deleteId}`
     try {
-      const response = await fetch(`${type === 'Comment' ? CommentApi : SubCommentApi}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      })
+      const response = await fetch(
+        `${type === 'Comment' ? CommentApi : SubCommentApi}`,
+        {
+          method: 'DELETE',
+          credentials: 'include',
+        }
+      )
 
       if (!response.ok) {
         const result = await response.json()
@@ -45,10 +48,10 @@ export default function DeleteCommentComponent({
 
   return (
     <div
-      className={`fixed top-[50%] left-[50%] flex items-center justify-center gap-3 h-screen w-full bg-[#0E0E0E]/80 z-[1000000] translate-x-[-50%] translate-y-[-50%]`}
+      className={`fixed top-[50%] left-[50%] md:text-[15px] flex items-center justify-center gap-3 h-screen w-full bg-[#0E0E0E]/80 z-[1000000] translate-x-[-50%] translate-y-[-50%]`}
     >
       <div
-        className={`w-[336px]  flex flex-col bg-[#1E1E1E]/80 shadow-lg backdrop-blur-md py-[8px]  rounded-[22px] ${className}`}
+        className={`md:w-[336px] w-[306px]  flex flex-col bg-[#1E1E1E]/80 shadow-lg backdrop-blur-md py-[8px]  rounded-[22px] ${className}`}
         style={{}}
       >
         {authUser?.userProfileId === userId ? (

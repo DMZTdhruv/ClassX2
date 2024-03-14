@@ -1,8 +1,10 @@
 'use client'
 
 import Post from '@/components/cards/Post'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import DeletePostModal from '@/components/shared/DeleteComponent/DeletePost'
+import { useInView } from 'react-intersection-observer'
+import { getPosts } from './postActions'
 
 interface IComments {
   _id: string
@@ -41,12 +43,34 @@ interface IDeletePostDetails {
   className?: string
 }
 
-export default function PostSection({ postData }: { postData: IPost[] }) {
-  const [posts, setPosts] = useState<IPost[] | null>(postData)
+export default function PostSection({
+  postData,
+  cookie,
+  totalPost,
+}: {
+  postData: IPost[]
+  cookie: string
+  totalPost: number
+}) {
+  // ref
+  const { ref, inView } = useInView()
+
+  // states
+  const [posts, setPosts] = useState<IPost[]>(postData)
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false)
   const [deletePostDetails, setDeletePotDetails] = useState<IDeletePostDetails | null>(
     null
   )
+  const [allPostLoaded, setAllPostLoaded] = useState<boolean>(false)
+  const [page, setPage] = useState(1)
+
+  //  handlers
+  const loadMoreUpdates = async () => {
+    const nextPage = page + 1
+    const newPosts = await getPosts(cookie, nextPage)
+    setPosts(prev => [...prev, ...newPosts])
+    setPage(nextPage)
+  }
 
   const handleDeleteModal = (value: boolean) => {
     setIsOpenModal(value)
@@ -63,6 +87,17 @@ export default function PostSection({ postData }: { postData: IPost[] }) {
   const handlePostState = (postId: string) => {
     setPosts(prev => (prev ? prev.filter(post => post._id !== postId) : []))
   }
+
+  // useEffects
+  useEffect(() => {
+    if (inView) {
+      if (posts.length >= totalPost) {
+        setAllPostLoaded(true)
+        return
+      }
+      loadMoreUpdates()
+    }
+  }, [inView, page])
 
   return (
     <div
@@ -95,6 +130,13 @@ export default function PostSection({ postData }: { postData: IPost[] }) {
           />
         )
       })}
+      <div className='w-full flex justify-center'>
+        {allPostLoaded ? (
+          <p className='my-5'>You are up-to-date</p>
+        ) : (
+          <div className='loader mb-5' ref={ref}></div>
+        )}
+      </div>
     </div>
   )
 }

@@ -4,7 +4,7 @@ import MessageContainer from '@/components/messageComponents/Messages/MessageCon
 import MessageSideBar from '@/components/messageComponents/Sidebar/MessageSideBar'
 import useGetConversations from '@/hooks/Conversations/useGetConversations'
 import MessageContextProvider, { useMessageContext } from '@/context/MessageContext'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useAuthContext } from '@/context/AuthContext'
 import MessageSkeleton from '@/components/Skeletons/MessageSkeleton'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -12,7 +12,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 const Message = () => {
   const { loading, conversation: chatFriends } = useGetConversations()
   // @ts-ignore
-  const { authUser } = useAuthContext()
 
   if (loading) {
     return (

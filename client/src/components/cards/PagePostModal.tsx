@@ -323,22 +323,8 @@ export default function PostModalPage({
           type='Comment'
         />
       )}
-
-      {/* {openDeletePostModal && (
-        <DeletePostModal
-          userId=':1d'
-          deleteId='sda'
-          userProfileId={postData?.postedBy._id}
-          endPoint='sda'
-          handleModal={handleDeletePostModal}
-        />
-      )} */}
-
-      {/* <button>
-        <HiMiniXMark className='fixed hidden md:block top-[5%] right-[5%]' size={30} />
-      </button> */}
       <div
-        className={`w-full h-full pt-[60px] sm:pt-[0px]  sm:h-full sm:max-w-[80%] sm:min-w-[100%] md:min-w-[80%] md:max-h-[563px] xl:min-w-[75%] xl:max-w-[50%]  md:border  bg-[#0E0E0E]  border-[#212936] flex flex-col lg:flex-row border`}
+        className={`w-full h-full pt-[60px] sm:pt-[0px]  sm:h-full sm:max-w-[80%] sm:min-w-[100%] md:min-w-[80%] md:max-h-[563px] xl:min-w-[85%] xl:max-w-[50%]  md:border  bg-[#0E0E0E]  border-[#212936] flex flex-col lg:flex-row border`}
       >
         <div className='top-[-1px] border-b border-[#212936] py-[20px] sticky z-[10000000] md:hidden px-[16px] flex items-center bg-[#0E0E0E] '>
           <button onClick={goBack}>Post</button>
@@ -575,6 +561,7 @@ function ImageDisplay({ imageUrl }: ImageDisplayProps) {
       style={{ width: '100%', height: 'auto' }}
       className='md:max-w-[400px] sm:h-full imageResponive object-contain'
       quality={100}
+      unoptimized
     />
   )
 }

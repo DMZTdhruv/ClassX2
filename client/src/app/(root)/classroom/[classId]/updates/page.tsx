@@ -6,6 +6,7 @@ import { cookies } from 'next/headers'
 import React from 'react'
 import { getClassrooms, getClassroomUpdates } from '../../classroomActions'
 import InfiniteScrollClassroomUpdates from '@/components/classroom/InfiniteScrollClassroomUpdates'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface IClassroomUpdate {
   _id: string
@@ -46,21 +47,25 @@ const Updates = async ({ params }: { params: { classId: string } }) => {
             adminIds={classrooms?.adminEmails}
             classId={params?.classId}
           />
-          {classroomUpdates?.map(update => {
-            return (
-              <ClassroomUpdate
-                key={update._id}
-                classroomUpdate={{
-                  postedBy: {
-                    username: update.postedBy.username,
-                    userProfileImage: update.postedBy.userProfileImage,
-                  },
-                  createdAt: update.createdAt,
-                  description: update.description,
-                }}
-              />
-            )
-          })}
+          {classroomUpdates ? (
+            classroomUpdates?.map(update => {
+              return (
+                <ClassroomUpdate
+                  key={update._id}
+                  classroomUpdate={{
+                    postedBy: {
+                      username: update.postedBy.username,
+                      userProfileImage: update.postedBy.userProfileImage,
+                    },
+                    createdAt: update.createdAt,
+                    description: update.description,
+                  }}
+                />
+              )
+            })
+          ) : (
+            <Skeleton className='h-[250px] p-[24px]  rounded-[20px]' />
+          )}
           <InfiniteScrollClassroomUpdates
             cookie={cookie || ''}
             classId={params.classId}

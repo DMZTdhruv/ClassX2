@@ -17,7 +17,6 @@ export default function Loading() {
         <Skeleton className=' h-16 md:w-[150%] w-[100%]' />
         <div className='flex gap-[10px]'>
           <Skeleton className=' h-6 w-[100px]' />
-          <Skeleton className=' h-6 w-[100px]' />
         </div>
       </div>
       <Skeleton className='h-[500px] w-[100%] rounded-xl' />

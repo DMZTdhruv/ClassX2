@@ -257,6 +257,7 @@ export default function PostModalPage({
       setRepliedSubComments(prev => {
         return [...prev, result]
       })
+      setComment("");
     } catch (error: any) {
       console.error(error.message)
     } finally {

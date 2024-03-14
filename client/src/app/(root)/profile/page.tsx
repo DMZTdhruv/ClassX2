@@ -25,6 +25,7 @@ export default async function Profile() {
   const cookie = cookies()
   const api = process.env.NEXT_PUBLIC_API
   const token = cookie.get('classX_user_token')
+  let error = undefined
   const getUserProfile = async () => {
     const userProfileApi = `${api}/users/get-user-profile`
     try {
@@ -37,17 +38,25 @@ export default async function Profile() {
 
       const data = await response.json()
       if (data.error) {
-        console.log('Failed to fetch the user')
+        throw new Error(data.error)
       }
 
       return data.data
-    } catch (error: any) {
-      console.log(error.message)
+    } catch (err: any) {
+      error = err.message
+      console.log(err.message)
     }
   }
 
   // variables
   const userProfile: UserProfileProps = await getUserProfile()
+  if (error) {
+    return (
+      <div className='h-screen w-full flexCenter text-center'>
+        {error} <br /> Log in
+      </div>
+    )
+  }
   return (
     <section className='flex mt-[80px]  md:mt-[0px] sm:px-[16px] flex-col items-center gap-[60px] mb-[20px]'>
       <UserHeader

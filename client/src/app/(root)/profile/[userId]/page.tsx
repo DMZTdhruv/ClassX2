@@ -30,7 +30,6 @@ const ProfilePage = async ({ params }: { params: { userId: string } }) => {
       })
 
       const data = await response.json()
-      console.log(data)
       if (data.error) {
         console.log('Failed to fetch the user')
       }
@@ -41,8 +40,6 @@ const ProfilePage = async ({ params }: { params: { userId: string } }) => {
     }
   }
 
-  const { userId } = params
-  console.log(userId)
   const userProfile: UserProfileProps = await getUserProfile()
 
   return (

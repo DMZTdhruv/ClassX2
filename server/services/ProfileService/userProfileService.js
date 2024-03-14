@@ -149,14 +149,8 @@ export const createUserProfile = async (
     res.cookie('classX_user_token', token, {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
-<<<<<<< HEAD
       sameSite: 'Strict',
       secure: process.env.NODE_ENV !== 'development',
-=======
-      sameSite: 'None',
-      domain: '.railway.app',
-      secure: false,
->>>>>>> 5782d6450493d8ef2eba73bd7bc3dbad5dde7dfb
     })
 
     return res.status(201).json({

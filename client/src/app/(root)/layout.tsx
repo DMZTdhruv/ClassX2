@@ -34,6 +34,7 @@ export default function RootLayout({
             <NextTopLoader
               color='rgba(137, 29, 204, 1)'
               shadow='0 4px 18.9px #891DCC'
+              showSpinner={false}
             />
             {postModal}
             <TopBar />

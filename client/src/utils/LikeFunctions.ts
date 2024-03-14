@@ -8,7 +8,7 @@ interface PostLikes {
   setNumberOfLikes: (newNumberOfLikes: number) => void
   setIsLiked: (newValueOfLike: boolean) => void
   numberOfLikes: number
-  authUser: IAuthUser
+  authUser: IAuthUser | null
   endPoint: string
   isDevMode?: boolean | null
 }

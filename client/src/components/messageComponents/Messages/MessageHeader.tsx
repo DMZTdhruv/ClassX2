@@ -17,15 +17,21 @@ interface IUserDetails {
 
 export default function MessageHeader({ userDetails }: { userDetails: IUserDetails }) {
   // @ts-ignore
-  const { userProfileImage, username, update, url } = userDetails
+  const { userProfileImage, _id, username, update, url } = userDetails
   const { setConversation }: MessageContextProps = useMessageContext()
 
   return (
-    <div className='flex items-center'>
-      <FaArrowLeft onClick={() => setConversation(null)} size={20}  className='ml-[16px]'/>
-      <Link href={`profile/@${username}`}>
+    <div className='flex items-center gap-3'>
+      <button onClick={() => setConversation(null)}>
+        <FaArrowLeft
+          size={20}
+          className='ml-[16px] active:scale-75 active:opacity-75 transition-all'
+        />
+      </button>
+
+      <Link href={`profile/${_id}`} className='flex-1'>
         <div
-          className={`flex cursor-pointer transition-all items-center px-[31px] h-[70px] gap-2 hover:bg-[#111111] w-full`}
+          className={`flex flex-1 cursor-pointer transition-all items-center p-5 h-[70px] gap-2 hover:bg-[#111111] w-full`}
         >
           <Image
             height={44}

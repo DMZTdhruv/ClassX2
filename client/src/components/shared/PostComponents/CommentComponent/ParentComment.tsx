@@ -74,7 +74,7 @@ export default function ParentComment({
   parentTotalCommentReplies,
   updateUsername,
   updateReplyCommentData,
-  userRepliedComments, // our replied comments
+  userRepliedComments,
   updateRepliedComments,
   likeSubComment,
   unlikeSubComment,
@@ -265,7 +265,10 @@ export default function ParentComment({
           <div className='space-y-[5px] w-full'>
             <div className='flex justify-between flex-1 w-full'>
               <p className=' flex-1 w-full '>
-                <Link href={`/profile/${parentCommentUserId}`} className='font-semibold text-[12px] lg:text-[12px]'>
+                <Link
+                  href={`/profile/${parentCommentUserId}`}
+                  className='font-semibold text-[12px] lg:text-[12px]'
+                >
                   {parentCommentUsername} &nbsp;
                 </Link>
                 <span className='text-[12px] lg:text-[12px]'>
@@ -347,7 +350,10 @@ export default function ParentComment({
               <button
                 className=' text-neutral-500 flex items-center gap-3'
                 onClick={() => {
-                  if (userRepliedComments.length > 0) {
+                  if (
+                    userRepliedComments.length > 0 &&
+                    userRepliedComments.find(comment => comment.parentCommentId === _id)
+                  ) {
                     setSubComments(prev => [...(prev || []), ...userRepliedComments])
                     setTotalCommentReplies(prev => prev + userRepliedComments.length)
                     updateRepliedComments()

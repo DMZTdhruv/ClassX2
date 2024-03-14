@@ -1,6 +1,5 @@
 import { Api } from '@/Constants'
 import NormalPost from '@/components/cards/NormalPost'
-import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 
 interface Posts {
@@ -19,15 +18,18 @@ const ProfilePosts = async ({
 }) => {
   const getUserPosts = async () => {
     try {
-      const response = await fetch(`${Api}/users/get-user-posts?userProfileId=${userProfileId}`, {
-        method: 'GET',
-        headers: {
-          Cookies: `classX_user_token=${token}`,
-        },
-        next: {
-          tags: ['userPost'],
-        },
-      })
+      const response = await fetch(
+        `${Api}/users/get-user-posts?userProfileId=${userProfileId}`,
+        {
+          method: 'GET',
+          headers: {
+            Cookies: `classX_user_token=${token}`,
+          },
+          next: {
+            tags: ['userPost'],
+          },
+        }
+      )
 
       if (!response.ok) {
         console.log('There was an error')

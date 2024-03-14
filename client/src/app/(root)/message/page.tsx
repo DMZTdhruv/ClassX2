@@ -13,9 +13,7 @@ const Message = () => {
   const { loading, conversation: chatFriends } = useGetConversations()
   // @ts-ignore
   const { authUser } = useAuthContext()
-  useEffect(() => {
-    console.log(authUser)
-  }, [authUser])
+
   if (loading) {
     return (
       <div className='w-full flex h-screen gap-3 p-[10px] '>
@@ -25,7 +23,6 @@ const Message = () => {
     )
   }
 
-  console.log(chatFriends)
   return (
     <MessageContextProvider>
       <div className={`flex w-full overflow-x-hidden`}>

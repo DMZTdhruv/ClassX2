@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button'
 import useLogOut from '@/hooks/auth/useLogout'
 import React from 'react'
 
-const LogOut = ({ type }: { type: string }) => {
+const LogOut = ({ type, className }: { type: string, className?: string }) => {
   const { loading, logout } = useLogOut()
   return (
     <Button
       type='button'
-      className={`text-white font-bold absolute  bottom-[41px] transition-all`}
+      className={`text-white font-bold absolute  bottom-[41px] transition-all ${className}`}
       onClick={logout}
     >
       {type === 'mobile' ? (

@@ -1,25 +1,35 @@
+// context/AuthContext.tsx
 'use client'
 
 import { createContext, useContext, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
-interface AuthContext {
+interface AuthUser {
   userId: string
   userProfileId: string
   userProfileImage: string
+  username: string
 }
 
-// @ts-expect-error
-export const AuthContext = createContext()
+interface AuthContextType {
+  authUser: AuthUser | null
+  setAuthUser: React.Dispatch<React.SetStateAction<AuthUser | null>>
+}
+
+export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const useAuthContext = () => {
-  return useContext(AuthContext)
+  const context = useContext(AuthContext)
+  if (!context) {
+    throw new Error('useAuthContext must be used within an AuthContextProvider')
+  }
+  return context
 }
 
 export const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter()
-  const [authUser, setAuthUser] = useState<AuthContext | null>(null)
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null)
   useEffect(() => {
     const storedUser = localStorage.getItem('classX_user')
 

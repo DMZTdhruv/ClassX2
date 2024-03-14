@@ -10,7 +10,7 @@ interface IUserDetails {
 }
 const Conversations = ({ sideBarUsers }: { sideBarUsers: IUserDetails[] }) => {
   return (
-    <div>
+    <div className='sm:divide-y-0 divide-y space-y-1 divide-neutral-800/80'>
       {sideBarUsers.map(user => {
         return <Conversation key={user._id} userDetails={user} />
       })}

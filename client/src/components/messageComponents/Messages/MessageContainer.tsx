@@ -5,7 +5,7 @@ import { useMessageContext } from '@/context/MessageContext'
 import { MessageContextProps } from '@/Constants'
 import MessageHeader from './MessageHeader'
 import MessageInput from './MessageInput'
-import Messages from './Messages'
+import MessagesTwo from './MessagesTwo'
 
 const MessageContainer = () => {
   const { conversation }: MessageContextProps = useMessageContext()
@@ -23,7 +23,7 @@ const MessageContainer = () => {
         <>
           <div className='flex flex-col h-screen max-h-screen overflow-y-hidden w-full'>
             <MessageHeader userDetails={conversation} />
-            <Messages />
+            <MessagesTwo />
             <MessageInput />
           </div>
         </>

@@ -1,5 +1,6 @@
 import { Api } from '@/Constants'
 
+// convert this to client if you want to preserve update like feedback when navigating DHRUVV!!
 export const getPosts = async (cookie: string, page: number) => {
   try {
     const response = await fetch(`${Api}/post/get-post?page=${page}&limit=${10}`, {
@@ -19,7 +20,7 @@ export const getPosts = async (cookie: string, page: number) => {
     }
     return data
   } catch (error: any) {
-    console.log(error.message)
+    console.error(error.message)
   }
 }
 
@@ -37,9 +38,8 @@ export const getTotalPost = async (cookie: string) => {
     if (data.error) {
       throw new Error(data.error)
     }
-    console.log(data)
     return data
   } catch (error: any) {
-    console.log(error.message)
+    console.error(error.message)
   }
 }

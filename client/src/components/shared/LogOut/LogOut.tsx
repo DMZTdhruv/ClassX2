@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import useLogOut from '@/hooks/auth/useLogout'
 import React from 'react'
 
-const LogOut = ({ type, className }: { type: string, className?: string }) => {
+const LogOut = ({ type, className }: { type: string; className?: string }) => {
   const { loading, logout } = useLogOut()
   return (
     <Button

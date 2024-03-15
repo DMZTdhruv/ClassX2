@@ -51,7 +51,7 @@ export default function DeleteCommentComponent({
       className={`fixed top-[50%] left-[50%] md:text-[15px] flex items-center justify-center gap-3 h-screen w-full bg-[#0E0E0E]/80 z-[1000000] translate-x-[-50%] translate-y-[-50%]`}
     >
       <div
-        className={`md:w-[336px] w-[306px]  flex flex-col bg-[#1E1E1E]/80 shadow-lg backdrop-blur-md py-[8px]  rounded-[22px] ${className}`}
+        className={`md:w-[336px] animate-in fade-in-0 w-[306px]  flex flex-col bg-[#1E1E1E]/80 shadow-lg backdrop-blur-md py-[8px]  rounded-[22px] ${className}`}
         style={{}}
       >
         {authUser?.userProfileId === userId ? (

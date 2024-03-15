@@ -77,7 +77,7 @@ export default function DeletePostModal({
       <div
         className={`w-[336px] ${
           isDeleting && 'pointer-events-none'
-        } flex flex-col  bg-[#1E1E1E]/80 shadow-lg backdrop-blur-md py-[8px]  rounded-[22px] ${className}`}
+        } flex flex-col animate-in fade-in-0  bg-[#1E1E1E]/80 shadow-lg backdrop-blur-md py-[8px]  rounded-[22px] ${className}`}
       >
         {authUser?.userProfileId === userProfileId ? (
           <button

@@ -1,0 +1,16 @@
+# Chat features
+
+Allow users to see the last seen in chat
+// Enable pagination data in chat
+Enable typing feedback
+// Enable scrollInView load chats
+Enable reply chat
+
+# Classroom features
+Allow admins to share the classroom Id
+Allow users to join a classroom through classroom Id
+Start working on attachments
+Fix some padding
+
+# Explore
+Remove skeleton of too many posts and put a single block of skeleton to take the full height of the screen

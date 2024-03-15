@@ -317,7 +317,7 @@ export default function PostModalPage({
 
   return (
     <section
-      className='w-full min-h-[100vh] responiveModal flexCenter md:border md:h-full overflow-y-auto bg-[#0E0E0E] md:bg-transparent'
+      className='w-full animate-in fade-in-0 min-h-[100vh] responiveModal flexCenter md:border md:h-full overflow-y-auto bg-[#0E0E0E] md:bg-transparent'
       onClick={hanldePostModalClose}
     >
       {openDeleteCommentModal && (

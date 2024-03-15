@@ -18,7 +18,6 @@ const InfiniteExploreFeed = ({
   const [allPostLoaded, setAllPostLoaded] = useState<boolean>(false)
 
   const loadMorePosts = async () => {
-    console.log('hello')
     const nextPage = page + 1
     const newPosts: IPost[] = await getPosts(cookie, nextPage)
     setPosts(prev => [...prev, ...newPosts])

@@ -23,6 +23,7 @@ export const useMessageContext = () => {
 
 const MessageContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [conversation, setConversation] = useState(null)
+
   const [messages, setMessages] = useState<any[]>([])
 
   const value = {

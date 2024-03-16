@@ -26,7 +26,7 @@ const MessagesTwo = () => {
   const [totalMessages, setTotalMessages] = useState<number>(0)
   const [previousMessages, setPreviousMessages] = useState<MessageProps[]>([])
   const [allMessagesReceived, setAllMessageReceived] = useState<boolean>(false)
-  const [page, setPage] = useState<number>(0)
+  const [page, setPage] = useState<number>(1)
   const [previousMessageIndex, setPreviousMessageIndex] = useState<number>(0)
 
   // refs
@@ -56,7 +56,7 @@ const MessagesTwo = () => {
   }, [page])
 
   useEffect(() => {
-    setAllMessageReceived(previousMessages?.length >= totalMessages)
+    setAllMessageReceived(previousMessages?.length + messages.length >= totalMessages)
   }, [messages, previousMessages])
 
   useEffect(() => {}, [previousMessages])
@@ -70,6 +70,7 @@ const MessagesTwo = () => {
   const loadPreviousMessages = async () => {
     const nextPage = page + 1
     const conversationPreviousMessages = await getMessages(nextPage)
+    console.log(conversationPreviousMessages)
     setPreviousMessageIndex(conversationPreviousMessages?.length)
     setPreviousMessages(prev => [...conversationPreviousMessages, ...prev])
     setPage(nextPage)
@@ -81,10 +82,10 @@ const MessagesTwo = () => {
     setMessages([])
     setPreviousMessages([])
     setTotalMessages(0)
-    setPage(0)
+    setPage(1)
     const totalCount = await getTotalMessages()
     setTotalMessages(totalCount)
-    const messages = await getMessages(0)
+    const messages = await getMessages(1)
     setMessages(messages)
     setLoading(false)
     setAllMessageReceived(previousMessages?.length >= totalMessages)

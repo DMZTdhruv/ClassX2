@@ -1,13 +1,13 @@
 'use client'
 
 import CustomTextArea from '@/components/shared/ChatComponents/CustomTextArea'
-import { Textarea } from '@/components/ui/textarea'
 import useSendMessage from '@/hooks/Conversations/useSendMessage'
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 
 const MessageInput = () => {
   const { loading, sendMessage } = useSendMessage()
   const [message, setMessage] = useState<string>('')
+
   const handleSendMessage = async (e: FormEvent) => {
     e.preventDefault()
     if (message.trim() === '') {
@@ -23,7 +23,9 @@ const MessageInput = () => {
         placeholder='Write something...'
         className='bg-[#171717] max-h-[150px] w-full pl-5 outline-none focus-visible:ring-0 resize-none md:font-semibold border-none rounded-lg  py-[20px] pr-[60px] caret-violet-300'
         value={message}
-        onChange={e => setMessage(e.target.value)}
+        onChange={e => {
+          setMessage(e.target.value)
+        }}
       />
       <button
         className={`absolute rotate-[-6deg] 

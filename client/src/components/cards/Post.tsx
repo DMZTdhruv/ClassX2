@@ -37,7 +37,7 @@ const Post: React.FC<IPost> = ({
   }, [authUser])
 
   return (
-    <div className='w-full lg:w-[584px] h-auto rounded-xl border-b-2 border-[#171717] font-poppins  postSection'>
+    <div className='w-full animate-in fade-in-0 lg:w-[584px] h-auto rounded-xl border-b-2 border-[#171717] font-poppins  postSection'>
       <div className='h-[60px] px-[16px] flex items-center justify-between text-[14px]'>
         <div className='flex items-center justify-between w-full gap-[11px]'>
           <div className='flex items-center gap-[11px]'>

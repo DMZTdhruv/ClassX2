@@ -2,6 +2,7 @@ import UserProfile from '../../models/user/userProfile.model.js'
 import {
   messageService,
   getMessageService,
+  getTotalMessageService,
 } from '../../services/MessageService/message.service.js'
 import {
   getMessageValidator,
@@ -27,11 +28,37 @@ export const sendMessage = async (req, res) => {
 
 export const getMessage = async (req, res) => {
   try {
+    const { page, limit } = req.query
+    console.log(req.query)
+    const currentPage = parseInt(page) || 1
+    const itemsPerPage = parseInt(limit) || 10
+    const startIndex = (currentPage - 1) * itemsPerPage
+
     const { id: receiverId } = req.params
     const senderId = req.user.userProfileId
 
-    getMessageValidator(receiverId, senderId, res)
-    await getMessageService(senderId, receiverId, res)
+    const { statusCode, response } = await getMessageService(
+      startIndex,
+      itemsPerPage,
+      senderId,
+      receiverId
+    )
+
+    res.status(statusCode).json(response)
+  } catch (error) {
+    console.log(error.message)
+    res.status(500).json({ error: 'Internal Server Error' })
+  }
+}
+
+export const getTotalMessages = async (req, res) => {
+  try {
+    const { id: receiverId } = req.params
+    const senderId = req.user.userProfileId
+
+    const { statusCode, response } = await getTotalMessageService(senderId, receiverId)
+
+    res.status(statusCode).json(response)
   } catch (error) {
     console.log(error.message)
     res.status(500).json({ error: 'Internal Server Error' })

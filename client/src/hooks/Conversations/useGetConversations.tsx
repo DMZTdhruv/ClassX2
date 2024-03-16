@@ -21,7 +21,6 @@ const useGetConversations = () => {
         }
 
         const users = data.data
-        console.log(users)
         setConversations(data.data)
       } catch (error: any) {
         console.error(error.message)

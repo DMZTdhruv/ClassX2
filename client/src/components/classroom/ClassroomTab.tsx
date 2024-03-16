@@ -31,7 +31,6 @@ const ClassroomTab = ({ classId }: { classId: string }) => {
         return (
           <Link
             key={link.id}
-            
             href={`/classroom/${classId}/${link.link}`}
             className={`text-[15px] ${
               isActive ? 'bg-primary' : ' hover:bg-primary/30'

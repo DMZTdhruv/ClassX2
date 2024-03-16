@@ -90,10 +90,7 @@ function SignInPage() {
       {(errorMessage || completeDetails) && (
         <p className='text-center  error_message'>
           Error:{' '}
-          <span className='text-red-500'>
-            {' '}
-            {errorMessage || completeDetails}
-          </span>
+          <span className='text-red-500'> {errorMessage || completeDetails}</span>
         </p>
       )}
       {message && (

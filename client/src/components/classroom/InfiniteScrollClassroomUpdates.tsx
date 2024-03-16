@@ -49,7 +49,7 @@ const InfiniteScrollClassroomUpdates = ({
       }
       loadMoreUpdates()
     }
-  }, [inView])
+  }, [inView, page])
 
   return (
     <>

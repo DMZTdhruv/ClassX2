@@ -43,6 +43,8 @@ const SocketContextProvider: React.FC<{ children: React.ReactNode }> = ({
       socketInstance.on('activeUsers', users => {
         setActiveUsers(users)
       })
+
+      socketInstance.emit('custom-message', 'hello world')
       return () => socketInstance.close()
     } else {
       if (socket) {

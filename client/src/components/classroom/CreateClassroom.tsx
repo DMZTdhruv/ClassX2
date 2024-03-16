@@ -64,7 +64,6 @@ const CreateClassroom = () => {
   }
 
   const submitClassroomData = async (e: FormEvent) => {
-    console.log(state)
     e.preventDefault()
     await createClassroom(state)
   }

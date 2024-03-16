@@ -9,10 +9,8 @@ const useListenNewMessages = () => {
 
   // @ts-ignore
   useEffect(() => {
-    console.log(`can you`)
     socket?.on('newMessage', newMessage => {
-      console.log(newMessage)
-      setMessages([...messages, newMessage])
+      setMessages(prev => [...prev, newMessage])
     })
     return () => socket?.off('newMessage')
   }, [messages, socket, setMessages])

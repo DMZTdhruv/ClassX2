@@ -2,6 +2,7 @@ import Conversation from '../../models/messages/conversation.model.js'
 import Message from '../../models/messages/message.model.js'
 import UserProfile from '../../models/user/userProfile.model.js'
 import { getSocketIdByUserId, io } from '../../socket/socket.js'
+import { getMessageValidator } from '../../validations/MessageValidator/message.validator.js'
 
 export const messageService = async (message, senderId, receiverId, res) => {
   try {
@@ -32,6 +33,7 @@ export const messageService = async (message, senderId, receiverId, res) => {
       senderId,
       receiverId,
       message,
+      conversationId: conversation._id,
     })
 
     if (newMessage) {
@@ -42,7 +44,7 @@ export const messageService = async (message, senderId, receiverId, res) => {
 
     const receiverSocketId = getSocketIdByUserId(receiverId)
     if (receiverSocketId) {
-      console.log(newMessage);
+      console.log(newMessage)
       io.to(receiverSocketId).emit('newMessage', newMessage)
     }
 
@@ -55,21 +57,98 @@ export const messageService = async (message, senderId, receiverId, res) => {
   }
 }
 
-export const getMessageService = async (senderId, receiverId, res) => {
+export const getMessageService = async (
+  startIndex,
+  itemsPerPage,
+  senderId,
+  receiverId
+) => {
   try {
+    getMessageValidator(senderId, receiverId)
     const conversation = await Conversation.findOne({
       participants: { $all: [senderId, receiverId] },
-    }).populate('messages')
+    })
 
     if (!conversation) {
-      return res.status(200).json({ data: [] })
+      return {
+        statusCode: 200,
+        response: {
+          message: 'Message received successfully',
+          data: [],
+        },
+      }
     }
 
-    return res
-      .status(200)
-      .json({ message: 'Message received successfully', data: conversation.messages })
+    const conversationMessages = await Message.find({
+      conversationId: conversation._id,
+    })
+      .sort({ createdAt: -1 })
+      .skip(startIndex)
+      .limit(itemsPerPage)
+
+    if (!conversationMessages) {
+      return {
+        statusCode: 200,
+        response: {
+          message: 'Message received successfully',
+          data: [],
+        },
+      }
+    }
+
+    return {
+      statusCode: 200,
+      response: {
+        message: 'Message received successfully',
+        data: conversationMessages.reverse(),
+      },
+    }
   } catch (error) {
     console.log(error.message)
-    res.status(500).json({ error: 'Internal server error' })
+    return {
+      statusCode: 500,
+      response: {
+        error: `Internal server error`,
+      },
+    }
+  }
+}
+
+export const getTotalMessageService = async (senderId, receiverId) => {
+  try {
+    getMessageValidator(senderId, receiverId)
+    const conversation = await Conversation.findOne({
+      participants: { $all: [senderId, receiverId] },
+    })
+
+    if (!conversation) {
+      return {
+        statusCode: 200,
+        response: {
+          message: 'Message received successfully',
+          data: 0,
+        },
+      }
+    }
+
+    const totalConversationMessages = await Message.find({
+      conversationId: conversation._id,
+    }).countDocuments({})
+
+    return {
+      statusCode: 200,
+      response: {
+        message: 'Message received successfully',
+        data: totalConversationMessages,
+      },
+    }
+  } catch (error) {
+    console.log(error.message)
+    return {
+      statusCode: 500,
+      response: {
+        error: `Internal server error`,
+      },
+    }
   }
 }

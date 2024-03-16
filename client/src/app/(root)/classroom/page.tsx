@@ -1,12 +1,13 @@
 import { Api } from '@/Constants'
 import ClassroomCard, { IClassroomCard } from '@/components/classroom/ClassroomCard'
 import ClassroomOptions from '@/components/classroom/ClassroomOptions'
+import { Skeleton } from '@/components/ui/skeleton'
 import { cookies } from 'next/headers'
 
 export default async function Classroom() {
   const cookie = cookies().get('classX_user_token')?.value
   let requestError = undefined
-  
+
   const getClassrooms = async () => {
     try {
       const res = await fetch(`${Api}/classroom`, {
@@ -64,7 +65,10 @@ export default async function Classroom() {
           })}
         </div>
       ) : (
-        <p>Loading...</p>
+        <div className='sm:p-[32px] p-[16px] w-full items-center gap-3 flex flex-wrap'>
+          <Skeleton className='sm:w-[380px]  active:scale-[0.99] h-[200px]  w-full md:w-[400px] rounded-md p-4' />
+          <Skeleton className='sm:w-[380px]  active:scale-[0.99] h-[200px]  w-full md:w-[400px] rounded-md p-4' />
+        </div>
       )}
     </section>
   )

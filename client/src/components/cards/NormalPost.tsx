@@ -13,7 +13,7 @@ interface IPostProps {
 
 export default function NormalPost({ _id, imageUrl, likes, comments }: IPostProps) {
   return (
-    <div className='relative max-w-[300px]'>
+    <div className='relative animate-in fade-in-0 max-w-[300px]'>
       <Link href={`/post/${_id}?isProfile=true`} scroll={false}>
         <Image
           src={imageUrl}

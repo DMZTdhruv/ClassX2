@@ -1,5 +1,6 @@
 import { getAllPostService } from '../../services/PostService/getAllPostService.js'
 import getPostByIdService from '../../services/PostService/getPostByIdService.js'
+import getTotalPostService from '../../services/PostService/getTotalPostService.js'
 
 export const getPostController = async (req, res) => {
   const { page, limit } = req.query
@@ -20,5 +21,15 @@ export const getPostByIdController = async (req, res) => {
     await getPostByIdService(postId, res)
   } catch (err) {
     res.status(500).json(err.message)
+  }
+}
+
+export const getTotalPostCount = async (req, res) => {
+  try {
+    const { statusCode, response } = await getTotalPostService()
+    res.status(statusCode).json(response)
+  } catch (error) {
+    console.log(`Error in getTotalPostCount controller`)
+    res.status(500).json({ error: `Internal server error` })
   }
 }

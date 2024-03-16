@@ -14,13 +14,7 @@ import {
 } from '@/components/ui/select'
 
 import Image from 'next/image'
-import {
-  useState,
-  ChangeEvent,
-  FormEvent,
-  useEffect,
-  ChangeEventHandler,
-} from 'react'
+import { useState, ChangeEvent, FormEvent, useEffect, ChangeEventHandler } from 'react'
 import { SanityImageAssetDocument } from '@sanity/client'
 import { Textarea } from '@/components/ui/textarea'
 import useCreateUserProfile from '@/hooks/user/useCreateUserProfile'
@@ -38,8 +32,7 @@ interface SemesterNumber {
 
 function SignUpPage() {
   const { generateUrl, getUrl } = useGenerateLink()
-  const { loading, errorMessage, message, createUserProfile } =
-    useCreateUserProfile()
+  const { loading, errorMessage, message, createUserProfile } = useCreateUserProfile()
 
   // all states of single value
   const [name, setName] = useState<string>('')
@@ -48,9 +41,7 @@ function SignUpPage() {
   const [enrollmentNo, setEnrollmentNo] = useState<string>('')
   const [division, setDivision] = useState<string>('')
   const [userBranch, setUserBranch] = useState<string>('')
-  const [userSemester, setUserSemester] = useState<number | undefined>(
-    undefined
-  )
+  const [userSemester, setUserSemester] = useState<number | undefined>(undefined)
   const [userProfileImageDemoLink, setUserProfileImageDemoLink] = useState<
     SanityImageAssetDocument | undefined
   >(undefined)
@@ -297,9 +288,7 @@ function SignUpPage() {
             <SelectTrigger className='bg-[#171717] border-none outline-none rounded-full  px-[16px]'>
               <SelectValue
                 placeholder={
-                  isBranchLoading
-                    ? 'Branches are loading..'
-                    : 'Select your branch'
+                  isBranchLoading ? 'Branches are loading..' : 'Select your branch'
                 }
               />
             </SelectTrigger>
@@ -370,14 +359,11 @@ function SignUpPage() {
           </Select>
         </label>
 
-        <Button
-          className='rounded-full text-white px-[24px] py-[3px]'
-          type='submit'
-        >
+        <Button className='rounded-full text-white px-[24px] py-[3px]' type='submit'>
           {loading ? 'Submitting....' : 'Submit'}
         </Button>
       </form>
-      {(errorMessage || clientErrors )&& (
+      {(errorMessage || clientErrors) && (
         <p className='text-center  error_message'>
           Error: <span className='text-red-500'> {errorMessage || clientErrors}</span>
         </p>

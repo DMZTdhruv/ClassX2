@@ -3,11 +3,12 @@ import PostSection from './PostSection'
 import SearchRightBar from '@/components/shared/SearchRightBar'
 import { cookies } from 'next/headers'
 import { Skeleton } from '@/components/ui/skeleton'
-import { getPosts } from './postActions'
+import { getPosts, getTotalPost } from './postActions'
 
 export default async function HomeLayout() {
   const cookie = cookies().get('classX_user_token')?.value
-  const postData = await getPosts(cookie || '')
+  const postData = await getPosts(cookie || '', 1)
+  const totalPost = await getTotalPost(cookie || '')
   if (!postData) {
     return (
       <div className='xl:w-[60%] mt-[80px] md:mt-[40px] w-full flex-1 px-[16px] flex gap-5 justify-center'>
@@ -21,7 +22,7 @@ export default async function HomeLayout() {
 
   return (
     <section className='flex w-full'>
-      <PostSection postData={postData} />
+      <PostSection postData={postData} totalPost={totalPost} cookie={cookie || ''} />
       <SearchRightBar />
     </section>
   )

@@ -257,7 +257,7 @@ export default function PostModalPage({
       setRepliedSubComments(prev => {
         return [...prev, result]
       })
-      setComment("");
+      setComment('')
     } catch (error: any) {
       console.error(error.message)
     } finally {
@@ -317,7 +317,7 @@ export default function PostModalPage({
 
   return (
     <section
-      className='w-full min-h-[100vh] responiveModal flexCenter md:border md:h-full overflow-y-auto bg-[#0E0E0E] md:bg-transparent'
+      className='w-full animate-in fade-in-0 min-h-[100vh] responiveModal flexCenter md:border md:h-full overflow-y-auto bg-[#0E0E0E] md:bg-transparent'
       onClick={hanldePostModalClose}
     >
       {openDeleteCommentModal && (
@@ -343,7 +343,7 @@ export default function PostModalPage({
         <HiMiniXMark className='fixed hidden md:block top-[5%] right-[5%]' size={30} />
       </button>
       <div
-        className='w-full h-full overflow-y-auto sm:h-full sm:max-w-[80%] sm:min-w-[100%] md:min-w-[80%] md:min-h-[463px] xl:min-w-[75%] xl:max-w-[50%]  md:border  bg-[#0E0E0E]  md:border-[#212936] flex flex-col md:flex-row '
+        className='w-full h-full overflow-y-auto sm:h-full sm:max-w-[80%] sm:min-w-[100%] md:min-w-[80%] md:min-h-[463px] xl:min-w-[75%] xl:max-w-[80%]  md:border  bg-[#0E0E0E]  md:border-[#212936] flex flex-col  md:items-center md:flex-row '
         ref={modalRef}
       >
         <button
@@ -591,8 +591,8 @@ function ImageDisplay({ imageUrl }: ImageDisplayProps) {
       width={400}
       height={300}
       style={{ width: '100%', height: 'auto' }}
-      className='md:max-w-[400px] border-y  border-[#212936] sm:h-full imageResponive object-contain'
-      quality={100}
+      className='max-h-[93vh] h-auto xl:max-w-[600px] lg:max-w-[500px] md:max-w-[400px] md:border-none border-y  border-[#212936] sm:h-full imageResponive object-contain'
+      unoptimized
     />
   )
 }

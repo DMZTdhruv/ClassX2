@@ -20,7 +20,7 @@ const Message = ({ message }: { message: MessageProps }) => {
   const messageDate = messageTime(message.createdAt)
   return (
     <div
-      className={`w-full flex justify-start gap-3  ${
+      className={`w-full animate-in duration-300 fade-in flex justify-start gap-3  ${
         isUserMessage && 'flex-row-reverse'
       } `}
     >

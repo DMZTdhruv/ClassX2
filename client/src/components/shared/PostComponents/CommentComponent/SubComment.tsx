@@ -130,7 +130,9 @@ export default function SubComment({
   }
 
   return (
-    <div className={`flex py-[12px] pr-[23px] gap-3 items-start ${Styles.subComment}`}>
+    <div
+      className={`flex py-[12px] animate-in fade-in-0 pr-[23px] gap-3 items-start ${Styles.subComment}`}
+    >
       <Image
         src={subCommentImage}
         alt={subCommentCommentText}

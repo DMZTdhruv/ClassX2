@@ -2,7 +2,7 @@
 
 import CustomTextArea from '@/components/shared/ChatComponents/CustomTextArea'
 import useSendMessage from '@/hooks/Conversations/useSendMessage'
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useRef, useState } from 'react'
 
 const MessageInput = () => {
   const { loading, sendMessage } = useSendMessage()
@@ -16,6 +16,7 @@ const MessageInput = () => {
     await sendMessage(message)
     setMessage('')
   }
+
 
   return (
     <form className='h-auto p-3 relative' onSubmit={handleSendMessage}>

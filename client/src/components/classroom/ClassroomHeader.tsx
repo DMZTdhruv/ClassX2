@@ -5,7 +5,7 @@ import { Skeleton } from '../ui/skeleton'
 
 const ClassroomHeader = () => {
   return (
-    <header className='h-[60px] sticky top-0 md:relative border-b bg-[#0E0E0E] z-[100] border-neutral-800 flex md:px-[24px] px-[16px] items-center justify-between'>
+    <header className='h-[60px] sticky top-0  md:relative border-b bg-[#0E0E0E] z-[50] border-neutral-800 flex md:px-[24px] px-[16px] items-center justify-between'>
       <Link
         href={`/classroom`}
         className='text-[15px] items-center flex  gap-[10px] font-semibold'

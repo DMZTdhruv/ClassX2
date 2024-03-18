@@ -11,7 +11,7 @@ export async function updateClassroomUpdates() {
   revalidateTag('classroomUpdates')
 }
 
-export const getClassrooms = async (cookie: string, classId: string) => {
+export const getClassroomData = async (cookie: string, classId: string) => {
   try {
     const res = await fetch(`${Api}/classroom/${classId}`, {
       method: 'GET',

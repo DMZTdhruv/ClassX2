@@ -18,7 +18,7 @@ interface UserHeaderProps {
   isPrivate: boolean
   following: any[]
   followers: any[]
-  post: string[]
+  posts: string[]
 }
 
 export default function UserHeader({
@@ -30,7 +30,7 @@ export default function UserHeader({
   isPrivate,
   following,
   followers,
-  post,
+  posts,
 }: UserHeaderProps) {
   const cookie = cookies()
   const token = cookie.get('classX_user_token')
@@ -38,7 +38,7 @@ export default function UserHeader({
     ? jwtDecode(token?.value || '')
     : { userProfileId: '' }
   return (
-    <div className='flex flex-col items-center relative mt-[40px] font-semibold  font-poppins gap-[10px]'>
+    <div className='flex flex-col items-center  relative mt-[40px] font-semibold  font-poppins gap-[10px]'>
       <div className='absolute top-10 right-14 sm:hidden '></div>
       <Image
         src={userProfileImage}
@@ -58,7 +58,22 @@ export default function UserHeader({
         <span className='text-[28px]'>{name}</span>
         <span className='text-[#474747]'>@{username}</span>
       </div>
+      <div className='flex items-center gap-10 translate-x-[-2px]'>
+        <p className='flex flex-col items-center'>
+          <span className='text-[25px] font-bold'>{following?.length}</span>
+          <span className='text-[10px] opacity-30'>following</span>
+        </p>
+        <p className='flex flex-col items-center'>
+          <span className='text-[25px] font-bold'>{posts.length}</span>
+          <span className='text-[10px] opacity-30'>Posts</span>
+        </p>
+        <p className='flex flex-col items-center'>
+          <span className='text-[25px] font-bold'>{followers?.length}</span>
+          <span className='text-[10px] opacity-30'>followers</span>
+        </p>
+      </div>
       <p className='w-[75%] text-center text-[14px]'>{about}</p>
+
       <div className='user-interactions relative flex gap-[20px] mt-[8px]'>
         {_id === userProfileId && (
           <LogOut

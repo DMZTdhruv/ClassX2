@@ -16,6 +16,7 @@ interface IUserDetails {
   username: string
   update: string
   url: string
+  lastActiveOn: string
 }
 
 export default function MessageSideBar({

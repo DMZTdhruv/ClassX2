@@ -3,9 +3,11 @@ import { FormEvent, useReducer } from 'react'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import useCreateClassroom from '@/hooks/classroom/useCreateClassroom'
+import { v4 as uuidv4 } from 'uuid'
 
 interface ClassroomState {
   className: string
+  classroomJoinId: string
   branch: string
   division: string
   semester: string
@@ -13,6 +15,7 @@ interface ClassroomState {
 
 const initialState: ClassroomState = {
   className: '',
+  classroomJoinId: uuidv4(),
   branch: '',
   division: '',
   semester: '',
@@ -133,7 +136,7 @@ const CreateClassroom = () => {
           type='submit'
           disabled={loading}
         >
-          {loading ? 'Signing in...' : 'Sign in '}
+          {loading ? 'Creating...' : 'Create'}
         </Button>
         {message && (
           <p className='text-center  error_message'>

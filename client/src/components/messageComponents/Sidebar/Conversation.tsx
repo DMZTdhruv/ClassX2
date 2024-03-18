@@ -1,6 +1,7 @@
 import { MessageContextProps } from '@/Constants'
 import { useMessageContext } from '@/context/MessageContext'
 import { useSocketContext } from '@/context/SocketContext'
+import { formatMessageSideBarDate } from '@/utils/formatDate'
 import useConversation from '@/zustand/useConversation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -12,6 +13,7 @@ interface IUserDetails {
   username: string
   update: string
   url?: string
+  lastActiveOn: string
 }
 
 export default function Conversation({ userDetails }: { userDetails: IUserDetails }) {
@@ -20,7 +22,7 @@ export default function Conversation({ userDetails }: { userDetails: IUserDetail
   const isSelected = conversation?._id === userDetails?._id
   // @ts-ignore
   const { activeUsers } = useSocketContext()
-
+  const date = formatMessageSideBarDate(new Date(userDetails.lastActiveOn))
   const isActive = activeUsers?.includes(userDetails._id)
 
   const { userProfileImage, username, update, url } = userDetails
@@ -30,7 +32,6 @@ export default function Conversation({ userDetails }: { userDetails: IUserDetail
         isSelected && 'bg-[#111111]'
       } cursor-pointer transition-all items-center lg:px-[31px] px-[16px] h-[70px] gap-2 hover:bg-[#111111] w-full`}
       onClick={() => {
-        console.log(userDetails)
         setConversation(userDetails)
       }}
     >
@@ -50,7 +51,7 @@ export default function Conversation({ userDetails }: { userDetails: IUserDetail
       <div className='flex-col lg:flex space-y-1 md:space-y-0 sm:hidden'>
         <p className='font-semibold text-[17px]'>{username}</p>
         <p className=' text-[10px] text-white/50'>
-          {isActive ? 'Active now' : 'Sent 3 hours ago'}
+          {isActive ? 'Active now' : `Active ${date} ago`}
         </p>
       </div>
     </div>

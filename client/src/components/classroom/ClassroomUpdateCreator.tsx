@@ -1,7 +1,7 @@
 'use client'
 
 import { useAuthContext } from '@/context/AuthContext'
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import CustomTextArea from '../shared/ChatComponents/CustomTextArea'
 import useCreateUpdate from '@/hooks/classroom/useCreateUpdate'
@@ -25,6 +25,7 @@ const ClassroomUpdateCreator = ({
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [attachments, setAttachments] = useState<string[]>([])
   const { loading, createUpdate, error, message } = useCreateUpdate()
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     if (authUser?.userProfileId) {
@@ -33,6 +34,17 @@ const ClassroomUpdateCreator = ({
       setIsAdmin(false)
     }
   }, [authUser])
+
+  const adjustTextareaHeight = () => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = 'auto'
+      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`
+    }
+  }
+
+  useEffect(() => {
+    adjustTextareaHeight()
+  }, [description])
 
   if (!isAdmin) {
     return null
@@ -59,10 +71,11 @@ const ClassroomUpdateCreator = ({
           className='bg-neutral-900 relative flex flex-col items-end  md:p-[22px] p-[16px] rounded-[20px]'
           onSubmit={createUpdateForClassroom}
         >
-          <CustomTextArea
-            placeholder='Write something...'
-            className='bg-[#171717] w-full md:pr-[40px] pr-[30px] outline-none focus-visible:ring-0 resize-none border-none rounded-lg h-auto caret-violet-300'
+          <textarea
+            ref={textAreaRef}
             value={description}
+            placeholder={'Write something...'}
+            className='bg-[#171717] w-full md:pr-[40px] pr-[30px] outline-none focus-visible:ring-0 resize-none border-none rounded-lg h-auto caret-violet-300'
             onChange={e => setDescription(e.target.value)}
           />
           <div className='flex items-start gap-3'>
@@ -99,7 +112,7 @@ const ClassroomUpdateCreator = ({
               alt='User profile image'
               height={48}
               width={48}
-              className='aspect-square rounded-full'
+              className='aspect-square object-cover rounded-full'
               unoptimized
             />
             <div className='flex items-start flex-col group-hover:underline '>

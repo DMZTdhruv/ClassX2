@@ -22,9 +22,8 @@ const useSendMessage = () => {
       }
 
       setMessages(prev => [...prev, data.data])
-      console.log(data)
     } catch (error: any) {
-      console.log(error.message)
+      console.error(error.message)
     } finally {
       setLoading(false)
     }

@@ -57,11 +57,13 @@ const CustomTextArea: React.FC<TextareaProps> = ({
         socket?.emit('typing-message', authUser?.userProfileId, conversation._id, {
           status: true,
         })
+        console.log(`Typing`)
       }}
       onBlur={e => {
         socket?.emit('typing-message', authUser?.userProfileId, conversation._id, {
           status: false,
         })
+        console.log(`Finished Ty`)
       }}
       onChange={e => {
         handleInputChange(e)

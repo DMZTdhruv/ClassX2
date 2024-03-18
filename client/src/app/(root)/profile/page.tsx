@@ -1,6 +1,8 @@
 import UserHeader from '@/components/shared/UserHeader'
 import { cookies } from 'next/headers'
 import ProfilePosts from './ProfilePosts'
+import Link from 'next/link'
+import { getUserProfile } from './ProfileAction'
 
 interface UserProfileProps {
   _id: string
@@ -11,7 +13,7 @@ interface UserProfileProps {
   isPrivate: boolean
   following: any[]
   followers: any[]
-  post: string[]
+  posts: string[]
 }
 
 interface Ipost {
@@ -23,37 +25,17 @@ interface Ipost {
 
 export default async function Profile() {
   const cookie = cookies()
-  const api = process.env.NEXT_PUBLIC_API
   const token = cookie.get('classX_user_token')
   let error = undefined
-  const getUserProfile = async () => {
-    const userProfileApi = `${api}/users/get-user-profile`
-    try {
-      const response = await fetch(userProfileApi, {
-        method: 'GET',
-        headers: {
-          Cookies: `classX_user_token=${token?.value}`,
-        },
-      })
-
-      const data = await response.json()
-      if (data.error) {
-        throw new Error(data.error)
-      }
-
-      return data.data
-    } catch (err: any) {
-      error = err.message
-      console.log(err.message)
-    }
-  }
 
   // variables
-  const userProfile: UserProfileProps = await getUserProfile()
+  const userProfile: UserProfileProps = await getUserProfile(token?.value || '')
+  console.log(userProfile)
   if (error) {
     return (
       <div className='h-screen w-full flexCenter text-center'>
-        {error} <br /> Log in
+        {error} <br />
+        <Link href='/auth/sign-in'>Sign in</Link>
       </div>
     )
   }
@@ -65,7 +47,7 @@ export default async function Profile() {
         username={userProfile?.username}
         about={userProfile?.about}
         userProfileImage={userProfile?.userProfileImage}
-        post={userProfile?.post}
+        posts={userProfile?.posts}
         followers={userProfile?.followers}
         following={userProfile?.following}
         isPrivate={userProfile?.isPrivate}

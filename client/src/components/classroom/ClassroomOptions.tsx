@@ -15,15 +15,17 @@ const ClassroomOptions = () => {
         <div className='absolute right-0 w-[250px] p-2 gap-2 bg-[#0E0E0E] border-neutral-800 rounded-lg border flex flex-col'>
           <Link
             href={'/classroom/create-classroom'}
-            className='text-[15px] font-semibold hover:bg-neutral-800 active:scale-90 rounded-md text-center'
+            className='text-[15px] font-semibold hover:bg-neutral-800 group rounded-md text-center'
+            prefetch={true}
           >
-            Create-classroom
+            <span className='group-active:scale-75'>Create-classroom</span>
           </Link>
           <Link
             href={'/classroom/join-classroom'}
-            className='text-[15px] font-semibold hover:bg-neutral-800 active:scale-90 rounded-md text-center'
+            className='text-[15px] font-semibold group hover:bg-neutral-800 group rounded-md text-center'
+            prefetch={true}
           >
-            Join-classroom
+            <span className='group-active:scale-75'>Join-classroom</span>
           </Link>
         </div>
       )}

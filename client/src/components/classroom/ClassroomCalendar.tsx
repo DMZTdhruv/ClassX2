@@ -11,7 +11,7 @@ const ClassroomCalendar = () => {
       mode='single'
       selected={date}
       onSelect={setDate}
-      className='rounded-[20px] md:block hidden h-fit sticky top-[22px] border border-neutral-800 bg-[#171717] text-white'
+      className='rounded-[20px]  h-fit sticky top-[22px] border border-neutral-800 bg-[#171717] text-white'
     />
   )
 }

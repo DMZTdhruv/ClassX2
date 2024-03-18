@@ -1,8 +1,8 @@
 # Chat features
 
-Allow users to see the last seen in chat
+// Allow users to see the last active in chat
 // Enable pagination data in chat
-Enable typing feedback
+// Enable typing feedback
 // Enable scrollInView load chats
 Enable reply chat
 

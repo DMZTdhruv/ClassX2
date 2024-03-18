@@ -7,6 +7,7 @@ interface IUserDetails {
   username: string
   update: string
   url: string
+  lastActiveOn: string
 }
 const Conversations = ({ sideBarUsers }: { sideBarUsers: IUserDetails[] }) => {
   return (

@@ -1,6 +1,7 @@
 import { Api } from '@/Constants'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { updateClassroom } from '@/app/(root)/classroom/classroomActions'
 
 interface ClassroomState {
   className: string
@@ -27,12 +28,12 @@ const useCreateClassroom = () => {
       })
 
       const data = await res.json()
-      console.log(data)
       if (data.error) {
         throw new Error(data.error)
       }
 
       setMessage(data.message)
+      updateClassroom();
       router.push('/classroom')
     } catch (error: any) {
       console.error(error.message)

@@ -2,6 +2,7 @@ import ClassroomHeader from '@/components/classroom/ClassroomHeader'
 import ClassroomTab from '@/components/classroom/ClassroomTab'
 import Link from 'next/link'
 import React from 'react'
+import { Toaster } from '@/components/ui/toaster'
 
 const layout = ({
   children,
@@ -15,6 +16,7 @@ const layout = ({
       <ClassroomHeader />
       <ClassroomTab classId={params.classId} />
       {children}
+      <Toaster />
     </section>
   )
 }

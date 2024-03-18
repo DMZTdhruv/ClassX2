@@ -13,7 +13,7 @@ interface UserProfileProps {
   isPrivate: boolean
   following: any[]
   followers: any[]
-  post: string[]
+  posts: string[]
 }
 
 const ProfilePage = async ({ params }: { params: { userId: string } }) => {
@@ -50,7 +50,7 @@ const ProfilePage = async ({ params }: { params: { userId: string } }) => {
         username={userProfile?.username}
         about={userProfile?.about}
         userProfileImage={userProfile?.userProfileImage}
-        post={userProfile?.post}
+        posts={userProfile?.posts}
         followers={userProfile?.followers}
         following={userProfile?.following}
         isPrivate={userProfile?.isPrivate}

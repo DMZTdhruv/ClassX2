@@ -4,9 +4,10 @@ import ClassroomUpdateCreator from '@/components/classroom/ClassroomUpdateCreato
 import ClassroomUpdateHeaderCard from '@/components/classroom/ClassroomUpdateHeaderCard'
 import { cookies } from 'next/headers'
 import React from 'react'
-import { getClassrooms, getClassroomUpdates } from '../../classroomActions'
+import { getClassroomData, getClassroomUpdates } from '../../classroomActions'
 import InfiniteScrollClassroomUpdates from '@/components/classroom/InfiniteScrollClassroomUpdates'
 import { Skeleton } from '@/components/ui/skeleton'
+import ClassroomJoinId from '@/components/classroom/ClassroomJoinId'
 
 interface IClassroomUpdate {
   _id: string
@@ -23,28 +24,38 @@ interface IClassroomUpdate {
 
 const Updates = async ({ params }: { params: { classId: string } }) => {
   const cookie = cookies().get('classX_user_token')?.value
-  const classrooms = await getClassrooms(cookie || '', params.classId)
-  console.log(classrooms)
+  const classroomData = await getClassroomData(cookie || '', params.classId)
+  console.log(classroomData)
   const classroomUpdates: IClassroomUpdate[] = await getClassroomUpdates(
     cookie || '',
     params.classId,
     1
   )
-  if (!classrooms) {
+  if (!classroomData) {
     return <div>Loading...</div>
   }
 
   return (
     <section className='md:p-[22px] p-[16px]'>
       <ClassroomUpdateHeaderCard
-        className={classrooms?.className}
-        division={classrooms?.division}
+        className={classroomData?.className}
+        division={classroomData?.division}
       />
       <div className='flex gap-[22px] mt-[22px]'>
-        <ClassroomCalendar />
+        <div className='flex-col gap-[22px] md:flex hidden'>
+          {classroomData?.classroomJoinId && (
+            <ClassroomJoinId classroomJoinId={classroomData.classroomJoinId} />
+          )}
+          <ClassroomCalendar />
+        </div>
         <div className='flex flex-col flex-1 gap-[22px]'>
+          <div className='block md:hidden'>
+            {classroomData?.classroomJoinId && (
+              <ClassroomJoinId classroomJoinId={classroomData.classroomJoinId} />
+            )}
+          </div>
           <ClassroomUpdateCreator
-            adminIds={classrooms?.adminEmails}
+            adminIds={classroomData?.adminEmails}
             classId={params?.classId}
           />
           {classroomUpdates ? (
@@ -69,7 +80,7 @@ const Updates = async ({ params }: { params: { classId: string } }) => {
           <InfiniteScrollClassroomUpdates
             cookie={cookie || ''}
             classId={params.classId}
-            totalUpdates={classrooms.updates}
+            totalUpdates={classroomData.updates}
           />
         </div>
       </div>

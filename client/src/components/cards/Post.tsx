@@ -95,7 +95,6 @@ const Post: React.FC<IPost> = ({
           style={{ height: 'auto', width: '584px', aspectRatio: '1' }}
           className='object-cover  md:w-[584px] md:h-[584px] border-2 border-[#171717]'
           quality={100}
-          unoptimized
         />
       </div>
       <div>

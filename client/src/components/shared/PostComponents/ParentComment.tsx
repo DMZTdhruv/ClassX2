@@ -7,7 +7,7 @@ import SubComment from './SubComment'
 import React, { useEffect, useState } from 'react'
 import { Api } from '@/Constants'
 import { BsThreeDots } from 'react-icons/bs'
-import DeleteCommentComponent from '../../DeleteComponent/DeleteComment'
+import DeleteCommentComponent from '../DeleteComponent/DeleteComment'
 import { useAuthContext } from '@/context/AuthContext'
 import Link from 'next/link'
 

@@ -14,13 +14,14 @@ const useLogOut = () => {
       const res = await fetch(`${Api}/auth/logout`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
+        credentials: 'include',
       })
       const data = await res.json()
       if (data.error) {
         throw new Error(data.error)
       }
       setAuthUser(null)
-      localStorage.removeItem('chat-user')
+      localStorage.removeItem('classX_user')
       router.push('/auth/sign-in')
     } catch (error: any) {
       console.log('Failed to log out')

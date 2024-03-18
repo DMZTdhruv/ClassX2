@@ -1,6 +1,7 @@
 import { Api } from '@/Constants'
 import ClassroomCard, { IClassroomCard } from '@/components/classroom/ClassroomCard'
 import ClassroomOptions from '@/components/classroom/ClassroomOptions'
+import AccessProfile from '@/components/shared/profile/AccessProfile'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cookies } from 'next/headers'
 
@@ -45,7 +46,7 @@ export default async function Classroom() {
         </div>
         <div className='flex items-center gap-3'>
           <ClassroomOptions />
-          <div className='icon h-4 w-4 rounded-full bg-red-300'></div>
+          <AccessProfile />
         </div>
       </header>
       {classrooms && !requestError ? (

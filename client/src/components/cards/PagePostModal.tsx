@@ -9,7 +9,7 @@ import FollowButton from '@/components/shared/FollowButton/FollowButton'
 import { likePost, unlikePost } from '@/utils/LikeFunctions'
 
 const ParentComment = React.lazy(
-  () => import('@/components/shared/PostComponents/CommentComponent/ParentComment')
+  () => import('@/components/shared/PostComponents/ParentComment')
 )
 import { formatDate } from '@/utils'
 import { HiMiniXMark } from 'react-icons/hi2'

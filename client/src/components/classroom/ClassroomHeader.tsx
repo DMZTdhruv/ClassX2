@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { FaArrowLeft } from 'react-icons/fa6'
-import { Skeleton } from '../ui/skeleton'
+import AccessProfile from '../shared/profile/AccessProfile'
 
 const ClassroomHeader = () => {
   return (
@@ -17,9 +17,7 @@ const ClassroomHeader = () => {
         Classroom
       </Link>
       <div>
-        <Link href={`/profile`}>
-          <Skeleton className='h-6 w-6 rounded-full' />
-        </Link>
+        <AccessProfile />
       </div>
     </header>
   )

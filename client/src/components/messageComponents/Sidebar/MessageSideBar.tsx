@@ -3,12 +3,13 @@
 import { Button } from '@/components/ui/button'
 import Conversations from './Conversations'
 import { useMessageContext } from '@/context/MessageContext'
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { FaArrowLeft } from 'react-icons/fa6'
 import { useAuthContext } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Input } from '@/components/ui/input'
+import Conversation from './Conversation'
 
 interface IUserDetails {
   _id: string
@@ -25,6 +26,12 @@ export default function MessageSideBar({
   sideBarUsers: IUserDetails[]
 }) {
   const { conversation } = useMessageContext()
+  const [findUsername, setFindUsername] = useState<string>('')
+
+  const filteredConversationUsers = sideBarUsers.filter(user => {
+    return user.username.toLowerCase().includes(findUsername.toLowerCase())
+  })
+
   return (
     <div
       className={`messageSideBar justify-start lg:items-stretch sm:items-center flex flex-col xl:w-auto lg:w-auto sm:border-r sm:w-[100px] w-full h-screen bg-[#0E0E0E]  md:flex z-50 md:py-[31px] transition-all ${
@@ -57,11 +64,39 @@ export default function MessageSideBar({
           width={24}
         />
         <Input
+          onChange={e => setFindUsername(e.target.value)}
           placeholder='Search a friend'
           className='bg-[#242424] border-none pl-[52px] rounded-[10px]'
+          maxLength={30}
         />
       </div>
-      <Conversations sideBarUsers={sideBarUsers} />
+      {findUsername.length > 0 && (
+        <div className='py-5 bg-primary/5 animate-in fade-in-0 border-neutral-800'>
+          {filteredConversationUsers.length > 0 && (
+            <div className='lg:px-[31px] px-[16px] font-poppins '>
+              <span>Results founded of : </span>
+              <span className='font-bold text-wrap'>{findUsername}</span>
+            </div>
+          )}
+          {filteredConversationUsers.length === 0 && (
+            <p className='lg:px-[31px] mt-3 px-[16px]  text-wrap '>
+              No results were found of
+              <br />
+              <span className='font-bold'> {findUsername}</span>
+            </p>
+          )}
+          {filteredConversationUsers.map(user => {
+            return (
+              <div className='mt-3' key={user._id}>
+                <Conversation userDetails={user} />
+              </div>
+            )
+          })}
+        </div>
+      )}
+      <div className={`${findUsername && 'opacity-20'} transition-all`}>
+        <Conversations sideBarUsers={sideBarUsers} />
+      </div>
     </div>
   )
 }

@@ -17,4 +17,10 @@ export default class ClassroomRepositoryInterface {
   async getClassroomUpdate() {
     throw new Error(`Get classroom update service is not defined`)
   }
+  async getClassroomJoinId() {
+    throw new Error(`getClassroomJoinId method not implemented`)
+  }
+  async getClassroomByJoinClassroomId() {
+    throw new Error(`getClassroomByJoinClassroomId method not implemented`)
+  }
 }

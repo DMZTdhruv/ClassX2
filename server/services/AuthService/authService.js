@@ -41,12 +41,21 @@ export const signIn = async (email, password, res) => {
       }
     )
 
-    res.cookie('classX_user_token', token, {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      sameSite: 'Strict',
-      secure: process.env.NODE_ENV !== 'development',
-    })
+    if (process.env.NODE_ENV === 'development') {
+      res.cookie('classX_user_token', token, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== 'development',
+      })
+    } else {
+      res.cookie('classX_user_token', token, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        sameSite: 'Strict',
+        domain: '.railway.app',
+        secure: process.env.NODE_ENV !== 'development',
+      })
+    }
 
     return res.status(201).json({
       message: 'Successfully signed in',

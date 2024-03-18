@@ -24,6 +24,7 @@ const userProfileSchema = new mongoose.Schema(
     medals: { type: Number, default: 0 },
     totalPoints: { type: Number, default: 0 },
     groups: [{ type: String }],
+    lastActiveOn: { type: Date, default: Date.now() },
   },
   { timestamps: true }
 )

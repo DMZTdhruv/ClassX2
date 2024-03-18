@@ -72,15 +72,15 @@ export const getUsersForSideBar = async (req, res) => {
     // if (user.chatIds.length === 0) {
     const followingUsers = await UserProfile.find({
       _id: { $in: user.following },
-    }).select('username userProfileImage')
-
+    }).select('username userProfileImage lastActiveOn')
+    console.log(followingUsers)
     return res.status(200).json({
       message: 'Follow some users or send messages to start conversation',
       data: followingUsers,
     })
     // }
 
-    // const chatIdUsers = await UserProfile.find({
+    // const chatIdUsers = await UserProfile.find(
     //   _id: { $in: user.chatIds },
     // }).select('username userProfileImage')
     // console.log(chatIdUsers)

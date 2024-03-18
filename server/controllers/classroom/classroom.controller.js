@@ -4,15 +4,17 @@ import {
   getAllClassroomsService,
   getClassroomService,
   getClassroomUpdateService,
+  joinClassroomService,
 } from '../../services/classroom/classroom.service.js'
 
 export const createClassroomController = async (req, res) => {
   try {
     const user = req.user
     console.log(req.body)
-    const { className, branch, division, semester } = req.body
+    const { className, classroomJoinId, branch, division, semester } = req.body
     const { statusCode, response } = await createClassroomService(
       className,
+      classroomJoinId,
       branch,
       division,
       semester,
@@ -38,10 +40,25 @@ export const getAllClassroom = async (req, res) => {
 export const getClassroom = async (req, res) => {
   try {
     const { classId } = req.params
-    const { statusCode, response } = await getClassroomService(classId)
+    const user = req.user
+    const { statusCode, response } = await getClassroomService(classId, user)
     res.status(statusCode).json(response)
   } catch (error) {
     console.log(`Error in getClassroomController ${error.message}`)
+    res.status(500).json({ error: `Internal server error` })
+  }
+}
+
+export const joinClassroomController = async (req, res) => {
+  try {
+    const { classroomJoinId } = req.body
+    console.log({ classroomJoinId })
+    const user = req.user
+    console.log({ user })
+    const { statusCode, response } = await joinClassroomService(user, classroomJoinId)
+    res.status(statusCode).json(response)
+  } catch (error) {
+    console.log(`Error in ${error.message}`)
     res.status(500).json({ error: `Internal server error` })
   }
 }

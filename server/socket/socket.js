@@ -2,6 +2,7 @@
 import { Server } from 'socket.io'
 import http from 'http'
 import express from 'express'
+import UserProfile from '../models/user/userProfile.model.js'
 
 const app = express()
 const server = http.createServer(app)
@@ -23,7 +24,7 @@ export const getSocketIdByUserId = receiverId => {
 
 io.on('connection', socket => {
   const userId = socket.handshake.query.userId
-  console.log(userId)
+  console.log(`${userId} : Is connected`)
 
   if (userId) {
     users[userId] = socket.id
@@ -33,11 +34,6 @@ io.on('connection', socket => {
     socket
       .to(users[receiverId])
       .emit('typingStarted', { status: currentStatus, receiverId: senderId })
-    console.log({
-      senderId,
-      receiverId,
-      currentStatus,
-    })
   })
 
   // active users info when they get online
@@ -45,10 +41,23 @@ io.on('connection', socket => {
 
   // A user disconnects
   socket.on('disconnect', () => {
-    console.log(`User ${users[userId]} got disconnected`)
+    console.log(`User ${userId} got disconnected`)
+    updateActiveStatus(userId)
     delete users[userId]
     io.emit('activeUsers', Object.keys(users))
   })
+
+  const updateActiveStatus = async userId => {
+    try {
+      const userProfile = await UserProfile.findById(userId)
+      const lastActiveDate = new Date().toISOString()
+      console.log(`${userProfile.username} was last seen active at ${lastActiveDate}`)
+      userProfile.lastActiveOn = lastActiveDate
+      userProfile.save()
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
 })
 
 export { app, io, server }

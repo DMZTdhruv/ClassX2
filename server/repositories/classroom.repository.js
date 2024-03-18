@@ -4,10 +4,11 @@ import UserProfile from '../models/user/userProfile.model.js'
 import ClassroomPost from '../models/classroom/classroomPost.model.js'
 
 export default class ClassroomRepository extends ClassroomRepositoryInterface {
-  async createClassroom(className, branch, division, semester, user) {
+  async createClassroom(className, classroomJoinId, branch, division, semester, user) {
     const userProfile = await UserProfile.findById(user.userProfileId)
     const classroom = await Classroom.create({
       className,
+      classroomJoinId,
       branch,
       division,
       semester,
@@ -37,7 +38,7 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
 
   async getClassroomMinimalData(classId) {
     const classroom = await Classroom.findById(classId).select(
-      'className branch division semester adminEmails updates'
+      'className branch division semester adminEmails classroomJoinId updates'
     )
 
     return {
@@ -46,6 +47,7 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
       branch: classroom.branch,
       division: classroom.division,
       semester: classroom.semester,
+      classroomJoinId: classroom.classroomJoinId,
       adminEmails: classroom.adminEmails,
       updates: classroom.updates.length,
     }
@@ -74,5 +76,9 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
       .skip(startIndex)
       .limit(itemsPerPage)
     return updates
+  }
+
+  async getClassroomByJoinClassroomId(classroomJoinId) {
+    return await Classroom.findOne({ classroomJoinId })
   }
 }

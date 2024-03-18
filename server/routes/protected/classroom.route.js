@@ -6,6 +6,7 @@ import {
   getAllClassroom,
   getClassroom,
   getClassroomUpdates,
+  joinClassroomController,
 } from '../../controllers/classroom/classroom.controller.js'
 const router = express.Router()
 
@@ -15,5 +16,6 @@ router.get('/updates/:classId', authenticateUserToken, getClassroomUpdates)
 
 router.post('/create-classroom', authenticateUserToken, createClassroomController)
 router.post('/create-update', authenticateUserToken, createClassroomUpdate)
+router.post('/join-classroom', authenticateUserToken, joinClassroomController)
 
 export default router

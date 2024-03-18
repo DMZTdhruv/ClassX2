@@ -6,6 +6,11 @@ const classroomSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    classroomJoinId: {
+      type: String,
+      unique: true,
+      required: true,
+    },
     branch: {
       type: String,
       required: true,
@@ -30,14 +35,18 @@ const classroomSchema = new mongoose.Schema(
         ref: 'UserProfile',
       },
     ],
-    updates: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'ClassroomPost'
-    }],
-    classWork: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'ClassroomClasswork'
-    }],
+    updates: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ClassroomPost',
+      },
+    ],
+    classWork: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ClassroomClasswork',
+      },
+    ],
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'UserProfile',

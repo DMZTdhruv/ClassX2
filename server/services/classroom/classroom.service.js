@@ -1,16 +1,25 @@
+import UserProfile from '../../models/user/userProfile.model.js'
 import ClassroomRepository from '../../repositories/classroom.repository.js'
 import { classroomUpdateValidator } from '../../validations/classroom.validator.js'
 
 const classroomRepo = new ClassroomRepository()
 export const createClassroomService = async (
   className,
+  classroomJoinId,
   branch,
   division,
   semester,
   user
 ) => {
   try {
-    await classroomRepo.createClassroom(className, branch, division, semester, user)
+    await classroomRepo.createClassroom(
+      className,
+      classroomJoinId,
+      branch,
+      division,
+      semester,
+      user
+    )
     return {
       statusCode: 201,
       response: {
@@ -38,14 +47,19 @@ export const getAllClassroomsService = async user => {
   }
 }
 
-export const getClassroomService = async classId => {
+export const getClassroomService = async (classId, user) => {
   try {
     const classroom = await classroomRepo.getClassroomMinimalData(classId)
+    const classroomData = classroom
+    const isAdmin = classroom.adminEmails.includes(user.userProfileId)
+    if (!isAdmin) delete classroomData.classroomJoinId
+    console.log(classroom)
+
     return {
       statusCode: 200,
       response: {
         message: `Data received successfully`,
-        data: classroom,
+        data: classroomData,
       },
     }
   } catch (error) {
@@ -115,5 +129,38 @@ export const getClassroomUpdateService = async (startIndex, itemsPerPage, classI
     }
   } catch (error) {
     throw new Error(`Error in getClassroomUpdateService ${error.message}`)
+  }
+}
+
+export const joinClassroomService = async (user, classroomJoinId) => {
+  try {
+    const classroom = await classroomRepo.getClassroomByJoinClassroomId(classroomJoinId)
+    console.log(classroom)
+    const isAdminPresent = classroom.adminEmails.includes(user.userProfileId)
+    const isUserPresent = classroom.studentEmails.includes(user.userProfileId)
+
+    if (isAdminPresent || isUserPresent) {
+      return {
+        statusCode: 400,
+        response: {
+          error: `You have already joined this classroom`,
+        },
+      }
+    }
+
+    const userProfile = await UserProfile.findById(user.userProfileId)
+    userProfile.classrooms.push(classroom._id)
+    classroom.studentEmails.push(user.userProfileId)
+
+    await Promise.all([userProfile.save(), classroom.save()])
+
+    return {
+      statusCode: 201,
+      response: {
+        message: `Successfully joined the classroom!`,
+      },
+    }
+  } catch (error) {
+    throw new Error(error.message)
   }
 }

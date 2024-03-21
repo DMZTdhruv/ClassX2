@@ -6,6 +6,8 @@ import { useMessageContext } from '@/context/MessageContext'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useInView } from 'react-intersection-observer'
 import useGetMessagesTwo from '@/hooks/Conversations/useGetMessagesTwo'
+import { useDeleteMessage } from '@/hooks/Message/useDeleteMessage'
+import { useSocketContext } from '@/context/SocketContext'
 
 interface MessageProps {
   _id: string
@@ -20,14 +22,15 @@ const MessagesTwo = () => {
 
   const { getMessages, getTotalMessages } = useGetMessagesTwo()
   const { messages, setMessages, conversation } = useMessageContext()
-
+  const { socket } = useSocketContext()
   // states
-  const [loading, setLoading] = useState<boolean>(true)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [totalMessages, setTotalMessages] = useState<number>(0)
   const [previousMessages, setPreviousMessages] = useState<MessageProps[]>([])
   const [allMessagesReceived, setAllMessageReceived] = useState<boolean>(false)
   const [page, setPage] = useState<number>(1)
   const [previousMessageIndex, setPreviousMessageIndex] = useState<number>(0)
+  const { loading, deleteMessage: messageDelete } = useDeleteMessage()
 
   // refs
   const lastMessageRef = useRef<HTMLDivElement>(null)
@@ -78,7 +81,7 @@ const MessagesTwo = () => {
 
   // handlers
   const getConversationTotalMessageCount = async () => {
-    setLoading(true)
+    setIsLoading(true)
     setMessages([])
     setPreviousMessages([])
     setTotalMessages(0)
@@ -87,14 +90,22 @@ const MessagesTwo = () => {
     setTotalMessages(totalCount)
     const messages = await getMessages(1)
     setMessages(messages)
-    setLoading(false)
+    setIsLoading(false)
     setAllMessageReceived(previousMessages?.length >= totalMessages)
+  }
+
+  const deleteMessage = async (_id: string) => {
+    await messageDelete(_id, conversation._id)
+    setMessages(prev => prev.filter(message => message._id !== _id))
+    socket?.emit('deleteMessage', {
+      deleteMessageId: _id,
+    })
   }
 
   return (
     <div className={`p-2 flex-1 border-y overflow-y-auto`}>
-      {loading ? (
-        <MessageLoadingUiSkeleton />
+      {isLoading ? (
+        <MessageIsLoadingUiSkeleton />
       ) : (
         <div className='flex gap-3 flex-col'>
           {totalMessages === 0 && (
@@ -126,7 +137,10 @@ const MessagesTwo = () => {
                     }
                   }}
                 >
-                  <Message message={message} />
+                  <Message
+                    message={message}
+                    deleteMessage={{ deleteMessage, loading }}
+                  />
                 </div>
               ))}
             </div>
@@ -139,7 +153,10 @@ const MessagesTwo = () => {
                   key={message._id}
                   ref={index === messages?.length - 1 ? lastMessageRef : null}
                 >
-                  <Message message={message} />
+                  <Message
+                    message={message}
+                    deleteMessage={{ deleteMessage, loading }}
+                  />
                 </div>
               ))}
             </div>
@@ -152,7 +169,7 @@ const MessagesTwo = () => {
 
 export default MessagesTwo
 
-const MessageLoadingUiSkeleton = () => {
+const MessageIsLoadingUiSkeleton = () => {
   return (
     <section className='flex h-full animate-in fade-in-0 justify-end flex-col gap-3 px-[16px]'>
       <div className='flex w-full justify-end items-center gap-3'>

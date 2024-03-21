@@ -1,5 +1,6 @@
 import express from 'express'
 import {
+  deleteMessage,
   getMessage,
   getTotalMessages,
   getUsersForSideBar,
@@ -16,5 +17,8 @@ router.post('/chat/send/:id', authenticateUserToken, sendMessage)
 router.get('/chat/:id', authenticateUserToken, getMessage)
 router.get('/chat/total-chat/:id', authenticateUserToken, getTotalMessages)
 router.get('/chat', authenticateUserToken, getUsersForSideBar)
+
+// delete
+router.delete('/chat/:deleteId', authenticateUserToken, deleteMessage)
 
 export default router

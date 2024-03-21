@@ -35,7 +35,7 @@ io.on('connection', socket => {
       .to(users[receiverId])
       .emit('typingStarted', { status: currentStatus, receiverId: senderId })
   })
-
+  
   // active users info when they get online
   io.emit('activeUsers', Object.keys(users))
 

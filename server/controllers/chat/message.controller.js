@@ -3,6 +3,7 @@ import {
   messageService,
   getMessageService,
   getTotalMessageService,
+  deleteMessageService,
 } from '../../services/MessageService/message.service.js'
 import {
   getMessageValidator,
@@ -89,5 +90,16 @@ export const getUsersForSideBar = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message })
     console.log(`Error in chat controller: ${error.message}`)
+  }
+}
+
+export const deleteMessage = async (req, res) => {
+  try {
+    const deleteId = req.params.deleteId
+    const receiverId = req.body.receiverId
+    const { statusCode, response } = await deleteMessageService(deleteId, receiverId)
+    return res.status(statusCode).json(response)
+  } catch (error) {
+    console.log(error.message)
   }
 }

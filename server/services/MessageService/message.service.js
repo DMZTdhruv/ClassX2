@@ -152,3 +152,33 @@ export const getTotalMessageService = async (senderId, receiverId) => {
     }
   }
 }
+
+export const deleteMessageService = async (deleteId, receiverId) => {
+  try {
+    const message = await Message.findByIdAndDelete(deleteId)
+    const receiverSocketId = getSocketIdByUserId(receiverId)
+    io.to(receiverSocketId).emit('deletedMessage', deleteId)
+    if (message) {
+      io.emit('delete-message')
+      return {
+        statusCode: 201,
+        response: {
+          message: 'deleted successfully',
+        },
+      }
+    } else {
+      return {
+        statusCode: 201,
+        response: {
+          error: 'Failed to delete message',
+        },
+      }
+    }
+  } catch (error) {
+    console.log(error.message)
+    return {
+      statusCode: 500,
+      error: error.message,
+    }
+  }
+}

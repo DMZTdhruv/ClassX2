@@ -1,5 +1,6 @@
 // repositories/UserProfileRepository.js
 import UserProfileRepositoryInterface from '../interfaces/UserProfileRepositoryInterface.js'
+import Post from '../models/post/post.model.js'
 import UserProfile from '../models/user/userProfile.model.js'
 
 export default class UserProfileRepository extends UserProfileRepositoryInterface {
@@ -42,10 +43,13 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
     await UserProfile.find({ division: divisionId })
   }
 
-  async getUserPosts(userId) {
-    const posts = await UserProfile.find({ _id: userId })
-      .select('posts')
-      .populate('posts')
+  async getUserPosts(startIndex, itemsPerPage, userId) {
+    const posts = await Post.find({ postedBy: userId })
+      .sort({ createdAt: -1 })
+      .skip(startIndex)
+      .limit(itemsPerPage)
+      .select('imageUrl likes comments')
+    console.log(posts)
     return posts
   }
 

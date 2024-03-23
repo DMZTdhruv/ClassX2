@@ -16,21 +16,18 @@ import getUserProfileDetailsController from '../../controllers/profile/getUserPr
 
 const router = express.Router()
 
-router.get(
-  '/',
-  authenticateUserToken,
-  getUserProfileDetailsController
-)
+router.get('/', authenticateUserToken, getUserProfileDetailsController)
 
 //User profile routes
-router.post(
-  '/create-user-profile',
-  createUserProfileController
-)
+router.post('/create-user-profile', createUserProfileController)
 
 router.get('/get-user-profile', authenticateUserToken, getUserProfileController)
 
-router.get('/get-user-posts', authenticateUserToken, getUserPostsController)
+router.get(
+  '/get-user-posts/:userProfileId',
+  authenticateUserToken,
+  getUserPostsController
+)
 
 router.get(
   '/users-of-division',
@@ -38,23 +35,13 @@ router.get(
   getUserProfilesByDivisionNameController
 )
 
-router.get(
-  '/userprofile',
-  authenticateUserToken,
-  GetUserProfileByUsernameController
-)
-
-
+router.get('/userprofile', authenticateUserToken, GetUserProfileByUsernameController)
 
 // following routes
 router.post('/follow', authenticateUserToken, followUserController)
 
 router.post('/unFollow', authenticateUserToken, unfollowUserController)
 
-router.get(
-  '/isFollowing',
-  authenticateUserToken,
-  checkIfUserIsFollowingController
-)
+router.get('/isFollowing', authenticateUserToken, checkIfUserIsFollowingController)
 
 export default router

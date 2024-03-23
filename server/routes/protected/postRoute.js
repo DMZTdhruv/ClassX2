@@ -23,6 +23,12 @@ import { getTotalPostCount } from '../../controllers/post/getPostController.js'
 
 const router = express.Router()
 
+// Get routes
+router.get('/get-post', authenticateUserToken, getPostController)
+router.get('/', authenticateUserToken, getPostByIdController)
+router.get('/total-post', authenticateUserToken, getTotalPostCount)
+router.get('/comment/sub-comment', authenticateUserToken, getSubCommentsController)
+
 // Post routes
 router.post('/create-post', authenticateUserToken, createPostController)
 router.post('/like-post', authenticateUserToken, likePostController)
@@ -47,12 +53,6 @@ router.post(
 
 // Reply comment route
 router.post('/comment/reply-comment', authenticateUserToken, replyCommentController)
-
-// Get routes
-router.get('/get-post', authenticateUserToken, getPostController)
-router.get('/', authenticateUserToken, getPostByIdController)
-router.get('/total-post', authenticateUserToken, getTotalPostCount)
-router.get('/comment/sub-comment', authenticateUserToken, getSubCommentsController)
 
 // Delete routes
 // Delete routes for post

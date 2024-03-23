@@ -175,7 +175,7 @@ const Post: React.FC<IPost> = ({
           <span>{numberOfLikes} likes</span>
           {caption.length > 85 ? (
             showFullCaption ? (
-              <div>
+              <pre className='text-wrap font-poppins'>
                 {caption}
                 <button
                   className='text-neutral-500 mx-[10px] inline-block'
@@ -185,9 +185,9 @@ const Post: React.FC<IPost> = ({
                 >
                   less
                 </button>
-              </div>
+              </pre>
             ) : (
-              <div>
+              <pre className='text-wrap font-poppins'>
                 {caption.slice(0, 85)}...
                 <button
                   className='text-neutral-500 mx-[10px] inline-block'
@@ -197,7 +197,7 @@ const Post: React.FC<IPost> = ({
                 >
                   more
                 </button>
-              </div>
+              </pre>
             )
           ) : (
             <p>{caption}</p>

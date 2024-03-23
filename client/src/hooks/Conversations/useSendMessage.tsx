@@ -1,6 +1,6 @@
 import { Api, MessageContextProps } from '@/Constants'
 import { useMessageContext } from '@/context/MessageContext'
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 const useSendMessage = () => {
   const [loading, setLoading] = useState<boolean>(false)

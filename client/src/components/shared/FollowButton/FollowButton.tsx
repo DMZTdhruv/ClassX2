@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useAuthContext } from '@/context/AuthContext'
 import React, { useEffect, useState } from 'react'
 
@@ -13,12 +14,19 @@ interface FollowButtonProps {
 export default function FollowButton({
   _id,
   userToFollowId,
-  classes
+  classes,
 }: FollowButtonProps) {
   const api = process.env.NEXT_PUBLIC_API
   //@ts-ignore
-  const {authUser} = useAuthContext();
+  const [loading, setLoading] = useState<boolean>(true)
+  const { authUser } = useAuthContext()
   const [isFollowing, setIsFollowing] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (authUser) {
+      setLoading(false)
+    }
+  }, [authUser])
 
   const handleFollow = async () => {
     if (isFollowing) return
@@ -31,7 +39,7 @@ export default function FollowButton({
         body: JSON.stringify({
           userToFollowId: userToFollowId,
         }),
-        credentials: 'include'
+        credentials: 'include',
       })
 
       if (!response.ok) {
@@ -55,9 +63,9 @@ export default function FollowButton({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userToUnfollowId: userToFollowId
+          userToUnfollowId: userToFollowId,
         }),
-        credentials: 'include'
+        credentials: 'include',
       })
 
       if (!response.ok) {
@@ -77,7 +85,7 @@ export default function FollowButton({
         `${api}/users/isFollowing?userToFollowId=${userToFollowId}`,
         {
           method: 'GET',
-          credentials: 'include'
+          credentials: 'include',
         }
       )
 
@@ -100,6 +108,10 @@ export default function FollowButton({
   useEffect(() => {
     handleIsFollowing()
   }, [])
+
+  if (loading) {
+    return <Skeleton className='w-28 h-8' />
+  }
 
   return (
     <Button

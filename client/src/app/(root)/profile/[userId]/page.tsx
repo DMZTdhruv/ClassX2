@@ -55,7 +55,11 @@ const ProfilePage = async ({ params }: { params: { userId: string } }) => {
         following={userProfile?.following}
         isPrivate={userProfile?.isPrivate}
       />
-      <ProfilePosts userProfileId={userProfile?._id} token={token?.value || ''} />
+      <ProfilePosts
+        userProfileId={userProfile?._id}
+        token={token?.value || ''}
+        totalPosts={userProfile?.posts.length}
+      />
     </section>
   )
 }

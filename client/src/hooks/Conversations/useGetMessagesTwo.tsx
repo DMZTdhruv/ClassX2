@@ -26,7 +26,7 @@ const useGetMessagesTwo = () => {
   const getMessages = async (page: number) => {
     try {
       const res = await fetch(
-        `${Api}/message/chat/${conversation?._id}?page=${page}&limit=50`,
+        `${Api}/message/chat/${conversation?._id}?page=${page}&limit=20`,
         {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },

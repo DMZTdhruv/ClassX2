@@ -226,3 +226,7 @@
     min-width: 100%;
   }
 }
+
+.h-screen-80 {
+  height: calc(100vh - 20%);
+}

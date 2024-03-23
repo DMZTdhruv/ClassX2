@@ -1,79 +1,69 @@
-import { Api } from '@/Constants'
+'use client'
+
 import NormalPost from '@/components/cards/NormalPost'
-import { Skeleton } from '@/components/ui/skeleton'
+import { getUserPosts } from './ProfileAction'
+import { useEffect, useState } from 'react'
+import { useInView } from 'react-intersection-observer'
+import { IPost } from '@/Constants'
 
-interface Posts {
-  _id: string
-  imageUrl: string
-  comments: string[]
-  likes: string[]
-}
-
-const ProfilePosts = async ({
+const ProfilePosts = ({
   userProfileId,
   token,
+  totalPosts,
 }: {
   token: string
   userProfileId: string
+  totalPosts: number
 }) => {
-  const getUserPosts = async () => {
-    try {
-      const response = await fetch(
-        `${Api}/users/get-user-posts?userProfileId=${userProfileId}`,
-        {
-          method: 'GET',
-          headers: {
-            Cookies: `classX_user_token=${token}`,
-          },
-          next: {
-            tags: ['userPost'],
-          },
-        }
-      )
+  const { ref, inView } = useInView()
+  const [userPosts, setUserPosts] = useState<IPost[]>([])
+  const [page, setPage] = useState<number>(1)
+  const [allPostLoaded, setAllPostLoaded] = useState<boolean>(false)
 
-      if (!response.ok) {
-        console.log('There was an error')
+  const loadMorePosts = async () => {
+    const nextPage = page + 1
+    const newPosts: IPost[] = await getUserPosts(userProfileId, token, page)
+    setUserPosts(prev => [...prev, ...newPosts])
+    setPage(nextPage)
+  }
+
+  useEffect(() => {
+    if (inView) {
+      if (userPosts.length >= totalPosts) {
+        setAllPostLoaded(true)
+        return
       }
-
-      const { data: result } = await response.json()
-      return result[0].posts
-    } catch (error) {
-      console.log(error)
+      loadMorePosts()
     }
-  }
-  const userPosts = await getUserPosts()
-
-  if (!userPosts) {
-    return (
-      <div className='grid grid-cols-3 sm:px-[16px] relative gap-[4px] md:gap-[8px] '>
-        <Skeleton className='h-auto min-h-[300px] w-[300px] rounded-xl' />
-        <Skeleton className='h-auto min-h-[300px] w-[300px] rounded-xl' />
-        <Skeleton className='h-auto min-h-[300px] w-[300px] rounded-xl' />
-      </div>
-    )
-  }
+  }, [inView, page])
 
   return (
-    <div className='grid grid-cols-3 sm:px-[16px] relative gap-[4px] md:gap-[8px] '>
-      {userPosts &&
-        (userPosts?.length === 0 ? (
-          <p className='text-center absolute w-[200px] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'>
-            Post something
-          </p>
-        ) : (
-          userPosts?.map((post: Posts) => {
-            return (
-              <NormalPost
-                key={post._id}
-                _id={post._id}
-                imageUrl={post.imageUrl}
-                comments={post.comments.length}
-                likes={post.likes.length}
-              />
-            )
-          })
-        ))}
-    </div>
+    <>
+      <div className=' md:mt-[50px] p-[1px]  grid grid-cols-3 max-w-[904px] gap-[1px]  '>
+        {userPosts?.map(posts => {
+          return (
+            <NormalPost
+              key={posts._id}
+              _id={posts._id}
+              imageUrl={posts.imageUrl}
+              likes={posts.likes.length}
+              comments={posts.comments.length}
+            />
+          )
+        })}
+      </div>
+      {totalPosts === 0 ? (
+        <p>No posts by this user :D</p>
+      ) : (
+        <div className='w-full flex justify-center'>
+          {allPostLoaded ? (
+            <p className='my-5'>Haha someone needs to post more 😁</p>
+          ) : (
+            <div className='loader my-5' ref={ref}></div>
+          )}
+        </div>
+      )}
+    </>
   )
 }
 

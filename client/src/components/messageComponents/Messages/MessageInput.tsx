@@ -17,7 +17,6 @@ const MessageInput = () => {
     setMessage('')
   }
 
-
   return (
     <form className='h-auto p-3 relative' onSubmit={handleSendMessage}>
       <CustomTextArea

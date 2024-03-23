@@ -20,3 +20,33 @@ export const getUserProfile = async (cookie: string) => {
     console.log(err.message)
   }
 }
+
+export const getUserPosts = async (
+  userProfileId: string,
+  token: string,
+  page: number
+) => {
+  try {
+    const response = await fetch(
+      `${Api}/users/get-user-posts/${userProfileId}?page=${page}&limit=${10}`,
+      {
+        method: 'GET',
+        headers: {
+          Cookies: `classX_user_token=${token}`,
+        },
+        next: {
+          tags: ['userPost'],
+        },
+      }
+    )
+
+    if (!response.ok) {
+      console.log('There was an error')
+    }
+
+    const { data: result } = await response.json()
+    return result
+  } catch (error) {
+    console.log(error)
+  }
+}

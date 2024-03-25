@@ -357,7 +357,7 @@ const UserInfoCard = ({
 
 export default EditProfile
 
-export const FormSkeleton = () => {
+function FormSkeleton() {
   return (
     <div className='mt-[42px] flex flex-col gap-6'>
       <div className='flex gap-2 flex-col'>

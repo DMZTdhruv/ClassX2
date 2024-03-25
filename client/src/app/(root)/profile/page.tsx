@@ -30,7 +30,6 @@ export default async function Profile() {
 
   // variables
   const userProfile: UserProfileProps = await getUserProfile(token?.value || '')
-  console.log(userProfile)
   if (error) {
     return (
       <div className='h-screen w-full flexCenter text-center'>

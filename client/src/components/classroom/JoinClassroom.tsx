@@ -10,7 +10,6 @@ const JoinClassroom = ({}) => {
 
   const handleJoinClassroom = async (e: FormEvent) => {
     e.preventDefault()
-    console.log(classroomId)
     await joinClassroom(classroomId)
   }
 

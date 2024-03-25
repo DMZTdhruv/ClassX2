@@ -1,4 +1,4 @@
-import { validateComment } from "../../validations/commentValidator.js";
+import { validateComment } from "../../validations/CommentValidtor/commentValidator.js";
 import { createComment } from "../../services/Comment/createCommentService.js";
 
 export const createCommentController = async (req,res) => {

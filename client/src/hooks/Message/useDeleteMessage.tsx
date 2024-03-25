@@ -20,7 +20,6 @@ export const useDeleteMessage = () => {
       if (data.error) {
         throw new Error(data.error)
       }
-      console.log(data.message)
     } catch (error: any) {
       console.error(error.message)
     } finally {

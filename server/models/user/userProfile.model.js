@@ -21,6 +21,7 @@ const userProfileSchema = new mongoose.Schema(
     classrooms: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Classroom' }],
     requestsId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile' }],
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
+    gender: { type: 'String' },
     medals: { type: Number, default: 0 },
     totalPoints: { type: Number, default: 0 },
     groups: [{ type: String }],

@@ -1,5 +1,5 @@
 import { likeComment } from '../../../services/Comment/ParentComment/likeCommentService.js'
-import { validateCommentLike } from '../../../validations/commentValidator.js'
+import { validateCommentLike } from '../../../validations/CommentValidtor/commentValidator.js'
 
 export const likeCommentController = async (req, res) => {
   const { commentId, userID } = req.body

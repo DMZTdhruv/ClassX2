@@ -39,7 +39,7 @@ const ProfilePosts = ({
 
   return (
     <>
-      <div className=' md:mt-[50px] p-[1px]  grid grid-cols-3 max-w-[904px] gap-[1px]  '>
+      <div className='  p-[1px]  grid grid-cols-3 max-w-[904px] gap-[1px]  '>
         {userPosts?.map(posts => {
           return (
             <NormalPost

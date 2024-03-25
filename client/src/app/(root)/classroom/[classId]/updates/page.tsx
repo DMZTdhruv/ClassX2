@@ -25,7 +25,6 @@ interface IClassroomUpdate {
 const Updates = async ({ params }: { params: { classId: string } }) => {
   const cookie = cookies().get('classX_user_token')?.value
   const classroomData = await getClassroomData(cookie || '', params.classId)
-  console.log(classroomData)
   const classroomUpdates: IClassroomUpdate[] = await getClassroomUpdates(
     cookie || '',
     params.classId,

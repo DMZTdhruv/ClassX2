@@ -1,6 +1,6 @@
 import UserProfile from '../../models/user/userProfile.model.js'
 import ClassroomRepository from '../../repositories/classroom.repository.js'
-import { classroomUpdateValidator } from '../../validations/classroom.validator.js'
+import { classroomUpdateValidator } from '../../validations/ClassroomValidator/classroom.validator.js'
 
 const classroomRepo = new ClassroomRepository()
 export const createClassroomService = async (

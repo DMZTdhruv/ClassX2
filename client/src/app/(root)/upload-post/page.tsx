@@ -128,109 +128,119 @@ export default function UploadPost() {
   }
 
   return (
-    <div className='flex-col w-full sm:px-[16px] flex p-[16px] mt-[80px] md:mt-[0px]'>
+    <div className='flex-col w-full  flex lg:justify-center pb-[100px] sm:px-[16px] lg:h-screen p-[16px] mt-[80px] sm:mt-[0px]'>
       <div className='flex flex-col items-center gap-3'>
-        <p className='text-[18px] font-semibold text-center'>Enter post details</p>
-        <div
-          className={`w-full max-w-[548px] min-h-[300px] rounded-xl p-5 bg-[#171717]`}
-        >
-          {demoUploadImage?.url ? (
-            <div className='w-full relative'>
-              <Image
-                src={demoUploadImage?.url}
-                width={0}
-                height={0}
-                style={{ height: 'auto', width: '100%' }}
-                alt='uploaded-image'
-                unoptimized
-                className='rounded-md'
-              />
-              <button
-                onClick={() => setDemoUploadImage(undefined)}
-                className='bg-neutral-900 rounded-md p-1 absolute opacity-70 hover:opacity-100 transition-opacity right-0 bottom-0 '
-              >
-                <MdDeleteOutline size={25} />
-              </button>
-            </div>
-          ) : (
-            <label
-              className={`flex min-h-[400px] w-full rounded-lg  border-2  border-dashed items-center justify-center ${
-                isUploadingImage && 'animate-pulse'
-              } `}
-            >
-              <div className='flex items-center flex-col gap-2  justify-center'>
-                <AiOutlineCloudUpload />
-                <p>{isUploadingImage ? 'Uploading image...' : 'upload image'}</p>
-                {errorMessage && (
-                  <p className='text-center'>
-                    Error: <span className='text-red-500'>{errorMessage}</span>
-                  </p>
-                )}
+        <header className='sm:text-[33px] mt-[36px] font-black sm:block hidden'>
+          <h2 className='sm:block hidden pb-[30px]'>
+            Upload{' '}
+            <span className='inline-block  font-black bg-gradient-to-r from-[#891DCC] to-[#C01DCC] bg-clip-text text-transparent'>
+              &nbsp;Post
+            </span>
+          </h2>
+          <p className='sm:hidden'>Upload post</p>
+        </header>
+        <div className='w-full flex lg:flex-row flex-col gap-5 lg:justify-center items-center h-full '>
+          <div
+            className={`w-full max-w-[548px] min-h-[300px] rounded-xl p-5 bg-[#171717]`}
+          >
+            {demoUploadImage?.url ? (
+              <div className='w-full relative'>
+                <Image
+                  src={demoUploadImage?.url}
+                  width={0}
+                  height={0}
+                  style={{ height: 'auto', width: '100%' }}
+                  alt='uploaded-image'
+                  unoptimized
+                  className='rounded-md'
+                />
+                <button
+                  onClick={() => setDemoUploadImage(undefined)}
+                  className='bg-neutral-900 rounded-md p-1 absolute opacity-70 hover:opacity-100 transition-opacity right-0 bottom-0 '
+                >
+                  <MdDeleteOutline size={25} />
+                </button>
               </div>
-              <input
-                type='file'
-                disabled={isUploadingImage}
-                className='h-0 w-0 hidden'
-                onChange={handleUploadFile}
+            ) : (
+              <label
+                className={`flex min-h-[400px] w-full rounded-lg  border-2  border-dashed items-center justify-center ${
+                  isUploadingImage && 'animate-pulse'
+                } `}
+              >
+                <div className='flex items-center flex-col gap-2  justify-center'>
+                  <AiOutlineCloudUpload />
+                  <p>{isUploadingImage ? 'Uploading image...' : 'upload image'}</p>
+                  {errorMessage && (
+                    <p className='text-center'>
+                      Error: <span className='text-red-500'>{errorMessage}</span>
+                    </p>
+                  )}
+                </div>
+                <input
+                  type='file'
+                  disabled={isUploadingImage}
+                  className='h-0 w-0 hidden'
+                  onChange={handleUploadFile}
+                />
+              </label>
+            )}
+          </div>
+
+          <form
+            className='w-full max-w-[548px] flex gap-3 flex-col'
+            onSubmit={handleFormSubmitEvent}
+          >
+            {!demoUploadImage?.url && (
+              <p className='text-center mt-3'>Upload images of type jpeg/png/gif</p>
+            )}
+            <label className='w-full mb-[4px]'>
+              <p className='mb-2'>Title</p>
+              <Input
+                type='text'
+                className='sm:rounded-xl rounded-[0px] focus-visible:ring-0 border-neutral-800 sm:bg-[#171717] bg-transparent sm:border-none border-b-2 border-t-0 border-l-0 border-r-0 outline-none px-[16px]'
+                placeholder='Enter your post title'
+                onChange={handleTitle}
+                value={title}
+                required
               />
             </label>
-          )}
+            <label className='w-full mb-[4px]'>
+              <p className='mb-2'>Caption</p>
+              <Textarea
+                className='sm:rounded-xl rounded-[0px] focus-visible:ring-0 border-neutral-800 sm:bg-[#171717] bg-transparent sm:border-none border-b-2 border-t-0 border-l-0 border-r-0 outline-none px-[16px]'
+                placeholder='Enter your post description here'
+                onChange={handleCaption}
+                value={caption}
+                required
+              />
+            </label>
+            <label className='w-full mb-[4px]'>
+              <p className='mb-2'>Location</p>
+              <Input
+                type='text'
+                className='sm:rounded-xl rounded-[0px] focus-visible:ring-0 border-neutral-800 sm:bg-[#171717] bg-transparent sm:border-none border-b-2 border-t-0 border-l-0 border-r-0 outline-none px-[16px]'
+                placeholder='Enter the location'
+                onChange={handleLocation}
+                value={location}
+                required
+              />
+            </label>
+            <label className='w-full mb-[4px]'>
+              <p className='mb-2'>Category</p>
+              <Input
+                type='text'
+                className='sm:rounded-xl rounded-[0px] focus-visible:ring-0 border-neutral-800 sm:bg-[#171717] bg-transparent sm:border-none border-b-2 border-t-0 border-l-0 border-r-0 outline-none px-[16px]'
+                placeholder='Enter the category'
+                onChange={handleCategory}
+                value={category}
+                required
+              />
+            </label>
+            <Button type='submit' className='text-white' disabled={isPosting}>
+              {isPosting ? 'Posting...' : 'Post'}
+            </Button>
+          </form>
         </div>
-        {!demoUploadImage?.url && (
-          <p className='text-center mt-3'>Upload images of type jpeg/png/gif</p>
-        )}
-
-        <form
-          className='w-full max-w-[548px] flex gap-3 flex-col'
-          onSubmit={handleFormSubmitEvent}
-        >
-          <label className='w-full mb-[4px]'>
-            <p className='mb-2'>Title</p>
-            <Input
-              type='text'
-              className='rounded-xl  bg-[#171717] border-none outline-none px-[16px]'
-              placeholder='Enter your post title'
-              onChange={handleTitle}
-              value={title}
-              required
-            />
-          </label>
-          <label className='w-full mb-[4px]'>
-            <p className='mb-2'>Caption</p>
-            <Textarea
-              className='rounded-xl bg-[#171717] border-none outline-none px-[16px]'
-              placeholder='Enter your post description here'
-              onChange={handleCaption}
-              value={caption}
-              required
-            />
-          </label>
-          <label className='w-full mb-[4px]'>
-            <p className='mb-2'>Location</p>
-            <Input
-              type='text'
-              className='rounded-xl  bg-[#171717] border-none outline-none px-[16px]'
-              placeholder='Enter the location'
-              onChange={handleLocation}
-              value={location}
-              required
-            />
-          </label>
-          <label className='w-full mb-[4px]'>
-            <p className='mb-2'>Category</p>
-            <Input
-              type='text'
-              className='rounded-xl  bg-[#171717] border-none outline-none px-[16px]'
-              placeholder='Enter the category'
-              onChange={handleCategory}
-              value={category}
-              required
-            />
-          </label>
-          <Button type='submit' className='text-white' disabled={isPosting}>
-            {isPosting ? 'Posting...' : 'Post'}
-          </Button>
-        </form>
         {errorMessage && (
           <p className='text-center'>
             Error: <span className='text-red-500'>{errorMessage}</span>

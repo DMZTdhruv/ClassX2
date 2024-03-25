@@ -5,7 +5,7 @@ import { DetailedMessageTime, messageTime } from '@/utils/messageTime'
 // @ts-ignore
 import { CopyIcon } from '@radix-ui/react-icons'
 import Image from 'next/image'
-import React, { useEffect, useReducer, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { BsThreeDots } from 'react-icons/bs'
 import { MdOutlineReport } from 'react-icons/md'
 import { FiTrash } from 'react-icons/fi'
@@ -83,9 +83,8 @@ const Message = ({ message, deleteMessage, messageType }: MessageComponentProps)
         newTop = 10
       }
 
-      // Adjust the left position if the modal is going out of the right edge
       if (right > windowWidth - 50) {
-        newLeft = windowWidth - right - 50 // Adjust the value as needed
+        newLeft = windowWidth - right - 50
       }
 
       if (left < 50) {
@@ -98,13 +97,12 @@ const Message = ({ message, deleteMessage, messageType }: MessageComponentProps)
         modalRef.current.style.top = `${newTop}px`
       }
 
-      // Set the left position instead of right
       if (newLeft !== left) {
-        modalRef.current.style.left = `${newLeft}px`
+        modalRef.current.style.left = `${newLeft - 25}px`
       }
 
       if (newRight !== right) {
-        modalRef.current.style.right = `-${newRight}px`
+        modalRef.current.style.right = `-${newRight + 50}px`
       }
     }
   }, [modal])

@@ -1,5 +1,5 @@
 import PostRepository from '../../repositories/PostRepository.js'
-import { validateCreatePostInput } from '../../validations/createPostValidator.js'
+import { validateCreatePostInput } from '../../validations/PostValidators/createPostValidator.js'
 import Post from '../../models/post/post.model.js'
 
 export const createPostInstance = async (

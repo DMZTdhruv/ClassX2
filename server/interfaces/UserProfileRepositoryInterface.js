@@ -39,4 +39,8 @@ export default class UserProfileRepositoryInterface {
   async followUser(userId, userToFollowId) {
     throw new Error('Method not implemented')
   }
+
+  async editProfile() {
+    throw new Error(`Method not implemented Edit profile`)
+  }
 }

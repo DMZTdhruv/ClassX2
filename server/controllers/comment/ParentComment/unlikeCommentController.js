@@ -1,5 +1,5 @@
 import unlikeCommentService from '../../../services/Comment/ParentComment/unlikeCommentService.js'
-import { validateCommentunLike } from '../../../validations/commentValidator.js'
+import { validateCommentunLike } from '../../../validations/CommentValidtor/commentValidator.js'
 
 export default async function unlikeCommentController(req, res) {
   const { commentId, userID } = req.body

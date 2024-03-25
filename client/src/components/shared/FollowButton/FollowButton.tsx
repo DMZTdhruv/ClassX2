@@ -26,7 +26,7 @@ export default function FollowButton({
     if (authUser) {
       setLoading(false)
     }
-  }, [authUser])
+  }, [])
 
   const handleFollow = async () => {
     if (isFollowing) return
@@ -81,6 +81,7 @@ export default function FollowButton({
 
   const handleIsFollowing = async () => {
     try {
+      setLoading(true)
       const response = await fetch(
         `${api}/users/isFollowing?userToFollowId=${userToFollowId}`,
         {
@@ -102,6 +103,8 @@ export default function FollowButton({
       }
     } catch (err: any) {
       console.log(err.message)
+    } finally {
+      setLoading(false)
     }
   }
 

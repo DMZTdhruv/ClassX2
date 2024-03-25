@@ -49,7 +49,6 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
       .skip(startIndex)
       .limit(itemsPerPage)
       .select('imageUrl likes comments')
-    console.log(posts)
     return posts
   }
 
@@ -132,5 +131,25 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
     return {
       isFollowing: false,
     }
+  }
+
+  async editProfile(
+    userProfileId,
+    username,
+    name,
+    userProfileImage,
+    bio,
+    privateAccount,
+    gender
+  ) {
+    const user = await UserProfile.findByIdAndUpdate(userProfileId, {
+      username,
+      userProfileImage,
+      name,
+      about: bio,
+      isPrivate: privateAccount.toLowerCase() === 'True',
+      gender: gender ? gender : '',
+    })
+    return await user.save()
   }
 }

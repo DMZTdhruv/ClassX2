@@ -1,4 +1,4 @@
-import { validateUserLikePost } from '../../validations/postValidators.js'
+import { validateUserLikePost } from '../../validations/PostValidators/postValidators.js'
 import PostRepository from '../../repositories/PostRepository.js'
 
 export default async function likePostService(userProfileID, postId) {

@@ -1,5 +1,5 @@
 import CommentRepository from '../../repositories/CommentRepository.js'
-import { repliedCommentValidator } from '../../validations/commentValidator.js'
+import { repliedCommentValidator } from '../../validations/CommentValidtor/commentValidator.js'
 import UserProfileRepository from '../../repositories/UserProfileRepository.js'
 import ReplyComment from '../../models/comment/repliedComment.model.js'
 

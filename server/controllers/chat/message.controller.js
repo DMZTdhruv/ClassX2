@@ -5,10 +5,7 @@ import {
   getTotalMessageService,
   deleteMessageService,
 } from '../../services/MessageService/message.service.js'
-import {
-  getMessageValidator,
-  messageValidator,
-} from '../../validations/MessageValidator/message.validator.js'
+import { getMessageValidator } from '../../validations/MessageValidator/message.validator.js'
 
 export const sendMessage = async (req, res) => {
   try {

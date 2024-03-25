@@ -1,4 +1,4 @@
-import { delete_sub_comment_validator } from '../../../validations/deleteCommentValidator.js'
+import { delete_sub_comment_validator } from '../../../validations/CommentValidtor/deleteCommentValidator.js'
 import CommentRepository from '../../../repositories/CommentRepository.js'
 import ReplyCommentRepo from '../../../repositories/ReplyCommentRepo.js'
 

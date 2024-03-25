@@ -1,8 +1,6 @@
 import CommentRepository from '../../../repositories/CommentRepository.js'
 import ReplyCommentRepo from '../../../repositories/ReplyCommentRepo.js'
-import UserRepository from '../../../repositories/UserRepository.js'
-import { delete_parent_comment_validator } from '../../../validations/deleteCommentValidator.js'
-import Post from '../../../models/post/post.model.js'
+import { delete_parent_comment_validator } from '../../../validations/CommentValidtor/deleteCommentValidator.js'
 import PostRepository from '../../../repositories/PostRepository.js'
 
 export default async function deleteParentCommentService(

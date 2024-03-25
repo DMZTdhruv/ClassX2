@@ -1,4 +1,4 @@
-import { validateUserUnlikedPost } from '../../validations/postValidators.js'
+import { validateUserUnlikedPost } from '../../validations/PostValidators/postValidators.js'
 import PostRepository from '../../repositories/PostRepository.js'
 
 export default async function unlikePostService(userProfileID, postId) {

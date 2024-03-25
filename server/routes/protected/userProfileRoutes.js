@@ -13,6 +13,7 @@ import {
 import { getUserProfileController } from '../../controllers/profile/getUserProfileController.js'
 import getUserPostsController from '../../controllers/post/getUserPostsController.js'
 import getUserProfileDetailsController from '../../controllers/profile/getUserProfileDetails.controller.js'
+import { editProfileController } from '../../controllers/profile/editProfileController.js'
 
 const router = express.Router()
 
@@ -43,5 +44,8 @@ router.post('/follow', authenticateUserToken, followUserController)
 router.post('/unFollow', authenticateUserToken, unfollowUserController)
 
 router.get('/isFollowing', authenticateUserToken, checkIfUserIsFollowingController)
+
+// Patch routes
+router.post('/edit-profile', authenticateUserToken, editProfileController)
 
 export default router

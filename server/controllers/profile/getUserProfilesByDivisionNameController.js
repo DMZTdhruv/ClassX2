@@ -1,5 +1,5 @@
 import getUserProfileByDivisionService from '../../services/ProfileService/getUserProfileByDivisionService.js'
-import { userProfileIdValidator } from '../../validations/userProfileValidation.js'
+import { userProfileIdValidator } from '../../validations/ProfileValidators/userProfileValidation.js'
 
 export default async function getUserProfilesByDivisionNameController(
   req,

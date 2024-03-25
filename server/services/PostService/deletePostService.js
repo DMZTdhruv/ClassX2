@@ -1,5 +1,5 @@
 import PostRepository from '../../repositories/PostRepository.js'
-import { deletePostValidator } from '../../validations/deletePostValidator.js'
+import { deletePostValidator } from '../../validations/PostValidators/deletePostValidator.js'
 
 export default async function (postId, userProfileId) {
   try {

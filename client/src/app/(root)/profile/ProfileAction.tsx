@@ -1,4 +1,7 @@
+'use server'
+
 import { Api } from '@/Constants'
+import { revalidateTag } from 'next/cache'
 
 export const getUserProfile = async (cookie: string) => {
   const userProfileApi = `${Api}/users/get-user-profile`
@@ -7,6 +10,9 @@ export const getUserProfile = async (cookie: string) => {
       method: 'GET',
       headers: {
         Cookies: `classX_user_token=${cookie}`,
+      },
+      next: {
+        tags: ['userProfile'],
       },
     })
 
@@ -49,4 +55,8 @@ export const getUserPosts = async (
   } catch (error) {
     console.log(error)
   }
+}
+
+export const updateUserProfile = () => {
+  revalidateTag('userProfile')
 }

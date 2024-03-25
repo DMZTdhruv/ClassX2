@@ -2,8 +2,8 @@ import { Button } from '@/components/ui/button'
 import { jwtDecode } from 'jwt-decode'
 import { cookies } from 'next/headers'
 import Image from 'next/image'
-import LogOut from '../LogOut/LogOut'
 import FollowButton from '../FollowButton/FollowButton'
+import Link from 'next/link'
 
 interface Token {
   userProfileId: string
@@ -72,14 +72,20 @@ export default function UserHeader({
           <span className='text-[10px] opacity-30'>followers</span>
         </p>
       </div>
-      <p className='w-[75%] text-center text-[14px]'>{about}</p>
+      <pre className='w-[85%]   text-wrap text-center text-[14px] font-poppins'>
+        {about}
+      </pre>
 
       <div className='user-interactions relative flex gap-[20px] mt-[8px]'>
         {_id === userProfileId && (
-          <LogOut
-            type='pc'
-            className='top-0 bottom-0 h-[25px] left-[50%] translate-x-[-50%]'
-          />
+          <div className='flex gap-3'>
+            <Button className='h-[28px] rounded-[13px] text-white font-semibold'>
+              <Link href={'/profile/edit-profile'}>Edit profile</Link>
+            </Button>
+            <Button className='h-[28px] rounded-[13px] text-white font-semibold'>
+              <Link href={'/settings'}>Settings</Link>
+            </Button>
+          </div>
         )}
         {_id !== userProfileId && (
           <FollowButton

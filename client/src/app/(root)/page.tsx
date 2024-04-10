@@ -4,10 +4,12 @@ import SearchRightBar from '@/components/shared/SearchRightBar'
 import { cookies } from 'next/headers'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getPosts, getTotalPost } from './postActions'
+import { jwtDecode } from 'jwt-decode'
 
 export default async function HomeLayout() {
   const cookie = cookies().get('classX_user_token')?.value
   const postData = await getPosts(cookie || '', 1)
+  const decodedValue = jwtDecode(cookie || '')
   const totalPost = await getTotalPost(cookie || '')
   if (!postData) {
     return (
@@ -23,7 +25,8 @@ export default async function HomeLayout() {
   return (
     <section className='flex w-full'>
       <PostSection postData={postData} totalPost={totalPost} cookie={cookie || ''} />
-      <SearchRightBar />
+      {/*@ts-ignore  */}
+      <SearchRightBar userProfileId={decodedValue?.userProfileId || ''} />
     </section>
   )
 }

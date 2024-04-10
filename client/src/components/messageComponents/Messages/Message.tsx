@@ -91,7 +91,6 @@ const Message = ({ message, deleteMessage, messageType }: MessageComponentProps)
         newRight = 50
       }
 
-      console.log({ top, left, right, bottom, windowWidth })
 
       if (newTop !== top) {
         modalRef.current.style.top = `${newTop}px`

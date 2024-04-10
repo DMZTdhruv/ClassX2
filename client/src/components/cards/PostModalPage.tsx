@@ -317,7 +317,7 @@ export default function PostModalPage({
 
   return (
     <section
-      className='w-full animate-in fade-in-0 min-h-[100vh] responiveModal flexCenter md:border md:h-full overflow-y-auto bg-[#0E0E0E] md:bg-transparent'
+      className='w-full animate-in fade-in-0 min-h-[100vh] responiveModal flexCenter border-neutral-800 md:border md:h-full overflow-y-auto bg-[#0E0E0E]  md:bg-transparent '
       onClick={hanldePostModalClose}
     >
       {openDeleteCommentModal && (
@@ -343,11 +343,11 @@ export default function PostModalPage({
         <HiMiniXMark className='fixed hidden md:block top-[5%] right-[5%]' size={30} />
       </button>
       <div
-        className='w-full h-full overflow-y-auto sm:h-full sm:max-w-[80%] sm:min-w-[100%] md:min-w-[80%] md:min-h-[463px] xl:min-w-[75%] xl:max-w-[80%]  md:border  bg-[#0E0E0E]  md:border-[#212936] flex flex-col  md:items-center md:flex-row '
+        className='w-full  h-full overflow-y-auto sm:h-full sm:max-w-[80%] sm:min-w-[100%] md:min-w-[80%] md:min-h-[463px] xl:min-w-[75%] xl:max-w-[80%]  md:border md:rounded-[10px] relative bg-[#0E0E0E]  md:border-neutral-800 flex flex-col  md:items-center md:flex-row '
         ref={modalRef}
       >
         <button
-          className='top-[-1px] border-b group md:border-[#212936] py-[20px] sticky md:hidden px-[16px] flex items-center bg-[#0E0E0E] '
+          className='top-[-1px] border-b group border-neutral-800 py-[20px] sticky md:hidden px-[16px] flex items-center bg-[#0E0E0E] '
           onClick={goBack}
         >
           <FaArrowLeftLong className=' group-active:scale-75 transition-all' />{' '}
@@ -364,9 +364,9 @@ export default function PostModalPage({
             isProfile={isProfile || 'false'}
           ></Header>
         </div>
-        <ImageDisplay imageUrl={postData.imageUrl} />
+        <ImageDisplay imageUrl={postData.imageUrl} className='' />
 
-        <div className='flex flex-col flex-1 md:h-full md:border-l border-[#212936] '>
+        <div className='flex  flex-col flex-1 md:h-full md:border-l border-neutral-800 '>
           <div className='md:block hidden'>
             <Header
               userProfileImage={postData?.postedBy.userProfileImage!}
@@ -378,9 +378,9 @@ export default function PostModalPage({
               isProfile={isProfile || 'false'}
             ></Header>
           </div>
-          <div className='flex-1 md:border-t md:border-b border-[#212936] w-full min-h-[60vh] md:max-h-[45vh] overflow-y-auto '>
-            <div className='flex py-[18px] px-[15px] space-y-2 justify-start '>
-              <div className='flex items-start gap-3  '>
+          <div className='flex-1 md:border-t md:border-b border-neutral-800 w-full min-h-[60vh] md:max-h-[45vh] overflow-y-auto '>
+            <div className='flex py-[15px] px-[15px] space-y-2 justify-start '>
+              <div className='flex items-start gap-3 '>
                 <Image
                   src={postData?.postedBy.userProfileImage!}
                   alt=''
@@ -393,7 +393,7 @@ export default function PostModalPage({
                   unoptimized
                   className=' aspect-square object-cover rounded-full'
                 />
-                <div className=' text-[12px] sm:text-[14px]'>
+                <div className=' text-[12px] sm:text-[14px] mt-[3px]'>
                   <span className='font-semibold'>{postData?.postedBy.username!}</span>{' '}
                   <span>{postData?.caption}</span>
                 </div>
@@ -425,7 +425,7 @@ export default function PostModalPage({
               )
             })}
           </div>
-          <div className='md:flex hidden border-t md:border-t-0 border-[#212936] flex-col justify-center gap-[9px] p-[15px]'>
+          <div className='md:flex hidden border-t md:border-t-0 border-neutral-800 flex-col justify-center gap-[9px] p-[15px]'>
             <div className='flex items-center gap-[10px] '>
               <button
                 onClick={() => {
@@ -498,7 +498,7 @@ export default function PostModalPage({
           <form
             onSubmit={submitComment}
             onKeyDown={hanldePostModalClose}
-            className='border-t bg-[#0E0E0E] sticky  border-b md:border-b-0 border-[#212936] sm:min-h-[80px] justify-center p-3 bottom-[0px] md:relative'
+            className='border-t bg-[#0E0E0E] sticky  border-b md:border-b-0 border-neutral-800 sm:min-h-[80px] justify-center p-3 bottom-[0px] md:relative'
           >
             {isPendingComment && (
               <div className='bg-[#171717] w-[80%] outline-none focus-visible:ring-0 min-h-[48px] md:font-semibold sm:min-h-[78px] border-none rounded-xl absolute top-[12px] left-[12px] gap-3 flexCenter  '>
@@ -581,18 +581,29 @@ function Header({
 
 interface ImageDisplayProps {
   imageUrl: string
+  className?: string
+  unoptimized?: boolean
 }
 
-function ImageDisplay({ imageUrl }: ImageDisplayProps) {
+function ImageDisplay({ imageUrl, className, unoptimized }: ImageDisplayProps) {
+  const [loadingImage, setLoadingImage] = useState<boolean>(false)
   return (
     <Image
       src={imageUrl}
       alt=''
       width={400}
+      onLoad={() => {
+        setLoadingImage(true)
+      }}
       height={300}
       style={{ width: '100%', height: 'auto' }}
-      className='max-h-[93vh] h-auto xl:max-w-[600px] lg:max-w-[500px] md:max-w-[400px] md:border-none border-y  border-[#212936] sm:h-full imageResponive object-contain'
-      unoptimized
+      className={`max-h-[93vh] h-auto xl:max-w-[600px] lg:max-w-[500px] md:max-w-[400px] md:border-none border-y  border-neutral-800 sm:h-full imageResponive object-contain ${className} ${
+        !loadingImage
+          ? 'animate-pulse rounded-md bg-neutral-700 w-auto h-screen-80'
+          : ''
+      }
+      `}
+      unoptimized={loadingImage}
     />
   )
 }

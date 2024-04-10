@@ -271,7 +271,7 @@ export default function ParentComment({
                 >
                   {parentCommentUsername} &nbsp;
                 </Link>
-                <span className='text-[12px] lg:text-[12px]'>
+                <span className='text-[12px] lg:text-[14px]'>
                   {parentCommentCommentText}
                 </span>
               </p>
@@ -346,9 +346,10 @@ export default function ParentComment({
         {totalCommentReplies > 0 && (
           <div className='text-[12px] flex flex-col items-start gap-[10px]'>
             <div className='flex items-center gap-[10px] justify-start mt-3'>
-              <span className='w-[25px] h-[2px] bg-neutral-400 rounded-[2px] '></span>
+              {/* change ui in future */}
+              <span className='w-[25px] h-[2px] bg-neutral-600 rounded-[2px] '></span>
               <button
-                className=' text-neutral-500 flex items-center gap-3'
+                className=' text-neutral-500 flex text-[10px] items-center gap-3'
                 onClick={() => {
                   if (
                     userRepliedComments.length > 0 &&
@@ -370,7 +371,9 @@ export default function ParentComment({
               </button>
             </div>
             {openRepliedComments && subComments && (
-              <div className='flex flex-col w-full justify-start'>
+              // remove padding left if you want to use the old layout
+              <div className='flex flex-col w-full relative border-neutral-800 justify-start'>
+                {/* <div className='absolute left-0 h-[98%] animate-in fade-in-0 rounded-md bg-neutral-800 w-[2px]'></div> */}
                 {subComments?.map((comment: ISubComment, index: number) => (
                   <SubComment
                     key={comment._id}
@@ -402,9 +405,8 @@ export default function ParentComment({
             <div className='text-[12px] flex flex-col items-start gap-[10px]'>
               {userRepliedComments.length > 0 && totalCommentReplies === 0 && (
                 <div className='flex items-center gap-[10px] justify-start mt-3'>
-                  <span className='w-[25px] h-[2px] bg-neutral-400 rounded-[2px]'></span>
                   <button
-                    className=' text-neutral-500 flex items-center gap-3'
+                    className=' text-neutral-500 text-[10px] flex items-center gap-3'
                     onClick={() => {
                       setOpeningUserRepliedComments(prev => !prev)
                     }}
@@ -417,7 +419,9 @@ export default function ParentComment({
                 </div>
               )}
               {openUserRepliedComments && (
-                <div className='w-full'>
+                <div className='w-full relative pl-4'>
+                  {/* <div className='absolute left-0 h-[98%] animate-in fade-in-0 rounded-md bg-neutral-800 w-[2px]'></div> */}
+
                   {userRepliedComments?.map((comment: ISubComment) => {
                     if (_id === comment.parentCommentId) {
                       return (

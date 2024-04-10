@@ -52,7 +52,7 @@ export default async function index() {
     }
 
     const users: IUser[] = await getUsers()
-    const recommendedUsers = shuffleArray(users)
+    const recommendedUsers = users
     const divisionName = users && users[0].division.divisionName
     return (
       <div className='bg-[#171717] w-[90%] rounded-[20px] px-[14px] mt-[33px] pb-[10px]'>

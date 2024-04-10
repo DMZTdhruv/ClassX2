@@ -54,9 +54,10 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
   }
 
   //send empty array incase of no attachments
-  async createUpdate(classroom, description, attachments, user) {
+  async createUpdate(classroom, title, description, attachments, user) {
     const classroomPost = await ClassroomPost.create({
       classId: classroom._id,
+      title: title,
       description: description,
       attachments: attachments,
       postedBy: user.userProfileId,

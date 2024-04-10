@@ -9,6 +9,7 @@ import { likePost, unlikePost } from '@/utils/LikeFunctions'
 import { BsThreeDots } from 'react-icons/bs'
 import { useAuthContext } from '@/context/AuthContext'
 import { Skeleton } from '../ui/skeleton'
+import { comment } from 'postcss'
 
 const Post: React.FC<IPost> = ({
   _id,
@@ -32,14 +33,15 @@ const Post: React.FC<IPost> = ({
   const [numberOfLikes, setNumberOfLikes] = useState<number>(likes.length)
   const [isLiked, setIsLiked] = useState<boolean>(false)
   const [showFullCaption, setShowFullCaption] = useState<boolean>(false)
+  const [loadingImage, setLoadingImage] = useState<boolean>(false)
 
   useEffect(() => {
     setIsLiked(likes.filter(id => id === authUser?.userProfileId).length > 0)
   }, [authUser])
 
   return (
-    <div className='w-full animate-in fade-in-0 lg:w-[584px] h-auto rounded-xl border-b-2 border-[#171717] font-poppins  postSection'>
-      <div className='h-[60px] px-[16px] flex items-center justify-between text-[14px]'>
+    <div className='w-full animate-in fade-in-0 lg:w-[584px] h-auto  border-b-2 border-[#171717] font-poppins  postSection'>
+      <div className='h-[60px] px-[15px] flex items-center justify-between md:text-[14px] text-[12px]'>
         <div className='flex items-center justify-between w-full gap-[11px]'>
           <div className='flex items-center gap-[11px]'>
             <Image
@@ -63,7 +65,7 @@ const Post: React.FC<IPost> = ({
                 <span className=' h-1 w-1 bg-neutral-600 rounded-full'></span>
               </Link>
               <span
-                className='text-neutral-500 text-[13px]'
+                className='text-neutral-500 md:text-[13px] text-[11px]'
                 suppressHydrationWarning={true}
               >
                 {formatDate(date)} ago
@@ -93,13 +95,18 @@ const Post: React.FC<IPost> = ({
           height={0}
           alt={'post'}
           style={{ height: 'auto', width: '584px', aspectRatio: '1' }}
-          className='object-cover  md:w-[584px] md:h-[584px] border-2 border-[#171717]'
-          quality={100}
+          onLoad={() => {
+            setLoadingImage(true)
+          }}
+          className={`object-cover  md:w-[584px] md:h-[584px] border-2 border-[#171717]
+          ${!loadingImage ? 'animate-pulse rounded-md bg-neutral-700' : ''}`}
+          priority={false}
+          unoptimized={loadingImage}
         />
       </div>
       <div>
         {authUser ? (
-          <div className='px-[12px] gap-[15px] md:h-[60px] h-[45px]  w-full flex items-center mt-[3px]'>
+          <div className='px-[13px] gap-[15px] md:h-[60px] h-[45px]  w-full flex items-center mt-[3px]'>
             <button
               onClick={() => {
                 setIsLiked(prev => !prev)
@@ -172,10 +179,10 @@ const Post: React.FC<IPost> = ({
           <Skeleton className='m-[12px]   md:h-[40px] h-[25px] w-[40%]' />
         )}
         <div className='px-[15px] md:text-[14px] flex flex-col gap-[3px] text-[12px] font-semibold mb-[20px] '>
-          <span>{numberOfLikes} likes</span>
+          <span className=''>{numberOfLikes} likes</span>
           {caption.length > 85 ? (
             showFullCaption ? (
-              <pre className='text-wrap font-poppins'>
+              <pre className=' text-wrap font-poppins'>
                 {caption}
                 <button
                   className='text-neutral-500 mx-[10px] inline-block'
@@ -187,7 +194,7 @@ const Post: React.FC<IPost> = ({
                 </button>
               </pre>
             ) : (
-              <pre className='text-wrap font-poppins'>
+              <pre className=' text-wrap font-poppins'>
                 {caption.slice(0, 85)}...
                 <button
                   className='text-neutral-500 mx-[10px] inline-block'
@@ -202,13 +209,17 @@ const Post: React.FC<IPost> = ({
           ) : (
             <p>{caption}</p>
           )}
-          <p className='text-neutral-500 inline-block'>
-            view all {comments.length} comments
-          </p>
-          {comments.length !== 0 && (
-            <p className='text-neutral-200'>
-              {comments[0]?.postedBy?.username} {comments[0].commentText}
-            </p>
+          {comments.length > 0 && (
+            <Link href={`/post/${_id}`} scroll={false}>
+              <p className='text-neutral-500 inline-block'>
+                view all {comments.length} comments
+              </p>
+              {comments.length !== 0 && (
+                <p className='text-neutral-200'>
+                  {comments[0]?.postedBy?.username} {comments[0].commentText}
+                </p>
+              )}
+            </Link>
           )}
         </div>
       </div>

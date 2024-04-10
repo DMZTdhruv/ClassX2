@@ -1,4 +1,4 @@
-export const classroomUpdateValidator = (classId, description, attachments, user) => {
+export const classroomUpdateValidator = (classId, title, description, attachments, user) => {
   if (!classId || !description || !user) {
     return true
   }

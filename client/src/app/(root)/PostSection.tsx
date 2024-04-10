@@ -101,7 +101,7 @@ export default function PostSection({
 
   return (
     <div
-      className={`xl:w-[60%] mt-[80px] w-full sm:px-[16px] sm:mt-[40px]  px-[16px] flex flex-col gap-5 items-center`}
+      className={`xl:w-[60%] md:text-[15px] text-[10px] mt-[80px] w-full sm:px-[16px] sm:mt-[40px] px-[10px]  flex flex-col gap-5 items-center`}
     >
       {isOpenModal && (
         <DeletePostModal

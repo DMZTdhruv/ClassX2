@@ -4,6 +4,7 @@ import { useState } from 'react'
 
 interface IClassroomUpdate {
   classId: string
+  title?: string
   description: string
   attachments?: string[]
 }

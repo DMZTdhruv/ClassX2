@@ -14,6 +14,24 @@
   width: 5px;
 }
 
+.custom-h-bar::-webkit-scrollbar-track {
+  background: #1e1e1e;
+  border-radius: 10px;
+}
+
+.custom-h-bar::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 5px;
+}
+
+.custom-h-bar::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+.custom-h-bar::-webkit-scrollbar-corner {
+  background: #1e1e1e;
+}
+
 /* Track */
 ::-webkit-scrollbar-track {
   background: #1e1e1e;

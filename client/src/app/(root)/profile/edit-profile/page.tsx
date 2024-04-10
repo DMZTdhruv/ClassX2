@@ -20,6 +20,8 @@ import { SanityImageAssetDocument } from '@sanity/client'
 import { useRouter } from 'next/navigation'
 import { updateUserProfile } from '../../profile/ProfileAction'
 import { Skeleton } from '@/components/ui/skeleton'
+import { updateFeed } from '../../serverActions'
+import { AuthContextProvider, useAuthContext } from '@/context/AuthContext'
 
 interface EditProfileState {
   username: string
@@ -96,7 +98,10 @@ const EditProfile = () => {
   const [imageData, setImageData] = useState<SanityImageAssetDocument | undefined>(
     undefined
   )
+  const [newProfileData, setNewProfileData] = useState(null)
+
   const router = useRouter()
+  const { setAuthUser } = useAuthContext()
 
   const handleImageUpload = async (e: FormEvent<HTMLInputElement>) => {
     e.preventDefault()
@@ -147,6 +152,7 @@ const EditProfile = () => {
 
   const submitNewProfile = async (e: FormEvent) => {
     e.preventDefault()
+
     try {
       setSubmittingData(true)
       if (imageData) {
@@ -157,18 +163,34 @@ const EditProfile = () => {
         handleUserProfileImage(imageUrl)
       }
 
+      const requestBody = {
+        username: state.username,
+        name: state.name,
+        userProfileImage: state.userProfileImage,
+        bio: state.bio,
+        privateAccount: state.privateAccount,
+        gender: state.gender,
+      }
+
       const res = await fetch(`${Api}/users/edit-profile`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(state),
+        body: JSON.stringify(requestBody),
         credentials: 'include',
+        cache: 'no-cache',
       })
 
       const data = await res.json()
       if (data.error) throw new Error(data.error)
-      console.log(data.message)
+      const updatedProfileData = data.data
+      setNewProfileData(updatedProfileData)
+      localStorage.setItem('classX_user', JSON.stringify(updatedProfileData))
+      const storedUser = localStorage.getItem('classX_user')
+      const value = JSON.parse(storedUser || '')
+      setAuthUser(value)
       updateUserProfile()
-      router.push('/profile')
+      updateFeed()
+      router.push("/profile")
     } catch (error: any) {
       console.error(error.message)
     } finally {
@@ -203,12 +225,13 @@ const EditProfile = () => {
                 name={state.name}
                 loading={loading}
               />
-              <label className='text-white h-[34px] px-2 items-center bg-primary font-semibold rounded-[10px] flex gap-2'>
+              <label className='text-white h-[34px] px-2  cursor-pointer items-center bg-primary font-semibold rounded-[10px] flex gap-2'>
                 <AiOutlineCloudUpload />
                 <Input
                   type='file'
                   className='hidden h-0 w-0'
                   onChange={handleImageUpload}
+                  disabled={uploadingImage}
                 />
                 {uploadingImage ? 'Uploading....' : 'Upload new picture'}
               </label>

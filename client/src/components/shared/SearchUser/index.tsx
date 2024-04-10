@@ -83,9 +83,9 @@ export default function SearchUser({ userId }: { userId: string }) {
       <div
         className={`w-full top-[55px] ${
           userName
-            ? 'scale-100 opacity-100 translate-y-0'
+            ? 'scale-100 opacity-100 translate-y-0 animate-in fade-in-0'
             : 'scale-0 opacity-0 translate-y-4'
-        } transition-all rounded-xl max-h-[50vh] shadow-md shadow-neutral-800 overflow-y-auto  absolute flex items-center gap-4 p-[10px] flex-col border-neutral-800 border bg-[#0E0E0E] `}
+        } transition-all rounded-xl max-h-[50vh] overflow-y-auto  absolute flex items-center gap-4 p-[10px] flex-col border-neutral-800 border bg-[#0E0E0E] `}
       >
         {isSearching ? (
           <>

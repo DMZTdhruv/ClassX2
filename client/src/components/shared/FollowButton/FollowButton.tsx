@@ -118,7 +118,7 @@ export default function FollowButton({
 
   return (
     <Button
-      className={`text-white rounded-full ${classes}`}
+      className={`text-white rounded-full  ${classes}`}
       onClick={() => {
         setIsFollowing(prev => !prev)
         handleFollow()

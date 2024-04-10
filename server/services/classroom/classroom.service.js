@@ -69,6 +69,7 @@ export const getClassroomService = async (classId, user) => {
 
 export const createClassroomUpdatesService = async (
   classId,
+  title,
   description,
   attachments,
   user
@@ -76,6 +77,7 @@ export const createClassroomUpdatesService = async (
   try {
     const validateRequest = classroomUpdateValidator(
       classId,
+      title,
       description,
       attachments,
       user
@@ -100,7 +102,7 @@ export const createClassroomUpdatesService = async (
       }
     }
 
-    await classroomRepo.createUpdate(classroom, description, attachments, user)
+    await classroomRepo.createUpdate(classroom,title, description, attachments, user)
     return {
       statusCode: 201,
       response: {

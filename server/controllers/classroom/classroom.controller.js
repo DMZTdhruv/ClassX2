@@ -66,10 +66,11 @@ export const joinClassroomController = async (req, res) => {
 export const createClassroomUpdate = async (req, res) => {
   try {
     const user = req.user
-    const { classId, description, attachments } = req.body
+    const { classId, title, description, attachments } = req.body
 
     const { statusCode, response } = await createClassroomUpdatesService(
       classId,
+      title,
       description,
       attachments,
       user

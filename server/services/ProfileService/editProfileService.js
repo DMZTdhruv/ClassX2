@@ -12,6 +12,14 @@ export const editProfileService = async (
   gender
 ) => {
   try {
+    console.log({
+      username,
+      name,
+      bio,
+      privateAccount,
+      gender,
+      userProfileImage,
+    })
     const validateUserEditDetails = editProfileValidator(
       username,
       name,
@@ -25,7 +33,7 @@ export const editProfileService = async (
 
     const userProfileRepo = new UserProfileRepository()
 
-    await userProfileRepo.editProfile(
+    const updatedProfile = await userProfileRepo.editProfile(
       userProfileId,
       username,
       name,
@@ -35,7 +43,15 @@ export const editProfileService = async (
       gender
     )
 
-    return returnMessage(201, { message: `Updated profile successfully.` })
+    return returnMessage(201, {
+      message: `Updated profile successfully.`,
+      data: {
+        userID: updatedProfile.userID,
+        userProfileId: updatedProfile._id,
+        username: updatedProfile.username,
+        userProfileImage: updatedProfile.userProfileImage,
+      },
+    })
   } catch (error) {
     console.log(error.message)
     throw new Error(error.message)

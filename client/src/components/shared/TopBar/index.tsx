@@ -1,10 +1,9 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
-import { PiChatTeardropLight } from 'react-icons/pi'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import { BiMessageSquareDetail } from 'react-icons/bi'
 
 function TopBar() {
   const pathname = usePathname()
@@ -15,9 +14,9 @@ function TopBar() {
   const isMessageRoute = pathname.startsWith(`/message`)
   const isClassroomRoute = pathname.startsWith('/classroom')
   const isExploreRoute = pathname.startsWith('/explore')
+
   useEffect(() => {
-    let prevPosition = window.scrollY
-    window.onscroll = () => {
+    const handleScroll = () => {
       let currentPosition = window.scrollY
       if (prevPosition < currentPosition) {
         setIsNavHidden(true)
@@ -26,31 +25,34 @@ function TopBar() {
       }
       prevPosition = currentPosition
     }
-  })
+
+    let prevPosition = window.scrollY
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   return (
     <section
       ref={navRef}
-      className={`h-[60px] ${
-        (isMessageRoute || isClassroomRoute || isExploreRoute) && 'hidden'
-      } ${onPath && 'hidden'} ${
-        isNavHidden ? 'translate-y-[-60px]' : 'translate-y-[0px]'
-      } sm:hidden flex  justify-between  px-[16px] items-center fixed top-0 
-    backdrop-blur-lg z-[50] border-b border-neutral-800  w-full transition-transform `}
+      className={`h-[60px] transition-transform
+      ${isNavHidden ? 'translate-y-[-60px]' : 'translate-y-0'}
+      ${(isMessageRoute || isClassroomRoute || isExploreRoute) && 'hidden'} ${
+        onPath && 'hidden'
+      } sm:hidden flex  justify-between  px-[14px] items-center fixed 
+      bg-[#0E0E0E] z-[50] border-b border-neutral-800  w-full transition-transform `}
     >
-      <Image
-        src={`/assets/ClassX.svg`}
-        height={15}
-        width={0}
-        alt={'classX logo'}
-        style={{
-          height: '20px',
-          width: 'auto',
-        }}
-      />
-
+      <span
+        className='inline-block text-[25px] font-black
+        bg-gradient-to-r from-[#891DCC] to-[#C01DCC] bg-clip-text text-transparent
+        '
+      >
+        ClassX
+      </span>
       <Link href={`/message`}>
-        <PiChatTeardropLight className='h-[24px] w-[24px] active:scale-75 active:opacity-70 transition-all' />
+        <BiMessageSquareDetail className='h-[23px] w-[23px] active:scale-75 active:opacity-70 transition-all' />
       </Link>
     </section>
   )

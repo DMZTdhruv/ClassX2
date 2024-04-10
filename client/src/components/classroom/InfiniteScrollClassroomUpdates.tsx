@@ -64,6 +64,7 @@ const InfiniteScrollClassroomUpdates = ({
               },
               createdAt: update.createdAt,
               description: update.description,
+              attachments: update?.attachments,
             }}
           />
         )

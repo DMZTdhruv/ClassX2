@@ -9,7 +9,7 @@ const LogOut = ({ type, className }: { type: string; className?: string }) => {
   return (
     <Button
       type='button'
-      className={`text-white font-bold absolute  bottom-[41px] transition-all ${className}`}
+      className={`text-white font-bold transition-all ${className}`}
       onClick={logout}
     >
       {type === 'mobile' ? (

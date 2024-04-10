@@ -7,11 +7,13 @@ import React from 'react'
 import { getClassroomData, getClassroomUpdates } from '../../classroomActions'
 import InfiniteScrollClassroomUpdates from '@/components/classroom/InfiniteScrollClassroomUpdates'
 import { Skeleton } from '@/components/ui/skeleton'
+
 import ClassroomJoinId from '@/components/classroom/ClassroomJoinId'
 
 interface IClassroomUpdate {
   _id: string
   classId: string
+  title: string
   description: string
   attachments?: string[]
   postedBy: {
@@ -69,6 +71,8 @@ const Updates = async ({ params }: { params: { classId: string } }) => {
                     },
                     createdAt: update.createdAt,
                     description: update.description,
+                    title: update.title,
+                    attachments: update?.attachments
                   }}
                 />
               )

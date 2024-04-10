@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 const classroomPostSchema = new mongoose.Schema(
   {
     classId: { type: mongoose.Schema.Types.ObjectId, ref: 'Classroom' },
+    title: { type: String, required: true },
     description: { type: String, required: true },
     postedBy: {
       type: mongoose.Schema.Types.ObjectId,

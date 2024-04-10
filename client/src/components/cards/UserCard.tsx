@@ -22,7 +22,7 @@ export default function UserCard({
   userId,
 }: UserCardProps) {
   return (
-    <div className='flex w-full hover:bg-neutral-900 transition-all  items-center h-[68px] rounded-md justify-between px-[20px]'>
+    <div className='flex w-full animate-in fade-in-0  hover:bg-neutral-900 transition-all  items-center h-[68px] rounded-md justify-between px-[20px]'>
       <div className='flex items-center '>
         <Image
           src={userImageUrl}
@@ -46,7 +46,13 @@ export default function UserCard({
           <span className='text-[#474747]'>@{username}</span>
         </Link>
       </div>
-      {_id !== userId && <FollowButton _id={currentUser} userToFollowId={_id} />}
+      {_id !== userId && (
+        <FollowButton
+          _id={currentUser}
+          userToFollowId={_id}
+          classes={`bg-primary font-semibold`}
+        />
+      )}
     </div>
   )
 }

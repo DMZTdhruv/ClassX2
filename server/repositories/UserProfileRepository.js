@@ -142,14 +142,18 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
     privateAccount,
     gender
   ) {
-    const user = await UserProfile.findByIdAndUpdate(userProfileId, {
-      username,
-      userProfileImage,
-      name,
-      about: bio,
-      isPrivate: privateAccount.toLowerCase() === 'True',
-      gender: gender ? gender : '',
-    })
+    const user = await UserProfile.findByIdAndUpdate(
+      userProfileId,
+      {
+        username,
+        userProfileImage,
+        name,
+        about: bio,
+        isPrivate: privateAccount.toLowerCase() === 'True',
+        gender: gender ? gender : '',
+      },
+      { new: true }
+    )
     return await user.save()
   }
 }

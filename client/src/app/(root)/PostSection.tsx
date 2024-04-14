@@ -68,6 +68,7 @@ export default function PostSection({
   const loadMoreUpdates = async () => {
     const nextPage = page + 1
     const newPosts = await getPosts(cookie, nextPage)
+    console.log(newPosts)
     setPosts(prev => [...prev, ...newPosts])
     setPage(nextPage)
   }

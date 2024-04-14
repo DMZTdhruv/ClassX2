@@ -64,7 +64,9 @@ const Updates = async ({ params }: { params: { classId: string } }) => {
               return (
                 <ClassroomUpdate
                   key={update._id}
+                  classId={params.classId}
                   classroomUpdate={{
+                    _id: update._id,
                     postedBy: {
                       username: update.postedBy.username,
                       userProfileImage: update.postedBy.userProfileImage,
@@ -72,7 +74,7 @@ const Updates = async ({ params }: { params: { classId: string } }) => {
                     createdAt: update.createdAt,
                     description: update.description,
                     title: update.title,
-                    attachments: update?.attachments
+                    attachments: update?.attachments,
                   }}
                 />
               )

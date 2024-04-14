@@ -3,6 +3,7 @@
 import { deletePostFromUserPage, updateFeed } from '@/app/(root)/serverActions'
 import { Api } from '@/Constants'
 import { useAuthContext } from '@/context/AuthContext'
+import { usePostContext } from '@/context/PostContext'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { IoWarningOutline } from 'react-icons/io5'
@@ -29,6 +30,8 @@ export default function DeletePostModal({
   const { authUser } = useAuthContext()
   const [isDeleting, setIsDeleting] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const { setUserPost, setExplorePost } = usePostContext()
+
   const deletePost = async () => {
     setIsDeleting(true)
     try {
@@ -53,8 +56,9 @@ export default function DeletePostModal({
       }, 500)
       handleModal(false)
       if (userPost) {
-        deletePostFromUserPage()
         updateFeed()
+        setUserPost(prev => prev.filter(post => post._id !== deleteId))
+        setExplorePost(prev => prev.filter(post => post._id !== deleteId))
         router.push('/profile')
       }
     } catch (error: any) {
@@ -72,7 +76,7 @@ export default function DeletePostModal({
 
   return (
     <div
-      className={`fixed top-[50%] left-[50%] flex items-center justify-center gap-3 h-screen w-full bg-[#0E0E0E]/80 z-[1000000] translate-x-[-50%] translate-y-[-50%]`}
+      className={`fixed top-[50%] left-[50%] text-[13px] md:text-[14px]  flex items-center justify-center gap-3 h-screen w-full bg-[#0E0E0E]/80 z-[1000000] translate-x-[-50%] translate-y-[-50%]`}
     >
       <div
         className={`w-[336px] ${

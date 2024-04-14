@@ -6,7 +6,7 @@ const SideBarMoreCard = () => {
   const { logout } = useLogOut()
   return (
     <div
-      className={`animate-in  fade-in-0 text-[13px] mb-4 md:text-[13px] flex gap-3  w-full bg-[#0E0E0E]/80  `}
+      className={`animate-in fixed bottom-[60px]  z-50 fade-in-0 text-[13px] mb-4 md:text-[13px] flex gap-3  w-fit bg-[#0E0E0E]/80  `}
     >
       <div
         className={`md:w-[336px] animate-in fade-in-0 w-[280px]  flex flex-col bg-[#1E1E1E]/80 shadow-lg backdrop-blur-md py-[8px]  rounded-lg `}

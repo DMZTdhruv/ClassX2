@@ -1,5 +1,6 @@
 import UserProfile from '../../models/user/userProfile.model.js'
 import ClassroomRepository from '../../repositories/classroom.repository.js'
+import { returnMessage } from '../../utils/returnMessage.js'
 import { classroomUpdateValidator } from '../../validations/ClassroomValidator/classroom.validator.js'
 
 const classroomRepo = new ClassroomRepository()
@@ -102,7 +103,7 @@ export const createClassroomUpdatesService = async (
       }
     }
 
-    await classroomRepo.createUpdate(classroom,title, description, attachments, user)
+    await classroomRepo.createUpdate(classroom, title, description, attachments, user)
     return {
       statusCode: 201,
       response: {
@@ -164,5 +165,37 @@ export const joinClassroomService = async (user, classroomJoinId) => {
     }
   } catch (error) {
     throw new Error(error.message)
+  }
+}
+
+export const getClassroomByIdService = async (user, classId, classroomUpdateId) => {
+  try {
+    console.log({ user, classId, classroomUpdateId })
+
+    const classroom = await classroomRepo.getClassroomById(classId)
+    const classroomUpdate = await classroomRepo.getClassroomUpdateById(
+      classroomUpdateId
+    )
+
+    if (!classroomUpdate) {
+      return returnMessage(401, { error: 'Classroom update not found' })
+    }
+
+    const userIsAuthorized =
+      classroom.studentEmails.includes(user.userProfileId) ||
+      classroom.adminEmails.includes(user.userProfileId)
+
+    if (userIsAuthorized) {
+      return returnMessage(200, {
+        data: classroomUpdate,
+        message: 'Classroom update found',
+      })
+    } else {
+      return returnMessage(401, {
+        message: 'Unauthorized: Classroom not found',
+      })
+    }
+  } catch (error) {
+    throw new Error(`Error in getClassroomByIdService: ${error.message}`)
   }
 }

@@ -25,9 +25,9 @@ const links = [
 const ClassroomTab = ({ classId }: { classId: string }) => {
   const pathname = usePathname()
   return (
-    <nav className='md:h-[60px] h-[50px] md:text-[15px] text-[13px] border-b md:top-auto bg-[#0E0E0E] z-[50] top-[60px] md:relative sticky items-center border-neutral-800 flex gap-[10px] md:px-[24px] px-[16px]'>
+    <nav className='md:h-[60px] h-[50px] md:text-[15px] text-[13px] border-b  bg-[#0E0E0E] z-[50] top-[60px]  sticky items-center border-neutral-800 flex gap-[10px] md:px-[24px] px-[16px]'>
       {links.map(link => {
-        const isActive = pathname.includes(link.link)
+        const isActive = pathname === `/classroom/${classId}/${link.link}`
         return (
           <Link
             key={link.id}

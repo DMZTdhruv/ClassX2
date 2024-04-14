@@ -6,6 +6,8 @@ import SideBar from '@/components/shared/sidebar'
 import NextTopLoader from 'nextjs-toploader'
 import { AuthContextProvider } from '@/context/AuthContext'
 import SocketContextProvider from '@/context/SocketContext'
+import PostContextProvider from '@/context/PostContext'
+import MessageContextProvider from '@/context/MessageContext'
 
 export const metadata: Metadata = {
   title: 'classX app',
@@ -30,20 +32,22 @@ export default function RootLayout({
       </head>
       <AuthContextProvider>
         <SocketContextProvider>
-          <body className='dark sm:flex items-center sm:flex-col bg-[#0E0E0E] font-poppins '>
-            <NextTopLoader
-              color='rgba(137, 29, 204, 1)'
-              shadow='0 4px 18.9px #891DCC'
-              showSpinner={false}
-            />
-            {postModal}
-            <TopBar />
-            <main className='relative max-w-screen-2xl  main-container w-[100%] text-[12px] lg:text-[14px] flex mainsection'>
-              <SideBar />
-              <section className='flex-1 w-full '>{children}</section>
-            </main>
-            <BottomBar />
-          </body>
+          <PostContextProvider>
+            <body className='dark sm:flex items-center sm:flex-col bg-[#0d0d0d] font-poppins '>
+              <NextTopLoader
+                color='rgba(137, 29, 204, 1)'
+                shadow='0 4px 18.9px #891DCC'
+                showSpinner={false}
+              />
+              {postModal}
+              <TopBar />
+              <main className='relative max-w-screen-2xl  main-container w-[100%] text-[12px] lg:text-[14px] flex mainsection'>
+                <SideBar />
+                <section className='flex-1 w-full '>{children}</section>
+              </main>
+              <BottomBar />
+            </body>
+          </PostContextProvider>
         </SocketContextProvider>
       </AuthContextProvider>
     </html>

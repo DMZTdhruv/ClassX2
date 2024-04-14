@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { Types, mongo } from 'mongoose'
 
 const messageSchema = new mongoose.Schema(
   {
@@ -11,6 +11,10 @@ const messageSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'UserProfile',
       required: true,
+    },
+    replyMessage: {
+      replyToUsername: String,
+      replyMessage: String,
     },
     message: {
       type: String,

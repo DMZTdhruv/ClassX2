@@ -23,4 +23,7 @@ export default class ClassroomRepositoryInterface {
   async getClassroomByJoinClassroomId() {
     throw new Error(`getClassroomByJoinClassroomId method not implemented`)
   }
+  async getClassroomUpdateById() {
+    throw new Error(`getClassroomUpdate method not implemented`)
+  }
 }

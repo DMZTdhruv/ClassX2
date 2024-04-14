@@ -13,8 +13,13 @@ import { MessageIsLoadingUiSkeleton } from '@/components/Skeletons/MessageChatSk
 
 interface MessageProps {
   _id: string
-  senderId: string
-  receiverId: string
+  senderId: { userProfileImage: string; username: string; _id: string }
+  receiverId: { userProfileImage: string; username: string; _id: string }
+  replyMessage: {
+    repliedMessageId: string
+    replyMessage: string
+    replyToUsername: string
+  }
   message: string
   createdAt: string
 }
@@ -232,8 +237,9 @@ const MessagesTwo = () => {
     }
   }
 
+
   return (
-    <div className={`p-2 flex-1 border-y overflow-y-auto`}>
+    <div className={`p-2 flex-1 border-y border-neutral-800 overflow-y-auto`}>
       {isLoading ? (
         <MessageIsLoadingUiSkeleton />
       ) : (

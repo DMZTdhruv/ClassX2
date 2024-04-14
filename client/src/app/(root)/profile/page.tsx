@@ -51,6 +51,7 @@ export default async function Profile() {
         following={userProfile?.following}
         isPrivate={userProfile?.isPrivate}
       />
+
       <ProfilePosts
         userProfileId={userProfile?._id}
         token={token?.value || ''}

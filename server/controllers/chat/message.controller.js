@@ -10,15 +10,15 @@ import { messageValidator } from '../../validations/MessageValidator/message.val
 
 export const sendMessage = async (req, res) => {
   try {
-    const { message } = req.body
+    const { messageBody } = req.body
     const { id: receiverId } = req.params
     const senderId = req.user.userProfileId
 
     // checking message details
-    messageValidator(message, senderId, receiverId, res)
+    messageValidator(messageBody, senderId, receiverId, res)
 
     // creating conversation and message
-    await messageService(message, senderId, receiverId, res)
+    await messageService(messageBody, senderId, receiverId, res)
   } catch (error) {
     console.log(error.message)
     res.status(500).json({ error: 'Internal Server Error' })

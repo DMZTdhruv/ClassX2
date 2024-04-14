@@ -1,12 +1,9 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import Conversations from './Conversations'
 import { useMessageContext } from '@/context/MessageContext'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { FaArrowLeft } from 'react-icons/fa6'
-import { useAuthContext } from '@/context/AuthContext'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Input } from '@/components/ui/input'
 import Conversation from './Conversation'
@@ -34,7 +31,7 @@ export default function MessageSideBar({
 
   return (
     <div
-      className={`messageSideBar  justify-start lg:items-stretch sm:items-center flex flex-col xl:w-auto lg:w-auto sm:border-r  sm:w-[100px] w-full h-screen bg-[#0E0E0E]  md:flex  md:py-[31px] transition-all ${
+      className={`messageSideBar border-neutral-800  justify-start lg:items-stretch sm:items-center flex flex-col xl:w-auto lg:w-auto sm:border-r sm:w-[100px] w-full h-screen bg-[#0E0E0E]  md:flex  md:py-[31px] transition-all ${
         conversation ? 'translate-x-[-100%] sm:translate-x-0' : 'translate-x-0'
       }`}
     >

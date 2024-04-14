@@ -12,7 +12,7 @@ export const formatDate = (date: Date) => {
   } else if (minutes < 60) {
     return `${minutes} minutes`
   } else if (hours < 24) {
-    return `${hours} horus`
+    return `${hours} hours`
   } else {
     return `${days} days`
   }

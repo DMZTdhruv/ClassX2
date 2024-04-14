@@ -3,11 +3,10 @@
 import MessageContainer from '@/components/messageComponents/Messages/MessageContainer'
 import MessageSideBar from '@/components/messageComponents/Sidebar/MessageSideBar'
 import useGetConversations from '@/hooks/Conversations/useGetConversations'
-import MessageContextProvider, { useMessageContext } from '@/context/MessageContext'
 import React from 'react'
-import { useAuthContext } from '@/context/AuthContext'
 import MessageSkeleton from '@/components/Skeletons/MessageSkeleton'
 import { Skeleton } from '@/components/ui/skeleton'
+import MessageContextProvider from '@/context/MessageContext'
 
 const Message = () => {
   const { loading, conversation: chatFriends } = useGetConversations()

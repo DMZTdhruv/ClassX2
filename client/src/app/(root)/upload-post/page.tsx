@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { updateFeed } from '../serverActions'
 import { useAuthContext } from '@/context/AuthContext'
+import { usePostContext } from '@/context/PostContext'
 
 interface Post {
   title: string
@@ -27,6 +28,7 @@ export default function UploadPost() {
   //@ts-ignore
   const { authUser } = useAuthContext()
   const { generateUrl, getUrl } = useGenerateLink()
+  const { setExplorePost, setUserPost } = usePostContext()
 
   // states
   const [demoUploadImage, setDemoUploadImage] = useState<
@@ -96,6 +98,8 @@ export default function UploadPost() {
         postedBy: authUser?.userProfileId,
       }
       updateFeed()
+      setExplorePost([])
+      setUserPost([])
       await submitDataToBackend(data)
       router.push('/')
     } catch (err: any) {
@@ -122,6 +126,7 @@ export default function UploadPost() {
       })
 
       const result = await response.json()
+      console.log(result)
     } catch (err: any) {
       throw new Error(err.message)
     }

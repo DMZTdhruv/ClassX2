@@ -5,6 +5,7 @@ import { getUserPosts } from './ProfileAction'
 import { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { IPost } from '@/Constants'
+import { usePostContext } from '@/context/PostContext'
 
 const ProfilePosts = ({
   userProfileId,
@@ -16,20 +17,21 @@ const ProfilePosts = ({
   totalPosts: number
 }) => {
   const { ref, inView } = useInView()
-  const [userPosts, setUserPosts] = useState<IPost[]>([])
+  const { userPost, setUserPost } = usePostContext()
+  // const [userPosts, setUserPosts] = useState<IPost[]>([])
   const [page, setPage] = useState<number>(1)
   const [allPostLoaded, setAllPostLoaded] = useState<boolean>(false)
 
   const loadMorePosts = async () => {
     const nextPage = page + 1
     const newPosts: IPost[] = await getUserPosts(userProfileId, token, page)
-    setUserPosts(prev => [...prev, ...newPosts])
+    setUserPost(prev => [...prev, ...newPosts])
     setPage(nextPage)
   }
 
   useEffect(() => {
     if (inView) {
-      if (userPosts.length >= totalPosts) {
+      if (userPost.length >= totalPosts) {
         setAllPostLoaded(true)
         return
       }
@@ -40,7 +42,7 @@ const ProfilePosts = ({
   return (
     <>
       <div className='  p-[1px]  grid grid-cols-3 max-w-[904px] gap-[1px]  '>
-        {userPosts?.map(posts => {
+        {userPost?.map(posts => {
           return (
             <NormalPost
               key={posts._id}

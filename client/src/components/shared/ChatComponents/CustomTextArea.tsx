@@ -1,5 +1,6 @@
 // Textarea.tsx
 'use client'
+// Textarea.tsx
 import { useAuthContext } from '@/context/AuthContext'
 import { useMessageContext } from '@/context/MessageContext'
 import { useSocketContext } from '@/context/SocketContext'
@@ -7,12 +8,9 @@ import React, {
   useEffect,
   useRef,
   ChangeEvent,
-  FocusEventHandler,
-  FocusEvent,
-  KeyboardEvent,
   useState,
 } from 'react'
-import _debounce from 'lodash/debounce'
+
 
 interface TextareaProps {
   value: string
@@ -58,7 +56,7 @@ const CustomTextArea: React.FC<TextareaProps> = ({
           status: true,
         })
       }}
-      onBlur={e => {
+      onBlur={() => {
         socket?.emit('typing-message', authUser?.userProfileId, conversation._id, {
           status: false,
         })

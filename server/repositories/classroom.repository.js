@@ -82,4 +82,13 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
   async getClassroomByJoinClassroomId(classroomJoinId) {
     return await Classroom.findOne({ classroomJoinId })
   }
+
+  async getClassroomUpdateById(classroomUpdateId) {
+    const update = await ClassroomPost.findById(classroomUpdateId)
+      .populate({
+        path: 'postedBy',
+        select: 'username userProfileImage',
+      })
+    return update;
+  }
 }

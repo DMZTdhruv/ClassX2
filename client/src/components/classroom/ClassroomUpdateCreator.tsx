@@ -3,27 +3,28 @@
 import { useAuthContext } from '@/context/AuthContext'
 import React, { FormEvent, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import CustomTextArea from '../shared/ChatComponents/CustomTextArea'
 import useCreateUpdate from '@/hooks/classroom/useCreateUpdate'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
-import {
-  Carousel,
-  CarouselApi,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel'
-import client from '../../../client'
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
 import { SanityImageAssetDocument } from '@sanity/client'
 import { useGenerateLink } from '@/hooks/useGenerateLink'
+import { MdCancel, MdOutlineCancel } from 'react-icons/md'
+import ClassroomImageModal from './ClassroomImageModal'
 
 interface IClassroomUpdate {
   classId: string
   title?: string
   description: string
   attachments?: string[]
+}
+
+interface ErrorMessages {
+  fileUploadError: string
+  incompleteDetails: string
+  uploadingImagesError: string
+  uploadError: string
+  totalImagesError: string
 }
 
 const ClassroomUpdateCreator = ({
@@ -34,23 +35,41 @@ const ClassroomUpdateCreator = ({
   classId: string
 }) => {
   const { authUser } = useAuthContext()
-  const [isAdmin, setIsAdmin] = useState<boolean>(false)
-  const [description, setDescription] = useState<string>('')
-  const [openModal, setOpenModal] = useState<boolean>(false)
-  const [attachments, setAttachments] = useState<string[]>([])
-  const { loading, createUpdate, error, message } = useCreateUpdate()
+  const { loading, createUpdate, message } = useCreateUpdate()
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
+  const { getUrl, generateUrl } = useGenerateLink()
 
-  const { getUrl } = useGenerateLink()
+  // States
+  const [isAdmin, setIsAdmin] = useState<boolean>(false)
+  const [openModal, setOpenModal] = useState<boolean>(false)
 
-  const [images, setImages] = useState<any[]>([])
+  // Update body
   const [title, setTitle] = useState<string>('')
-  const [tempImageUrls, setTempImageUrls] = useState<SanityImageAssetDocument[]>([])
-  const [updateImages, setUpdateImages] = useState<string[]>([])
-  const [blobUrls, setBlobUrls] = useState<any[]>([])
+  const [description, setDescription] = useState<string>('')
+  const [images, setImages] = useState<SanityImageAssetDocument[]>([])
+  const [generatedUrls, setGeneratedUrls] = useState<string[]>([])
 
-  const [gettingTempImages, setGettingTempImages] = useState<boolean>(false)
-  const [uploading, setUploading] = useState<boolean>(false)
+  // loading states
+  const [uploadingImage, setUploadingImage] = useState<boolean>(false)
+  const [isCreatingUpdate, setIsCreatingUpdate] = useState<boolean>(false)
+
+  // Error states
+  const [error, setError] = useState<string>('')
+
+  const [imageOpenModal, setImageOpenModal] = useState<boolean>(false)
+  const [selectedImage, setSelectedImage] = useState('')
+
+  const closeModal = () => {
+    setImageOpenModal(false)
+    setSelectedImage('')
+  }
+
+  const setErrorFunc = (errorMessage: string) => {
+    setError(errorMessage)
+    setTimeout(() => {
+      setError('')
+    }, 5000)
+  }
 
   useEffect(() => {
     if (authUser?.userProfileId) {
@@ -73,24 +92,18 @@ const ClassroomUpdateCreator = ({
 
   const createUpdateForClassroom = async (e: FormEvent) => {
     e.preventDefault()
+    setIsCreatingUpdate(true)
     try {
-      setUploading(true)
       if (description.trim() === '') {
-        throw new Error('A title is required')
+        throw new Error('Incomplete details')
       }
 
-      await uploadingImages()
-
-      if (updateImages.length !== images.length) {
-        console.log(updateImages.length, images.length)
-        throw new Error('Wait your images are uploading to database...')
-      }
-
+      await uploadImagesToSanity()
       const updateData = {
         classId,
         title: title,
         description: description,
-        attachments: updateImages,
+        attachments: generatedUrls,
       }
 
       await createUpdate(updateData)
@@ -98,67 +111,52 @@ const ClassroomUpdateCreator = ({
       setDescription('')
       setImages([])
     } catch (error: any) {
+      setErrorFunc(error.message)
       console.error(error.message)
     } finally {
-      setUploading(false)
+      setIsCreatingUpdate(false)
     }
   }
 
-  const uploadImage = async (e: any) => {
+  const uploadImagesToSanity = async () => {
     try {
-      if (e.target.files) {
-        setImages(prev => [...prev, e.target.files[0]])
-      }
-    } catch (error: any) {
-      console.log(error.message)
-    }
-  }
-
-  const getTempUrls = async () => {
-    try {
-      setGettingTempImages(true)
       const urls = await Promise.all(
         images.map(async image => {
-          const imageData = await client.assets.upload('image', image)
-          return imageData
+          const url = await getUrl(image)
+          return url
         })
       )
-
-      console.log(urls)
-      setTempImageUrls(urls)
-      console.log(urls)
+      setGeneratedUrls(prev => [...urls])
     } catch (error: any) {
+      setErrorFunc(error.message)
       console.error(error.message)
-    } finally {
-      setGettingTempImages(false)
     }
   }
 
-  const uploadingImages = async () => {
-    setUploading(true)
+  const getTemporaryImageUrl = async (e: FormEvent<HTMLInputElement>) => {
     try {
-      const imageUrls = await Promise.all(
-        tempImageUrls.map(async file => {
-          return await getUrl(file)
-        })
-      )
-      console.log(imageUrls)
-      setUpdateImages(imageUrls)
+      e.preventDefault()
+      setUploadingImage(true)
+      const url = await generateUrl(e)
+      // @ts-ignore
+      setImages(prev => [url, ...prev])
     } catch (error: any) {
+      setErrorFunc(error.message)
       console.error(error.message)
     } finally {
-      setUploading(false)
+      setUploadingImage(false)
     }
   }
 
   useEffect(() => {
-    const getImages = async () => {
-      await getTempUrls()
+    if (imageOpenModal) {
+      const body = document.getElementsByTagName('body')[0]
+      body.style.overflow = 'hidden'
+      return () => {
+        body.style.overflow = 'auto'
+      }
     }
-    getImages()
-    const urls = images.map(image => URL.createObjectURL(image))
-    setBlobUrls(urls)
-  }, [images])
+  }, [imageOpenModal])
 
   return (
     <section>
@@ -195,29 +193,50 @@ const ClassroomUpdateCreator = ({
               htmlFor='uploadImage'
             >
               <span>Upload:</span>
-              <span className=' text-white font-semibold bg-primary px-4 mt-1 py-1 rounded-full'>
-                Upload-image
+              <span className=' text-white b font-semibold bg-neutral-800 cursor-pointer group px-4 mt-1 py-1 rounded-full'>
+                <span className='group-active:scale-[0.95] inline-block'>
+                  {' '}
+                  Upload-image
+                </span>
               </span>
               <input
                 type='file'
-                onChange={uploadImage}
+                onChange={getTemporaryImageUrl}
                 id='uploadImage'
                 className='h-0 w-0'
               />
             </label>
+            {imageOpenModal && (
+              <ClassroomImageModal imageUrl={selectedImage} onClose={closeModal} />
+            )}
             {images.length > 0 && (
-              <Carousel className='max-w-[300px] rounded-md mt-3 max-h-[300px]'>
+              <Carousel className='max-w-[290px] rounded-md  mt-3 mb-10 max-h-[3000px]'>
                 <CarouselContent className='max-w-[300px]  max-h-[300px] rounded-md'>
-                  {blobUrls.map(image => {
+                  {images.map((image, index) => {
                     return (
-                      <CarouselItem className='rounded-md' key={image}>
+                      <CarouselItem className='rounded-md relative' key={image._id}>
                         <Image
-                          src={image}
+                          src={image.url}
                           alt='image'
                           width={150}
                           height={150}
-                          className='aspect-square w-full h-full object-cover rounded-md'
+                          unoptimized
+                          onClick={() => {
+                            setImageOpenModal(prev => !prev)
+                            setSelectedImage(image.url)
+                          }}
+                          className='aspect-square cursor-pointer w-full h-full object-cover rounded-md'
                         />
+
+                        <button
+                          type='button'
+                          className='absolute group top-3 right-3 bg-black/80 rounded-full shadow-md shadow-neutral-700 '
+                          onClick={() => {
+                            setImages(prev => prev.filter(img => img._id !== image._id))
+                          }}
+                        >
+                          <MdCancel size={24} className='group-active:scale-[0.90]' />
+                        </button>
                       </CarouselItem>
                     )
                   })}
@@ -229,24 +248,18 @@ const ClassroomUpdateCreator = ({
               </Carousel>
             )}
           </div>
-
           <div className='flex items-center gap-3'>
-            {gettingTempImages && (
-              <span className='animate-pulse text-neutral-600'>
-                Uploading images...
-              </span>
-            )}
-            <button
+            <Button
               type='submit'
-              disabled={loading || gettingTempImages || uploading}
+              disabled={uploadingImage || isCreatingUpdate}
               className={` ${
                 loading && 'animate-pulse'
-              }text-white px-4 py-2 group rounded-full bg-primary font-bold `}
+              }text-white px-4 py- group rounded-full bg-primary font-bold `}
             >
-              <span className='inline-block active:scale-90 group-active:scale-90'>
-                {uploading ? 'Posting...' : 'Post'}
+              <span className='inline-block active:scale-90 text-white group-active:scale-90'>
+                {isCreatingUpdate ? 'Posting...' : 'Post'}
               </span>
-            </button>
+            </Button>
             <button
               type='button'
               onClick={() => setOpenModal(prev => !prev)}
@@ -257,10 +270,18 @@ const ClassroomUpdateCreator = ({
               <span className='inline-block group-active:scale-90'>Cancel</span>
             </button>
           </div>
+          <div className='w-full text-center mt-2 text-red-500'>
+            {error && <span>{error}</span>}
+          </div>
+          <div className='w-full text-center mt-2'>
+            {uploadingImage && (
+              <span className='animate-pulse text-neutral-600'>Uploading image</span>
+            )}
+          </div>
         </form>
       ) : (
         <div
-          className='flex group items-center md:p-[22px] p-[16px] bg-neutral-900 rounded-[20px]'
+          className='flex group cursor-pointer items-center md:p-[22px] p-[16px] bg-neutral-900 rounded-[20px]'
           onClick={() => setOpenModal(prev => !prev)}
         >
           <div className='flex items-center gap-[10px]'>

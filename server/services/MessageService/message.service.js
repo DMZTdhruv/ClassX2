@@ -4,21 +4,8 @@ import UserProfile from '../../models/user/userProfile.model.js'
 import { getSocketIdByUserId, io } from '../../socket/socket.js'
 import { getMessageValidator } from '../../validations/MessageValidator/message.validator.js'
 
-export const messageService = async (message, senderId, receiverId, res) => {
+export const messageService = async (messageBody, senderId, receiverId, res) => {
   try {
-    // const sender = await UserProfile.findById(senderId)
-    // if (!sender.chatIds.includes(receiverId)) {
-    //   sender.chatIds.push(receiverId)
-    //   if (!sender.requestsId.includes(receiverId)) {
-    //     sender.requestsId.remove(receiverId)
-    //   }
-    // }
-
-    // const receiver = await UserProfile.findById(receiverId)
-    // if (!receiver.chatIds.includes(senderId)) {
-    //   receiver.requestsId.push(receiverId)
-    // }
-
     let conversation = await Conversation.findOne({
       participants: { $all: [senderId, receiverId] },
     })
@@ -32,7 +19,11 @@ export const messageService = async (message, senderId, receiverId, res) => {
     const newMessage = new Message({
       senderId,
       receiverId,
-      message,
+      message: messageBody.message,
+      replyMessage: {
+        replyToUsername: messageBody.repliedUser,
+        replyMessage: messageBody.repliedMessage,
+      },
       conversationId: conversation._id,
     })
 
@@ -85,7 +76,16 @@ export const getMessageService = async (
       .sort({ createdAt: -1 })
       .skip(startIndex)
       .limit(itemsPerPage)
+      .populate({
+        path: 'senderId',
+        select: 'username userProfileImage',
+      })
+      .populate({
+        path: 'receiverId',
+        select: 'username userProfileImage',
+      })
 
+    console.log(conversationMessages)
     if (!conversationMessages) {
       return {
         statusCode: 200,

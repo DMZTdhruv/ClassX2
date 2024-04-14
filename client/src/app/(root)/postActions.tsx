@@ -8,7 +8,7 @@ export const getPosts = async (cookie: string, page: number) => {
       headers: {
         Cookies: `classX_user_token=${cookie}`,
       },
-      cache: 'no-store',
+      cache: 'no-cache',
       next: {
         tags: ['feedPost'],
       },

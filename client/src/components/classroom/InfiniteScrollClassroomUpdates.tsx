@@ -58,6 +58,7 @@ const InfiniteScrollClassroomUpdates = ({
           <ClassroomUpdate
             key={update._id}
             classroomUpdate={{
+              _id: update._id,
               postedBy: {
                 username: update.postedBy.username,
                 userProfileImage: update.postedBy.userProfileImage,

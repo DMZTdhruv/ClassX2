@@ -2,10 +2,12 @@
 
 import React, { Suspense } from 'react'
 import { IPost } from '@/Constants'
-const PostModalPage = React.lazy(() => import('@/components/cards/PostModalPage'))
+// const PostModalPage = React.lazy(() => import('@/components/cards/PostModalPage'))
+import PostModalPage from '@/components/cards/PostModalPage'
 import { useEffect, useState } from 'react'
 import useGetPost from '@/hooks/posts/useGetPost'
 import { usePathname, useRouter } from 'next/navigation'
+import PostCommentContextProvider from '@/context/postCommentContext'
 
 export default function PostModal({ params }: { params: { id: string } }) {
   const pathname = usePathname()
@@ -37,7 +39,9 @@ export default function PostModal({ params }: { params: { id: string } }) {
       <Suspense fallback={<LoadingSkeleton />}>
         <div className=' w-full flexCenter'>
           {!loading && postData && (
-            <PostModalPage postData={postData} postId={params.id} />
+            <PostCommentContextProvider>
+              <PostModalPage postData={postData} postId={params.id} />
+            </PostCommentContextProvider>
           )}
         </div>
       </Suspense>

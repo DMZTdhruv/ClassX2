@@ -1,35 +1,30 @@
 'use client'
 
-import React, { ChangeEvent, FormEvent, useState, useRef, useEffect } from 'react'
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+} from 'react'
 import Image from 'next/image'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Api, IComments, IPost, UpdateReplyCommentData, webUrl } from '@/Constants'
-import FollowButton from '@/components/shared/FollowButton/FollowButton'
 import { likePost, unlikePost } from '@/utils/LikeFunctions'
-
 const ParentComment = React.lazy(
   () => import('@/components/shared/PostComponents/ParentComment')
 )
 import { formatDate } from '@/utils'
-import { HiMiniXMark } from 'react-icons/hi2'
 import axios from 'axios'
 import { BsThreeDots } from 'react-icons/bs'
 import DeleteCommentComponent from '../shared/DeleteComponent/DeleteComment'
-import DeletePostModal from '../shared/DeleteComponent/DeletePost'
 import Link from 'next/link'
 import { useAuthContext } from '@/context/AuthContext'
+import DeletePostModal from '../shared/DeleteComponent/DeletePost'
 
 // Interfaces
-interface SubCommentProps {
-  _id: string
-  parentCommentId: string
-  postId: string
-  repliedUserId: string
-  commentText: string
-  postedBy: string
-}
-
 interface GetSubComment {
   _id: string
   parentCommentId: string
@@ -45,6 +40,25 @@ interface GetSubComment {
   createdAt: string
 }
 
+interface ISubComment {
+  _id: string
+  parentCommentId: string
+  postId: string
+  repliedUserId: string
+  commentText: string
+  postedBy: {
+    userProfileImage: string
+    username: string
+    _id: string
+  }
+  likes: string[]
+  createdAt: string
+}
+interface IUserCommentReplies {
+  parentCommentId: string
+  comment: ISubComment[]
+}
+
 export default function PostModalPage({
   postData,
   postId,
@@ -53,14 +67,14 @@ export default function PostModalPage({
   postId: string
 }) {
   //constants
-  const pathname = usePathname()
-  const onPath = pathname.startsWith('/post')
-
-  // @ts-ignore
   const { authUser } = useAuthContext()
+  const [dummyUserComments, setDummyUserComments] = useState<IUserCommentReplies[]>([])
+
+  //constants
 
   const router = useRouter()
-  const postedDate = formatDate(new Date(postData?.createdAt))
+  const isProfile = useSearchParams().get('isProfile')
+  const postedDate = formatDate(new Date(postData.createdAt))
 
   // refs
   const modalRef = useRef<HTMLDivElement>(null)
@@ -71,20 +85,23 @@ export default function PostModalPage({
 
   // Post data states
   const [isLiked, setIsLiked] = useState<boolean>(
-    postData?.likes.filter(id => id === authUser?.userProfileId).length > 0
+    postData.likes.filter(id => id === authUser?.userProfileId).length > 0
   )
-  const [numberOfLikes, setNumberOfLikes] = useState<number>(postData?.likes.length)
+  const [numberOfLikes, setNumberOfLikes] = useState<number>(postData.likes.length)
+
+  // Delete post states
   const [openDeletePostModal, setOpenDeletePostModal] = useState<boolean>(false)
 
   // comment states
-  const [allComments, setAllComments] = useState<IComments[]>(postData?.comments)
+  const [allComments, setAllComments] = useState<IComments[]>(postData.comments)
+  const memoizedAllComments = useMemo(() => allComments, [allComments])
+
   const [openDeleteCommentModal, setOpenDeleteCommentModal] = useState<boolean>(false)
   const [comment, setComment] = useState<string>('')
   const [deleteCommentDetails, setDeleteCommentDetails] =
     useState<DeleteCommentDetails | null>(null)
 
   //subcomments states
-  const [repliedSubComments, setRepliedSubComments] = useState<GetSubComment[]>([])
   const [replyUsername, setReplyUsername] = useState<string>('')
   const [replyCommentData, setReplyCommentData] = useState({
     parentCommentId: '',
@@ -154,41 +171,87 @@ export default function PostModalPage({
     setComment(`@${name} `)
   }
 
-  const likeSubComment = (_id: string) => {
-    setRepliedSubComments(prevComments => {
-      const subCommentIndex = prevComments.findIndex(comment => comment._id === _id)
-
-      if (subCommentIndex !== -1) {
-        prevComments[subCommentIndex].likes.push(authUser?.userProfileId!)
+  const likeDummyUserComment = (parentCommentId: string, subCommentId: string) => {
+    console.log('Hello')
+    setDummyUserComments(prev => {
+      const index = prev.findIndex(
+        comment => comment.parentCommentId === parentCommentId
+      )
+      if (index !== -1) {
+        const updatedComments = [...prev]
+        const updatedComment = { ...updatedComments[index] }
+        const subCommentIndex = updatedComment.comment.findIndex(
+          comment => comment._id === subCommentId
+        )
+        if (subCommentIndex !== -1) {
+          if (
+            !updatedComment.comment[subCommentIndex].likes.includes(
+              authUser?.userProfileId!
+            )
+          ) {
+            updatedComment.comment[subCommentIndex].likes.push(authUser?.userProfileId!)
+          }
+        }
+        // Hey gpt should I add this line?
+        updatedComments[index] = updatedComment
+        return updatedComments
+      } else {
+        return prev
       }
-
-      return [...prevComments]
     })
   }
 
-  const unlikeSubComment = (_id: string) => {
-    setRepliedSubComments(prevComments => {
-      const subCommentIndex = prevComments.findIndex(comment => comment._id === _id)
-
-      if (subCommentIndex !== -1) {
-        prevComments[subCommentIndex].likes = prevComments[
-          subCommentIndex
-        ].likes.filter(id => id !== authUser?.userProfileId)
+  const unlikeDummyUserComment = (parentCommentId: string, subCommentId: string) => {
+    setDummyUserComments(prev => {
+      const index = prev.findIndex(
+        comment => comment.parentCommentId === parentCommentId
+      )
+      if (index !== -1) {
+        const updatedComments = [...prev]
+        const updatedComment = { ...updatedComments[index] }
+        const subCommentIndex = updatedComment.comment.findIndex(
+          comment => comment._id === subCommentId
+        )
+        if (subCommentIndex !== -1) {
+          if (
+            updatedComment.comment[subCommentIndex].likes.includes(
+              authUser?.userProfileId!
+            )
+          ) {
+            const subCommentLikeIndex = updatedComment.comment[
+              subCommentIndex
+            ].likes.indexOf(authUser?.userProfileId!)
+            updatedComment.comment[subCommentIndex].likes.splice(subCommentLikeIndex, 1)
+          }
+        }
+        return updatedComments
+      } else {
+        return prev
       }
-
-      return [...prevComments]
     })
   }
 
-  const deleteSubComment = (commentId: string) => {
-    setRepliedSubComments(prev => prev.filter(comment => comment._id !== commentId))
+  const deleteSubComment = (parentCommentId: string, commentId: string) => {
+    setDummyUserComments(prev => {
+      const index = prev.findIndex(
+        comment => comment.parentCommentId === parentCommentId
+      )
+      if (index !== -1) {
+        const updatedComments = [...prev]
+        const subCommentIndex = updatedComments[index].comment.findIndex(
+          comment => comment._id === commentId
+        )
+        updatedComments[index].comment.splice(subCommentIndex, 1)
+        return updatedComments
+      }
+      return prev
+    })
   }
 
   const handleReplyUserComment = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === '') {
       setReplyUsername('')
       setComment('')
-      return
     }
     if (comment.length < replyUsername.length + 2) {
       if (e.target.value === `@${replyUsername} `) {
@@ -207,15 +270,29 @@ export default function PostModalPage({
   }: UpdateReplyCommentData) => {
     setReplyCommentData({
       parentCommentId,
-      postId: postData?._id,
+      postId: postData._id,
       repliedUserId,
       commentText: comment,
       postedBy: authUser?.userProfileId!,
     })
   }
 
-  const updateRepliedComments = () => {
-    setRepliedSubComments([])
+  const updateRepliedComments = (parentCommentId: string) => {
+    setDummyUserComments(prev => {
+      const index = prev.findIndex(
+        comment => comment.parentCommentId === parentCommentId
+      )
+      if (index !== -1) {
+        const updatedComments = [...prev]
+        updatedComments[index] = {
+          ...updatedComments[index],
+          comment: [], // Set the comment array to an empty array
+        }
+        return updatedComments
+      } else {
+        return prev // Return the previous state if parent comment is not found
+      }
+    })
   }
 
   // Normal important functions
@@ -231,7 +308,6 @@ export default function PostModalPage({
     router.back()
   }
 
-  // Fetch functions
   const replyComment = async () => {
     setIsPendingComment(true)
 
@@ -249,9 +325,28 @@ export default function PostModalPage({
 
       const { message: result } = response.data
 
-      setRepliedSubComments(prev => {
-        return [...prev, result]
+      setDummyUserComments(prev => {
+        const index = prev.findIndex(
+          commentReply =>
+            commentReply.parentCommentId === replyCommentData.parentCommentId
+        )
+        if (index !== -1) {
+          const updatedComments = [...prev]
+          updatedComments[index] = {
+            ...updatedComments[index],
+            comment: [...updatedComments[index].comment, result],
+          }
+          return updatedComments
+        } else {
+          return [
+            ...prev,
+            { parentCommentId: replyCommentData.parentCommentId, comment: [result] },
+          ]
+        }
       })
+
+      setComment('')
+      setReplyUsername('')
     } catch (error: any) {
       console.error(error.message)
     } finally {
@@ -308,7 +403,6 @@ export default function PostModalPage({
       setIsPendingComment(false)
     }
   }
-
   return (
     <section
       className='w-full min-h-[100vh] responiveModalPage flexCenter sm:h-full  bg-[#0E0E0E] md:bg-transparent'
@@ -323,12 +417,25 @@ export default function PostModalPage({
           type='Comment'
         />
       )}
+
+      {openDeletePostModal && (
+        <DeletePostModal
+          userProfileId={authUser?.userProfileId!}
+          deleteId={postData._id}
+          handleModal={handleDeletePostModal}
+          userPost={true}
+        />
+      )}
       <div
-        className={`w-full h-full pt-[60px] sm:pt-[0px]  sm:h-full sm:max-w-[80%] sm:min-w-[100%] md:min-w-[80%] md:max-h-[563px] xl:min-w-[85%] xl:max-w-[50%]  md:border  bg-[#0E0E0E]  border-[#212936] flex flex-col lg:flex-row border`}
+        className='w-full h-full pt-[60px] sm:pt-[0px]  sm:h-full sm:max-w-[80%] sm:min-w-[100%] md:min-w-[80%] md:max-h-[563px] xl:min-w-[85%] xl:max-w-[50%]  md:border  bg-[#0E0E0E]  border-[#212936] flex flex-col lg:flex-row border '
+        ref={modalRef}
       >
-        <div className='top-[-1px] border-b border-[#212936] py-[20px] sticky z-[10000000] md:hidden px-[16px] flex items-center bg-[#0E0E0E] '>
-          <button onClick={goBack}>Post</button>
-        </div>
+        <button
+          className='top-[-1px] border-b z-50 group border-neutral-800 py-[20px] sticky md:hidden px-[16px] flex items-center bg-[#0E0E0E] '
+          onClick={goBack}
+        >
+          <p className='ml-3'>Posts</p>
+        </button>
         <div className='md:hidden block'>
           <Header
             userProfileImage={postData?.postedBy.userProfileImage!}
@@ -336,23 +443,27 @@ export default function PostModalPage({
             createdAt={postedDate}
             userId={postData?.postedBy._id}
             handleModal={handleDeletePostModal}
+            router={router}
+            isProfile={isProfile || 'false'}
           ></Header>
         </div>
-        <ImageDisplay imageUrl={postData?.imageUrl} />
+        <ImageDisplay imageUrl={postData.imageUrl} className='' />
 
-        <div className='flex flex-col flex-1 md:h-full md:border-l border-[#212936] '>
+        <div className='flex  flex-col flex-1 md:h-full md:border-l border-neutral-800 '>
           <div className='md:block hidden'>
             <Header
               userProfileImage={postData?.postedBy.userProfileImage!}
               username={postData?.postedBy.username!}
               createdAt={postedDate}
+              router={router}
               userId={postData?.postedBy._id}
               handleModal={handleDeletePostModal}
+              isProfile={isProfile || 'false'}
             ></Header>
           </div>
-          <div className='flex-1 md:border-t md:border-b border-[#212936] w-full min-h-[320px] md:max-h-[320px] overflow-y-auto '>
-            <div className='flex py-[18px] px-[15px] space-y-2 justify-start '>
-              <div className='flex items-start gap-3  '>
+          <div className='flex-1 md:border-t md:border-b border-[#212936] w-full min-h-[320px] md:max-h-[320px] overflow-y-auto'>
+            <div className='flex py-[15px] px-[15px] space-y-2 justify-start '>
+              <div className='flex items-start gap-3 '>
                 <Image
                   src={postData?.postedBy.userProfileImage!}
                   alt=''
@@ -365,31 +476,32 @@ export default function PostModalPage({
                   unoptimized
                   className=' aspect-square object-cover rounded-full'
                 />
-                <div className=' text-[12px] sm:text-[14px]'>
+                <div className=' text-[12px] sm:text-[14px] mt-[3px]'>
                   <span className='font-semibold'>{postData?.postedBy.username!}</span>{' '}
                   <span>{postData?.caption}</span>
                 </div>
               </div>
             </div>
-            {allComments?.map((comment: IComments) => {
+            {memoizedAllComments?.map((comment: IComments) => {
               return (
                 <ParentComment
-                  key={comment._id}
+                  key={comment?._id}
                   postId={postData?._id}
-                  _id={comment._id}
-                  parentCommentImage={comment.postedBy.userProfileImage}
-                  parentCommentUserId={comment.postedBy._id}
-                  parentCommentUsername={comment.postedBy.username}
-                  parentCommentCommentText={comment.commentText}
-                  parentCommentPostedDate={comment.createdAt}
-                  parentCommentTotalLikes={comment.likes}
-                  parentTotalCommentReplies={comment.commentReplies.length}
+                  _id={comment?._id}
+                  parentCommentImage={comment?.postedBy?.userProfileImage}
+                  parentCommentUserId={comment?.postedBy?._id}
+                  parentCommentUsername={comment?.postedBy?.username}
+                  parentCommentCommentText={comment?.commentText}
+                  parentCommentPostedDate={comment?.createdAt}
+                  parentCommentTotalLikes={comment?.likes}
+                  parentTotalCommentReplies={comment?.commentReplies?.length}
                   updateUsername={handleReplyUsername}
                   updateReplyCommentData={updateReplyCommentData}
-                  userRepliedComments={repliedSubComments}
+                  userRepliedComments={dummyUserComments}
+                  setDummyUserComment={setDummyUserComments}
                   updateRepliedComments={updateRepliedComments}
-                  likeSubComment={likeSubComment}
-                  unlikeSubComment={unlikeSubComment}
+                  likeSubComment={likeDummyUserComment}
+                  unlikeSubComment={unlikeDummyUserComment}
                   handleModal={handleModal}
                   setDeleteCommentDetails={setDeleteCommentDetails}
                   deleteSubComment={deleteSubComment}
@@ -397,7 +509,7 @@ export default function PostModalPage({
               )
             })}
           </div>
-          <div className='md:flex hidden border-t md:border-t-0 border-[#212936] flex-col justify-center gap-[9px] p-[15px]'>
+          <div className='md:flex hidden border-t md:border-t-0 border-neutral-800 flex-col justify-center gap-[9px] p-[15px]'>
             <div className='flex items-center gap-[10px] '>
               <button
                 onClick={() => {
@@ -470,12 +582,12 @@ export default function PostModalPage({
           <form
             onSubmit={submitComment}
             onKeyDown={hanldePostModalClose}
-            className='border-t bg-[#0E0E0E] sticky  border-b md:border-b-0 border-[#212936] sm:min-h-[80px] justify-center p-3 bottom-[0px] md:relative'
+            className='border-t bg-[#0E0E0E] sticky  border-b md:border-b-0 border-neutral-800 sm:min-h-[80px] justify-center p-3 bottom-[0px] md:relative'
           >
             {isPendingComment && (
               <div className='bg-[#171717] w-[80%] outline-none focus-visible:ring-0 min-h-[48px] md:font-semibold sm:min-h-[78px] border-none rounded-xl absolute top-[12px] left-[12px] gap-3 flexCenter  '>
                 <span className='animate-pulse'>Uploading comment..</span>
-                <div className='loader '></div>
+                <div className='loader'></div>
               </div>
             )}
 
@@ -499,13 +611,14 @@ export default function PostModalPage({
     </section>
   )
 }
-
 interface HeaderProps {
   username: string
   userProfileImage: string
   createdAt: string
   userId: string
+  router: any
   handleModal: (data: boolean) => void
+  isProfile?: string
 }
 
 interface DeleteCommentDetails {
@@ -515,9 +628,11 @@ interface DeleteCommentDetails {
 
 function Header({
   username,
-  userId,
   userProfileImage,
   createdAt,
+  userId,
+  isProfile,
+  router,
   handleModal,
 }: HeaderProps) {
   return (
@@ -532,36 +647,46 @@ function Header({
           unoptimized
           className=' aspect-square object-cover rounded-full'
         />
-        <Link href={`/profile/${userId}`} className=''>
-          {username}
-        </Link>
+        <Link href={`/profile/${userId}`}>{username}</Link>
         <span className=' text-white/50 '>{createdAt}</span>
       </div>
-      <button
-        className={`flex space-x-[2px] items-center active:scale-75 active:opacity-75 transition-all`}
-        onClick={() => handleModal(true)}
-      >
-        <BsThreeDots size={18} />
-      </button>
+      {isProfile === 'true' && (
+        <button
+          className={`flex space-x-[2px] items-center active:scale-75 active:opacity-75 transition-all`}
+          onClick={() => handleModal(true)}
+        >
+          <BsThreeDots size={18} />
+        </button>
+      )}
     </header>
   )
 }
 
 interface ImageDisplayProps {
   imageUrl: string
+  className?: string
+  unoptimized?: boolean
 }
 
-function ImageDisplay({ imageUrl }: ImageDisplayProps) {
+function ImageDisplay({ imageUrl, className, unoptimized }: ImageDisplayProps) {
+  const [loadingImage, setLoadingImage] = useState<boolean>(false)
   return (
     <Image
       src={imageUrl}
       alt=''
       width={400}
+      onLoad={() => {
+        setLoadingImage(true)
+      }}
       height={300}
       style={{ width: '100%', height: 'auto' }}
-      className='md:max-w-[400px] sm:h-full imageResponive object-contain'
-      quality={100}
-      unoptimized
+      className={`max-h-[93vh] h-auto xl:max-w-[600px] lg:max-w-[500px] md:max-w-[400px] md:border-none border-y  border-neutral-800 sm:h-full imageResponive object-contain ${className} ${
+        !loadingImage
+          ? 'animate-pulse rounded-md bg-neutral-700 w-auto h-screen-80'
+          : ''
+      }
+      `}
+      unoptimized={loadingImage}
     />
   )
 }

@@ -1,6 +1,13 @@
 'use client'
 
-import React, { ChangeEvent, FormEvent, useState, useRef, useEffect } from 'react'
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+} from 'react'
 import Image from 'next/image'
 import { useRouter, useSearchParams, redirect } from 'next/navigation'
 import { Input } from '@/components/ui/input'
@@ -19,22 +26,6 @@ import { useAuthContext } from '@/context/AuthContext'
 import Link from 'next/link'
 
 // Interfaces
-interface SubCommentProps {
-  _id: string
-  parentCommentId: string
-  postId: string
-  repliedUserId: string
-  commentText: string
-  postedBy: string
-}
-
-interface IDeletePostDetails {
-  deleteId: string
-  userProfileId: string
-  handleModal?: (data: boolean) => void
-  className?: string
-}
-
 interface GetSubComment {
   _id: string
   parentCommentId: string
@@ -50,6 +41,25 @@ interface GetSubComment {
   createdAt: string
 }
 
+interface ISubComment {
+  _id: string
+  parentCommentId: string
+  postId: string
+  repliedUserId: string
+  commentText: string
+  postedBy: {
+    userProfileImage: string
+    username: string
+    _id: string
+  }
+  likes: string[]
+  createdAt: string
+}
+interface IUserCommentReplies {
+  parentCommentId: string
+  comment: ISubComment[]
+}
+
 export default function PostModalPage({
   postData,
   postId,
@@ -60,8 +70,10 @@ export default function PostModalPage({
   //@ts-ignore
   //auth user
   const { authUser } = useAuthContext()
+  const [dummyUserComments, setDummyUserComments] = useState<IUserCommentReplies[]>([])
 
   //constants
+
   const router = useRouter()
   const isProfile = useSearchParams().get('isProfile')
   const postedDate = formatDate(new Date(postData.createdAt))
@@ -84,13 +96,14 @@ export default function PostModalPage({
 
   // comment states
   const [allComments, setAllComments] = useState<IComments[]>(postData.comments)
+  const memoizedAllComments = useMemo(() => allComments, [allComments])
+
   const [openDeleteCommentModal, setOpenDeleteCommentModal] = useState<boolean>(false)
   const [comment, setComment] = useState<string>('')
   const [deleteCommentDetails, setDeleteCommentDetails] =
     useState<DeleteCommentDetails | null>(null)
 
   //subcomments states
-  const [repliedSubComments, setRepliedSubComments] = useState<GetSubComment[]>([])
   const [replyUsername, setReplyUsername] = useState<string>('')
   const [replyCommentData, setReplyCommentData] = useState({
     parentCommentId: '',
@@ -160,41 +173,87 @@ export default function PostModalPage({
     setComment(`@${name} `)
   }
 
-  const likeSubComment = (_id: string) => {
-    setRepliedSubComments(prevComments => {
-      const subCommentIndex = prevComments.findIndex(comment => comment._id === _id)
-
-      if (subCommentIndex !== -1) {
-        prevComments[subCommentIndex].likes.push(authUser?.userProfileId!)
+  const likeDummyUserComment = (parentCommentId: string, subCommentId: string) => {
+    console.log('Hello')
+    setDummyUserComments(prev => {
+      const index = prev.findIndex(
+        comment => comment.parentCommentId === parentCommentId
+      )
+      if (index !== -1) {
+        const updatedComments = [...prev]
+        const updatedComment = { ...updatedComments[index] }
+        const subCommentIndex = updatedComment.comment.findIndex(
+          comment => comment._id === subCommentId
+        )
+        if (subCommentIndex !== -1) {
+          if (
+            !updatedComment.comment[subCommentIndex].likes.includes(
+              authUser?.userProfileId!
+            )
+          ) {
+            updatedComment.comment[subCommentIndex].likes.push(authUser?.userProfileId!)
+          }
+        }
+        // Hey gpt should I add this line?
+        updatedComments[index] = updatedComment
+        return updatedComments
+      } else {
+        return prev
       }
-
-      return [...prevComments]
     })
   }
 
-  const unlikeSubComment = (_id: string) => {
-    setRepliedSubComments(prevComments => {
-      const subCommentIndex = prevComments.findIndex(comment => comment._id === _id)
-
-      if (subCommentIndex !== -1) {
-        prevComments[subCommentIndex].likes = prevComments[
-          subCommentIndex
-        ].likes.filter(id => id !== authUser?.userProfileId)
+  const unlikeDummyUserComment = (parentCommentId: string, subCommentId: string) => {
+    setDummyUserComments(prev => {
+      const index = prev.findIndex(
+        comment => comment.parentCommentId === parentCommentId
+      )
+      if (index !== -1) {
+        const updatedComments = [...prev]
+        const updatedComment = { ...updatedComments[index] }
+        const subCommentIndex = updatedComment.comment.findIndex(
+          comment => comment._id === subCommentId
+        )
+        if (subCommentIndex !== -1) {
+          if (
+            updatedComment.comment[subCommentIndex].likes.includes(
+              authUser?.userProfileId!
+            )
+          ) {
+            const subCommentLikeIndex = updatedComment.comment[
+              subCommentIndex
+            ].likes.indexOf(authUser?.userProfileId!)
+            updatedComment.comment[subCommentIndex].likes.splice(subCommentLikeIndex, 1)
+          }
+        }
+        return updatedComments
+      } else {
+        return prev
       }
-
-      return [...prevComments]
     })
   }
 
-  const deleteSubComment = (commentId: string) => {
-    setRepliedSubComments(prev => prev.filter(comment => comment._id !== commentId))
+  const deleteSubComment = (parentCommentId: string, commentId: string) => {
+    setDummyUserComments(prev => {
+      const index = prev.findIndex(
+        comment => comment.parentCommentId === parentCommentId
+      )
+      if (index !== -1) {
+        const updatedComments = [...prev]
+        const subCommentIndex = updatedComments[index].comment.findIndex(
+          comment => comment._id === commentId
+        )
+        updatedComments[index].comment.splice(subCommentIndex, 1)
+        return updatedComments
+      }
+      return prev
+    })
   }
 
   const handleReplyUserComment = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === '') {
       setReplyUsername('')
       setComment('')
-      return
     }
     if (comment.length < replyUsername.length + 2) {
       if (e.target.value === `@${replyUsername} `) {
@@ -220,8 +279,22 @@ export default function PostModalPage({
     })
   }
 
-  const updateRepliedComments = () => {
-    setRepliedSubComments([])
+  const updateRepliedComments = (parentCommentId: string) => {
+    setDummyUserComments(prev => {
+      const index = prev.findIndex(
+        comment => comment.parentCommentId === parentCommentId
+      )
+      if (index !== -1) {
+        const updatedComments = [...prev]
+        updatedComments[index] = {
+          ...updatedComments[index],
+          comment: [], // Set the comment array to an empty array
+        }
+        return updatedComments
+      } else {
+        return prev // Return the previous state if parent comment is not found
+      }
+    })
   }
 
   // Normal important functions
@@ -254,10 +327,28 @@ export default function PostModalPage({
 
       const { message: result } = response.data
 
-      setRepliedSubComments(prev => {
-        return [...prev, result]
+      setDummyUserComments(prev => {
+        const index = prev.findIndex(
+          commentReply =>
+            commentReply.parentCommentId === replyCommentData.parentCommentId
+        )
+        if (index !== -1) {
+          const updatedComments = [...prev]
+          updatedComments[index] = {
+            ...updatedComments[index],
+            comment: [...updatedComments[index].comment, result],
+          }
+          return updatedComments
+        } else {
+          return [
+            ...prev,
+            { parentCommentId: replyCommentData.parentCommentId, comment: [result] },
+          ]
+        }
       })
+
       setComment('')
+      setReplyUsername('')
     } catch (error: any) {
       console.error(error.message)
     } finally {
@@ -347,7 +438,7 @@ export default function PostModalPage({
         ref={modalRef}
       >
         <button
-          className='top-[-1px] border-b group border-neutral-800 py-[20px] sticky md:hidden px-[16px] flex items-center bg-[#0E0E0E] '
+          className='top-[-1px] border-b z-50 group border-neutral-800 py-[20px] sticky md:hidden px-[16px] flex items-center bg-[#0E0E0E] '
           onClick={goBack}
         >
           <FaArrowLeftLong className=' group-active:scale-75 transition-all' />{' '}
@@ -399,7 +490,7 @@ export default function PostModalPage({
                 </div>
               </div>
             </div>
-            {allComments?.map((comment: IComments) => {
+            {memoizedAllComments?.map((comment: IComments) => {
               return (
                 <ParentComment
                   key={comment?._id}
@@ -414,10 +505,11 @@ export default function PostModalPage({
                   parentTotalCommentReplies={comment?.commentReplies?.length}
                   updateUsername={handleReplyUsername}
                   updateReplyCommentData={updateReplyCommentData}
-                  userRepliedComments={repliedSubComments}
+                  userRepliedComments={dummyUserComments}
+                  setDummyUserComment={setDummyUserComments}
                   updateRepliedComments={updateRepliedComments}
-                  likeSubComment={likeSubComment}
-                  unlikeSubComment={unlikeSubComment}
+                  likeSubComment={likeDummyUserComment}
+                  unlikeSubComment={unlikeDummyUserComment}
                   handleModal={handleModal}
                   setDeleteCommentDetails={setDeleteCommentDetails}
                   deleteSubComment={deleteSubComment}

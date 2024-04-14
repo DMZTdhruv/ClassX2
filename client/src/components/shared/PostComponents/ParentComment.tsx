@@ -10,6 +10,7 @@ import { BsThreeDots } from 'react-icons/bs'
 import DeleteCommentComponent from '../DeleteComponent/DeleteComment'
 import { useAuthContext } from '@/context/AuthContext'
 import Link from 'next/link'
+import { usePostCommentContext } from '@/context/postCommentContext'
 
 interface UpdateReplyCommentData {
   parentCommentId: string
@@ -37,6 +38,11 @@ interface DeleteCommentDetails {
   clientComponent?: boolean
 }
 
+interface IUserCommentReplies {
+  parentCommentId: string
+  comment: ISubComment[]
+}
+
 interface Comment {
   postId: string
   _id: string
@@ -47,15 +53,16 @@ interface Comment {
   parentCommentPostedDate: string
   parentCommentTotalLikes: string[]
   parentTotalCommentReplies: number
+  setDummyUserComment: React.Dispatch<React.SetStateAction<IUserCommentReplies[]>>
   updateUsername: (name: string) => void
   updateReplyCommentData: (data: UpdateReplyCommentData) => void
-  userRepliedComments: ISubComment[]
-  updateRepliedComments: () => void
-  likeSubComment: (_id: string) => void
-  unlikeSubComment: (_id: string) => void
+  userRepliedComments: IUserCommentReplies[]
+  updateRepliedComments: (parentCommentId: string) => void
+  likeSubComment: (parentCommentId: string, subCommentId: string) => void
+  unlikeSubComment: (parentCommentId: string, subCommentId: string) => void
   handleModal: (data: boolean) => void
   setDeleteCommentDetails: (data: DeleteCommentDetails) => void
-  deleteSubComment: (data: string) => void
+  deleteSubComment: (parentCommentId: string, commentId: string) => void
 }
 
 interface BackendData {
@@ -83,20 +90,20 @@ export default function ParentComment({
   deleteSubComment,
 }: Comment) {
   // @ts-ignore
+
   // context
   const { authUser } = useAuthContext()
 
   const date = new Date(parentCommentPostedDate)
   const formatedDate = formatDate(date)
   // states
-  const [subComments, setSubComments] = useState<ISubComment[] | null>(null)
+  const [subComments, setSubComments] = useState<ISubComment[]>([])
 
   const [isOpeningRepliedComments, setIsOpeningRepliedComments] =
     useState<boolean>(false)
   const [openRepliedComments, setOpenRepliedComments] = useState<boolean>(false)
   const [openUserRepliedComments, setOpeningUserRepliedComments] =
     useState<boolean>(true)
-  const [repliedComments, setRepliedComments] = useState([])
   const [isLiked, setIsLiked] = useState<boolean>(
     parentCommentTotalLikes.filter(id => id === authUser?.userProfileId).length > 0
   )
@@ -104,7 +111,7 @@ export default function ParentComment({
     parentCommentTotalLikes.length
   )
   const [userRepliedCommentsLength, setUserRepliedCommentsLength] = useState<number>(
-    userRepliedComments.length
+    userRepliedComments?.length
   )
   const [totalCommentReplies, setTotalCommentReplies] = useState<number>(
     parentTotalCommentReplies
@@ -126,11 +133,11 @@ export default function ParentComment({
   }
 
   const handleDeleteUserRepliedComments = (commentId: string) => {
-    deleteSubComment(commentId)
+    deleteSubComment(_id, commentId)
   }
 
   useEffect(() => {
-    setUserRepliedCommentsLength(userRepliedComments.length)
+    setUserRepliedCommentsLength(userRepliedComments?.length)
   }, [userRepliedComments])
 
   // get replies of the comments
@@ -138,10 +145,20 @@ export default function ParentComment({
     if (subComments?.length! >= totalCommentReplies) {
       return
     }
+
     if (openRepliedComments) {
-      setSubComments(prev => [...(prev || []), ...userRepliedComments])
+      // setSubComments(prev => [...(prev || []), ...userRepliedComments])
+      setSubComments(prev => {
+        const index = userRepliedComments.findIndex(
+          comment => comment.parentCommentId === parentCommentId
+        )
+        if (userRepliedComments[index]?.comment.length !== 0) {
+          return [...prev, ...userRepliedComments[index].comment]
+        }
+        return [...prev]
+      })
       setTotalCommentReplies(prev => prev + userRepliedComments.length)
-      updateRepliedComments()
+      updateRepliedComments(parentCommentId)
       return
     }
 
@@ -163,7 +180,7 @@ export default function ParentComment({
 
       if (parentCommentId === userRepliedComments[0]?.parentCommentId) {
         setTotalCommentReplies(result.length)
-        updateRepliedComments()
+        updateRepliedComments(_id)
       }
       setSubComments(result)
       return
@@ -352,12 +369,27 @@ export default function ParentComment({
                 className=' text-neutral-500 flex text-[10px] items-center gap-3'
                 onClick={() => {
                   if (
-                    userRepliedComments.length > 0 &&
-                    userRepliedComments.find(comment => comment.parentCommentId === _id)
+                    userRepliedComments?.find(
+                      comment => comment.parentCommentId === _id
+                    )?.comment.length! > 0 &&
+                    userRepliedComments?.find(
+                      comment => comment.parentCommentId === _id
+                    )
                   ) {
-                    setSubComments(prev => [...(prev || []), ...userRepliedComments])
-                    setTotalCommentReplies(prev => prev + userRepliedComments.length)
-                    updateRepliedComments()
+                    setSubComments(prev => {
+                      const index = userRepliedComments?.findIndex(
+                        comment => comment.parentCommentId === _id
+                      )
+                      return [...prev, ...userRepliedComments[index].comment]
+                    })
+                    setTotalCommentReplies(
+                      prev =>
+                        prev +
+                        (userRepliedComments?.find(
+                          comment => comment.parentCommentId === _id
+                        )?.comment.length || 0)
+                    )
+                    updateRepliedComments(_id)
                   }
                   setOpenRepliedComments(prev => !prev)
                   getRepliedComments(_id)
@@ -399,53 +431,60 @@ export default function ParentComment({
 
         {userRepliedComments &&
           userRepliedCommentsLength > 0 &&
-          userRepliedComments.find(
-            comment => comment.parentCommentId === _id //we need to find efficient implementation
-          ) && (
+          userRepliedComments.find(comment => comment.parentCommentId === _id) && (
             <div className='text-[12px] flex flex-col items-start gap-[10px]'>
-              {userRepliedComments.length > 0 && totalCommentReplies === 0 && (
-                <div className='flex items-center gap-[10px] justify-start mt-3'>
-                  <button
-                    className=' text-neutral-500 text-[10px] flex items-center gap-3'
-                    onClick={() => {
-                      setOpeningUserRepliedComments(prev => !prev)
-                    }}
-                  >
-                    {openUserRepliedComments
-                      ? `Hide replies`
-                      : `View replies (${userRepliedComments.length})`}
-                    {isOpeningRepliedComments && <div className='loader '></div>}
-                  </button>
-                </div>
-              )}
-              {openUserRepliedComments && (
-                <div className='w-full relative pl-4'>
-                  {/* <div className='absolute left-0 h-[98%] animate-in fade-in-0 rounded-md bg-neutral-800 w-[2px]'></div> */}
+              {userRepliedComments?.find(comment => comment.parentCommentId === _id)
+                ?.comment.length! > 0 &&
+                totalCommentReplies === 0 && (
+                  <div className='flex items-center gap-[10px] justify-start mt-3'>
+                    <span className='w-[25px] h-[2px] bg-neutral-600 rounded-[2px] '></span>
+                    <button
+                      className=' text-neutral-500 text-[10px] flex items-center gap-3'
+                      onClick={() => {
+                        setOpeningUserRepliedComments(prev => !prev)
+                      }}
+                    >
+                      {' '}
+                      {openUserRepliedComments
+                        ? `Hide replies`
+                        : `View replies (${
+                            userRepliedComments.find(
+                              comment => comment.parentCommentId === _id
+                            )?.comment.length
+                          })`}
+                      {isOpeningRepliedComments && <div className='loader '></div>}
+                    </button>
+                  </div>
+                )}
 
-                  {userRepliedComments?.map((comment: ISubComment) => {
+              {openUserRepliedComments && (
+                <div className='w-full relative'>
+                  {userRepliedComments.map(comment => {
                     if (_id === comment.parentCommentId) {
-                      return (
-                        <SubComment
-                          key={comment._id}
-                          _id={comment._id}
-                          postId={comment.postId}
-                          parentCommentId={comment.parentCommentId}
-                          subCommentUserId={comment.postedBy._id}
-                          subCommentImage={comment.postedBy.userProfileImage}
-                          subCommentUsername={comment.postedBy.username}
-                          subCommentCommentText={comment.commentText}
-                          subCommentPostedDate={comment.createdAt}
-                          subCommentTotalLikes={comment.likes}
-                          updateUsername={updateUsername}
-                          updateReplyCommentData={updateReplyCommentData}
-                          clientComment={true}
-                          likeSubComment={likeSubComment}
-                          unlikeSubComment={unlikeSubComment}
-                          handleParentCommentModal={handleParentDeleteModal}
-                          setDeleteSubCommentDetails={setDeleteSubCommentDetails}
-                          deleteSubComment={deleteSubComment}
-                        />
-                      )
+                      return comment.comment.map(userComment => {
+                        return (
+                          <SubComment
+                            key={userComment._id}
+                            _id={userComment._id}
+                            postId={userComment.postId}
+                            parentCommentId={userComment.parentCommentId}
+                            subCommentUserId={userComment.postedBy._id}
+                            subCommentImage={userComment.postedBy.userProfileImage}
+                            subCommentUsername={userComment.postedBy.username}
+                            subCommentCommentText={userComment.commentText}
+                            subCommentPostedDate={userComment.createdAt}
+                            subCommentTotalLikes={userComment.likes}
+                            updateUsername={updateUsername}
+                            updateReplyCommentData={updateReplyCommentData}
+                            clientComment={true}
+                            likeSubComment={likeSubComment}
+                            unlikeSubComment={unlikeSubComment}
+                            handleParentCommentModal={handleParentDeleteModal}
+                            setDeleteSubCommentDetails={setDeleteSubCommentDetails}
+                            deleteSubComment={deleteSubComment}
+                          />
+                        )
+                      })
                     }
                   })}
                 </div>

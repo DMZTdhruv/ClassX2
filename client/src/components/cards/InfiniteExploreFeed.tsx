@@ -4,6 +4,7 @@ import { getPosts } from '@/app/(root)/postActions'
 import React, { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import NormalPost from './NormalPost'
+import { usePostContext } from '@/context/PostContext'
 
 const InfiniteExploreFeed = ({
   cookie,
@@ -12,21 +13,25 @@ const InfiniteExploreFeed = ({
   cookie: string
   totalPost: number
 }) => {
+  const { setExplorePost, explorePost, userPost } = usePostContext()
   const { ref, inView } = useInView()
-  const [posts, setPosts] = useState<IPost[]>([])
   const [page, setPage] = useState<number>(0)
   const [allPostLoaded, setAllPostLoaded] = useState<boolean>(false)
+
+  useEffect(() => {
+    console.log({ explorePost, userPost })
+  }, [explorePost])
 
   const loadMorePosts = async () => {
     const nextPage = page + 1
     const newPosts: IPost[] = await getPosts(cookie, nextPage)
-    setPosts(prev => [...prev, ...newPosts])
+    setExplorePost(prev => [...prev, ...newPosts])
     setPage(nextPage)
   }
 
   useEffect(() => {
     if (inView) {
-      if (posts.length >= totalPost) {
+      if (explorePost.length >= totalPost) {
         setAllPostLoaded(true)
         return
       }
@@ -37,7 +42,7 @@ const InfiniteExploreFeed = ({
   return (
     <>
       <div className=' p-[1px]  grid grid-cols-3 max-w-[904px] gap-[1px]  '>
-        {posts?.map(posts => {
+        {explorePost?.map(posts => {
           return (
             <NormalPost
               key={posts._id}

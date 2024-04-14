@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { formatDate } from '@/utils'
+import { formatMessageSideBarDate } from '@/utils/formatDate'
 import Link from 'next/link'
 import { IPost } from '@/Constants'
 import { likePost, unlikePost } from '@/utils/LikeFunctions'
@@ -40,7 +40,7 @@ const Post: React.FC<IPost> = ({
   }, [authUser])
 
   return (
-    <div className='w-full animate-in fade-in-0 lg:w-[584px] h-auto  border-b-2 border-[#171717] font-poppins  postSection'>
+    <div className='w-full animate-in fade-in-0 lg:w-[544px] h-auto  border-b-2 border-[#171717] font-poppins  postSection'>
       <div className='h-[60px] px-[15px] flex items-center justify-between md:text-[14px] text-[12px]'>
         <div className='flex items-center justify-between w-full gap-[11px]'>
           <div className='flex items-center gap-[11px]'>
@@ -57,19 +57,24 @@ const Post: React.FC<IPost> = ({
               unoptimized
             />
             <div className='flex font-semibold gap-3 items-center'>
-              <Link
-                href={`/profile/${postedBy._id}`}
-                className='flex items-center gap-3'
-              >
-                {postedBy?.username}{' '}
-                <span className=' h-1 w-1 bg-neutral-600 rounded-full'></span>
-              </Link>
-              <span
-                className='text-neutral-500 md:text-[13px] text-[11px]'
-                suppressHydrationWarning={true}
-              >
-                {formatDate(date)} ago
-              </span>
+              <div>
+                <div className='flex items-center gap-2'>
+                  <Link
+                    href={`/profile/${postedBy._id}`}
+                    className='flex items-center gap-3'
+                  >
+                    {postedBy?.username}
+                  </Link>
+                  <span className=' h-1 w-1 bg-neutral-600 rounded-full'></span>
+                  <span
+                    className='text-neutral-500 md:text-[13px] text-[11px]'
+                    suppressHydrationWarning={true}
+                  >
+                    {formatMessageSideBarDate(date)}
+                  </span>
+                </div>
+                <span className='text-[12px] '>{location}</span>
+              </div>
             </div>
           </div>
           <button
@@ -98,7 +103,7 @@ const Post: React.FC<IPost> = ({
           onLoad={() => {
             setLoadingImage(true)
           }}
-          className={`object-cover  md:w-[584px] md:h-[584px] border-2 border-[#171717]
+          className={`object-cover rounded-[5px] md:w-[584px] md:h-[584px] border-2 border-[#171717]
           ${!loadingImage ? 'animate-pulse rounded-md bg-neutral-700' : ''}`}
           priority={false}
           unoptimized={loadingImage}

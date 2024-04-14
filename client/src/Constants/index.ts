@@ -144,7 +144,13 @@ interface AuthContext {
   userProfileImage: string
 }
 
+interface IReplyMessage {
+  repliedUser: string
+  repliedUserMessage: string
+}
+
 export type {
+  IReplyMessage,
   IComments,
   IPost,
   UpdateReplyCommentData,

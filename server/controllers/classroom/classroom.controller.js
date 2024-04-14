@@ -2,6 +2,7 @@ import {
   createClassroomService,
   createClassroomUpdatesService,
   getAllClassroomsService,
+  getClassroomByIdService,
   getClassroomService,
   getClassroomUpdateService,
   joinClassroomService,
@@ -99,6 +100,22 @@ export const getClassroomUpdates = async (req, res) => {
     res.status(statusCode).json(response)
   } catch (error) {
     console.log(`Error in createClassroomUpdate controller: ${error.message} `)
+    res.status(500).json({ error: `Internal server error` })
+  }
+}
+
+export const getClassroomUpdate = async (req, res) => {
+  try {
+    const { classId, updateId } = req.params
+    const user = req.user
+    const { statusCode, response } = await getClassroomByIdService(
+      user,
+      classId,
+      updateId
+    )
+    res.status(statusCode).json(response)
+  } catch (error) {
+    console.log(`Error in getClassroomUpdateController: ${error.message}`)
     res.status(500).json({ error: `Internal server error` })
   }
 }

@@ -32,11 +32,11 @@ interface SubComments {
   updateUsername: (name: string) => void
   updateReplyCommentData: (data: UpdateReplyCommentData) => void
   clientComment?: boolean
-  likeSubComment?: (_id: string) => void
-  unlikeSubComment?: (_id: string) => void
+  likeSubComment?: (parentCommentId: string, subCommentId: string) => void
+  unlikeSubComment?: (parentCommentId: string, subCommentId: string) => void
   handleParentCommentModal: (data: boolean) => void
   setDeleteSubCommentDetails: (data: DeleteCommentDetails) => void
-  deleteSubComment?: (data: string) => void
+  deleteSubComment?: (parentCommentId: string, commentId: string) => void
 }
 
 export default function SubComment({
@@ -62,18 +62,20 @@ export default function SubComment({
   const { authUser } = useAuthContext()
   const date = new Date(subCommentPostedDate)
   const formatedDate = formatDate(date)
+
   const [isLiked, setIsLiked] = useState<boolean>(
     subCommentTotalLikes.filter(id => id === authUser?.userProfileId).length > 0
   )
   const [numberOfLikes, setNumberOfLikes] = useState<number>(
     subCommentTotalLikes.length
   )
+
   const user = subCommentCommentText.split(' ')[0]
   const userComment = subCommentCommentText.split(' ').slice(1).join(' ')
 
   const likeComment = async () => {
     if (isLiked) return
-    clientComment && likeSubComment?.(_id)
+    clientComment && likeSubComment?.(parentCommentId, _id)
     setNumberOfLikes(numberOfLikes + 1)
     try {
       const response = await fetch(`${Api}/post/comment/sub/like-comment`, {
@@ -94,7 +96,7 @@ export default function SubComment({
         throw new Error('Error liking in post ')
       }
 
-      const result = await response.json()
+      await response.json()
     } catch (err) {
       console.error(err)
     }
@@ -103,7 +105,7 @@ export default function SubComment({
   const unlikeComment = async () => {
     if (!isLiked) return
     setNumberOfLikes(numberOfLikes - 1)
-    clientComment && unlikeSubComment?.(_id)
+    clientComment && unlikeSubComment?.(parentCommentId, _id)
     try {
       const response = await fetch(`${Api}/post/comment/sub/unlike-comment`, {
         method: 'POST',
@@ -123,7 +125,7 @@ export default function SubComment({
         throw new Error('Error unliking the post ')
       }
 
-      const result = await response.json()
+      await response.json()
     } catch (err) {
       console.error(err)
     }
@@ -206,8 +208,11 @@ export default function SubComment({
         className='hover:scale-105  flexCenter w-auto'
         onClick={() => {
           setIsLiked(prev => !prev)
-          likeComment()
-          unlikeComment()
+          if (isLiked) {
+            unlikeComment()
+          } else {
+            likeComment()
+          }
         }}
       >
         {isLiked ? (

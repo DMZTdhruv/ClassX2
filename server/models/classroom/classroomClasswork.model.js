@@ -12,7 +12,10 @@ const classroomClassworkModelSchema = new mongoose.Schema(
     },
     attachments: [
       {
-        type: String,
+        _id: String,
+        originalFilename: String,
+        url: String,
+        extension: String,
       },
     ],
     topic: [

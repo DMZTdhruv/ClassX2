@@ -4,8 +4,8 @@ export default {
   type: 'document',
   fields: [
     {
-      name: 'classwork',
-      title: 'Classwork',
+      name: 'file',
+      title: 'File',
       type: 'file',
       options: {
         accept: ['.pdf', '.docx', '.ppt', '.mp4'], 

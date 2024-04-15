@@ -16,6 +16,7 @@ const useCreateClassroom = () => {
   const [message, setMessage] = useState<string>('')
 
   const createClassroom = async (classroomData: ClassroomState) => {
+    
     try {
       setLoading(true)
       const res = await fetch(`${Api}/classroom/create-classroom`, {
@@ -33,7 +34,7 @@ const useCreateClassroom = () => {
       }
 
       setMessage(data.message)
-      updateClassroom();
+      updateClassroom()
       router.push('/classroom')
     } catch (error: any) {
       console.error(error.message)

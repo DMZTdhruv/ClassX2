@@ -2,6 +2,7 @@ import ClassroomRepositoryInterface from '../interfaces/classroom.interface.js'
 import Classroom from '../models/classroom/classroom.model.js'
 import UserProfile from '../models/user/userProfile.model.js'
 import ClassroomPost from '../models/classroom/classroomPost.model.js'
+import ClassroomClasswork from '../models/classroom/classroomClasswork.model.js'
 
 export default class ClassroomRepository extends ClassroomRepositoryInterface {
   async createClassroom(className, classroomJoinId, branch, division, semester, user) {
@@ -90,5 +91,25 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
         select: 'username userProfileImage',
       })
     return update;
+  }
+
+  async createClassroomClasswork(
+    classId,
+    title,
+    description,
+    userProfileId,
+    attachments,
+    topic
+  ) {
+    const classwork = await ClassroomClasswork.create({
+      classId,
+      title,
+      description,
+      postedBy: userProfileId,
+      attachments,
+      topic
+    })
+
+    return await classwork.save();
   }
 }

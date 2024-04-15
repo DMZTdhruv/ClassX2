@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { useRef } from 'react'
-import { MdCancel } from 'react-icons/md'
+import { RxCross2 } from 'react-icons/rx'
 
 interface ImageModalProps {
   imageUrl: string
@@ -41,9 +41,9 @@ const ClassroomImageModal: React.FC<ImageModalProps> = ({
         />
         <button
           onClick={onClose}
-          className='fixed md:top-8 right-8 bg-transparent rounded-full p-1'
+          className='fixed top-4 right-4 bg-transparent rounded-full p-1'
         >
-          <MdCancel size={24} />
+          <RxCross2 size={24} />
         </button>
       </div>
     </div>

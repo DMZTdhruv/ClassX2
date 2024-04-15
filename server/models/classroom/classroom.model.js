@@ -23,6 +23,7 @@ const classroomSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    topics: [{ type: String }],
     adminEmails: [
       {
         type: mongoose.Schema.Types.ObjectId,

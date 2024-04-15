@@ -14,6 +14,7 @@ import {
 } from './routes/protected/index.js'
 import connectToMongoDB from './config/db.js'
 import classroomRoutes from './routes/protected/classroom.route.js'
+import { getClassroomWorksService } from './services/classroom/classroom.service.js'
 dotenv.config()
 
 const port = process.env.PORT || 3001

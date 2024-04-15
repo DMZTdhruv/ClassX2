@@ -63,3 +63,79 @@ export const getClassroomUpdates = async (
     console.error(error.message)
   }
 }
+
+export const getClassroomTopics = async (cookie: string, classId: string) => {
+  try {
+    const res = await fetch(`${Api}/classroom/${classId}/topics`, {
+      method: 'GET',
+      headers: {
+        Cookies: `classX_user_token=${cookie}`,
+      },
+      cache: 'no-store',
+      next: {
+        tags: ['classroomTopics'],
+      },
+    })
+
+    const data = await res.json()
+    if (data.error) {
+      throw new Error(data.error)
+    }
+    console.log(data)
+    return data.data
+  } catch (error: any) {
+    console.log(error.message)
+  }
+}
+
+export const getClassroomClassworkData = async (
+  cookie: string,
+  classId: string,
+  topicName: string
+) => {
+  try {
+    const res = await fetch(`${Api}/classroom/classwork/${classId}/${topicName}`, {
+      method: 'GET',
+      headers: {
+        Cookies: `classX_user_token=${cookie}`,
+      },
+      cache: 'no-store',
+      next: {
+        tags: ['classroomClassworkData'],
+      },
+    })
+
+    const data = await res.json()
+    if (data.error) {
+      throw new Error(data.error)
+    }
+    return data.data
+  } catch (error: any) {
+    console.log(error.message)
+  }
+}
+
+export const getClassworkById = async (
+  cookie: string,
+  classId: string,
+  classworkId: string
+) => {
+  try {
+    const res = await fetch(`${Api}/classroom/${classId}/classwork/${classworkId}`, {
+      method: 'GET',
+      headers: {
+        Cookies: `classX_user_token=${cookie}`,
+      },
+      cache: 'no-store',
+    })
+
+    const data = await res.json()
+    console.log(data)
+    if (data.error) {
+      throw new Error(data.error)
+    }
+    return data.data
+  } catch (error: any) {
+    console.log(error.message)
+  }
+}

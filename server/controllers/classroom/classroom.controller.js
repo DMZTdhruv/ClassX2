@@ -1,10 +1,14 @@
 import {
+  createClassroomClassworkService,
   createClassroomService,
   createClassroomUpdatesService,
   getAllClassroomsService,
   getClassroomByIdService,
   getClassroomService,
+  getClassroomTopicsService,
   getClassroomUpdateService,
+  getClassroomWorksService,
+  getClassworkByIdService,
   joinClassroomService,
 } from '../../services/classroom/classroom.service.js'
 
@@ -117,5 +121,83 @@ export const getClassroomUpdate = async (req, res) => {
   } catch (error) {
     console.log(`Error in getClassroomUpdateController: ${error.message}`)
     res.status(500).json({ error: `Internal server error` })
+  }
+}
+
+export const createClassroomClasswork = async (req, res) => {
+  try {
+    const { userProfileId } = req.user
+    const { classroomObj } = req.body
+    console.log(req.body)
+
+    console.log({
+      userProfileId,
+      classroomObj,
+    })
+
+    const { statusCode, response } = await createClassroomClassworkService(
+      userProfileId,
+      classroomObj
+    )
+
+    res.status(statusCode).json(response)
+  } catch (error) {
+    console.log(`Error in createClassroomClasswork ${error.message}`)
+    res.status(500).json({ error: 'Internal server error' })
+  }
+}
+
+export const getClassroomTopics = async (req, res) => {
+  try {
+    const { classId } = req.params
+    const { userProfileId } = req.user
+
+    const { statusCode, response } = await getClassroomTopicsService(
+      userProfileId,
+      classId
+    )
+    res.status(statusCode).json(response)
+  } catch (error) {
+    console.log(`Error in getClassroomTopics ${error.message}`)
+    res.status(500).json({ error: 'Internal server error' })
+  }
+}
+
+export const getClassroomWork = async (req, res) => {
+  try {
+    const { userProfileId } = req.user
+    const { classId, topicId } = req.params
+    console.log(req.params)
+    const { statusCode, response } = await getClassroomWorksService(
+      userProfileId,
+      classId,
+      topicId
+    )
+
+    res.status(statusCode).json(response)
+  } catch (error) {
+    console.log(`Error in getClassroomWorks ${error.message}`)
+  }
+}
+
+export const getClassworkById = async (req, res) => {
+  try {
+    const { userProfileId } = req.user
+    const { classId, classworkId } = req.params
+    console.log({
+      userProfileId,
+      params: req.params,
+    })
+
+    console.log(`HELLOOOOOOOOOOOOOOOOOOOOOO WOOOOOOOOOORRRRRRRLLLLLLLDDDDDDDDD`)
+
+    const { statusCode, response } = await getClassworkByIdService(
+      userProfileId,
+      classId,
+      classworkId
+    )
+    res.status(statusCode).json(response)
+  } catch (error) {
+    console.log(`Error in getClassworkById ${error.message}`)
   }
 }

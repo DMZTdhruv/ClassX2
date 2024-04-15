@@ -1,9 +1,30 @@
+import Classroom from '../../models/classroom/classroom.model.js'
+import ClassroomClasswork from '../../models/classroom/classroomClasswork.model.js'
 import UserProfile from '../../models/user/userProfile.model.js'
 import ClassroomRepository from '../../repositories/classroom.repository.js'
 import { returnMessage } from '../../utils/returnMessage.js'
 import { classroomUpdateValidator } from '../../validations/ClassroomValidator/classroom.validator.js'
+import { validateClasswork } from '../../validations/ClassroomValidator/classwork.validator.js'
 
 const classroomRepo = new ClassroomRepository()
+
+const isAuthorizedUser = async (classId, userProfileId) => {
+  try {
+    const classroom = await classroomRepo.getClassroomById(classId)
+    const userIsAuthorized =
+      classroom.studentEmails.includes(userProfileId) ||
+      classroom.adminEmails.includes(userProfileId)
+    console.log({
+      userIsAuthorized,
+    })
+
+    return userIsAuthorized
+  } catch (error) {
+    console.error(error.message)
+    throw new Error(error.message)
+  }
+}
+
 export const createClassroomService = async (
   className,
   classroomJoinId,
@@ -197,5 +218,104 @@ export const getClassroomByIdService = async (user, classId, classroomUpdateId) 
     }
   } catch (error) {
     throw new Error(`Error in getClassroomByIdService: ${error.message}`)
+  }
+}
+
+export const createClassroomClassworkService = async (userProfileId, classwork) => {
+  try {
+    const { classId, title, description, topic, attachments } = classwork
+    const validateClassworkObj = validateClasswork(
+      userProfileId,
+      classId,
+      title,
+      description,
+      topic,
+      attachments
+    )
+
+    if (validateClassworkObj) {
+      return validateClassworkObj
+    }
+
+    const classroom = await classroomRepo.getClassroomById(classId)
+    if (!classroom.topics.includes(topic)) {
+      classroom.topics.push(topic)
+    }
+
+    const isAuthorizedUser = classroom.adminEmails.includes(userProfileId)
+    if (!isAuthorizedUser) {
+      return returnMessage(401, { error: 'Unauthorized user' })
+    }
+
+    const newClasswork = await classroomRepo.createClassroomClasswork(
+      classId,
+      title,
+      description,
+      userProfileId,
+      attachments,
+      topic
+    )
+
+    if (!newClasswork) {
+      return returnMessage(400, { error: 'Error in creating classwork' })
+    }
+
+    classroom.classWork.push(newClasswork._id)
+    await classroom.save()
+    return returnMessage(200, { message: 'Classwork created', data: newClasswork })
+  } catch (error) {
+    console.log(`Error in createClassroomClassworkService: ${error.message}`)
+    throw new Error(error.message)
+  }
+}
+
+export const getClassroomTopicsService = async (userProfileId, classId) => {
+  try {
+    const classroom = await classroomRepo.getClassroomById(classId)
+    const isAuthorized =
+      classroom.studentEmails.includes(userProfileId) ||
+      classroom.adminEmails.includes(userProfileId)
+    if (!isAuthorized) {
+      return returnMessage(401, { error: 'Unauthorized user' })
+    }
+    return returnMessage(200, { data: classroom.topics })
+  } catch (error) {
+    console.log(`Error in getClassroomTopicsService: ${error.message}`)
+    throw new Error(error.message)
+  }
+}
+
+export const getClassroomWorksService = async (userProfileId, classId, topic) => {
+  try {
+    const isValidUser = await isAuthorizedUser(classId, userProfileId)
+    if (!isValidUser) {
+      return returnMessage(401, { error: 'Unauthorized user' })
+    }
+
+    const classwork = await ClassroomClasswork.find({ topic: topic })
+    console.log(classwork)
+    return returnMessage(200, { data: classwork })
+  } catch (error) {
+    console.log(`Error in getClassroomWorksService: ${error.message}`)
+    throw new Error(error.message)
+  }
+}
+
+export const getClassworkByIdService = async (userProfileId, classId, classworkId) => {
+  try {
+    const isValidUser = await isAuthorizedUser(classId, userProfileId)
+    if (!isValidUser) {
+      return returnMessage(401, { error: 'Unauthorized user' })
+    }
+
+    const classwork = await ClassroomClasswork.findById(classworkId).populate({
+      path: 'postedBy',
+      select: 'userProfileImage username',
+    })
+    console.log(classwork)
+    return returnMessage(200, { data: classwork })
+  } catch (error) {
+    console.log(error.message)
+    throw new Error(error.message)
   }
 }

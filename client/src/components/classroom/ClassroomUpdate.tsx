@@ -40,7 +40,7 @@ const ClassroomUpdate = ({
               alt='User profile image'
               height={48}
               width={48}
-              className='aspect-square rounded-full'
+              className='aspect-square rounded-full object-cover'
               unoptimized
             />
             <div className='flex items-start flex-col'>

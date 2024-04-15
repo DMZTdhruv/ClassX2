@@ -15,7 +15,7 @@ const useCreateClasswork = () => {
   const [uploadingFileError, setUploadingFileError] = useState<string>('')
   const [message, setMessage] = useState<string>('')
 
-  const createClasswork = async (classworkObj: IClassroomWork) => {
+  const createClasswork = async (classroomObj: IClassroomWork) => {
     setUploadingFile(true)
     try {
       const res = await fetch(`${Api}/classroom/create-classwork`, {
@@ -23,22 +23,19 @@ const useCreateClasswork = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(classworkObj),
+        body: JSON.stringify({ classroomObj }),
         credentials: 'include',
       })
 
       const data = await res.json()
+      console.log(data)
       if (data.error) {
         throw new Error(data.error)
       }
       setMessage(data.message)
       updateClassroomUpdates()
     } catch (error: any) {
-      console.error(error.message)
-      setUploadingFileError(error.message)
-      setTimeout(() => {
-        setUploadingFileError('')
-      }, 3000)
+      throw new Error(error.message)
     } finally {
       setUploadingFile(false)
     }

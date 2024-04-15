@@ -33,22 +33,23 @@ const useGenerateFileLink = () => {
     }
   }
 
-  const getFileUrl = async (file: SanityAssetDocument) => {
+  const getFile = async (file: SanityAssetDocument) => {
     const doc = {
       _type: 'classwork',
       file: {
-        _type: 'file',
+        type: 'file',
         asset: {
           _type: 'reference',
           _ref: file._id,
         },
       },
     }
-
     try {
       const createFile = await client.create(doc)
-      const url = await client.fetch(`*[_id == '${createFile.file.asset._ref}']{url}`)
-      return url[0].url
+      const file = await client.fetch(
+        `*[_id == '${createFile.file.asset._ref}']{_id, originalFilename, extension, url}`
+      )
+      return file[0]
     } catch (error: any) {
       console.error(error.message)
       setSanityError(error.message)
@@ -60,7 +61,7 @@ const useGenerateFileLink = () => {
 
   return {
     generateTempFileUrl,
-    getFileUrl,
+    getFile,
     sanityError,
   }
 }

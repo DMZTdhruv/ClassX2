@@ -26,4 +26,8 @@ export default class ClassroomRepositoryInterface {
   async getClassroomUpdateById() {
     throw new Error(`getClassroomUpdate method not implemented`)
   }
+  async createClassroomClasswork() {
+    throw new Error(`createClassroomClasswork method not implemented`)
+  }
 }
+

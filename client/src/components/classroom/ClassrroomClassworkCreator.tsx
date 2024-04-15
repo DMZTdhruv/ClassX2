@@ -24,7 +24,11 @@ import { IoWarningOutline } from 'react-icons/io5'
 import ClassroomHeader from './ClassroomHeader'
 import useCreateClassroom from '@/hooks/classroom/useCreateClassroom'
 import useCreateClasswork from '@/hooks/classroom/useCreateClasswork'
-import { updateClassroom, updateClassroomUpdates } from '@/app/(root)/classroom/classroomActions'
+import {
+  updateClassroom,
+  updateClassroomUpdates,
+} from '@/app/(root)/classroom/classroomActions'
+import useGetTopics from '@/hooks/classroom/useGetTopics'
 
 interface IClassroomCreator {
   classId: string
@@ -75,20 +79,21 @@ const ClassroomClassworkCreator = ({
 }) => {
   const { authUser } = useAuthContext()
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
-  const { generateTempFileUrl, getFileUrl, sanityError } = useGenerateFileLink()
+  const { generateTempFileUrl, getFile, sanityError } = useGenerateFileLink()
   const { uploadingFile, uploadingFileError, message, createClasswork } =
     useCreateClasswork()
+
+  const { getTopics, loading, topics } = useGetTopics()
+
+  useEffect(() => {
+    getTopics(classId)
+  }, [])
 
   // States
   const [isAdmin, setIsAdmin] = useState<boolean>(false)
   const [openModal, setOpenModal] = useState<boolean>(false)
-  const [existingTopics, setExistingTopics] = useState<string[]>([
-    'Thermodynamics',
-    'Nuclear plant',
-    'Neo energy',
-    'Vibranium',
-    'Python',
-  ])
+  const [existingTopics, setExistingTopics] = useState<string[]>(topics)
+  const [posted, setPosted] = useState<boolean>(false)
 
   // error states
   const [classWorkError, setClassWorkError] = useState<string>('')
@@ -102,7 +107,7 @@ const ClassroomClassworkCreator = ({
   const [title, setTitle] = useState<string>('')
   const [description, setDescription] = useState<string>('')
   const [attachments, setAttachMents] = useState<SanityAssetDocument[]>([])
-  const [attachmentsUrl, setAttachmentsUrl] = useState<string[]>([])
+  const [attachmentsUrl, setAttachmentsoUrl] = useState<string[]>([])
   const [topic, setTopic] = useState<string>('')
 
   // loading states
@@ -145,6 +150,10 @@ const ClassroomClassworkCreator = ({
 
   const handleCloseModal = () => {
     setOpenModal(false)
+    clearClasswork()
+  }
+
+  const clearClasswork = () => {
     setTitle('')
     setDescription('')
     setAttachMents([])
@@ -157,14 +166,12 @@ const ClassroomClassworkCreator = ({
 
   const getFileUrlsFromSanity = async () => {
     try {
-      const urls = await Promise.all(
-        attachments.map(async attachment => {
-          const url = await getFileUrl(attachment)
-          return url
-        })
+      const files = await Promise.all(
+        attachments.map(async attachment => await getFile(attachment))
       )
+      console.log(files)
 
-      setAttachmentsUrl(prev => [...urls])
+      return files
     } catch (error: any) {
       console.error(error.message)
       setClassWorkError(error.message)
@@ -175,9 +182,17 @@ const ClassroomClassworkCreator = ({
     }
   }
 
+  interface IClassroomWork {
+    classId: string
+    title: string
+    description: string
+    topic: string
+    attachments: string[]
+  }
+
   const handleClassworkSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    setUploading(true);
+    setUploading(true)
     try {
       if (
         description.trim() === '' ||
@@ -188,16 +203,27 @@ const ClassroomClassworkCreator = ({
         throw new Error('Incomplete details')
       }
 
-      await getFileUrlsFromSanity();
-      const classworkObj = {
+      const classworkObj: IClassroomWork = {
         classId: classId,
         title: title,
         description: description,
         topic: topic,
-        attachments: attachmentsUrl,
+        // @ts-ignore
+        attachments: await getFileUrlsFromSanity(),
       }
-      await createClasswork(classworkObj);
-      updateClassroomUpdates();
+
+      if (classworkObj.attachments.length === attachments.length) {
+        await createClasswork(classworkObj)
+      } else {
+        throw new Error(`Post again!`)
+      }
+
+      setPosted(true)
+      setTimeout(() => {
+        setPosted(false)
+      }, 5000)
+      setOpenModal(false)
+      clearClasswork()
     } catch (error: any) {
       console.error(error.message)
       setClassWorkError(error.message)
@@ -210,10 +236,17 @@ const ClassroomClassworkCreator = ({
   }
 
   return (
-    <section>
+    <section className='p-[16px] mt-3'>
+      {posted && (
+        <div className='fixed animate-in fade-in-0 top-[50%]  left-[50%] translate-x-[-50%] translate-y-[-50%]'>
+          <span className='animate-in fade-in-0 border py-1 px-4 rounded-full bg-neutral-900 border-neutral-800'>
+            posted
+          </span>
+        </div>
+      )}
       {openModal ? (
         <form
-          className='bg-neutral-900/40 md:border-neutral-800 md:border relative flex flex-col items-end  md:p-[22px] p-[16px] md:rounded-[20px]'
+          className='bg-neutral-900/40 md:border-neutral-800 md:border relative flex flex-col items-end  md:p-[22px] p-[16px] rounded-[20px]'
           onSubmit={handleClassworkSubmit}
         >
           <div className='flex flex-col gap-4 w-full'>
@@ -255,14 +288,14 @@ const ClassroomClassworkCreator = ({
             <label>
               Select a topic
               <div className='mt-1'>
-                <Select onValueChange={handleTopicChange} disabled={false}>
+                <Select onValueChange={handleTopicChange} disabled={loading}>
                   <SelectTrigger className='bg-[#202020] border-none outline-none rounded-full  px-[16px] '>
                     <SelectValue
-                      placeholder={false ? 'Topics are loading..' : 'Choose a topic'}
+                      placeholder={loading ? 'Topics are loading..' : 'Choose a topic'}
                     />
                   </SelectTrigger>
                   <SelectContent className='bg-[#202020]'>
-                    {existingTopics?.map((topic: string) => {
+                    {topics?.map((topic: string) => {
                       return (
                         <SelectItem key={topic} className='bg-[#202020]' value={topic}>
                           {topic}
@@ -381,7 +414,7 @@ const ClassroomClassworkCreator = ({
         </form>
       ) : (
         <div
-          className='flex group cursor-pointer items-center md:p-[22px] p-[16px] bg-neutral-900 md:rounded-[20px]'
+          className='flex group cursor-pointer items-center md:p-[22px] p-[16px] bg-neutral-900 rounded-[20px]'
           onClick={() => setOpenModal(prev => !prev)}
         >
           <div className='flex items-center gap-[10px]'>

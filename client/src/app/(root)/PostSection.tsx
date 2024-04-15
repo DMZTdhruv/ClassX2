@@ -26,6 +26,7 @@ interface IPost {
   caption: string
   location: string
   category: string
+  saved: string[]
   postedBy: {
     _id: string
     username: string
@@ -117,6 +118,7 @@ export default function PostSection({
           <Post
             key={post._id}
             _id={post._id}
+            saved={post.saved}
             title={post.title}
             imageUrl={post.imageUrl}
             caption={post.caption}

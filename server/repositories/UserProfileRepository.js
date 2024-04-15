@@ -52,6 +52,34 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
     return posts
   }
 
+  async savePost(postId, userProfileId, post) {
+    const user = await UserProfile.findById(userProfileId)
+    post.saved.push(userProfileId)
+    user.savedPosts.push(postId)
+    const data = await Promise.all([post.save(), user.save()])
+    console.log(data)
+    return data
+  }
+
+  async unSavePost(postId, userProfileId, post) {
+    const user = await UserProfile.findById(userProfileId)
+    if (user.savedPosts.includes(postId)) {
+      user.savedPosts.remove(postId)
+      post.saved.remove(userProfileId)
+    }
+    const data = await Promise.all([post.save(), user.save()])
+    return data
+  }
+
+  async getSavePostData(userProfileId) {
+    return await UserProfile.findById(userProfileId).select('savedPosts')
+  }
+
+  async getAllSavedPost(userProfileId) {
+    const posts = await Post.find({ saved: userProfileId })
+    return posts
+  }
+
   async followUser(userId, userToFollowId) {
     const user = await UserProfile.findById(userId)
     user.following.push(userToFollowId)

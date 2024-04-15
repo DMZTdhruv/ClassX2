@@ -1,3 +1,5 @@
+import { Api } from '@/Constants'
+
 interface IAuthUser {
   userProfileId: string
 }
@@ -93,6 +95,55 @@ export const unlikePost = async ({
     const result = await response.json()
   } catch (err) {
     console.log(err)
+  }
+}
+
+export const savePost = async (postId: string, isSaved: boolean) => {
+  if (!isSaved) {
+    try {
+      const res = await fetch(`${Api}/post/save-post/${postId}`, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        credentials: 'include',
+      })
+
+      const data = await res.json()
+      if (data.error) {
+        throw new Error(data.error)
+      }
+
+      console.log(data)
+      return true
+    } catch (error: any) {
+      console.error(error.message)
+      return false
+    }
+  }
+}
+export const unSavePost = async (postId: string, isSaved: boolean) => {
+  console.log(isSaved)
+  if (isSaved) {
+    try {
+      const res = await fetch(`${Api}/post/unsave-post/${postId}`, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        credentials: 'include',
+      })
+
+      const data = await res.json()
+      if (data.error) {
+        throw new Error(data.error)
+      }
+      console.log(data)
+      return true
+    } catch (error: any) {
+      console.error(error.message)
+      return false
+    }
   }
 }
 

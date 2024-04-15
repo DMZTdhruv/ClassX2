@@ -34,13 +34,7 @@ export const sideBarData = [
     filledIcon: 'classroom-fill.svg',
     routes: '/classroom',
   },
-  {
-    id: 6,
-    name: 'Profile',
-    icon: 'profile.svg',
-    filledIcon: 'profile-fill.svg',
-    routes: '/profile',
-  },
+
 ]
 export const BottomBarData = [
   {
@@ -91,7 +85,7 @@ interface IDeletePostDetails {
 interface IPost {
   _id: string
   title: string
-
+  saved: string[]
   imageUrl: string
   caption: string
   location: string

@@ -1,8 +1,7 @@
 import SearchUser from '@/components/shared/SearchUser'
 import { cookies } from 'next/headers'
-import NormalPost from '@/components/cards/NormalPost'
 import { jwtDecode } from 'jwt-decode'
-import { getPosts, getTotalPost } from '../postActions'
+import {  getTotalPost } from '../postActions'
 import InfiniteExploreFeed from '@/components/cards/InfiniteExploreFeed'
 
 interface IPost {

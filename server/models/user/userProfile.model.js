@@ -11,7 +11,7 @@ const userProfileSchema = new mongoose.Schema(
     about: { type: String, default: 'This is a user' },
     userProfileImage: { type: String, required: true, unique: true },
     enrollmentNumber: { type: String, unique: true, required: true },
-    branches: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Branch' }], // Use Branch schema from the branchModel
+    branches: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Branch' }],
     isPrivate: { type: Boolean, default: false },
     semesterNumber: { type: mongoose.Schema.Types.ObjectId, ref: 'Semester' },
     division: { type: mongoose.Schema.Types.ObjectId, ref: 'Division' },
@@ -21,6 +21,7 @@ const userProfileSchema = new mongoose.Schema(
     classrooms: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Classroom' }],
     requestsId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile' }],
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
+    savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
     gender: { type: 'String' },
     medals: { type: Number, default: 0 },
     totalPoints: { type: Number, default: 0 },

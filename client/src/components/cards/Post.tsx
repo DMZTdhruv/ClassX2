@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { formatMessageSideBarDate } from '@/utils/formatDate'
 import Link from 'next/link'
 import { IPost } from '@/Constants'
-import { likePost, unlikePost } from '@/utils/LikeFunctions'
+import { likePost, savePost, unSavePost, unlikePost } from '@/utils/LikeFunctions'
 import { BsThreeDots } from 'react-icons/bs'
 import { useAuthContext } from '@/context/AuthContext'
 import { Skeleton } from '../ui/skeleton'
@@ -21,6 +21,7 @@ const Post: React.FC<IPost> = ({
   postedBy,
   likes,
   comments,
+  saved,
   createdAt,
   handleDeletePostDetails,
   handleDeleteModal,
@@ -32,11 +33,14 @@ const Post: React.FC<IPost> = ({
 
   const [numberOfLikes, setNumberOfLikes] = useState<number>(likes.length)
   const [isLiked, setIsLiked] = useState<boolean>(false)
+  const [isSaved, setIsSaved] = useState<boolean>(false)
   const [showFullCaption, setShowFullCaption] = useState<boolean>(false)
   const [loadingImage, setLoadingImage] = useState<boolean>(false)
 
   useEffect(() => {
     setIsLiked(likes.filter(id => id === authUser?.userProfileId).length > 0)
+    setIsSaved(saved?.filter(id => id === authUser?.userProfileId).length > 0)
+    console.log(saved)
   }, [authUser])
 
   return (
@@ -111,74 +115,127 @@ const Post: React.FC<IPost> = ({
       </div>
       <div>
         {authUser ? (
-          <div className='px-[13px] gap-[15px] md:h-[60px] h-[45px]  w-full flex items-center mt-[3px]'>
-            <button
-              onClick={() => {
-                setIsLiked(prev => !prev)
-                likePost({
-                  _id,
-                  isLiked,
-                  setNumberOfLikes,
-                  setIsLiked,
-                  numberOfLikes,
-                  authUser,
-                  endPoint: 'post/like-post',
-                })
-                unlikePost({
-                  _id,
-                  isLiked,
-                  setNumberOfLikes,
-                  setIsLiked,
-                  numberOfLikes,
-                  authUser,
-                  endPoint: 'post/unlike-post',
-                })
-              }}
-              className='hover:scale-105'
-            >
-              {isLiked ? (
-                <Image
-                  src={`/assets/filledHeart.svg`}
-                  width={30}
-                  height={30}
-                  alt='user jpg'
-                  className='rounded-full sm:opacity-100 sm:hover:opacity-80 focus:scale-105 object-cover active:scale-90 transition-all'
-                  priority
-                  style={{
-                    width: '30px',
-                    height: '30px',
-                  }}
-                />
-              ) : (
-                <Image
-                  src={`/assets/heart.svg`}
-                  width={30}
-                  height={30}
-                  alt='user jpg'
-                  className='rounded-full sm:opacity-100 sm:hover:opacity-80 focus:scale-105 object-cover active:scale-90 transition-all'
-                  priority
-                  style={{
-                    width: '30px',
-                    height: '30px',
-                  }}
-                />
-              )}
-            </button>
-            <Link href={`/post/${_id}`} scroll={false}>
-              <Image
-                src={`/assets/comment.svg`}
-                width={30}
-                height={30}
-                alt='user jpg'
-                unoptimized
-                priority
-                className='rounded-full transition-all sm:opacity-100 sm:hover:opacity-80 focus:scale-105 object-cover active:scale-90 '
-                style={{
-                  width: '30px',
-                  height: '30px',
+          <div className='px-[13px] gap-[15px] md:h-[60px] h-[45px]  w-full flex items-center justify-between mt-[3px]'>
+            <div className='flex gap-[15px] items-center'>
+              <button
+                onClick={() => {
+                  setIsLiked(prev => !prev)
+                  likePost({
+                    _id,
+                    isLiked,
+                    setNumberOfLikes,
+                    setIsLiked,
+                    numberOfLikes,
+                    authUser,
+                    endPoint: 'post/like-post',
+                  })
+                  unlikePost({
+                    _id,
+                    isLiked,
+                    setNumberOfLikes,
+                    setIsLiked,
+                    numberOfLikes,
+                    authUser,
+                    endPoint: 'post/unlike-post',
+                  })
                 }}
-              />
-            </Link>
+                className='hover:scale-105'
+              >
+                {isLiked ? (
+                  <Image
+                    src={`/assets/filledHeart.svg`}
+                    width={30}
+                    height={30}
+                    alt='user jpg'
+                    className='rounded-full sm:opacity-100 sm:hover:opacity-80 focus:scale-105 object-cover active:scale-90 transition-all'
+                    priority
+                    style={{
+                      width: '30px',
+                      height: '30px',
+                    }}
+                  />
+                ) : (
+                  <Image
+                    src={`/assets/heart.svg`}
+                    width={30}
+                    height={30}
+                    alt='user jpg'
+                    className='rounded-full sm:opacity-100 sm:hover:opacity-80 focus:scale-105 object-cover active:scale-90 transition-all'
+                    priority
+                    style={{
+                      width: '30px',
+                      height: '30px',
+                    }}
+                  />
+                )}
+              </button>
+              <Link href={`/post/${_id}`} scroll={false}>
+                <Image
+                  src={`/assets/comment.svg`}
+                  width={30}
+                  height={30}
+                  alt='user jpg'
+                  unoptimized
+                  priority
+                  className='rounded-full transition-all sm:opacity-100 sm:hover:opacity-80 focus:scale-105 object-cover active:scale-90 '
+                  style={{
+                    width: '30px',
+                    height: '30px',
+                  }}
+                />
+              </Link>
+            </div>
+            <div>
+              {isSaved ? (
+                <button
+                  onClick={() => {
+                    setIsSaved(prev => !prev)
+                    const data = unSavePost(_id, isSaved)
+                    if (!data) {
+                      setIsSaved(false)
+                    }
+                  }}
+                >
+                  <Image
+                    src='/assets/bookmark-fill.svg'
+                    width={30}
+                    height={30}
+                    priority
+                    unoptimized
+                    alt='bookmark icon'
+                    className='rounded-full sm:opacity-100 sm:hover:opacity-80 focus:scale-105 object-cover active:scale-90 '
+                    style={{
+                      width: '30px',
+                      height: '30px',
+                    }}
+                  />
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setIsSaved(prev => !prev)
+                    const data = savePost(_id, isSaved)
+                    if (!data) {
+                      setIsSaved(false)
+                    }
+                  }}
+                >
+                  <Image
+                    src='/assets/bookmark.svg'
+                    width={30}
+                    height={30}
+                    priority
+                    unoptimized
+                    alt='bookmark icon'
+                    className='rounded-full sm:opacity-100 sm:hover:opacity-80 focus:scale-105 object-cover active:scale-90 fill-blue-500'
+                    style={{
+                      width: '30px',
+                      height: '30px',
+                    }}
+                  />
+                </button>
+              )}
+            </div>
           </div>
         ) : (
           <Skeleton className='m-[12px]   md:h-[40px] h-[25px] w-[40%]' />

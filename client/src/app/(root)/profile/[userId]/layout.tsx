@@ -1,12 +1,11 @@
+import UserHeader from '@/components/shared/UserHeader'
 import React from 'react'
 import ProfilePosts from '../ProfilePosts'
 import { cookies } from 'next/headers'
-import { jwtDecode } from 'jwt-decode'
 import { Api } from '@/Constants'
-
-interface Token {
-  userProfileId: string
-}
+import { jwtDecode } from 'jwt-decode'
+import Link from 'next/link'
+import ProfileNavigation from '@/components/shared/profile/ProfileNavigation'
 
 interface UserProfileProps {
   _id: string
@@ -20,7 +19,17 @@ interface UserProfileProps {
   posts: string[]
 }
 
-const Page = async ({ params }: { params: { userId: string } }) => {
+interface Token {
+  userProfileId: string
+}
+
+const ProfilePage = async ({
+  params,
+  children,
+}: {
+  params: { userId: string }
+  children: React.ReactNode
+}) => {
   const cookie = cookies()
   const token = cookie.get('classX_user_token')
   const { userProfileId }: Token = token
@@ -49,16 +58,27 @@ const Page = async ({ params }: { params: { userId: string } }) => {
   }
 
   const userProfile: UserProfileProps = await getUserProfile()
+
   return (
-    <div>
-      <ProfilePosts
-        userProfileId={userProfile?._id}
-        token={token?.value || ''}
-        isDifferentUser={params.userId !== userProfileId}
-        totalPosts={userProfile?.posts.length}
+    <section className='flex mt-[80px]  md:mt-[0px] sm:px-[16px] flex-col items-center gap-[60px] '>
+      <UserHeader
+        _id={userProfile?._id}
+        name={userProfile?.name}
+        username={userProfile?.username}
+        about={userProfile?.about}
+        userProfileImage={userProfile?.userProfileImage}
+        posts={userProfile?.posts}
+        followers={userProfile?.followers}
+        following={userProfile?.following}
+        isPrivate={userProfile?.isPrivate}
       />
-    </div>
+
+      <div className='w-full max-w-[904px]'>
+        <ProfileNavigation userId={userProfile._id} currentUserId={userProfileId}/>
+        {children}
+      </div>
+    </section>
   )
 }
 
-export default Page
+export default ProfilePage

@@ -16,10 +16,14 @@ import {
   unLikePostController,
   getPostByIdController,
   getSubCommentsController,
+  deleteSubCommentController,
+  deletePostController,
+  getTotalPostCount,
+  savePostController,
+  unSavePostController,
+  getAllSavedPost,
+  getTotalSavedPostCount,
 } from '../../controllers/post/index.js'
-import deleteSubCommentController from '../../controllers/comment/subComment/deleteSubCommentController.js'
-import deletePostController from '../../controllers/post/deletePostcontroller.js'
-import { getTotalPostCount } from '../../controllers/post/getPostController.js'
 
 const router = express.Router()
 
@@ -27,12 +31,18 @@ const router = express.Router()
 router.get('/get-post', authenticateUserToken, getPostController)
 router.get('/', authenticateUserToken, getPostByIdController)
 router.get('/total-post', authenticateUserToken, getTotalPostCount)
+router.get('/total-saved-post', authenticateUserToken)
 router.get('/comment/sub-comment', authenticateUserToken, getSubCommentsController)
+router.get('/saved-post', authenticateUserToken, getAllSavedPost)
+router.get('/total-saved-post', authenticateUserToken, getTotalSavedPostCount)
 
 // Post routes
 router.post('/create-post', authenticateUserToken, createPostController)
 router.post('/like-post', authenticateUserToken, likePostController)
 router.post('/unlike-post', authenticateUserToken, unLikePostController)
+router.post('/save-post/:postId', authenticateUserToken, savePostController)
+router.post('/unsave-post/:postId', authenticateUserToken, unSavePostController)
+
 
 // Comment routes
 router.post('/comment/create-comment', authenticateUserToken, createCommentController)
@@ -58,7 +68,7 @@ router.post('/comment/reply-comment', authenticateUserToken, replyCommentControl
 // Delete routes for post
 router.delete('/delete-post/:deletePostId', authenticateUserToken, deletePostController)
 
-// Delete routes for comments
+// Delete routes for comments and sub-comments
 router.delete(
   '/comment/delete-comment/:commentId',
   authenticateUserToken,

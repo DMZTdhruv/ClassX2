@@ -4,11 +4,13 @@ import getTotalPostService from '../../services/PostService/getTotalPostService.
 
 export const getPostController = async (req, res) => {
   const { page, limit } = req.query
+  const { userProfileId } = req.user
   const currentPage = parseInt(page) || 1
   const itemsPerPage = parseInt(limit) || 10
   const startIndex = (currentPage - 1) * itemsPerPage
   try {
-    const results = await getAllPostService(startIndex, itemsPerPage)
+    const results = await getAllPostService(startIndex, itemsPerPage, userProfileId)
+    console.log(results)
     res.json(results)
   } catch (err) {
     res.status(500).json({ error: err.message })

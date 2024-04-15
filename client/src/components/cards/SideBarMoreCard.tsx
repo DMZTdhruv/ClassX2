@@ -1,8 +1,9 @@
 import React from 'react'
 import LogOut from '../shared/LogOut/LogOut'
 import useLogOut from '@/hooks/auth/useLogout'
+import Link from 'next/link'
 
-const SideBarMoreCard = () => {
+const SideBarMoreCard = ({userProfileId} : {userProfileId: string}) => {
   const { logout } = useLogOut()
   return (
     <div
@@ -19,6 +20,10 @@ const SideBarMoreCard = () => {
         <button className='font-bold text-left   py-2 px-4 mx-[8px] active:scale-95 hover:bg-neutral-700/10 rounded-lg'>
           Dark mode
         </button>
+        <div className='w-full bg-[#474747]/40 my-[8px]  h-[2px]'></div>
+        <Link href={`/profile/${userProfileId}/saved`} className='font-bold text-left   py-2 px-4 mx-[8px] active:scale-95 hover:bg-neutral-700/10 rounded-lg'>
+          Saved
+        </Link>
         <div className='w-full bg-[#474747]/40 my-[8px]  h-[2px]'></div>
 
         <button className='font-bold text-left  py-2 px-4 mx-[8px] active:scale-95 hover:bg-neutral-700/10 rounded-lg'>

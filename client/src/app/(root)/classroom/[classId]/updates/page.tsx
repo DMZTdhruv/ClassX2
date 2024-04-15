@@ -9,6 +9,7 @@ import InfiniteScrollClassroomUpdates from '@/components/classroom/InfiniteScrol
 import { Skeleton } from '@/components/ui/skeleton'
 
 import ClassroomJoinId from '@/components/classroom/ClassroomJoinId'
+import { jwtDecode } from 'jwt-decode'
 
 interface IClassroomUpdate {
   _id: string
@@ -24,14 +25,22 @@ interface IClassroomUpdate {
   createdAt: string
 }
 
+interface Token {
+  userProfileId: string
+}
+
 const Updates = async ({ params }: { params: { classId: string } }) => {
   const cookie = cookies().get('classX_user_token')?.value
+  const decodedCookie: Token | null = cookie ? jwtDecode(cookie) : null
   const classroomData = await getClassroomData(cookie || '', params.classId)
   const classroomUpdates: IClassroomUpdate[] = await getClassroomUpdates(
     cookie || '',
     params.classId,
     1
   )
+
+  console.log(classroomData)
+
   if (!classroomData) {
     return <div>Loading...</div>
   }
@@ -55,10 +64,12 @@ const Updates = async ({ params }: { params: { classId: string } }) => {
               <ClassroomJoinId classroomJoinId={classroomData.classroomJoinId} />
             )}
           </div>
-          <ClassroomUpdateCreator
-            adminIds={classroomData?.adminEmails}
-            classId={params?.classId}
-          />
+          {classroomData.adminEmails.includes(decodedCookie?.userProfileId) && (
+            <ClassroomUpdateCreator
+              adminIds={classroomData?.adminEmails}
+              classId={params?.classId}
+            />
+          )}
           {classroomUpdates ? (
             classroomUpdates?.map(update => {
               return (

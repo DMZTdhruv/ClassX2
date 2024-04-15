@@ -3,6 +3,8 @@ import { cookies } from 'next/headers'
 import ProfilePosts from './ProfilePosts'
 import Link from 'next/link'
 import { getUserProfile } from './ProfileAction'
+import { redirect } from 'next/navigation'
+import { jwtDecode } from 'jwt-decode'
 
 interface UserProfileProps {
   _id: string
@@ -22,41 +24,17 @@ interface Ipost {
   likes: string[]
   comments: string[]
 }
+interface Token {
+  userProfileId: string
+}
 
 export default async function Profile() {
   const cookie = cookies()
   const token = cookie.get('classX_user_token')
-  let error = undefined
+  const { userProfileId }: Token = token
+    ? jwtDecode(token?.value || '')
+    : { userProfileId: '' }
 
-  // variables
-  const userProfile: UserProfileProps = await getUserProfile(token?.value || '')
-  if (error) {
-    return (
-      <div className='h-screen w-full flexCenter text-center'>
-        {error} <br />
-        <Link href='/auth/sign-in'>Sign in</Link>
-      </div>
-    )
-  }
-  return (
-    <section className='flex mt-[80px]  md:mt-[0px] sm:px-[16px] flex-col items-center gap-[60px] mb-[20px]'>
-      <UserHeader
-        _id={userProfile?._id}
-        name={userProfile?.name}
-        username={userProfile?.username}
-        about={userProfile?.about}
-        userProfileImage={userProfile?.userProfileImage}
-        posts={userProfile?.posts}
-        followers={userProfile?.followers}
-        following={userProfile?.following}
-        isPrivate={userProfile?.isPrivate}
-      />
-
-      <ProfilePosts
-        userProfileId={userProfile?._id}
-        token={token?.value || ''}
-        totalPosts={userProfile?.posts.length}
-      />
-    </section>
-  )
+  redirect(`/profile/${userProfileId}`)
+  return null
 }

@@ -11,12 +11,14 @@ import { useRouter } from 'next/navigation'
 import useLogOut from '@/hooks/auth/useLogout'
 import LogOut from '../LogOut/LogOut'
 import SideBarMoreCard from '@/components/cards/SideBarMoreCard'
+import { useAuthContext } from '@/context/AuthContext'
 
 export default function SideBar(props: any) {
   const pathname = usePathname()
   const [isActive, setIsActive] = useState<string>('/')
   const { loading, logout } = useLogOut()
   const router = useRouter()
+  const { authUser } = useAuthContext()
   const logOutUser = async () => {
     await logout()
     localStorage.removeItem('classX_user')
@@ -90,10 +92,38 @@ export default function SideBar(props: any) {
             </Link>
           )
         })}
+
+        <Link
+          className={`flex ${
+            pathname.startsWith('/profile') ? '' : 'hover:bg-[#891DCC]/20'
+          }  gap-[11px] py-[5px] px-[10px] rounded-md  transition-all cursor-pointer '`}
+          href={`/profile/${authUser?.userProfileId}`}
+        >
+          <Image
+            src={`/assets/sidebar-icons/${
+              pathname.includes('/profile') ? `profile-fill.svg` : `profile.svg`
+            }`}
+            width={24}
+            //
+            height={24}
+            alt={'profile'}
+            className=''
+            unoptimized
+          />
+          <span
+            className={`text-[19px] hidden ${!isMessageRoute && 'lg:block'} ${
+              pathname.includes('/profile') ? 'font-semibold' : ''
+            } `}
+          >
+            Profile
+          </span>
+        </Link>
       </div>
       {!isMessageRoute && (
         <>
-          {openMoreModal && <SideBarMoreCard />}
+          {openMoreModal && (
+            <SideBarMoreCard userProfileId={authUser?.userProfileId || ''} />
+          )}
           <div
             className={`fixed bottom-4 left-[28px] group   translate-x-[5px] ${
               isMessageRoute ? 'translate-x-[10px]' : 'lg:translate-x-[0px]'

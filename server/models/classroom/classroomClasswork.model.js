@@ -2,7 +2,8 @@ import mongoose from 'mongoose'
 
 const classroomClassworkModelSchema = new mongoose.Schema(
   {
-    classworkTitle: { type: String, required: true },
+    classId: { type: mongoose.Schema.Types.ObjectId, ref: 'Classroom' },
+    title: { type: String, required: true },
     description: { type: String, required: true },
     postedBy: {
       type: mongoose.Schema.Types.ObjectId,

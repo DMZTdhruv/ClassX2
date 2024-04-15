@@ -43,4 +43,15 @@ export default class UserProfileRepositoryInterface {
   async editProfile() {
     throw new Error(`Method not implemented Edit profile`)
   }
+
+  async savePost() {
+    throw new Error(`Save post method not implemented`)
+  }
+  async unSavePost() {
+    throw new Error(`Unsave post method not implemented`)
+  }
+
+  async getAllSavePost() {
+    throw new Error(`Get all save post method not implemented`)
+  }
 }

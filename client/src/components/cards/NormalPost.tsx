@@ -7,8 +7,8 @@ import Link from 'next/link'
 interface IPostProps {
   _id: string
   imageUrl: string
-  likes: number
-  comments: number
+  likes?: number
+  comments?: number
 }
 
 export default function NormalPost({ _id, imageUrl, likes, comments }: IPostProps) {

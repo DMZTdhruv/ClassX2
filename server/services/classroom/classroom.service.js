@@ -74,8 +74,14 @@ export const getClassroomService = async (classId, user) => {
     const classroom = await classroomRepo.getClassroomMinimalData(classId)
     const classroomData = classroom
     const isAdmin = classroom.adminEmails.includes(user.userProfileId)
-    if (!isAdmin) delete classroomData.classroomJoinId
-    console.log(classroom)
+    if (!isAdmin) {
+      delete classroomData.classroomJoinId
+      delete classroomData.adminEmails
+    }
+    console.log({
+      isAdmin,
+      classroomData,
+    })
 
     return {
       statusCode: 200,

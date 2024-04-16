@@ -8,7 +8,6 @@ import { formatDate } from '@/utils'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
-import { FaArrowLeft } from 'react-icons/fa6'
 
 const Update = ({ params }: { params: { classId: string; updateId: string } }) => {
   const { loading, error, getClassroomUpdate, updateData } = useGetUpdate()
@@ -52,7 +51,7 @@ const Update = ({ params }: { params: { classId: string; updateId: string } }) =
       )}
       <div className='  rounded-xl sm:p-6 p-2 mb-8'>
         <article className='flex items-start flex-col gap-2 '>
-          <div className='bg-neutral-900 w-full rounded-xl p-6'>
+          <div className='bg-neutral-900/80 w-full rounded-xl p-6'>
             <header>
               <h1 className='text-[20px] font-bold text-neutral-200'>
                 {updateData?.title}
@@ -65,7 +64,7 @@ const Update = ({ params }: { params: { classId: string; updateId: string } }) =
             </p>
           </div>
           {updateData?.attachments && (
-            <div className='my-3 p-6 flex flex-col gap-3 bg-neutral-900 rounded-xl'>
+            <div className='my-3 p-6 flex flex-col gap-3 bg-neutral-900/80 rounded-xl'>
               {updateData.attachments?.length > 0 && (
                 <Carousel className='max-w-[300px]  rounded-md  max-h-[300px]'>
                   <CarouselContent className='max-w-[300px]  max-h-[300px] rounded-md'>
@@ -101,7 +100,7 @@ const Update = ({ params }: { params: { classId: string; updateId: string } }) =
             </div>
           )}
         </article>
-        <div className='gap-[10px] flex justify-between px-6 border-t-2 border-neutral-900 pt-6 mt-6'>
+        <div className='gap-[10px] flex justify-between px-6 border-t-2 border-neutral-900/80 pt-6 mt-6'>
           <p className='text-neutral-300'>Posted by</p>
           <div className='flex gap-2 mt-2'>
             <Image

@@ -64,7 +64,7 @@ const Updates = async ({ params }: { params: { classId: string } }) => {
               <ClassroomJoinId classroomJoinId={classroomData.classroomJoinId} />
             )}
           </div>
-          {classroomData.adminEmails.includes(decodedCookie?.userProfileId) && (
+          {classroomData?.adminEmails?.includes(decodedCookie?.userProfileId) && (
             <ClassroomUpdateCreator
               adminIds={classroomData?.adminEmails}
               classId={params?.classId}

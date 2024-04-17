@@ -126,7 +126,6 @@ export const getClassworkById = async (
       headers: {
         Cookies: `classX_user_token=${cookie}`,
       },
-      cache: 'no-store',
     })
 
     const data = await res.json()
@@ -134,6 +133,46 @@ export const getClassworkById = async (
     if (data.error) {
       throw new Error(data.error)
     }
+    return data.data
+  } catch (error: any) {
+    console.log(error.message)
+  }
+}
+
+export const getClassroomStudents = async (cookie: string, classId: string) => {
+  try {
+    const res = await fetch(`${Api}/classroom/${classId}/people/students`, {
+      method: 'GET',
+      headers: {
+        Cookies: `classX_user_token=${cookie}`,
+      },
+    })
+
+    const data = await res.json()
+    if (data.error) {
+      return data.error
+    }
+
+    return data.data
+  } catch (error: any) {
+    console.log(error.message)
+  }
+}
+
+export const getClassroomAdmins = async (cookie: string, classId: string) => {
+  try {
+    const res = await fetch(`${Api}/classroom/${classId}/people/admins`, {
+      method: 'GET',
+      headers: {
+        Cookies: `classX_user_token=${cookie}`,
+      },
+    })
+
+    const data = await res.json()
+    if (data.error) {
+      return data.error
+    }
+
     return data.data
   } catch (error: any) {
     console.log(error.message)

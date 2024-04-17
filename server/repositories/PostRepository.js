@@ -59,6 +59,7 @@ export default class PostRepository extends PostRepositoryInterface {
     }
     const user = await UserProfile.findById(userProfileId)
     await user.posts.remove(post._id)
+    await user.savedPosts.remove(post._id)
     await user.save()
     await Post.deleteOne(post._id)
   }

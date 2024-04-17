@@ -2,9 +2,12 @@ import {
   createClassroomClassworkService,
   createClassroomService,
   createClassroomUpdatesService,
+  deleteClassroomUpdateByIdService,
   getAllClassroomsService,
+  getClassroomAdminsService,
   getClassroomByIdService,
   getClassroomService,
+  getClassroomStudentsService,
   getClassroomTopicsService,
   getClassroomUpdateService,
   getClassroomWorksService,
@@ -177,6 +180,7 @@ export const getClassroomWork = async (req, res) => {
     res.status(statusCode).json(response)
   } catch (error) {
     console.log(`Error in getClassroomWorks ${error.message}`)
+    res.status(500).json({ error: 'Internal server error' })
   }
 }
 
@@ -199,5 +203,55 @@ export const getClassworkById = async (req, res) => {
     res.status(statusCode).json(response)
   } catch (error) {
     console.log(`Error in getClassworkById ${error.message}`)
+    res.status(500).json({ error: 'Internal server error' })
+  }
+}
+
+export const getClassroomAdmins = async (req, res) => {
+  try {
+    const { userProfileId } = req.user
+    const { classId } = req.params
+
+    const { statusCode, response } = await getClassroomAdminsService(
+      userProfileId,
+      classId
+    )
+
+    res.status(statusCode).json(response)
+  } catch (error) {
+    console.log(`getClassroomAdmins error ${error.message}`)
+    res.status(500).json({ error: 'Internal server error' })
+  }
+}
+
+export const getClassroomStudents = async (req, res) => {
+  try {
+    const { userProfileId } = req.user
+    const { classId } = req.params
+    const { statusCode, response } = await getClassroomStudentsService(
+      userProfileId,
+      classId
+    )
+    res.status(statusCode).json(response)
+  } catch (error) {
+    console.log(`getClassroomStudents error ${error.message}`)
+    res.status(500).json({ error: 'Internal server error' })
+  }
+}
+
+export const deleteClassroomUpdateById = async (req, res) => {
+  try {
+    const { classId, updateId } = req.params
+    const { userProfileId } = req.user
+    const { statusCode, response } = await deleteClassroomUpdateByIdService(
+      classId,
+      updateId,
+      userProfileId
+    )
+
+    res.status(statusCode).json(response)
+  } catch (error) {
+    console.log(error.message)
+    res.status(500).json({ error: 'Internal server error' })
   }
 }

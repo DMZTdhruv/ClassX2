@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import DeletePostModal from '@/components/shared/DeleteComponent/DeletePost'
 import { useInView } from 'react-intersection-observer'
 import { getPosts } from './postActions'
+import { usePostContext } from '@/context/PostContext'
 
 interface IComments {
   _id: string
@@ -57,7 +58,9 @@ export default function PostSection({
   const { ref, inView } = useInView()
 
   // states
-  const [posts, setPosts] = useState<IPost[]>(postData)
+  // const [posts, setPosts] = useState<IPost[]>(postData)
+  const { feedPost, setFeedPost, totalPostDeleted } = usePostContext()
+
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false)
   const [deletePostDetails, setDeletePotDetails] = useState<IDeletePostDetails | null>(
     null
@@ -70,7 +73,7 @@ export default function PostSection({
     const nextPage = page + 1
     const newPosts = await getPosts(cookie, nextPage)
     console.log(newPosts)
-    setPosts(prev => [...prev, ...newPosts])
+    setFeedPost(prev => [...prev, ...newPosts])
     setPage(nextPage)
   }
 
@@ -87,13 +90,20 @@ export default function PostSection({
   }
 
   const handlePostState = (postId: string) => {
-    setPosts(prev => (prev ? prev.filter(post => post._id !== postId) : []))
+    setFeedPost(prev => (prev ? prev.filter(post => post._id !== postId) : []))
   }
 
   // useEffects
   useEffect(() => {
     if (inView) {
-      if (posts.length >= totalPost) {
+      console.log(feedPost.length + postData.length - totalPostDeleted >= totalPost)
+      console.log({
+        feedPosts: feedPost.length,
+        postsData: postData.length,
+        totalPostDeleted,
+        totalPost,
+      })
+      if (feedPost.length + postData.length - totalPostDeleted >= totalPost) {
         setAllPostLoaded(true)
         return
       }
@@ -111,9 +121,32 @@ export default function PostSection({
           userProfileId={deletePostDetails?.userProfileId!}
           handleModal={handleDeleteModal}
           handlePostState={handlePostState}
+          postData={postData}
         />
       )}
-      {posts?.map(post => {
+      {postData?.map((post, index) => {
+        return (
+          <Post
+            key={post._id}
+            _id={post._id}
+            saved={post.saved}
+            title={post.title}
+            index={index}
+            serverRenderedPost={true}
+            imageUrl={post.imageUrl}
+            caption={post.caption}
+            location={post.location}
+            category={post.category}
+            postedBy={post.postedBy}
+            likes={post.likes}
+            comments={post.comments}
+            createdAt={post.createdAt}
+            handleDeletePostDetails={handleDeletePostDetails}
+            handleDeleteModal={handleDeleteModal}
+          />
+        )
+      })}
+      {feedPost?.map((post, index) => {
         return (
           <Post
             key={post._id}
@@ -121,6 +154,8 @@ export default function PostSection({
             saved={post.saved}
             title={post.title}
             imageUrl={post.imageUrl}
+            index={index}
+            serverRenderedPost={false}
             caption={post.caption}
             location={post.location}
             category={post.category}

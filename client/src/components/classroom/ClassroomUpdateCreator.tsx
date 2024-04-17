@@ -11,6 +11,7 @@ import { SanityImageAssetDocument } from '@sanity/client'
 import { useGenerateLink } from '@/hooks/useGenerateLink'
 import { MdCancel, MdOutlineCancel } from 'react-icons/md'
 import ClassroomImageModal from './ClassroomImageModal'
+import { Skeleton } from '../ui/skeleton'
 
 interface IClassroomUpdate {
   classId: string
@@ -98,12 +99,11 @@ const ClassroomUpdateCreator = ({
         throw new Error('Incomplete details')
       }
 
-      await uploadImagesToSanity()
       const updateData = {
         classId,
         title: title,
         description: description,
-        attachments: generatedUrls,
+        attachments: await uploadImagesToSanity(),
       }
 
       await createUpdate(updateData)
@@ -122,11 +122,10 @@ const ClassroomUpdateCreator = ({
     try {
       const urls = await Promise.all(
         images.map(async image => {
-          const url = await getUrl(image)
-          return url
+          return await getUrl(image)
         })
       )
-      setGeneratedUrls(prev => [...urls])
+      return urls
     } catch (error: any) {
       setErrorFunc(error.message)
       console.error(error.message)
@@ -285,14 +284,19 @@ const ClassroomUpdateCreator = ({
           onClick={() => setOpenModal(prev => !prev)}
         >
           <div className='flex items-center gap-[10px]'>
-            <Image
-              src={authUser?.userProfileImage || ''}
-              alt='User profile image'
-              height={48}
-              width={48}
-              className='aspect-square object-cover rounded-full'
-              unoptimized
-            />
+            {authUser?.userProfileImage ? (
+              <Image
+                src={authUser?.userProfileImage || ''}
+                alt='User profile image'
+                height={48}
+                width={48}
+                className='aspect-square object-cover rounded-full'
+                unoptimized
+              />
+            ) : (
+              <Skeleton className='h-[48px] w-[48px] rounded-full' />
+            )}
+
             <div className='flex items-start flex-col group-hover:underline '>
               <p>Any updates click here to create!</p>
             </div>

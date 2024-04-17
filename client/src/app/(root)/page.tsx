@@ -9,7 +9,7 @@ import { jwtDecode } from 'jwt-decode'
 export default async function HomeLayout() {
   const cookie = cookies().get('classX_user_token')?.value
   const postData = await getPosts(cookie || '', 1)
-  const decodedValue = jwtDecode(cookie || '')
+  const decodedValue = cookie ? jwtDecode(cookie || '') : ''
   const totalPost = await getTotalPost(cookie || '')
   if (!postData) {
     return (

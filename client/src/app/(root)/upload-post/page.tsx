@@ -28,7 +28,7 @@ export default function UploadPost() {
   //@ts-ignore
   const { authUser } = useAuthContext()
   const { generateUrl, getUrl } = useGenerateLink()
-  const { setExplorePost, setUserPost } = usePostContext()
+  const { setExplorePost, setUserPost, setFeedPost } = usePostContext()
 
   // states
   const [demoUploadImage, setDemoUploadImage] = useState<
@@ -99,6 +99,7 @@ export default function UploadPost() {
       }
       updateFeed()
       setExplorePost([])
+      setFeedPost([])
       setUserPost([])
       await submitDataToBackend(data)
       router.push('/')

@@ -57,11 +57,9 @@ const Update = ({ params }: { params: { classId: string; updateId: string } }) =
                 {updateData?.title}
               </h1>
             </header>
-            <p>
-              <pre className='text-wrap font-poppins text-neutral-300'>
-                {updateData?.description}
-              </pre>
-            </p>
+            <pre className='text-wrap font-poppins text-neutral-300'>
+              {updateData?.description}
+            </pre>
           </div>
           {updateData?.attachments && (
             <div className='my-3 p-6 flex flex-col gap-3 bg-neutral-900/80 rounded-xl'>
@@ -103,14 +101,19 @@ const Update = ({ params }: { params: { classId: string; updateId: string } }) =
         <div className='gap-[10px] flex justify-between px-6 border-t-2 border-neutral-900/80 pt-6 mt-6'>
           <p className='text-neutral-300'>Posted by</p>
           <div className='flex gap-2 mt-2'>
-            <Image
-              src={updateData?.postedBy.userProfileImage || ''}
-              alt='User profile image'
-              height={48}
-              width={48}
-              className='aspect-square rounded-full object-cover'
-              unoptimized
-            />
+            {updateData?.postedBy.userProfileImage ? (
+              <Image
+                src={updateData?.postedBy.userProfileImage}
+                alt='User profile image'
+                height={48}
+                width={48}
+                className='aspect-square object-cover rounded-full'
+                unoptimized
+              />
+            ) : (
+              <Skeleton className='h-[48px] w-[48px] rounded-full' />
+            )}
+
             <div className='flex items-start gap-1 flex-col'>
               <p className='text-[15px] font-semibold' ref={updateRef}>
                 {updateData?.postedBy.username}

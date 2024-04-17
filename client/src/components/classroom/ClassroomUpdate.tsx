@@ -1,9 +1,21 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { formatDate } from '@/utils'
 import Link from 'next/link'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { BsThreeDots } from 'react-icons/bs'
+import { Button } from '../ui/button'
+import useDeleteUpdate from '@/hooks/classroom/useDeleteUpdate'
 
 interface IClassroomUpdate {
   _id: string
@@ -20,40 +32,74 @@ interface IClassroomUpdate {
 const ClassroomUpdate = ({
   classroomUpdate,
   classId,
+  isAdmin,
 }: {
   classroomUpdate: IClassroomUpdate
   classId?: string
+  isAdmin?: boolean
 }) => {
   const { _id, postedBy, createdAt, title, description, attachments } = classroomUpdate
   const formatedDate = formatDate(new Date(createdAt))
+  const { loading, deleteUpdate, error } = useDeleteUpdate()
 
   return (
     <>
-      <Link
-        href={`/classroom/${classId}/updates/${_id}`}
-        className='h-fit p-[24px] bg-neutral-900  rounded-[20px]'
-      >
+      <div className='h-fit p-[24px] bg-neutral-900  rounded-[20px]'>
         <article>
-          <div className='flex items-center gap-[10px]'>
-            <Image
-              src={postedBy.userProfileImage || ''}
-              alt='User profile image'
-              height={48}
-              width={48}
-              className='aspect-square rounded-full object-cover'
-              unoptimized
-            />
-            <div className='flex items-start flex-col'>
-              <p className='text-[15px] font-semibold'>{postedBy.username}</p>
-              <p className='opacity-50 text-[13px]'>Posted {formatedDate} ago</p>
+          <div className='flex items-center justify-between gap-[10px] pb-3'>
+            <div className='flex items-center gap-[10px]'>
+              <Image
+                src={postedBy.userProfileImage || ''}
+                alt='User profile image'
+                height={48}
+                width={48}
+                className='aspect-square rounded-full object-cover'
+                unoptimized
+              />
+              <div className='flex items-start flex-col'>
+                <p className='text-[15px] font-semibold'>{postedBy.username}</p>
+                <p className='opacity-50 text-[13px]' suppressHydrationWarning>
+                  Posted {formatedDate} ago
+                </p>
+              </div>
             </div>
+            <Dialog>
+              <DialogTrigger>
+                <BsThreeDots />
+              </DialogTrigger>
+              <DialogContent className=' bg-neutral-950 border border-neutral-800'>
+                <DialogHeader>
+                  <DialogTitle>Delete update</DialogTitle>
+                  <DialogDescription>
+                    Do you want to delete this update?
+                  </DialogDescription>
+                  <DialogFooter className='flex items-center'>
+                    <Button
+                      className={`${loading ? 'animate-pulse' : ''} font-bold`}
+                      disabled={loading}
+                      onClick={() => deleteUpdate(classId || '', _id)}
+                    >
+                      {loading ? 'Deleting..' : 'Delete'}
+                    </Button>
+                  </DialogFooter>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
           </div>
-          <p className='pt-[18px] text-left'>
-            {description.slice(0, 150)}
-            <span>{description.length > 150 && '...'}</span>
-          </p>
+          <Link href={`/classroom/${classId}/updates/${_id}`} className=' text-left'>
+            <pre className='text-wrap font-poppins'>
+              {title && (
+                <span className='font-bold text-lg'>
+                  {title} <br />
+                </span>
+              )}
+
+              {description.slice(0, 2000)}
+            </pre>
+            <span>{description.length > 2000 && '...'}</span>
+          </Link>
         </article>
-      </Link>
+      </div>
     </>
   )
 }

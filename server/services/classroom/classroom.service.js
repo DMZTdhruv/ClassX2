@@ -325,3 +325,55 @@ export const getClassworkByIdService = async (userProfileId, classId, classworkI
     throw new Error(error.message)
   }
 }
+
+export const getClassroomAdminsService = async (userProfileId, classId) => {
+  try {
+    const isAuthorized = await isAuthorizedUser(classId, userProfileId)
+    if (!isAuthorized) {
+      return returnMessage(401, { error: 'Unauthorized admin' })
+    }
+
+    const classroomAdmins = await classroomRepo.getClassroomAdmins(classId)
+    return returnMessage(200, { data: classroomAdmins })
+  } catch (error) {
+    throw new Error(`Error in getClassroomAdminsService ${error.message}`)
+  }
+}
+
+export const getClassroomStudentsService = async (userProfileId, classId) => {
+  try {
+    const isAuthorized = await isAuthorizedUser(classId, userProfileId)
+    if (!isAuthorized) {
+      return returnMessage(401, { error: 'Unauthorized user' })
+    }
+
+    const classroomStudents = await classroomRepo.getClassroomStudents(classId)
+    return returnMessage(200, { data: classroomStudents })
+  } catch (error) {
+    console.log(`Error in getClassroomStudentsService: ${error.message}`)
+    throw new Error(error.message)
+  }
+}
+
+export const deleteClassroomUpdateByIdService = async (
+  classId,
+  updateId,
+  userProfileId
+) => {
+  try {
+    const isAdmin = await classroomRepo.isAdmin(userProfileId, classId)
+    if (!isAdmin) {
+      return returnMessage(401, { error: 'Unauthorized user' })
+    }
+    const classroom = await classroomRepo.getClassroomById(classId)
+    classroom.updates.remove(updateId)
+    const deletedUpdate = await classroomRepo.deleteUpdateById(updateId)
+    await classroom.save()
+    return returnMessage(200, {
+      data: deletedUpdate,
+      message: 'Deleted classroom update successfully',
+    })
+  } catch (error) {
+    console.log(error.message)
+  }
+}

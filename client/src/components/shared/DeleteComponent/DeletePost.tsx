@@ -1,7 +1,7 @@
 'use client'
 
 import { deletePostFromUserPage, updateFeed } from '@/app/(root)/serverActions'
-import { Api } from '@/Constants'
+import { Api, IPost, IPostMinimal } from '@/Constants'
 import { useAuthContext } from '@/context/AuthContext'
 import { usePostContext } from '@/context/PostContext'
 import { useRouter } from 'next/navigation'
@@ -11,6 +11,7 @@ import { IoWarningOutline } from 'react-icons/io5'
 interface IDeleteComponent {
   deleteId: string
   userProfileId: string
+  postData: IPostMinimal[]
   handleModal: (data: boolean) => void
   className?: string
   handlePostState?: (data: string) => void
@@ -20,6 +21,7 @@ interface IDeleteComponent {
 export default function DeletePostModal({
   deleteId,
   userProfileId,
+  postData,
   handleModal,
   className,
   handlePostState,
@@ -30,7 +32,8 @@ export default function DeletePostModal({
   const { authUser } = useAuthContext()
   const [isDeleting, setIsDeleting] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
-  const { setUserPost, setExplorePost } = usePostContext()
+  const { setUserPost, setExplorePost, setTotalPostDeleted, savedPost } =
+    usePostContext()
 
   const deletePost = async () => {
     setIsDeleting(true)
@@ -55,11 +58,20 @@ export default function DeletePostModal({
         setIsDeleting(false)
       }, 500)
       handleModal(false)
+
       if (userPost) {
         updateFeed()
         setUserPost(prev => prev.filter(post => post._id !== deleteId))
         setExplorePost(prev => prev.filter(post => post._id !== deleteId))
-        router.push('/profile')
+        setTotalPostDeleted(prev => prev + 1)
+        router.refresh()
+      } else if (!userPost && authUser?.userProfileId === userProfileId) {
+        updateFeed()
+        setUserPost(prev => prev.filter(post => post._id !== deleteId))
+        setExplorePost(prev => prev.filter(post => post._id !== deleteId))
+        if (!postData.find(post => post._id === deleteId)) {
+          setTotalPostDeleted(prev => prev + 1)
+        }
       }
     } catch (error: any) {
       console.log(error.message)

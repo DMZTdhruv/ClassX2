@@ -9,9 +9,9 @@ import React from 'react'
 const AccessProfile = () => {
   const { authUser } = useAuthContext()
   return (
-    <Link href={`/profile`}>
+    <div>
       {authUser ? (
-        <Link href={'/profile'}>
+        <Link href={`/profile/${authUser?.userProfileId}`}>
           <Image
             src={authUser.userProfileImage}
             alt={'user-image'}
@@ -24,7 +24,7 @@ const AccessProfile = () => {
       ) : (
         <Skeleton className='h-6 w-6 rounded-full' />
       )}
-    </Link>
+    </div>
   )
 }
 

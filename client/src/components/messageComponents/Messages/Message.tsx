@@ -64,6 +64,13 @@ const Message = ({ message, deleteMessage, messageType }: MessageComponentProps)
   }
 
   useEffect(() => {
+    setReplyMessage({
+      repliedUser: '',
+      repliedUserMessage: '',
+    })
+  }, [conversation])
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
         setModal(false)

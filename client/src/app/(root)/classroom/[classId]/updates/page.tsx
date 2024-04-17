@@ -38,8 +38,7 @@ const Updates = async ({ params }: { params: { classId: string } }) => {
     params.classId,
     1
   )
-
-  console.log(classroomData)
+  const isAdmin = classroomData?.adminEmails?.includes(decodedCookie?.userProfileId)
 
   if (!classroomData) {
     return <div>Loading...</div>
@@ -64,7 +63,7 @@ const Updates = async ({ params }: { params: { classId: string } }) => {
               <ClassroomJoinId classroomJoinId={classroomData.classroomJoinId} />
             )}
           </div>
-          {classroomData?.adminEmails?.includes(decodedCookie?.userProfileId) && (
+          {isAdmin && (
             <ClassroomUpdateCreator
               adminIds={classroomData?.adminEmails}
               classId={params?.classId}
@@ -76,6 +75,7 @@ const Updates = async ({ params }: { params: { classId: string } }) => {
                 <ClassroomUpdate
                   key={update._id}
                   classId={params.classId}
+                  isAdmin={isAdmin}
                   classroomUpdate={{
                     _id: update._id,
                     postedBy: {

@@ -30,6 +30,7 @@ const ClassroomClassworkData = async ({
           <Link
             href={`/classroom/${classId}/classwork/${classwork._id}`}
             className='h-fit flex items-center w-full p-2 hover:bg-neutral-900 gap-2  rounded-[20px]'
+            key={classwork._id}
           >
             <div className='md:w-[45px] w-[35px] md:h-[45px] h-[35px] flex items-center justify-center rounded-full p-2 bg-neutral-800'>
               <Image

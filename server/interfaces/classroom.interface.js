@@ -29,5 +29,15 @@ export default class ClassroomRepositoryInterface {
   async createClassroomClasswork() {
     throw new Error(`createClassroomClasswork method not implemented`)
   }
-}
 
+  async getClassroomAdmins() {
+    throw new Error(`getClassroomAdmins method not implemented`)
+  }
+
+  async getClassroomStudents() {
+    throw new Error(`getClassroomStudents method not implemented`)
+  }
+  async deleteUpdateById () {
+    throw new Error(`deleteUpdateById method not implemented`)
+  }
+}

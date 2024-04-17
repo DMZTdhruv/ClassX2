@@ -63,6 +63,7 @@ export default function SideBar(props: any) {
 
           return (
             <Link
+              scroll={false}
               className={`flex ${
                 isActive === links.name || onPath ? '' : 'hover:bg-[#891DCC]/20'
               }  gap-[11px] py-[5px] px-[10px] rounded-md  transition-all cursor-pointer '`}

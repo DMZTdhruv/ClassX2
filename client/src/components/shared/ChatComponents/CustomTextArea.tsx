@@ -4,13 +4,7 @@
 import { useAuthContext } from '@/context/AuthContext'
 import { useMessageContext } from '@/context/MessageContext'
 import { useSocketContext } from '@/context/SocketContext'
-import React, {
-  useEffect,
-  useRef,
-  ChangeEvent,
-  useState,
-} from 'react'
-
+import React, { useEffect, useRef, ChangeEvent, useState } from 'react'
 
 interface TextareaProps {
   value: string
@@ -31,9 +25,19 @@ const CustomTextArea: React.FC<TextareaProps> = ({
   const { authUser } = useAuthContext()
   const [isTyping, setIsTyping] = useState<boolean>(false)
 
+  const { replyMessage, setReplyMessage, messages } = useMessageContext()
+
   useEffect(() => {
     adjustTextareaHeight()
   }, [value])
+
+  useEffect(() => {
+    if (messages[messages.length - 1] && textareaRef.current) {
+      if (messages[messages.length - 1].senderId === authUser?.userProfileId) {
+        textareaRef.current.focus()
+      }
+    }
+  }, [messages])
 
   const adjustTextareaHeight = () => {
     if (textareaRef.current) {
@@ -41,6 +45,14 @@ const CustomTextArea: React.FC<TextareaProps> = ({
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
     }
   }
+
+  useEffect(() => {
+    if (replyMessage.repliedUserMessage.length > 0) {
+      if (textareaRef.current) {
+        textareaRef.current.focus()
+      }
+    }
+  }, [replyMessage])
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     adjustTextareaHeight()

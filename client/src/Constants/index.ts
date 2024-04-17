@@ -34,7 +34,6 @@ export const sideBarData = [
     filledIcon: 'classroom-fill.svg',
     routes: '/classroom',
   },
-
 ]
 export const BottomBarData = [
   {
@@ -65,13 +64,6 @@ export const BottomBarData = [
     filledIcon: 'classroom-fill.svg',
     routes: '/classroom',
   },
-  {
-    id: 6,
-    name: 'Profile',
-    icon: 'profile.svg',
-    filledIcon: 'profile-fill.svg',
-    routes: '/profile',
-  },
 ]
 
 interface IDeletePostDetails {
@@ -90,16 +82,36 @@ interface IPost {
   caption: string
   location: string
   category: string
+  serverRenderedPost: boolean
   postedBy: {
     _id: string
     username: string
     userProfileImage: string
   }
+  index: number
   likes: string[]
   comments: IComments[]
   createdAt: string
   handleDeletePostDetails: (data: IDeletePostDetails) => void
   handleDeleteModal: (data: boolean) => void
+}
+
+interface IPostMinimal {
+  _id: string
+  title: string
+  imageUrl: string
+  caption: string
+  location: string
+  category: string
+  saved: string[]
+  postedBy: {
+    _id: string
+    username: string
+    userProfileImage: string
+  }
+  likes: any[]
+  comments: IComments[]
+  createdAt: string
 }
 
 interface IComments {
@@ -147,6 +159,7 @@ export type {
   IReplyMessage,
   IComments,
   IPost,
+  IPostMinimal,
   UpdateReplyCommentData,
   Comment,
   MessageContextProps,

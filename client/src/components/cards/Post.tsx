@@ -10,16 +10,20 @@ import { BsThreeDots } from 'react-icons/bs'
 import { useAuthContext } from '@/context/AuthContext'
 import { Skeleton } from '../ui/skeleton'
 import { comment } from 'postcss'
+import useLikePost from '@/hooks/posts/useLikePost'
+import useUnlikePost from '@/hooks/posts/useUnlikePost'
 
 const Post: React.FC<IPost> = ({
   _id,
   title,
   imageUrl,
+  index,
   caption,
   location,
   category,
   postedBy,
   likes,
+  serverRenderedPost,
   comments,
   saved,
   createdAt,
@@ -30,8 +34,11 @@ const Post: React.FC<IPost> = ({
 
   //@ts-ignore
   const { authUser } = useAuthContext()
+  const { likePost } = useLikePost()
+  const { unlikePost } = useUnlikePost()
 
   const [numberOfLikes, setNumberOfLikes] = useState<number>(likes.length)
+  console.log(likes)
   const [isLiked, setIsLiked] = useState<boolean>(false)
   const [isSaved, setIsSaved] = useState<boolean>(false)
   const [showFullCaption, setShowFullCaption] = useState<boolean>(false)
@@ -120,24 +127,29 @@ const Post: React.FC<IPost> = ({
               <button
                 onClick={() => {
                   setIsLiked(prev => !prev)
-                  likePost({
-                    _id,
-                    isLiked,
-                    setNumberOfLikes,
-                    setIsLiked,
-                    numberOfLikes,
-                    authUser,
-                    endPoint: 'post/like-post',
-                  })
-                  unlikePost({
-                    _id,
-                    isLiked,
-                    setNumberOfLikes,
-                    setIsLiked,
-                    numberOfLikes,
-                    authUser,
-                    endPoint: 'post/unlike-post',
-                  })
+                  if (!isLiked) {
+                    likePost(
+                      _id,
+                      index,
+                      setNumberOfLikes,
+                      numberOfLikes,
+                      isLiked,
+                      setIsLiked,
+                      authUser,
+                      serverRenderedPost
+                    )
+                  } else {
+                    unlikePost(
+                      _id,
+                      index,
+                      setNumberOfLikes,
+                      numberOfLikes,
+                      isLiked,
+                      setIsLiked,
+                      authUser,
+                      serverRenderedPost
+                    )
+                  }
                 }}
                 className='hover:scale-105'
               >

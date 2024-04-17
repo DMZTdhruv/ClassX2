@@ -85,12 +85,11 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
   }
 
   async getClassroomUpdateById(classroomUpdateId) {
-    const update = await ClassroomPost.findById(classroomUpdateId)
-      .populate({
-        path: 'postedBy',
-        select: 'username userProfileImage',
-      })
-    return update;
+    const update = await ClassroomPost.findById(classroomUpdateId).populate({
+      path: 'postedBy',
+      select: 'username userProfileImage',
+    })
+    return update
   }
 
   async createClassroomClasswork(
@@ -107,9 +106,41 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
       description,
       postedBy: userProfileId,
       attachments,
-      topic
+      topic,
     })
 
-    return await classwork.save();
+    return await classwork.save()
+  }
+
+  async isAdmin(userProfileId, classId) {
+    const classroom = await Classroom.findById(classId).select('adminEmails')
+    console.log(classroom)
+    return classroom.adminEmails.includes(userProfileId)
+  }
+
+  async getClassroomAdmins(classId) {
+    const classroomAdmins = await Classroom.findById(classId)
+      .populate({
+        path: 'adminEmails',
+        select: 'username userProfileImage -_id',
+      })
+      .select('adminEmails')
+
+    return classroomAdmins.adminEmails
+  }
+
+  async getClassroomStudents(classId) {
+    const classroomStudents = await Classroom.findById(classId)
+      .populate({
+        path: 'studentEmails',
+        select: 'username userProfileImage',
+      })
+      .select('studentEmails')
+
+    return classroomStudents.studentEmails
+  }
+
+  async deleteUpdateById(updateId) {
+    return await ClassroomPost.findByIdAndDelete(updateId)
   }
 }

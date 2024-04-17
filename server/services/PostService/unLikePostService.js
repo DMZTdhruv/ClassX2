@@ -1,5 +1,6 @@
 import { validateUserUnlikedPost } from '../../validations/PostValidators/postValidators.js'
 import PostRepository from '../../repositories/PostRepository.js'
+import { returnMessage } from '../../utils/returnMessage.js'
 
 export default async function unlikePostService(userProfileID, postId) {
   try {
@@ -9,17 +10,13 @@ export default async function unlikePostService(userProfileID, postId) {
     const postExists = await postRepo.findPostById(postId)
 
     if (!postExists) {
-      throw new Error(
-        'Either the post ' + postId + " is deleted by user or doesn't exist"
-      )
+      return returnMessage(401, { error: 'Post not found' })
     }
 
     // removing user like
     postExists.likes.remove(userProfileID)
     await postExists.save()
-    return {
-      message: 'Post Unliked',
-    }
+    return returnMessage(200, { message: 'Post Unliked. ' + postId, data: postExists })
   } catch (err) {
     console.log(err.message)
     throw new Error(err.message)

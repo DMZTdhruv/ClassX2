@@ -29,6 +29,7 @@ import {
   updateClassroomUpdates,
 } from '@/app/(root)/classroom/classroomActions'
 import useGetTopics from '@/hooks/classroom/useGetTopics'
+import { Skeleton } from '../ui/skeleton'
 
 interface IClassroomCreator {
   classId: string
@@ -418,14 +419,18 @@ const ClassroomClassworkCreator = ({
           onClick={() => setOpenModal(prev => !prev)}
         >
           <div className='flex items-center gap-[10px]'>
-            <Image
-              src={authUser?.userProfileImage || ''}
-              alt='User profile image'
-              height={48}
-              width={48}
-              className='aspect-square object-cover rounded-full'
-              unoptimized
-            />
+            {authUser?.userProfileImage ? (
+              <Image
+                src={authUser?.userProfileImage || ''}
+                alt='User profile image'
+                height={48}
+                width={48}
+                className='aspect-square object-cover rounded-full'
+                unoptimized
+              />
+            ) : (
+              <Skeleton className='h-[48px] w-[48px] rounded-full' />
+            )}
             <div className='flex items-start flex-col group-hover:underline '>
               <p>Any updates click here to create!</p>
             </div>

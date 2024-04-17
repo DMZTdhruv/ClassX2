@@ -5,11 +5,13 @@ import { BottomBarData } from '@/Constants'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useAuthContext } from '@/context/AuthContext'
 
 function BottomBar() {
   const pathname = usePathname()
   const isMessageRoute = pathname.startsWith(`/message`)
   const [isBottomBarHidden, setIsBottomBarHidden] = useState<boolean>(false)
+  const { authUser } = useAuthContext()
 
   useEffect(() => {
     let prevPosition = window.scrollY
@@ -49,6 +51,20 @@ function BottomBar() {
           </Link>
         )
       })}
+      <Link href={`/profile/${authUser?.userProfileId}`}>
+        <Image
+          className={` p-[5px] rounded-md `}
+          src={`/assets/sidebar-icons/${
+            pathname.includes(`/profile/${authUser?.userProfileId}`)
+              ? `profile-fill.svg`
+              : `profile.svg`
+          }`}
+          width={35}
+          height={35}
+          unoptimized
+          alt={'icons'}
+        />
+      </Link>
     </section>
   )
 }

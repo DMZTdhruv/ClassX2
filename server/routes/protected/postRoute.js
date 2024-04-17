@@ -38,11 +38,10 @@ router.get('/total-saved-post', authenticateUserToken, getTotalSavedPostCount)
 
 // Post routes
 router.post('/create-post', authenticateUserToken, createPostController)
-router.post('/like-post', authenticateUserToken, likePostController)
-router.post('/unlike-post', authenticateUserToken, unLikePostController)
+router.post('/like-post/:postId', authenticateUserToken, likePostController)
+router.post('/unlike-post/:postId', authenticateUserToken, unLikePostController)
 router.post('/save-post/:postId', authenticateUserToken, savePostController)
 router.post('/unsave-post/:postId', authenticateUserToken, unSavePostController)
-
 
 // Comment routes
 router.post('/comment/create-comment', authenticateUserToken, createCommentController)

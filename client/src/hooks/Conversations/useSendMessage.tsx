@@ -31,7 +31,6 @@ const useSendMessage = () => {
       if (data.error) {
         throw new Error(data.error)
       }
-      console.log(data)
       setMessages(prev => [...prev, data.data])
       setReplyMessage({
         repliedUser: '',

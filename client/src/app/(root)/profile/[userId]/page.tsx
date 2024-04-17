@@ -27,6 +27,10 @@ const Page = async ({ params }: { params: { userId: string } }) => {
     ? jwtDecode(token?.value || '')
     : { userProfileId: '' }
 
+  if(!cookie) {
+    
+  }
+
   const getUserProfile = async () => {
     const userProfileApi = `${Api}/users?userId=${params.userId}`
     try {

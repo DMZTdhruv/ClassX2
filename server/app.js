@@ -27,7 +27,8 @@ app.use(
   cors({
     origin: [
       'http://localhost:3000',
-      'https://classx2client-production.up.railway.app',
+      'https://classxfrontend-production.up.railway.app',
+      'https://classx.up.railway.app',
     ],
     credentials: true,
   })

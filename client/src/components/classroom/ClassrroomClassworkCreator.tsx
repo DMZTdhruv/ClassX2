@@ -140,7 +140,6 @@ const ClassroomClassworkCreator = ({
     try {
       setGeneratingTempUrl(true)
       const url = await generateTempFileUrl(e)
-      console.log(url)
       url && setAttachMents(prev => [url, ...prev])
     } catch (error: any) {
       console.error(error.message)
@@ -170,7 +169,6 @@ const ClassroomClassworkCreator = ({
       const files = await Promise.all(
         attachments.map(async attachment => await getFile(attachment))
       )
-      console.log(files)
 
       return files
     } catch (error: any) {

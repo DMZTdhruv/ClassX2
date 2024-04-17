@@ -172,7 +172,6 @@ export default function PostModalPage({
   }
 
   const likeDummyUserComment = (parentCommentId: string, subCommentId: string) => {
-    console.log('Hello')
     setDummyUserComments(prev => {
       const index = prev.findIndex(
         comment => comment.parentCommentId === parentCommentId

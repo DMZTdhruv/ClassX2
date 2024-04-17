@@ -49,7 +49,6 @@ const Page = async ({
     params.classworkId
   )
 
-  console.log(classworkData)
 
   return (
     <div className='w-full p-[16px] mt-4 md:p-[30px]'>

@@ -23,7 +23,6 @@ const ProfilePosts = ({
   const [differentUserPost, setDifferentUserPost] = useState<IPost[]>([])
   const [page, setPage] = useState<number>(1)
   const [allPostLoaded, setAllPostLoaded] = useState<boolean>(false)
-  console.log(totalPosts)
   const loadMorePosts = async () => {
     const nextPage = page + 1
     const newPosts: IPost[] = await getUserPosts(userProfileId, token, page)
@@ -47,7 +46,6 @@ const ProfilePosts = ({
     } else if (!isDifferentUser) {
       if (inView) {
         if (userPost.length >= totalPosts) {
-          console.log(userPost)
           setAllPostLoaded(true)
           return
         }

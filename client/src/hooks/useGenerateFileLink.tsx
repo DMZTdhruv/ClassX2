@@ -7,7 +7,6 @@ const useGenerateFileLink = () => {
 
   const generateTempFileUrl = async (e: any) => {
     const { type, name } = e.target.files[0]
-    console.log({ type, name })
     try {
       if (
         type === 'application/pdf' ||

@@ -15,7 +15,6 @@ const Classwork = async ({ params }: { params: { classId: string } }) => {
   const topics = await getClassroomTopics(cookie || '', params.classId)
   const classroomData = await getClassroomData(cookie || '', params.classId)
 
-  console.log(classroomData)
 
   return (
     <div className='w-full flex flex-col items-center '>

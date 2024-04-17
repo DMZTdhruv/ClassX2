@@ -16,7 +16,6 @@ const useGetTopics = () => {
       })
 
       const data = await res.json()
-      console.log(data.data)
       setTopics(data.data)
     } catch (error: any) {
       console.error(error.message)

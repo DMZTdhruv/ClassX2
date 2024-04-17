@@ -14,7 +14,6 @@ const useUnlikePost = () => {
     authUser: { userProfileId: string },
     serverRendered: boolean
   ) => {
-    console.log(serverRendered)
     setNumberOfLikes(prev => prev - 1)
     if (!serverRendered) {
       setFeedPost(prev => {
@@ -40,7 +39,6 @@ const useUnlikePost = () => {
         throw new Error(data.error)
       }
 
-      console.log(data)
     } catch (error: any) {
       setNumberOfLikes(numberOfLikes)
       console.error(error.message)

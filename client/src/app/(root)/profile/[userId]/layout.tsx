@@ -36,6 +36,19 @@ const ProfilePage = async ({
     ? jwtDecode(token?.value || '')
     : { userProfileId: '' }
 
+  if (!token) {
+    return (
+      <div className='xl:w-[60%] h-[100vh]  w-full flex-1 px-[16px] flex gap-5 justify-center'>
+        <div className='flex items-center justify-center flex-col'>
+          Unauthorized user
+          <Link href={`/auth/sign-in`} className='text-primary hover:underline'>
+            Sign in
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
   const getUserProfile = async () => {
     const userProfileApi = `${Api}/users?userId=${params.userId}`
     try {
@@ -74,7 +87,7 @@ const ProfilePage = async ({
       />
 
       <div className='w-full max-w-[904px]'>
-        <ProfileNavigation userId={userProfile._id} currentUserId={userProfileId}/>
+        <ProfileNavigation userId={userProfile._id} currentUserId={userProfileId} />
         {children}
       </div>
     </section>

@@ -30,7 +30,6 @@ const useGetUpdate = () => {
       })
 
       const data = await res.json()
-      console.log(data.data.createdAt)
       if (data.error) {
         throw new Error(data.error)
       }

@@ -39,7 +39,6 @@ const useLikePost = () => {
         throw new Error(data.error)
       }
 
-      console.log(data)
     } catch (error: any) {
       console.error(error.message)
       setIsLiked(false)

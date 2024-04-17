@@ -114,7 +114,6 @@ export const savePost = async (postId: string, isSaved: boolean) => {
         throw new Error(data.error)
       }
 
-      console.log(data)
       return true
     } catch (error: any) {
       console.error(error.message)
@@ -123,7 +122,6 @@ export const savePost = async (postId: string, isSaved: boolean) => {
   }
 }
 export const unSavePost = async (postId: string, isSaved: boolean) => {
-  console.log(isSaved)
   if (isSaved) {
     try {
       const res = await fetch(`${Api}/post/unsave-post/${postId}`, {
@@ -138,7 +136,6 @@ export const unSavePost = async (postId: string, isSaved: boolean) => {
       if (data.error) {
         throw new Error(data.error)
       }
-      console.log(data)
       return true
     } catch (error: any) {
       console.error(error.message)

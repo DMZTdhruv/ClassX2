@@ -38,7 +38,6 @@ const Post: React.FC<IPost> = ({
   const { unlikePost } = useUnlikePost()
 
   const [numberOfLikes, setNumberOfLikes] = useState<number>(likes.length)
-  console.log(likes)
   const [isLiked, setIsLiked] = useState<boolean>(false)
   const [isSaved, setIsSaved] = useState<boolean>(false)
   const [showFullCaption, setShowFullCaption] = useState<boolean>(false)
@@ -47,7 +46,6 @@ const Post: React.FC<IPost> = ({
   useEffect(() => {
     setIsLiked(likes.filter(id => id === authUser?.userProfileId).length > 0)
     setIsSaved(saved?.filter(id => id === authUser?.userProfileId).length > 0)
-    console.log(saved)
   }, [authUser])
 
   return (

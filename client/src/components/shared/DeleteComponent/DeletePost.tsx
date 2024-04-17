@@ -11,7 +11,7 @@ import { IoWarningOutline } from 'react-icons/io5'
 interface IDeleteComponent {
   deleteId: string
   userProfileId: string
-  postData: IPostMinimal[]
+  postData?: IPostMinimal[]
   handleModal: (data: boolean) => void
   className?: string
   handlePostState?: (data: string) => void
@@ -50,7 +50,7 @@ export default function DeletePostModal({
           setErrorMessage('')
         }, 3000)
         setIsDeleting(false)
-        console.log('Failed to delete the post')
+       
       }
 
       handlePostState?.(deleteId)
@@ -69,8 +69,10 @@ export default function DeletePostModal({
         updateFeed()
         setUserPost(prev => prev.filter(post => post._id !== deleteId))
         setExplorePost(prev => prev.filter(post => post._id !== deleteId))
-        if (!postData.find(post => post._id === deleteId)) {
-          setTotalPostDeleted(prev => prev + 1)
+        if (postData) {
+          if (!postData.find(post => post._id === deleteId)) {
+            setTotalPostDeleted(prev => prev + 1)
+          }
         }
       }
     } catch (error: any) {

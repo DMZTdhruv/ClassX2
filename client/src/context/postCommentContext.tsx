@@ -45,12 +45,11 @@ const PostCommentContextProvider = ({ children }: { children: React.ReactNode })
   }
 
   const handlePostComments = (comment: IComments[]) => {
-    console.log(comment)
     setPostComments(prev => [...comment])
   }
 
   const handleUserCommentReplies = (parentId: string, comment: IComments) => {
-    console.log({parentId, comment})
+
     setUserCommentReplies(prev => {
       const index = prev.findIndex(
         commentReply => commentReply.parentCommentId === parentId

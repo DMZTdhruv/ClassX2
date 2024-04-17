@@ -11,7 +11,6 @@ const useDeleteUpdate = () => {
   const deleteUpdate = async (classId: string, updateId: string) => {
     setLoading(true)
     try {
-      console.log(updateId)
       const res = await fetch(`${Api}/classroom/${classId}/delete-update/${updateId}`, {
         method: 'DELETE',
         headers: {
@@ -23,7 +22,6 @@ const useDeleteUpdate = () => {
       if (data.error) {
         throw new Error(data.error)
       }
-      console.log(data)
       updateClassroomUpdates()
       updateClassroom()
     } catch (error: any) {

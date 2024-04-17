@@ -127,7 +127,6 @@ export default function UploadPost() {
       })
 
       const result = await response.json()
-      console.log(result)
     } catch (err: any) {
       throw new Error(err.message)
     }

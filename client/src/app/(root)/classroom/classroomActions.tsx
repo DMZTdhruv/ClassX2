@@ -81,7 +81,7 @@ export const getClassroomTopics = async (cookie: string, classId: string) => {
     if (data.error) {
       throw new Error(data.error)
     }
-    console.log(data)
+
     return data.data
   } catch (error: any) {
     console.log(error.message)
@@ -129,7 +129,6 @@ export const getClassworkById = async (
     })
 
     const data = await res.json()
-    console.log(data)
     if (data.error) {
       throw new Error(data.error)
     }

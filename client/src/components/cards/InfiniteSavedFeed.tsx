@@ -18,10 +18,6 @@ const InfiniteSavedFeed = ({
   const [page, setPage] = useState<number>(0)
   const [allPostLoaded, setAllPostLoaded] = useState<boolean>(false)
 
-  useEffect(() => {
-    console.log({ savedPost })
-  }, [savedPost])
-
   const loadMorePosts = async () => {
     const nextPage = page + 1
     const newPosts: IPost[] = await getSavedPosts(cookie, nextPage)

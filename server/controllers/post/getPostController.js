@@ -8,9 +8,15 @@ export const getPostController = async (req, res) => {
   const currentPage = parseInt(page) || 1
   const itemsPerPage = parseInt(limit) || 10
   const startIndex = (currentPage - 1) * itemsPerPage
+
+  console.log({
+    query: req.query,
+    userProfileId,
+  })
+
+
   try {
     const results = await getAllPostService(startIndex, itemsPerPage, userProfileId)
-    console.log(results)
     res.json(results)
   } catch (err) {
     res.status(500).json({ error: err.message })

@@ -12,7 +12,6 @@ export default async function HomeLayout() {
   const postData = await getPosts(cookie || '', 1)
   const decodedValue = cookie ? jwtDecode(cookie || '') : ''
   const totalPost = await getTotalPost(cookie || '')
-  console.log(postData)
 
   if (postData?.error) {
     return (

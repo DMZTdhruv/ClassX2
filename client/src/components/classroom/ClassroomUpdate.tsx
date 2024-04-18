@@ -38,7 +38,7 @@ const ClassroomUpdate = ({
   classId?: string
   isAdmin?: boolean
 }) => {
-  const { _id, postedBy, createdAt, title, description, attachments } = classroomUpdate
+  const { _id, postedBy, createdAt, title, description } = classroomUpdate
   const formatedDate = formatDate(new Date(createdAt))
   const { loading, deleteUpdate, error } = useDeleteUpdate()
 
@@ -63,28 +63,31 @@ const ClassroomUpdate = ({
                 </p>
               </div>
             </div>
-            <Dialog>
-              <DialogTrigger>
-                <BsThreeDots />
-              </DialogTrigger>
-              <DialogContent className=' bg-neutral-950 border border-neutral-800'>
-                <DialogHeader>
-                  <DialogTitle>Delete update</DialogTitle>
-                  <DialogDescription>
-                    Do you want to delete this update?
-                  </DialogDescription>
-                  <DialogFooter className='flex items-center'>
-                    <Button
-                      className={`${loading ? 'animate-pulse' : ''} font-bold`}
-                      disabled={loading}
-                      onClick={() => deleteUpdate(classId || '', _id)}
-                    >
-                      {loading ? 'Deleting..' : 'Delete'}
-                    </Button>
-                  </DialogFooter>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
+            {isAdmin && (
+              <Dialog>
+                <DialogTrigger>
+                  <BsThreeDots />
+                </DialogTrigger>
+                <DialogContent className=' bg-neutral-950 border border-neutral-800'>
+                  <DialogHeader>
+                    <DialogTitle>Delete update</DialogTitle>
+                    <DialogDescription>
+                      Do you want to delete this update?
+                    </DialogDescription>
+                    <DialogFooter className='flex items-center'>
+                      {error && <div className='text-red-500'>{error}</div>}
+                      <Button
+                        className={`${loading ? 'animate-pulse' : ''} font-bold`}
+                        disabled={loading}
+                        onClick={() => deleteUpdate(classId || '', _id)}
+                      >
+                        {loading ? 'Deleting..' : 'Delete'}
+                      </Button>
+                    </DialogFooter>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
+            )}
           </div>
           <Link href={`/classroom/${classId}/updates/${_id}`} className=' text-left'>
             <pre className='text-wrap font-poppins'>

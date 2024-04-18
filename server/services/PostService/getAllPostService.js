@@ -1,6 +1,6 @@
 import Post from '../../models/post/post.model.js'
 
-export const getAllPostService = async (startIndex, itemsPerPage, userProfileId) => {
+export const getAllPostService = async (startIndex, itemsPerPage) => {
   try {
     const response = await Post.find()
       .sort({ createdAt: -1 })

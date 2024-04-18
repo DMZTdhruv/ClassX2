@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers'
 import React from 'react'
 import UserCard from '@/components/cards/UserCard'
-import { shuffleArray } from '@/utils'
 import { jwtDecode } from 'jwt-decode'
 import Link from 'next/link'
 import { Api, webUrl } from '@/Constants'

@@ -15,7 +15,6 @@ const Classwork = async ({ params }: { params: { classId: string } }) => {
   const topics = await getClassroomTopics(cookie || '', params.classId)
   const classroomData = await getClassroomData(cookie || '', params.classId)
 
-
   return (
     <div className='w-full flex flex-col items-center '>
       <div className='lg:w-[80%] flex-col md:w-[90%] w-full md:p-[16px] flex items-center'>
@@ -29,6 +28,7 @@ const Classwork = async ({ params }: { params: { classId: string } }) => {
             classId={params.classId}
             topics={topics}
             cookie={cookie || ''}
+            isAdmin={classroomData?.adminEmails?.includes(decodedCookie?.userProfileId)}
           />
         </div>
       </div>

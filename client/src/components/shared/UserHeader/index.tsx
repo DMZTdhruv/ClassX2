@@ -83,7 +83,7 @@ export default function UserHeader({
               <Link href={'/profile/edit-profile'}>Edit profile</Link>
             </Button>
             <Button className='h-[28px] rounded-[13px] text-white font-semibold'>
-              <Link href={'/settings'}>Settings</Link>
+              <Link href={'/profile/setting'}>Settings</Link>
             </Button>
           </div>
         )}

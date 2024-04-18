@@ -11,6 +11,14 @@ export async function updateClassroomUpdates() {
   revalidateTag('classroomUpdates')
 }
 
+export async function updateClassroomClassworkData() {
+  revalidateTag('classroomClassworkData')
+}
+
+export async function updateClassroomStudents() {
+  revalidateTag('classroomStudents')
+}
+
 export const getClassroomData = async (cookie: string, classId: string) => {
   try {
     const res = await fetch(`${Api}/classroom/${classId}`, {
@@ -144,6 +152,9 @@ export const getClassroomStudents = async (cookie: string, classId: string) => {
       method: 'GET',
       headers: {
         Cookies: `classX_user_token=${cookie}`,
+      },
+      next: {
+        tags: ['classroomStudents'],
       },
     })
 

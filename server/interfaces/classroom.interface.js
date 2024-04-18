@@ -40,4 +40,12 @@ export default class ClassroomRepositoryInterface {
   async deleteUpdateById () {
     throw new Error(`deleteUpdateById method not implemented`)
   }
+
+  async deleteClassworkById () {
+    throw new Error(`deleteClassworkById method not implemented`)
+  }
+
+  async deleteStudentFromClassroom(){
+    throw new Error(`deleteStudentFromClassroom method not implemented`)
+  }
 }

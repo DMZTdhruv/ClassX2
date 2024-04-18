@@ -83,7 +83,7 @@ const ProfilePosts = ({
           })}
       </div>
       {totalPosts === 0 ? (
-        <p>No posts by this user :D</p>
+        <p className='text-center'>No posts by this user :D</p>
       ) : (
         <div className='w-full flex justify-center'>
           {allPostLoaded ? (

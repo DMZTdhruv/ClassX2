@@ -14,31 +14,11 @@ export const getPosts = async (cookie: string, page: number) => {
       },
     })
 
-    const data = await response.json()
-
+    const { data } = await response.json()
     if (data.error) {
-      return data
+      throw new Error(data.error)
     }
-    return data.data
-  } catch (error: any) {
-    console.error(error.message)
-  }
-}
-
-export const getFeedPost = async (page: number) => {
-  try {
-    const response = await fetch(`${Api}/post/get-post?page=${page}&limit=${10}`, {
-      method: 'GET',
-      cache: 'no-cache',
-      credentials: 'include',
-    })
-
-    const data = await response.json()
-
-    if (data.error) {
-      return data
-    }
-    return data.data
+    return data
   } catch (error: any) {
     console.error(error.message)
   }
@@ -75,22 +55,6 @@ export const getTotalPost = async (cookie: string) => {
         Cookies: `classX_user_token=${cookie}`,
       },
       cache: 'no-store',
-    })
-
-    const { data } = await response.json()
-    if (data.error) {
-      throw new Error(data.error)
-    }
-    return data
-  } catch (error: any) {
-    console.error(error.message)
-  }
-}
-export const getTotalFeedPost = async () => {
-  try {
-    const response = await fetch(`${Api}/post/total-post`, {
-      method: 'GET',
-      credentials: 'include'
     })
 
     const { data } = await response.json()

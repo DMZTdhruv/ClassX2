@@ -4,6 +4,7 @@ import ClassroomOptions from '@/components/classroom/ClassroomOptions'
 import AccessProfile from '@/components/shared/profile/AccessProfile'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cookies } from 'next/headers'
+import Link from 'next/link'
 
 export default async function Classroom() {
   const cookie = cookies().get('classX_user_token')?.value
@@ -49,6 +50,24 @@ export default async function Classroom() {
           <AccessProfile />
         </div>
       </header>
+      {classrooms?.length === 0 && (
+        <div className='text-center h-[80vh] flex flex-col justify-center items-center'>
+          <span className='font-black text-2xl'> Oops no classroom joined</span>
+          <Link
+            href={`/classroom/create-classroom`}
+            className=' hover:underline text-primary font-semibold'
+          >
+            Create one
+          </Link>
+          or
+          <Link
+            href={`/classroom/join-classroom`}
+            className=' hover:underline text-primary font-semibold'
+          >
+            Join classroom
+          </Link>
+        </div>
+      )}
       {classrooms && !requestError ? (
         <div className='sm:p-[32px] p-[16px] w-full items-center gap-3 flex flex-wrap'>
           {classrooms.map((classroom: IClassroomCard) => {

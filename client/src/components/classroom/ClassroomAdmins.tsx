@@ -11,10 +11,13 @@ interface IAdmin {
 
 const ClassroomAdmins = ({ admins }: { admins: IAdmin[] }) => {
   return (
-    <div className='flex'>
+    <div className='flex flex-col gap-3 my-3'>
       {admins.map(admin => {
         return (
-          <div key={admin.username} className=' rounded-xl p-4 flex items-center'>
+          <div
+            key={admin.username}
+            className=' rounded-[20px] p-3 hover:bg-neutral-900/50  flex items-center'
+          >
             <div className='relative h-12 w-12 rounded-full overflow-hidden'>
               <Image
                 src={admin.userProfileImage}

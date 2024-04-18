@@ -5,11 +5,20 @@ import ClassroomPost from '../models/classroom/classroomPost.model.js'
 import ClassroomClasswork from '../models/classroom/classroomClasswork.model.js'
 
 export default class ClassroomRepository extends ClassroomRepositoryInterface {
-  async createClassroom(className, classroomJoinId, branch, division, semester, user) {
+  async createClassroom(
+    className,
+    classroomJoinId,
+    classroomAdminJoinId,
+    branch,
+    division,
+    semester,
+    user
+  ) {
     const userProfile = await UserProfile.findById(user.userProfileId)
     const classroom = await Classroom.create({
       className,
       classroomJoinId,
+      classroomAdminJoinId,
       branch,
       division,
       semester,
@@ -39,7 +48,7 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
 
   async getClassroomMinimalData(classId) {
     const classroom = await Classroom.findById(classId).select(
-      'className branch division semester adminEmails classroomJoinId updates'
+      'className branch division semester adminEmails classroomAdminJoinId classroomJoinId updates'
     )
 
     return {
@@ -48,6 +57,7 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
       branch: classroom.branch,
       division: classroom.division,
       semester: classroom.semester,
+      classroomAdminJoinId: classroom.classroomAdminJoinId,
       classroomJoinId: classroom.classroomJoinId,
       adminEmails: classroom.adminEmails,
       updates: classroom.updates.length,
@@ -81,7 +91,12 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
   }
 
   async getClassroomByJoinClassroomId(classroomJoinId) {
-    return await Classroom.findOne({ classroomJoinId })
+    const classroom = await Classroom.findOne({ classroomJoinId })
+    return classroom
+  }
+
+  async getClassroomByAdminJoinId(classroomAdminJoinId) {
+    return await Classroom.findOne({ classroomAdminJoinId })
   }
 
   async getClassroomUpdateById(classroomUpdateId) {
@@ -142,5 +157,54 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
 
   async deleteUpdateById(updateId) {
     return await ClassroomPost.findByIdAndDelete(updateId)
+  }
+
+  async deleteClassroomById(classId) {
+    try {
+      await UserProfile.updateMany(
+        { classrooms: classId },
+        { $pull: { classrooms: classId } }
+      )
+
+      await ClassroomClasswork.deleteMany({ classId })
+      await ClassroomPost.deleteMany({ classId })
+      return true
+    } catch (error) {
+      return false
+    }
+  }
+
+  async deleteClassworkById(classId, userProfileId, classworkId) {
+    const classroom = await Classroom.findById(classId)
+    if (!classroom.adminEmails.includes(userProfileId)) {
+      return false
+    }
+    classroom.classWork.remove(userProfileId)
+    await Promise.all([
+      ClassroomClasswork.findByIdAndDelete(classworkId),
+      classroom.save(),
+    ])
+    return true
+  }
+
+  async deleteStudentFromClassroom(classId, userProfileId, deleteStudentId) {
+    const [classroom, user] = await Promise.all([
+      Classroom.findById(classId),
+      UserProfile.findById(deleteStudentId),
+    ])
+
+    if (!classroom.adminEmails.includes(userProfileId)) {
+      return false
+    }
+
+    if (!classroom.studentEmails.includes(deleteStudentId)) {
+      return false
+    }
+
+    user.classrooms.remove(classroom._id)
+    classroom.studentEmails.remove(deleteStudentId)
+
+    await Promise.all([user.save(), classroom.save()])
+    return true
   }
 }

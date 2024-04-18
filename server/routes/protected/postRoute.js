@@ -28,9 +28,9 @@ import {
 const router = express.Router()
 
 // Get routes
-router.get('/get-post', authenticateUserToken, getPostController)
+router.get('/get-post', getPostController)
 router.get('/', authenticateUserToken, getPostByIdController)
-router.get('/total-post', authenticateUserToken, getTotalPostCount)
+router.get('/total-post', getTotalPostCount)
 router.get('/total-saved-post', authenticateUserToken)
 router.get('/comment/sub-comment', authenticateUserToken, getSubCommentsController)
 router.get('/saved-post', authenticateUserToken, getAllSavedPost)

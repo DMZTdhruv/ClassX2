@@ -1,5 +1,7 @@
 import Link from 'next/link'
+import { BsThreads, BsThreeDots } from 'react-icons/bs'
 import { FaArrowRight } from 'react-icons/fa6'
+import ClassroomModal from './ClassroomModal'
 
 export interface IClassroomCard {
   _id?: string
@@ -22,24 +24,31 @@ const ClassroomCard = ({
   createdBy,
 }: IClassroomCard) => {
   return (
-    <Link
-      href={`/classroom/${_id}/updates`}
-      className='sm:w-[380px] hover:scale-[1.01] active:scale-[0.99]  w-full md:w-[400px] flex flex-col gap-2 border border-neutral-800 bg-neutral-900 rounded-md p-4'
-    >
-      <div className='border-b border-neutral-800 pb-2'>
+    <div className='sm:w-[380px] hover:scale-[1.01] active:scale-[0.99]  w-full md:w-[350px] flex flex-col gap-2 border border-neutral-800 bg-neutral-900 rounded-md p-4 relative'>
+      <Link
+        href={`/classroom/${_id}/updates`}
+        className='border-b border-neutral-800 pb-2'
+      >
         <div className=''>
-          <h2 className='text-[33px] font-bold'>{branch}</h2>
+          <h2 className='text-[28px] font-bold'>{branch}</h2>
           <span className='inline-block font-semibold'>
             {className} <br />
             Div - {division}
           </span>
         </div>
         <div>prof. {createdBy.username}</div>
-      </div>
-      <div className='flex justify-end items-center h-[60px] '>
+      </Link>
+      <Link
+        href={`/classroom/${_id}/updates`}
+        className='flex justify-end items-center h-[60px] '
+      >
         <FaArrowRight />
+      </Link>
+      <div className='absolute top-4 right-4 active:scale-95 '>
+        {/* @ts-ignore */}
+        <ClassroomModal creatorId={createdBy._id} classId={_id} />
       </div>
-    </Link>
+    </div>
   )
 }
 

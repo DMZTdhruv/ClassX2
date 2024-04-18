@@ -2,7 +2,10 @@ import {
   createClassroomClassworkService,
   createClassroomService,
   createClassroomUpdatesService,
+  deleteClassroomByIdService,
   deleteClassroomUpdateByIdService,
+  deleteClassworkByIdService,
+  deleteStudentService,
   getAllClassroomsService,
   getClassroomAdminsService,
   getClassroomByIdService,
@@ -12,17 +15,27 @@ import {
   getClassroomUpdateService,
   getClassroomWorksService,
   getClassworkByIdService,
+  joinClassroomByAdminIdService,
   joinClassroomService,
+  unEnrolClassroomService,
 } from '../../services/classroom/classroom.service.js'
 
 export const createClassroomController = async (req, res) => {
   try {
     const user = req.user
     console.log(req.body)
-    const { className, classroomJoinId, branch, division, semester } = req.body
+    const {
+      className,
+      classroomJoinId,
+      classroomAdminJoinId,
+      branch,
+      division,
+      semester,
+    } = req.body
     const { statusCode, response } = await createClassroomService(
       className,
       classroomJoinId,
+      classroomAdminJoinId,
       branch,
       division,
       semester,
@@ -62,8 +75,24 @@ export const joinClassroomController = async (req, res) => {
     const { classroomJoinId } = req.body
     console.log({ classroomJoinId })
     const user = req.user
-    console.log({ user })
     const { statusCode, response } = await joinClassroomService(user, classroomJoinId)
+    res.status(statusCode).json(response)
+  } catch (error) {
+    console.log(`Error in ${error.message}`)
+    res.status(500).json({ error: `Internal server error` })
+  }
+}
+
+export const joinClassroomByAdminId = async (req, res) => {
+  try {
+    const { classroomAdminJoinId } = req.body
+    console.log({ classroomAdminJoinId })
+    const user = req.user
+    console.log({ user })
+    const { statusCode, response } = await joinClassroomByAdminIdService(
+      user,
+      classroomAdminJoinId
+    )
     res.status(statusCode).json(response)
   } catch (error) {
     console.log(`Error in ${error.message}`)
@@ -253,5 +282,67 @@ export const deleteClassroomUpdateById = async (req, res) => {
   } catch (error) {
     console.log(error.message)
     res.status(500).json({ error: 'Internal server error' })
+  }
+}
+
+export const deleteClassroomById = async (req, res) => {
+  try {
+    const { userProfileId } = req.user
+    const { classId } = req.params
+
+    const { statusCode, response } = await deleteClassroomByIdService(
+      userProfileId,
+      classId
+    )
+    res.status(statusCode).json(response)
+  } catch (error) {
+    console.log(error.message)
+    res.status(500).json({ error: `Internal server error` })
+  }
+}
+
+export const unEnrolClassroom = async (req, res) => {
+  try {
+    const { userProfileId } = req.user
+    const { classId } = req.params
+    console.log({ classId })
+    const { statusCode, response } = await unEnrolClassroomService(
+      userProfileId,
+      classId
+    )
+    res.status(statusCode).json(response)
+  } catch (error) {
+    console.log(error.message)
+    res.status(500).json({ error: `Internal server error` })
+  }
+}
+
+export const deleteClassworkById = async (req, res) => {
+  try {
+    const { userProfileId } = req.user
+    const { classworkId, classId } = req.params
+
+    const { statusCode, response } = await deleteClassworkByIdService(
+      classId,
+      userProfileId,
+      classworkId
+    )
+
+    res.status(statusCode).json(response)
+  } catch (error) {
+    console.log(error.message)
+    res.status(500).json({ error: `Internal server error` })
+  }
+}
+
+export const deleteStudent = async (req, res) => {
+  try {
+    const { userProfileId } = req.user
+    const { classId, deleteStudentId } = req.params
+    const { statusCode, response } = await deleteStudentService(classId, userProfileId, deleteStudentId)
+    res.status(statusCode).json(response)
+  } catch (error) {
+    console.log(error.message)
+    res.status(500).json({ error: `Internal server error` })
   }
 }

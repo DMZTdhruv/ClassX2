@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid'
 interface ClassroomState {
   className: string
   classroomJoinId: string
+  classroomAdminJoinId: string
   branch: string
   division: string
   semester: string
@@ -16,6 +17,7 @@ interface ClassroomState {
 const initialState: ClassroomState = {
   className: '',
   classroomJoinId: uuidv4(),
+  classroomAdminJoinId: uuidv4(),
   branch: '',
   division: '',
   semester: '',

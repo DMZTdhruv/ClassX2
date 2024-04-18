@@ -4,13 +4,40 @@ import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import useJoinClassroom from '@/hooks/classroom/useJoinClassroom'
 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import useJoinClassroomAsAdmin from '@/hooks/classroom/useJoinClassroomAsAdmin'
+
 const JoinClassroom = ({}) => {
-  const [classroomId, setClassroomId] = useState<string>('')
+  // Id states
+  const [classroomAdminJoinId, setClassroomAdminJoinId] = useState<string>('')
+  const [classroomJoinId, setClassroomJoinId] = useState<string>('')
+
+  const [tabSelection, setTabSelection] = useState<string>('Classroom Id')
+
+  // join classroom hooks
   const { loading, joinClassroom, error, message } = useJoinClassroom()
+  const { joinClassroomByAdminId, adminJoiningError, adminJoiningLoading } =
+    useJoinClassroomAsAdmin()
 
   const handleJoinClassroom = async (e: FormEvent) => {
     e.preventDefault()
-    await joinClassroom(classroomId)
+    if (classroomJoinId.trim() === '') return
+    await joinClassroom(classroomJoinId)
+  }
+
+  const handleJoiningAdmin = async (e: FormEvent) => {
+    e.preventDefault()
+    if (classroomAdminJoinId.trim() === '') return
+    await joinClassroomByAdminId(classroomAdminJoinId)
   }
 
   return (
@@ -25,40 +52,70 @@ const JoinClassroom = ({}) => {
           Classroom
         </span>
       </div>
-      <form
-        className='flex items-center flex-col  gap-[12px] '
-        onSubmit={handleJoinClassroom}
-      >
-        <label className='w-full mb-[4px]'>
-          <p className='mb-[2px] text-center pb-2'>Enter the classroom Id</p>
-          <Input
-            type='text'
-            className='rounded-full bg-[#171717] border-none outline-none px-[16px]'
-            placeholder='Enter a classname'
-            value={classroomId}
-            onChange={e => setClassroomId(e.target.value)}
-            required
-          />
-        </label>
-        <Button
-          className='rounded-full text-white px-[24px] py-[3px] transition-all'
-          type='submit'
-          disabled={loading}
-        >
-          {loading ? 'Joining...' : 'Join'}
-        </Button>
-        {message && (
-          <p className='text-center  error_message'>
-            Success: <span className='text-green-500'> {message}</span>
-          </p>
-        )}
-
-        {error && (
-          <p className='text-center  error_message'>
-            Error: <span className='text-red-500'> {error}</span>
-          </p>
-        )}
-      </form>
+      <div className='flex items-center justify-center'>
+        <Tabs defaultValue='classroom Join Id' className='lg:w-[50vw]'>
+          <TabsList className='grid w-full grid-cols-2 bg-neutral-900'>
+            <TabsTrigger value='classroom Join Id'>Classroom Join Id</TabsTrigger>
+            <TabsTrigger value='admin Join id'>Admin Join id</TabsTrigger>
+          </TabsList>
+          <TabsContent value='classroom Join Id'>
+            <Card className='bg-neutral-900/80 border-none'>
+              <CardHeader>
+                <CardTitle>Classroom</CardTitle>
+                <CardDescription>Enter classroom id to join classroom</CardDescription>
+              </CardHeader>
+              <CardContent className='space-y-2'>
+                <div className='space-y-1'>
+                  <Label htmlFor='classroomJoinId'>Classroom Join Id</Label>
+                  <Input
+                    id='classroomJoinId'
+                    placeholder='Enter your classroom join Id here'
+                    value={classroomJoinId}
+                    onChange={e => setClassroomJoinId(e.target.value)}
+                  />
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button onClick={handleJoinClassroom} disabled={loading}>
+                  {loading ? 'Joining classroom' : 'Join classroom'}
+                </Button>
+              </CardFooter>
+            </Card>
+          </TabsContent>
+          <TabsContent value='admin Join id'>
+            <Card className='bg-neutral-900/80 border-none'>
+              <CardHeader>
+                <CardTitle>Admin</CardTitle>
+                <CardDescription>If you have admin join Id enter here</CardDescription>
+              </CardHeader>
+              <CardContent className='space-y-2'>
+                <div className='space-y-1'>
+                  <Label htmlFor='AdminId'>Admin join Id</Label>
+                  <Input
+                    id='AdminId'
+                    type='text'
+                    placeholder='Enter your classroom admin join id'
+                    value={classroomAdminJoinId}
+                    onChange={e => {
+                      setClassroomAdminJoinId(e.target.value)
+                    }}
+                  />
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button onClick={handleJoiningAdmin} disabled={adminJoiningLoading}>
+                  {adminJoiningLoading ? 'Joining classroom' : 'Join classroom'}
+                </Button>
+              </CardFooter>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+      {(adminJoiningError || error) && (
+        <div className='text-center text-red-500 mt-3'>
+          {adminJoiningError || error}
+        </div>
+      )}
     </div>
   )
 }

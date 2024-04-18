@@ -28,6 +28,7 @@ const isAuthorizedUser = async (classId, userProfileId) => {
 export const createClassroomService = async (
   className,
   classroomJoinId,
+  classroomAdminJoinId,
   branch,
   division,
   semester,
@@ -37,6 +38,7 @@ export const createClassroomService = async (
     await classroomRepo.createClassroom(
       className,
       classroomJoinId,
+      classroomAdminJoinId,
       branch,
       division,
       semester,
@@ -77,12 +79,12 @@ export const getClassroomService = async (classId, user) => {
     if (!isAdmin) {
       delete classroomData.classroomJoinId
       delete classroomData.adminEmails
+      delete classroomData.classroomAdminJoinId
     }
     console.log({
       isAdmin,
       classroomData,
     })
-
     return {
       statusCode: 200,
       response: {
@@ -165,7 +167,7 @@ export const getClassroomUpdateService = async (startIndex, itemsPerPage, classI
 export const joinClassroomService = async (user, classroomJoinId) => {
   try {
     const classroom = await classroomRepo.getClassroomByJoinClassroomId(classroomJoinId)
-    console.log(classroom)
+
     const isAdminPresent = classroom.adminEmails.includes(user.userProfileId)
     const isUserPresent = classroom.studentEmails.includes(user.userProfileId)
 
@@ -182,6 +184,41 @@ export const joinClassroomService = async (user, classroomJoinId) => {
     userProfile.classrooms.push(classroom._id)
     classroom.studentEmails.push(user.userProfileId)
 
+    await Promise.all([userProfile.save(), classroom.save()])
+
+    return {
+      statusCode: 201,
+      response: {
+        message: `Successfully joined the classroom!`,
+      },
+    }
+  } catch (error) {
+    throw new Error(error.message)
+  }
+}
+
+export const joinClassroomByAdminIdService = async (user, classroomAdminJoinId) => {
+  try {
+    const classroom = await classroomRepo.getClassroomByAdminJoinId(
+      classroomAdminJoinId
+    )
+    console.log(classroom)
+    const isAdminPresent = classroom.adminEmails.includes(user.userProfileId)
+
+    if (isAdminPresent) {
+      return {
+        statusCode: 400,
+        response: {
+          error: `You are already admin of this classroom`,
+        },
+      }
+    }
+
+    const userProfile = await UserProfile.findById(user.userProfileId)
+    if (!userProfile.classrooms.includes(classroom._id)) {
+      userProfile.classrooms.push(classroom._id)
+    }
+    classroom.adminEmails.push(user.userProfileId)
     await Promise.all([userProfile.save(), classroom.save()])
 
     return {
@@ -375,5 +412,98 @@ export const deleteClassroomUpdateByIdService = async (
     })
   } catch (error) {
     console.log(error.message)
+    throw new Error(error.message)
+  }
+}
+
+export const deleteClassroomByIdService = async (userProfileId, classId) => {
+  try {
+    const isAdmin = await classroomRepo.isAdmin(userProfileId, classId)
+    if (!isAdmin) {
+      return returnMessage(401, { error: 'Unauthorized user' })
+    }
+    const deletedClassroom = await classroomRepo.deleteClassroomById(classId)
+    if (deletedClassroom) {
+      return returnMessage(200, {
+        data: deletedClassroom,
+        message: 'Deleted classroom successfully',
+      })
+    } else {
+      return returnMessage(400, {
+        error: 'Failed to delete the classroom',
+      })
+    }
+  } catch (error) {
+    console.log(error.message)
+    throw new Error(error.message)
+  }
+}
+
+export const unEnrolClassroomService = async (userProfileId, classId) => {
+  try {
+    const classroom = await classroomRepo.getClassroomById(classId)
+    const isAdmin = classroom.adminEmails.includes(userProfileId)
+    if (isAdmin) {
+      return returnMessage(401, { error: 'admin cannot un-enrol ' })
+    }
+
+    const isValidUser = classroom.studentEmails.includes(userProfileId)
+    const user = await UserProfile.findById(userProfileId)
+    if (isValidUser) {
+      classroom.studentEmails.remove(userProfileId)
+      user.classrooms.remove(classroom._id)
+    } else {
+      return returnMessage(401, { error: 'student not found' })
+    }
+
+    await Promise.all([classroom.save(), user.save()])
+    return returnMessage(200, { message: 'student unenrolled successfully' })
+  } catch (error) {
+    console.log(error.message)
+    throw new Error(error.message)
+  }
+}
+
+export const deleteClassworkByIdService = async (
+  classId,
+  userProfileId,
+  classworkId
+) => {
+  try {
+    const deleteClasswork = await classroomRepo.deleteClassworkById(
+      classId,
+      userProfileId,
+      classworkId
+    )
+
+    if (!deleteClasswork) {
+      return returnMessage(400, {
+        message: 'Deleted classwork successfully',
+      })
+    }
+
+    return returnMessage(200, { message: 'Deleted classwork successfully' })
+  } catch (error) {
+    console.log(error.message)
+    throw new Error(error.message)
+  }
+}
+
+export const deleteStudentService = async (classId, userProfileId, deleteStudentId) => {
+  try {
+    const deleteStudent = await classroomRepo.deleteStudentFromClassroom(
+      classId,
+      userProfileId,
+      deleteStudentId
+    )
+    
+    if (!deleteStudent) {
+      return returnMessage(400, { error: `Failed to remove student` })
+    }
+
+    return returnMessage(200, { message: 'removed student successfully' })
+  } catch (error) {
+    console.log(error.message)
+    throw new Error(error.message)
   }
 }

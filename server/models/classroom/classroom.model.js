@@ -11,6 +11,10 @@ const classroomSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
+    classroomAdminJoinId: {
+      type: String,
+      unique: true,
+    },
     branch: {
       type: String,
       required: true,

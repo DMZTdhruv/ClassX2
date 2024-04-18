@@ -35,7 +35,7 @@ const useCreateClassroom = () => {
 
       setMessage(data.message)
       updateClassroom()
-      router.push('/classroom')
+      router.replace('/classroom')
     } catch (error: any) {
       console.error(error.message)
     } finally {

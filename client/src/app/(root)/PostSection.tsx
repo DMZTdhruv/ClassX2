@@ -20,10 +20,18 @@ interface IComments {
   commentReplies: string[]
 }
 
+interface UploadAttachments {
+  _id: string
+  originalFilename: string
+  url: string
+  extension: string
+  _createdAt: string
+}
+
 interface IPost {
   _id: string
-  title: string
-  imageUrl: string
+  attachments: UploadAttachments[]
+  aspectRatio: string
   caption: string
   location: string
   category: string
@@ -72,7 +80,6 @@ export default function PostSection({
   const loadMoreUpdates = async () => {
     const nextPage = page + 1
     const newPosts = await getPosts(cookie, nextPage)
-    console.log(newPosts)
     setFeedPost(prev => [...prev, ...newPosts])
     setPage(nextPage)
   }
@@ -96,13 +103,6 @@ export default function PostSection({
   // useEffects
   useEffect(() => {
     if (inView) {
-      console.log(feedPost.length + postData.length - totalPostDeleted >= totalPost)
-      console.log({
-        feedPosts: feedPost.length,
-        postsData: postData.length,
-        totalPostDeleted,
-        totalPost,
-      })
       if (feedPost.length + postData.length - totalPostDeleted >= totalPost) {
         setAllPostLoaded(true)
         return
@@ -130,10 +130,10 @@ export default function PostSection({
             key={post._id}
             _id={post._id}
             saved={post.saved}
-            title={post.title}
             index={index}
+            aspectRatio={post.aspectRatio}
             serverRenderedPost={true}
-            imageUrl={post.imageUrl}
+            attachments={post.attachments}
             caption={post.caption}
             location={post.location}
             category={post.category}
@@ -152,8 +152,8 @@ export default function PostSection({
             key={post._id}
             _id={post._id}
             saved={post.saved}
-            title={post.title}
-            imageUrl={post.imageUrl}
+            attachments={post.attachments}
+            aspectRatio={post.aspectRatio}
             index={index}
             serverRenderedPost={false}
             caption={post.caption}

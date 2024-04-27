@@ -5,9 +5,12 @@ import UserRepository from '../../repositories/UserRepository.js'
 import { generateSaltAndHashPassword } from '../../utils/passwordUtils.js'
 import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
+import AuthRepository from '../../repositories/Auth.js'
+import { returnMessage } from '../../utils/returnMessage.js'
 dotenv.config()
 
 const userRepository = new UserRepository()
+const authRepo = new AuthRepository()
 
 export const signIn = async (email, password, res) => {
   try {
@@ -34,6 +37,7 @@ export const signIn = async (email, password, res) => {
       {
         userID: user._id,
         userProfileId: userProfile._id,
+        userProfileImage: userProfile.userProfileImage,
       },
       process.env.JWT_SECRET,
       {
@@ -91,6 +95,23 @@ export const signUp = async (email, password, res) => {
       userProfile: { userID: newUser._id },
     })
   } catch (error) {
+    throw new Error(error.message)
+  }
+}
+
+export async function getUserDataService(userProfileId) {
+  try {
+    const userData = await authRepo.getUserInfo(userProfileId)
+    console.log(userData)
+    const data = {
+      userProfileId: userData._id,
+      userID: userData.userID,
+      userProfileImage: userData.userProfileImage,
+      username: userData.username,
+    }
+    return returnMessage(200, { data })
+  } catch (error) {
+    console.log(error.message)
     throw new Error(error.message)
   }
 }

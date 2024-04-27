@@ -24,7 +24,7 @@ const ClassroomCard = ({
   createdBy,
 }: IClassroomCard) => {
   return (
-    <div className='sm:w-[380px] hover:scale-[1.01] active:scale-[0.99]  w-full md:w-[350px] flex flex-col gap-2 border border-neutral-800 bg-neutral-900 rounded-md p-4 relative'>
+    <div className='sm:w-[380px] relative z-[10] hover:scale-[1.01] active:scale-[0.99]  w-full md:w-[350px] flex flex-col gap-2 border border-neutral-800 bg-neutral-900 rounded-md p-4 '>
       <Link
         href={`/classroom/${_id}/updates`}
         className='border-b border-neutral-800 pb-2'

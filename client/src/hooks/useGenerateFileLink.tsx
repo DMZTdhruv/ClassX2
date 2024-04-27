@@ -32,6 +32,28 @@ const useGenerateFileLink = () => {
     }
   }
 
+  const generateTempVideoUrl = async (e: any) => {
+    const { type, name } = e.target.files[0]
+    try {
+      if (type === 'video/mp4') {
+        const file = await client.assets.upload('file', e.target.files[0], {
+          contentType: type,
+          filename: name,
+        })
+
+        return file
+      } else {
+        throw new Error(`Invalid file type`)
+      }
+    } catch (error: any) {
+      console.error(error.message)
+      setSanityError(error.message)
+      setTimeout(() => {
+        setSanityError('')
+      }, 5000)
+    }
+  }
+
   const getFile = async (file: SanityAssetDocument) => {
     const doc = {
       _type: 'classwork',
@@ -46,7 +68,7 @@ const useGenerateFileLink = () => {
     try {
       const createFile = await client.create(doc)
       const file = await client.fetch(
-        `*[_id == '${createFile.file.asset._ref}']{_id, originalFilename, extension, url}`
+        `*[_id == '${createFile.file.asset._ref}']{_id, originalFilename, extension, url, _createdAt}`
       )
       return file[0]
     } catch (error: any) {
@@ -61,6 +83,7 @@ const useGenerateFileLink = () => {
   return {
     generateTempFileUrl,
     getFile,
+    generateTempVideoUrl,
     sanityError,
   }
 }

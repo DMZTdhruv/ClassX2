@@ -11,7 +11,14 @@ import React, {
 import Image from 'next/image'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
-import { Api, IComments, IPost, UpdateReplyCommentData, webUrl } from '@/Constants'
+import {
+  Api,
+  IComments,
+  IPost,
+  UpdateReplyCommentData,
+  UploadAttachments,
+  webUrl,
+} from '@/Constants'
 import { likePost, unlikePost } from '@/utils/LikeFunctions'
 const ParentComment = React.lazy(
   () => import('@/components/shared/PostComponents/ParentComment')
@@ -23,6 +30,7 @@ import DeleteCommentComponent from '../shared/DeleteComponent/DeleteComment'
 import Link from 'next/link'
 import { useAuthContext } from '@/context/AuthContext'
 import DeletePostModal from '../shared/DeleteComponent/DeletePost'
+import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '../ui/carousel'
 
 // Interfaces
 interface GetSubComment {
@@ -59,7 +67,7 @@ interface IUserCommentReplies {
   comment: ISubComment[]
 }
 
-export default function PostModalPage({
+export default function PagePostModal({
   postData,
   postId,
 }: {
@@ -69,6 +77,9 @@ export default function PostModalPage({
   //constants
   const { authUser } = useAuthContext()
   const [dummyUserComments, setDummyUserComments] = useState<IUserCommentReplies[]>([])
+  const [api, setApi] = React.useState<CarouselApi>()
+  const [current, setCurrent] = React.useState(0)
+  const [count, setCount] = React.useState(0)
 
   //constants
 
@@ -119,6 +130,19 @@ export default function PostModalPage({
       body.style.overflow = 'auto'
     }
   }, [])
+
+  useEffect(() => {
+    if (!api) {
+      return
+    }
+
+    setCount(api.scrollSnapList().length)
+    setCurrent(api.selectedScrollSnap() + 1)
+
+    api.on('select', () => {
+      setCurrent(api.selectedScrollSnap() + 1)
+    })
+  }, [api])
 
   // All handles
 
@@ -304,7 +328,7 @@ export default function PostModalPage({
   }
 
   const goBack = () => {
-    router.back()
+    router.replace(`${webUrl}`)
   }
 
   const replyComment = async () => {
@@ -426,7 +450,7 @@ export default function PostModalPage({
         />
       )}
       <div
-        className='w-full h-full pt-[60px] sm:pt-[0px]  sm:h-full sm:max-w-[80%] sm:min-w-[100%] md:min-w-[80%] md:max-h-[563px] xl:min-w-[85%] xl:max-w-[50%]  md:border  bg-[#0E0E0E]  border-[#212936] flex flex-col lg:flex-row border '
+        className='w-full md:max-h-[80vh] h-screen pt-[60px] sm:pt-[0px]  sm:h-full sm:max-w-[80%] sm:min-w-[100%] md:min-w-[80%]  xl:min-w-[85%] xl:max-w-[50%]  md:border  bg-[#0E0E0E]  border-[#212936] flex flex-col lg:flex-row border '
         ref={modalRef}
       >
         <button
@@ -446,7 +470,13 @@ export default function PostModalPage({
             isProfile={isProfile || 'false'}
           ></Header>
         </div>
-        <ImageDisplay imageUrl={postData.imageUrl} className='' />
+        <ImageDisplay
+          attachments={postData.attachments}
+          aspectRatio={postData.aspectRatio}
+          setApi={setApi}
+          className=''
+          current={current}
+        />
 
         <div className='flex  flex-col flex-1 md:h-full md:border-l border-neutral-800 '>
           <div className='md:block hidden'>
@@ -513,24 +543,21 @@ export default function PostModalPage({
               <button
                 onClick={() => {
                   setIsLiked(prev => !prev)
-                  likePost({
-                    _id: postId,
-                    isLiked: isLiked,
-                    setNumberOfLikes,
-                    setIsLiked,
-                    numberOfLikes,
-                    authUser,
-                    endPoint: 'post/like-post',
-                  })
-                  unlikePost({
-                    _id: postId,
-                    isLiked: isLiked,
-                    setNumberOfLikes,
-                    setIsLiked,
-                    numberOfLikes,
-                    authUser,
-                    endPoint: 'post/unlike-post',
-                  })
+                  if (!isLiked) {
+                    likePost({
+                      _id: postData._id,
+                      setNumberOfLikes,
+                      setIsLiked,
+                      numberOfLikes,
+                    })
+                  } else {
+                    unlikePost({
+                      _id: postData._id,
+                      setNumberOfLikes,
+                      setIsLiked,
+                      numberOfLikes,
+                    })
+                  }
                 }}
                 className='hover:scale-105'
               >
@@ -662,30 +689,82 @@ function Header({
 }
 
 interface ImageDisplayProps {
-  imageUrl: string
+  attachments: UploadAttachments[]
+  aspectRatio: string
   className?: string
   unoptimized?: boolean
+  setApi: any
+  current: number
 }
 
-function ImageDisplay({ imageUrl, className, unoptimized }: ImageDisplayProps) {
+function ImageDisplay({
+  attachments,
+  aspectRatio,
+  setApi,
+  current,
+}: ImageDisplayProps) {
   const [loadingImage, setLoadingImage] = useState<boolean>(false)
   return (
-    <Image
-      src={imageUrl}
-      alt=''
-      width={400}
-      onLoad={() => {
-        setLoadingImage(true)
-      }}
-      height={300}
-      style={{ width: '100%', height: 'auto' }}
-      className={`max-h-[93vh] h-auto xl:max-w-[600px] lg:max-w-[500px] md:max-w-[400px] md:border-none border-y  border-neutral-800 sm:h-full imageResponive object-contain ${className} ${
-        !loadingImage
-          ? 'animate-pulse rounded-md bg-neutral-700 w-auto h-screen-80'
-          : ''
-      }
-      `}
-      unoptimized={loadingImage}
-    />
+    <Carousel
+      className='md:w-[560px] md:max-h-[80vh] h-full relative flexCenter  rounded-md'
+      setApi={setApi}
+    >
+      <CarouselContent className='md:w-[560px]  rounded-md'>
+        {attachments?.map(attachment => {
+          return (
+            <CarouselItem className='rounded-md' key={attachment._id}>
+              {attachment.extension === 'mp4' ? (
+                <div className='md:max-h-[80vh] h-full w-full flex items-center'>
+                  <video
+                    src={attachment.url}
+                    autoPlay
+                    muted
+                    loop
+                    className={`md:max-h-[80vh] h-full w-full transition-all object-cover aspect-square ${
+                      aspectRatio === '16:9' && 'aspect-video'
+                    }
+                    ${aspectRatio === '1:1' && 'aspect-square'}
+                    ${aspectRatio === '4:3' && 'fourRationThree'}
+                    ${aspectRatio === '3:4' && 'threeRatioFour'} `}
+                  ></video>
+                </div>
+              ) : (
+                <Image
+                  src={attachment.url}
+                  alt='image'
+                  width={384}
+                  height={0}
+                  onLoad={() => {
+                    setLoadingImage(true)
+                  }}
+                  style={{ height: 'auto', width: '560px' }}
+                  unoptimized={loadingImage}
+                  className={`object-cover rounded-[5px] md:max-h-[80vh] md:w-[560px]  border-2 border-[#171717]
+                  ${!loadingImage ? 'animate-pulse rounded-md bg-neutral-700' : ''}
+                  
+                  ${aspectRatio === '16:9' && 'aspect-video'}
+                  ${aspectRatio === '1:1' && 'aspect-square'}
+                  ${aspectRatio === '4:3' && 'fourRationThree'}
+                  ${aspectRatio === '3:4' && 'threeRatioFour'}
+                  `}
+                />
+              )}
+            </CarouselItem>
+          )
+        })}
+      </CarouselContent>
+      {attachments.length > 1 && (
+        <div className='py-2 absolute bottom-0 text-center mt-2 text-sm text-muted-foreground flex items-center gap-1 justify-center'>
+          {attachments.map((attachment, index) => (
+            <div
+              key={attachment._id}
+              className={`h-1 w-1 rounded-full transition-all ${
+                index === current - 1 ? 'bg-primary scale-150' : 'bg-neutral-600 '
+              } `}
+            ></div>
+          ))}
+        </div>
+      )}
+    </Carousel>
   )
 }

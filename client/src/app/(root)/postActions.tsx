@@ -1,6 +1,13 @@
 import { Api } from '@/Constants'
+import { revalidateTag } from 'next/cache'
 
 // convert this to client if you want to preserve update like feedback when navigating DHRUVV!!
+
+export const updateFeedPost = () => {
+  revalidateTag('feedPost')
+}
+
+
 export const getPosts = async (cookie: string, page: number) => {
   try {
     const response = await fetch(`${Api}/post/get-post?page=${page}&limit=${10}`, {

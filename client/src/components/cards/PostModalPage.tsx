@@ -11,9 +11,15 @@ import React, {
 import Image from 'next/image'
 import { useRouter, useSearchParams, redirect } from 'next/navigation'
 import { Input } from '@/components/ui/input'
-import { Api, IComments, IPost, UpdateReplyCommentData } from '@/Constants'
+import {
+  Api,
+  IComments,
+  IPost,
+  UpdateReplyCommentData,
+  UploadAttachments,
+} from '@/Constants'
 import FollowButton from '@/components/shared/FollowButton/FollowButton'
-import { likePost, unlikePost } from '@/utils/LikeFunctions'
+import { likePost, savePost, unSavePost, unlikePost } from '@/utils/LikeFunctions'
 import ParentComment from '../shared/PostComponents/ParentComment'
 import { formatDate } from '@/utils'
 import { HiMiniXMark } from 'react-icons/hi2'
@@ -24,6 +30,8 @@ import DeletePostModal from '../shared/DeleteComponent/DeletePost'
 import { FaArrowLeftLong } from 'react-icons/fa6'
 import { useAuthContext } from '@/context/AuthContext'
 import Link from 'next/link'
+import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '../ui/carousel'
+import PostVideo from '../shared/Post/PostVideo'
 
 // Interfaces
 interface GetSubComment {
@@ -73,10 +81,15 @@ export default function PostModalPage({
   const [dummyUserComments, setDummyUserComments] = useState<IUserCommentReplies[]>([])
 
   //constants
-
+  const [api, setApi] = React.useState<CarouselApi>()
+  const [current, setCurrent] = React.useState(0)
+  const [count, setCount] = React.useState(0)
   const router = useRouter()
   const isProfile = useSearchParams().get('isProfile')
   const postedDate = formatDate(new Date(postData.createdAt))
+  const [isSaved, setIsSaved] = useState<boolean>(
+    postData.saved.includes(authUser?.userProfileId || '')
+  )
 
   // refs
   const modalRef = useRef<HTMLDivElement>(null)
@@ -405,6 +418,19 @@ export default function PostModalPage({
     }
   }
 
+  useEffect(() => {
+    if (!api) {
+      return
+    }
+
+    setCount(api.scrollSnapList().length)
+    setCurrent(api.selectedScrollSnap() + 1)
+
+    api.on('select', () => {
+      setCurrent(api.selectedScrollSnap() + 1)
+    })
+  }, [api])
+
   return (
     <section
       className='w-full animate-in fade-in-0 min-h-[100vh] responiveModal flexCenter border-neutral-800 md:border md:h-full overflow-y-auto bg-[#0E0E0E]  md:bg-transparent '
@@ -454,7 +480,132 @@ export default function PostModalPage({
             isProfile={isProfile || 'false'}
           ></Header>
         </div>
-        <ImageDisplay imageUrl={postData.imageUrl} className='' />
+        <ImageDisplay
+          attachments={postData.attachments}
+          aspectRatio={postData.aspectRatio}
+          setApi={setApi}
+          className=''
+          current={current}
+        />
+        <div className='flex md:hidden border-t md:border-t-0 border-neutral-800 flex-col justify-center gap-[9px] p-[15px]'>
+          <div className='flex items-center justify-between gap-[10px] '>
+            <div className='flex gap-[10px] items-center'>
+              <button
+                onClick={() => {
+                  setIsLiked(prev => !prev)
+                  if (!isLiked) {
+                    likePost({
+                      _id: postData._id,
+                      setNumberOfLikes,
+                      setIsLiked,
+                      numberOfLikes,
+                    })
+                  } else {
+                    unlikePost({
+                      _id: postData._id,
+                      setNumberOfLikes,
+                      setIsLiked,
+                      numberOfLikes,
+                    })
+                  }
+                }}
+                className='hover:scale-105'
+              >
+                {isLiked ? (
+                  <Image
+                    src={`/assets/filledHeart.svg`}
+                    width={25}
+                    height={25}
+                    alt='user jpg'
+                    style={{
+                      width: '25px',
+                      height: '25px',
+                    }}
+                    className='rounded-full object-cover active:scale-90 transition-all'
+                  />
+                ) : (
+                  <Image
+                    src={`/assets/heart.svg`}
+                    width={25}
+                    height={25}
+                    alt='user jpg'
+                    style={{
+                      width: '25px',
+                      height: '25px',
+                    }}
+                    className='rounded-full object-cover active:scale-90 transition-all'
+                  />
+                )}
+              </button>
+
+              <button onClick={focusInput}>
+                <Image
+                  src={`/assets/comment.svg`}
+                  width={25}
+                  height={25}
+                  alt='user jpg'
+                  unoptimized
+                  style={{
+                    width: '25px',
+                    height: '25px',
+                  }}
+                  className=' aspect-square object-cover translate-y-[-1px]'
+                />
+              </button>
+            </div>
+
+            {isSaved ? (
+              <button
+                onClick={() => {
+                  setIsSaved(prev => !prev)
+                  const data = unSavePost(postData._id, isSaved)
+                  if (!data) {
+                    setIsSaved(false)
+                  }
+                }}
+              >
+                <Image
+                  src='/assets/bookmark-fill.svg'
+                  width={30}
+                  height={30}
+                  priority
+                  unoptimized
+                  alt='bookmark icon'
+                  className='rounded-full sm:opacity-100 sm:hover:opacity-80 focus:scale-105 object-cover active:scale-90 '
+                  style={{
+                    width: '30px',
+                    height: '30px',
+                  }}
+                />
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setIsSaved(prev => !prev)
+                  const data = savePost(postData._id, isSaved)
+                  if (!data) {
+                    setIsSaved(false)
+                  }
+                }}
+              >
+                <Image
+                  src='/assets/bookmark.svg'
+                  width={30}
+                  height={30}
+                  priority
+                  unoptimized
+                  alt='bookmark icon'
+                  className='rounded-full sm:opacity-100 sm:hover:opacity-80 focus:scale-105 object-cover active:scale-90 fill-blue-500'
+                  style={{
+                    width: '30px',
+                    height: '30px',
+                  }}
+                />
+              </button>
+            )}
+          </div>
+          <p className='text-[12px] pl-[2px]'>{numberOfLikes} likes</p>
+        </div>
 
         <div className='flex  flex-col flex-1 md:h-full md:border-l border-neutral-800 '>
           <div className='md:block hidden'>
@@ -517,72 +668,121 @@ export default function PostModalPage({
             })}
           </div>
           <div className='md:flex hidden border-t md:border-t-0 border-neutral-800 flex-col justify-center gap-[9px] p-[15px]'>
-            <div className='flex items-center gap-[10px] '>
-              <button
-                onClick={() => {
-                  setIsLiked(prev => !prev)
-                  likePost({
-                    _id: postId,
-                    isLiked: isLiked,
-                    setNumberOfLikes,
-                    setIsLiked,
-                    numberOfLikes,
-                    authUser,
-                    endPoint: 'post/like-post',
-                  })
-                  unlikePost({
-                    _id: postId,
-                    isLiked: isLiked,
-                    setNumberOfLikes,
-                    setIsLiked,
-                    numberOfLikes,
-                    authUser,
-                    endPoint: 'post/unlike-post',
-                  })
-                }}
-                className='hover:scale-105'
-              >
-                {isLiked ? (
-                  <Image
-                    src={`/assets/filledHeart.svg`}
-                    width={25}
-                    height={25}
-                    alt='user jpg'
-                    style={{
-                      width: '25px',
-                      height: '25px',
-                    }}
-                    className='rounded-full object-cover active:scale-90 transition-all'
-                  />
-                ) : (
-                  <Image
-                    src={`/assets/heart.svg`}
-                    width={25}
-                    height={25}
-                    alt='user jpg'
-                    style={{
-                      width: '25px',
-                      height: '25px',
-                    }}
-                    className='rounded-full object-cover active:scale-90 transition-all'
-                  />
-                )}
-              </button>
-
-              <button onClick={focusInput}>
-                <Image
-                  src={`/assets/comment.svg`}
-                  width={25}
-                  height={25}
-                  alt='user jpg'
-                  unoptimized
-                  style={{
-                    width: '25px',
-                    height: '25px',
+            <div className='flex items-center justify-between gap-[10px] '>
+              <div className='flex gap-[10px] items-center'>
+                <button
+                  onClick={() => {
+                    setIsLiked(prev => !prev)
+                    if (!isLiked) {
+                      likePost({
+                        _id: postData._id,
+                        setNumberOfLikes,
+                        setIsLiked,
+                        numberOfLikes,
+                      })
+                    } else {
+                      unlikePost({
+                        _id: postData._id,
+                        setNumberOfLikes,
+                        setIsLiked,
+                        numberOfLikes,
+                      })
+                    }
                   }}
-                  className=' aspect-square object-cover translate-y-[-1px]'
-                />
-              </button>
+                  className='hover:scale-105'
+                >
+                  {isLiked ? (
+                    <Image
+                      src={`/assets/filledHeart.svg`}
+                      width={25}
+                      height={25}
+                      alt='user jpg'
+                      style={{
+                        width: '25px',
+                        height: '25px',
+                      }}
+                      className='rounded-full object-cover active:scale-90 transition-all'
+                    />
+                  ) : (
+                    <Image
+                      src={`/assets/heart.svg`}
+                      width={25}
+                      height={25}
+                      alt='user jpg'
+                      style={{
+                        width: '25px',
+                        height: '25px',
+                      }}
+                      className='rounded-full object-cover active:scale-90 transition-all'
+                    />
+                  )}
+                </button>
+
+                <button onClick={focusInput}>
+                  <Image
+                    src={`/assets/comment.svg`}
+                    width={25}
+                    height={25}
+                    alt='user jpg'
+                    unoptimized
+                    style={{
+                      width: '25px',
+                      height: '25px',
+                    }}
+                    className=' aspect-square object-cover translate-y-[-1px]'
+                  />
+                </button>
+              </div>
+
+              {isSaved ? (
+                <button
+                  onClick={() => {
+                    setIsSaved(prev => !prev)
+                    const data = unSavePost(postData._id, isSaved)
+                    if (!data) {
+                      setIsSaved(false)
+                    }
+                  }}
+                >
+                  <Image
+                    src='/assets/bookmark-fill.svg'
+                    width={30}
+                    height={30}
+                    priority
+                    unoptimized
+                    alt='bookmark icon'
+                    className='rounded-full sm:opacity-100 sm:hover:opacity-80 focus:scale-105 object-cover active:scale-90 '
+                    style={{
+                      width: '30px',
+                      height: '30px',
+                    }}
+                  />
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setIsSaved(prev => !prev)
+                    const data = savePost(postData._id, isSaved)
+                    if (!data) {
+                      setIsSaved(false)
+                    }
+                  }}
+                >
+                  <Image
+                    src='/assets/bookmark.svg'
+                    width={30}
+                    height={30}
+                    priority
+                    unoptimized
+                    alt='bookmark icon'
+                    className='rounded-full sm:opacity-100 sm:hover:opacity-80 focus:scale-105 object-cover active:scale-90 fill-blue-500'
+                    style={{
+                      width: '30px',
+                      height: '30px',
+                    }}
+                  />
+                </button>
+              )}
             </div>
             <p className='text-[12px] pl-[2px]'>{numberOfLikes} likes</p>
           </div>
@@ -671,30 +871,66 @@ function Header({
 }
 
 interface ImageDisplayProps {
-  imageUrl: string
+  attachments: UploadAttachments[]
+  aspectRatio: string
   className?: string
   unoptimized?: boolean
+  setApi: any
+  current: number
 }
 
-function ImageDisplay({ imageUrl, className, unoptimized }: ImageDisplayProps) {
+function ImageDisplay({
+  attachments,
+  aspectRatio,
+  setApi,
+  current,
+}: ImageDisplayProps) {
   const [loadingImage, setLoadingImage] = useState<boolean>(false)
   return (
-    <Image
-      src={imageUrl}
-      alt=''
-      width={400}
-      onLoad={() => {
-        setLoadingImage(true)
-      }}
-      height={300}
-      style={{ width: '100%', height: 'auto' }}
-      className={`max-h-[93vh] h-auto xl:max-w-[600px] lg:max-w-[500px] md:max-w-[400px] md:border-none border-y  border-neutral-800 sm:h-full imageResponive object-contain ${className} ${
-        !loadingImage
-          ? 'animate-pulse rounded-md bg-neutral-700 w-auto h-screen-80'
-          : ''
-      }
-      `}
-      unoptimized={loadingImage}
-    />
+    <Carousel className='md:w-[560px] flexCenter  rounded-md  h-auto' setApi={setApi}>
+      <CarouselContent className='md:w-[560px]  rounded-md'>
+        {attachments?.map(attachment => {
+          return (
+            <CarouselItem className='rounded-md' key={attachment._id}>
+              {attachment.extension === 'mp4' ? (
+                <PostVideo url={attachment.url} aspectRatio={aspectRatio} />
+              ) : (
+                <Image
+                  src={attachment.url}
+                  alt='image'
+                  width={384}
+                  height={0}
+                  onLoad={() => {
+                    setLoadingImage(true)
+                  }}
+                  style={{ height: 'auto', width: '560px' }}
+                  unoptimized={loadingImage}
+                  className={`object-cover rounded-[5px]  md:w-[560px]  border-2 border-[#171717]
+                  ${!loadingImage ? 'animate-pulse rounded-md bg-neutral-700' : ''}
+                  
+                  ${aspectRatio === '16:9' && 'aspect-video'}
+                  ${aspectRatio === '1:1' && 'aspect-square'}
+                  ${aspectRatio === '4:3' && 'fourRationThree'}
+                  ${aspectRatio === '3:4' && 'threeRatioFour'}
+                  `}
+                />
+              )}
+            </CarouselItem>
+          )
+        })}
+      </CarouselContent>
+      {attachments.length > 1 && (
+        <div className='py-2 absolute bottom-0 text-center mt-2 text-sm text-muted-foreground flex items-center gap-1 justify-center'>
+          {attachments.map((attachment, index) => (
+            <div
+              key={attachment._id}
+              className={`h-1 w-1 rounded-full transition-all ${
+                index === current - 1 ? 'bg-primary scale-150' : 'bg-neutral-600 '
+              } `}
+            ></div>
+          ))}
+        </div>
+      )}
+    </Carousel>
   )
 }

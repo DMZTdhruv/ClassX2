@@ -42,7 +42,7 @@ function TopBar() {
       ${(isMessageRoute || isClassroomRoute || isExploreRoute) && 'hidden'} ${
         onPath && 'hidden'
       } sm:hidden flex  justify-between  px-[14px] items-center fixed 
-      bg-[#0E0E0E] z-[50] border-b border-neutral-800  w-full transition-transform `}
+      bg-[#0E0E0E] z-[50] border-b rounded-b-xl border-neutral-800  w-full transition-transform `}
     >
       <span
         className='inline-block text-[25px] font-black

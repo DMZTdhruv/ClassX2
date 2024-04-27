@@ -43,7 +43,7 @@ const InfiniteExploreFeed = ({
             <NormalPost
               key={posts._id}
               _id={posts._id}
-              imageUrl={posts.imageUrl}
+              attachments={posts.attachments}
               likes={posts.likes.length}
               comments={posts.comments.length}
             />

@@ -18,7 +18,7 @@ export const sideBarData = [
     name: 'Upload',
     icon: 'upload.svg',
     filledIcon: 'upload-fill.svg',
-    routes: '/upload-post',
+    routes: '/upload',
   },
   {
     id: 4,
@@ -55,7 +55,7 @@ export const BottomBarData = [
     name: 'Upload',
     icon: 'upload.svg',
     filledIcon: 'upload-fill.svg',
-    routes: '/upload-post',
+    routes: '/upload',
   },
   {
     id: 5,
@@ -76,18 +76,18 @@ interface IDeletePostDetails {
 // types
 interface IPost {
   _id: string
-  title: string
-  saved: string[]
-  imageUrl: string
+  attachments: UploadAttachments[]
+  aspectRatio: string
   caption: string
   location: string
   category: string
-  serverRenderedPost: boolean
+  saved: string[]
   postedBy: {
     _id: string
     username: string
     userProfileImage: string
   }
+  serverRenderedPost: boolean
   index: number
   likes: string[]
   comments: IComments[]
@@ -96,10 +96,18 @@ interface IPost {
   handleDeleteModal: (data: boolean) => void
 }
 
+interface UploadAttachments {
+  _id: string
+  originalFilename: string
+  url: string
+  extension: string
+  _createdAt: string
+}
+
 interface IPostMinimal {
   _id: string
-  title: string
-  imageUrl: string
+  attachments: UploadAttachments[]
+  aspectRatio: string
   caption: string
   location: string
   category: string
@@ -113,7 +121,6 @@ interface IPostMinimal {
   comments: IComments[]
   createdAt: string
 }
-
 interface IComments {
   _id: string
   commentText: string
@@ -158,6 +165,7 @@ interface IReplyMessage {
 export type {
   IReplyMessage,
   IComments,
+  UploadAttachments,
   IPost,
   IPostMinimal,
   UpdateReplyCommentData,

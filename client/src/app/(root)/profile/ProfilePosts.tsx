@@ -32,7 +32,12 @@ const ProfilePosts = ({
       setUserPost(prev => [...prev, ...newPosts])
     }
     setPage(nextPage)
+    console.log(userPost)
   }
+
+  useEffect(() => {
+    console.log(userPost)
+  }, [userPost])
 
   useEffect(() => {
     if (isDifferentUser) {
@@ -63,7 +68,7 @@ const ProfilePosts = ({
               <NormalPost
                 key={posts._id}
                 _id={posts._id}
-                imageUrl={posts.imageUrl}
+                attachments={posts.attachments}
                 likes={posts.likes.length}
                 comments={posts.comments.length}
               />
@@ -75,7 +80,7 @@ const ProfilePosts = ({
               <NormalPost
                 key={posts._id}
                 _id={posts._id}
-                imageUrl={posts.imageUrl}
+                attachments={posts.attachments}
                 likes={posts.likes.length}
                 comments={posts.comments.length}
               />

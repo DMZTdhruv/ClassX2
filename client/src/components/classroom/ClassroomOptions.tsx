@@ -12,7 +12,7 @@ const ClassroomOptions = () => {
         <IoAddOutline size={24} className='active:scale-90' />
       </button>
       {openModal && (
-        <div className='absolute top-[30px] right-0 w-[250px] p-2 gap-2 bg-[#0E0E0E] border-neutral-800 rounded-lg border flex flex-col'>
+        <div className='absolute z-[50] top-[30px] right-0 w-[250px] p-2 gap-2 bg-[#0E0E0E] border-neutral-800 rounded-lg border flex flex-col'>
           <Link
             href={'/classroom/create-classroom'}
             className='text-[15px] font-semibold transition-all hover:bg-neutral-800 group rounded-md text-center'

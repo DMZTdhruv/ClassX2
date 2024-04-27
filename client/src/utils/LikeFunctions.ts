@@ -6,95 +6,63 @@ interface IAuthUser {
 
 interface PostLikes {
   _id: string
-  isLiked: boolean
   setNumberOfLikes: (newNumberOfLikes: number) => void
   setIsLiked: (newValueOfLike: boolean) => void
   numberOfLikes: number
-  authUser: IAuthUser | null
-  endPoint: string
-  isDevMode?: boolean | null
+
 }
 
 export const likePost = async ({
   _id,
-  isLiked,
   setNumberOfLikes,
   setIsLiked,
   numberOfLikes,
-  authUser,
-  endPoint,
-  isDevMode,
 }: PostLikes) => {
-  if (isLiked) return
   setNumberOfLikes(numberOfLikes + 1)
-  const api = process.env.NEXT_PUBLIC_API
-  const likeApi = `${api}/${endPoint}`
-
-  if (isDevMode) return
-
   try {
-    const response = await fetch(`${likeApi}`, {
+    const res = await fetch(`${Api}/post/like-post/${_id}`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
       },
-      body: JSON.stringify({
-        userProfileID: authUser?.userProfileId,
-        postId: _id,
-      }),
       credentials: 'include',
     })
 
-    if (!response.ok) {
-      setNumberOfLikes(numberOfLikes)
-      setIsLiked(false)
-      throw new Error('Error liking in post ')
+    const data = await res.json()
+    if (data.error) {
+      throw new Error(data.error)
     }
-
-    const result = await response.json()
-  } catch (err) {
-    console.log(err)
+  } catch (error: any) {
+    console.error(error.message)
+    setIsLiked(false)
+    setNumberOfLikes(numberOfLikes)
   }
 }
 
 export const unlikePost = async ({
   _id,
-  isLiked,
   setNumberOfLikes,
   setIsLiked,
   numberOfLikes,
-  authUser,
-  endPoint,
-  isDevMode,
 }: PostLikes) => {
-  if (!isLiked) return
   setNumberOfLikes(numberOfLikes - 1)
-  const api = process.env.NEXT_PUBLIC_API
-  const unlikeApi = `${api}/${endPoint}`
-
-  if (isDevMode) return
   try {
-    const response = await fetch(`${unlikeApi}`, {
+    const res = await fetch(`${Api}/post/unlike-post/${_id}`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
       },
-      body: JSON.stringify({
-        userProfileID: authUser?.userProfileId,
-        postId: _id,
-      }),
       credentials: 'include',
     })
 
-    if (!response.ok) {
-      setNumberOfLikes(numberOfLikes)
-      setIsLiked(true)
-      throw new Error('Error unliking the post ')
+    const data = await res.json()
+    if (data.error) {
+      throw new Error(data.error)
     }
-
-    const result = await response.json()
-  } catch (err) {
-    console.log(err)
+  } catch (error: any) {
+    setNumberOfLikes(numberOfLikes)
+    console.error(error.message)
+    setIsLiked(true)
   }
 }
 

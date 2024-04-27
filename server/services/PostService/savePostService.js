@@ -1,7 +1,7 @@
 import PostRepository from '../../repositories/PostRepository.js'
 import { returnMessage } from '../../utils/returnMessage.js'
 import UserProfileRepository from '../../repositories/UserProfileRepository.js'
-import Post from '../../models/post/post.model.js'
+import PostSchema from '../../models/post/postSchema.model..js'
 
 const postRepository = new PostRepository()
 const userRepo = new UserProfileRepository()
@@ -43,10 +43,10 @@ export const getAllSavedPostService = async (
   userProfileId
 ) => {
   try {
-    const response = await Post.find({ saved: userProfileId })
+    const response = await PostSchema.find({ saved: userProfileId })
       .skip(startIndex)
       .limit(itemsPerPage)
-      .select('imageUrl')
+      .select('attachments')
 
     return returnMessage(200, { data: response })
   } catch (error) {
@@ -56,7 +56,9 @@ export const getAllSavedPostService = async (
 }
 export const getTotalPostSavedService = async userProfileId => {
   try {
-    const totalDocuments = await Post.find({ saved: userProfileId }).countDocuments({})
+    const totalDocuments = await PostSchema.find({
+      saved: userProfileId,
+    }).countDocuments({})
     return {
       statusCode: 200,
       response: {

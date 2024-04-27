@@ -2,6 +2,7 @@ import Post from '../models/post/post.model.js'
 import CommentRepositoryInterface from '../interfaces/CommentRepositoryInterface.js'
 import Comment from '../models/comment/comment.model.js'
 import ReplyComment from '../models/comment/repliedComment.model.js'
+import PostSchema from '../models/post/postSchema.model..js'
 
 export default class CommentRepository extends CommentRepositoryInterface {
   async createNewComment(postId, commentText, userId) {
@@ -20,7 +21,7 @@ export default class CommentRepository extends CommentRepositoryInterface {
   }
 
   async pushComment(postId, commentId) {
-    const post = await Post.findOne({ _id: postId })
+    const post = await PostSchema.findOne({ _id: postId })
     post.comments.push(commentId)
     return await post.save()
   }

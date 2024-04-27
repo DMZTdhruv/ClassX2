@@ -30,7 +30,13 @@ export default function UploadPost() {
   const { generateUrl, getUrl } = useGenerateLink()
   const { setExplorePost, setUserPost, setFeedPost } = usePostContext()
 
-  // states
+  // media type
+  const [mediaType, setMediaType] = useState<string>('image')
+
+  //states of video image
+  const [demoVideoUrl, setDemoVideoUrl] = useState<string>('');
+  // const []
+  // states of 
   const [demoUploadImage, setDemoUploadImage] = useState<
     SanityImageAssetDocument | undefined
   >(undefined)
@@ -111,7 +117,7 @@ export default function UploadPost() {
       }, 5000)
     } finally {
       setIsPosting(false)
-    }
+  }
   }
 
   const submitDataToBackend = async (data: Post) => {
@@ -150,15 +156,17 @@ export default function UploadPost() {
           >
             {demoUploadImage?.url ? (
               <div className='w-full relative'>
-                <Image
-                  src={demoUploadImage?.url}
-                  width={0}
-                  height={0}
-                  style={{ height: 'auto', width: '100%' }}
-                  alt='uploaded-image'
-                  unoptimized
-                  className='rounded-md'
-                />
+                {mediaType === 'image' ? (
+                  <Image
+                    src={demoUploadImage?.url}
+                    width={0}
+                    height={0}
+                    style={{ height: 'auto', width: '100%' }}
+                    alt='uploaded-image'
+                    unoptimized
+                    className='rounded-md'
+                  />
+                ) : null}
                 <button
                   onClick={() => setDemoUploadImage(undefined)}
                   className='bg-neutral-900 rounded-md p-1 absolute opacity-70 hover:opacity-100 transition-opacity right-0 bottom-0 '

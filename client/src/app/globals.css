@@ -252,3 +252,11 @@
 .random {
   z-index: 1000;
 }
+
+.fourRationThree {
+  aspect-ratio: 4 / 3;
+}
+
+.threeRatioFour {
+  aspect-ratio: 3 / 4;
+}

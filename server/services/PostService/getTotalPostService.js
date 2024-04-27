@@ -1,8 +1,8 @@
-import Post from '../../models/post/post.model.js'
+import PostSchema from '../../models/post/postSchema.model..js'
 
 const getTotalPostService = async () => {
   try {
-    const totalDocuments = await Post.countDocuments({})
+    const totalDocuments = await PostSchema.countDocuments({})
     return {
       statusCode: 200,
       response: {

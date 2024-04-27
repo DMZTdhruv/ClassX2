@@ -3,10 +3,11 @@ import UserProfile from '../models/user/userProfile.model.js'
 import Post from '../models/post/post.model.js'
 import Comment from '../models/comment/comment.model.js'
 import ReplyComment from '../models/comment/repliedComment.model.js'
+import PostSchema from '../models/post/postSchema.model..js'
 
 export default class PostRepository extends PostRepositoryInterface {
   async savePost(post) {
-    return post.save()
+    return PostSchema.save()
   }
 
   async getUserProfile(userID) {
@@ -20,7 +21,7 @@ export default class PostRepository extends PostRepositoryInterface {
   }
 
   async findPostById(postId) {
-    return await Post.findById(postId)
+    return await PostSchema.findById(postId)
       .populate({
         path: 'postedBy',
         model: 'UserProfile',
@@ -41,7 +42,7 @@ export default class PostRepository extends PostRepositoryInterface {
   }
 
   async findPostByIdWithPostedBy(postId) {
-    return await Post.findById(postId).populate({
+    return await PostSchema.findById(postId).populate({
       path: 'postedBy',
       model: 'UserProfile',
       select: 'username userProfileImage',
@@ -61,6 +62,6 @@ export default class PostRepository extends PostRepositoryInterface {
     await user.posts.remove(post._id)
     await user.savedPosts.remove(post._id)
     await user.save()
-    await Post.deleteOne(post._id)
+    await post.deleteOne()
   }
 }

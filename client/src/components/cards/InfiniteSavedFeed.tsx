@@ -43,7 +43,7 @@ const InfiniteSavedFeed = ({
             <NormalPost
               key={posts._id}
               _id={posts._id}
-              imageUrl={posts.imageUrl}
+              attachments={posts.attachments}
               
             />
           )

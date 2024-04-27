@@ -5,18 +5,20 @@ import Image from 'next/image'
 import { formatMessageSideBarDate } from '@/utils/formatDate'
 import Link from 'next/link'
 import { IPost } from '@/Constants'
-import { likePost, savePost, unSavePost, unlikePost } from '@/utils/LikeFunctions'
+import { savePost, unSavePost } from '@/utils/LikeFunctions'
 import { BsThreeDots } from 'react-icons/bs'
 import { useAuthContext } from '@/context/AuthContext'
 import { Skeleton } from '../ui/skeleton'
-import { comment } from 'postcss'
 import useLikePost from '@/hooks/posts/useLikePost'
 import useUnlikePost from '@/hooks/posts/useUnlikePost'
+import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '../ui/carousel'
+import { useInView } from 'react-intersection-observer'
+import PostVideo from '../shared/Post/PostVideo'
 
 const Post: React.FC<IPost> = ({
   _id,
-  title,
-  imageUrl,
+  attachments,
+  aspectRatio,
   index,
   caption,
   location,
@@ -31,11 +33,16 @@ const Post: React.FC<IPost> = ({
   handleDeleteModal,
 }) => {
   const date = new Date(createdAt)
+  const { ref, inView } = useInView()
 
   //@ts-ignore
   const { authUser } = useAuthContext()
   const { likePost } = useLikePost()
   const { unlikePost } = useUnlikePost()
+
+  const [api, setApi] = React.useState<CarouselApi>()
+  const [current, setCurrent] = React.useState(0)
+  const [count, setCount] = React.useState(0)
 
   const [numberOfLikes, setNumberOfLikes] = useState<number>(likes.length)
   const [isLiked, setIsLiked] = useState<boolean>(false)
@@ -47,6 +54,23 @@ const Post: React.FC<IPost> = ({
     setIsLiked(likes.filter(id => id === authUser?.userProfileId).length > 0)
     setIsSaved(saved?.filter(id => id === authUser?.userProfileId).length > 0)
   }, [authUser])
+
+  useEffect(() => {
+    if (!api) {
+      return
+    }
+
+    setCount(api.scrollSnapList().length)
+    setCurrent(api.selectedScrollSnap() + 1)
+
+    api.on('select', () => {
+      setCurrent(api.selectedScrollSnap() + 1)
+    })
+  }, [api])
+
+  useEffect(() => {
+    console.log(inView)
+  }, [inView])
 
   return (
     <div className='w-full animate-in fade-in-0 lg:w-[544px] h-auto  border-b-2 border-[#171717] font-poppins  postSection'>
@@ -102,21 +126,58 @@ const Post: React.FC<IPost> = ({
           </button>
         </div>
       </div>
-      <div>
-        <Image
-          src={imageUrl}
-          width={384}
-          height={0}
-          alt={'post'}
-          style={{ height: 'auto', width: '584px', aspectRatio: '1' }}
-          onLoad={() => {
-            setLoadingImage(true)
-          }}
-          className={`object-cover rounded-[5px] md:w-[584px] md:h-[584px] border-2 border-[#171717]
-          ${!loadingImage ? 'animate-pulse rounded-md bg-neutral-700' : ''}`}
-          priority={false}
-          unoptimized={loadingImage}
-        />
+      <div className='relative'>
+        {attachments?.length > 0 && (
+          <Carousel className='md:w-[560px]   rounded-md  h-auto' setApi={setApi}>
+            <CarouselContent className='md:w-[560px]  rounded-md'>
+              {attachments?.map(attachment => {
+                return (
+                  <CarouselItem className='rounded-md relative' key={attachment._id}>
+                    {attachment.extension === 'mp4' ? (
+                      <PostVideo url={attachment.url} aspectRatio={aspectRatio} />
+                    ) : (
+                      <Image
+                        src={attachment.url}
+                        alt='image'
+                        width={384}
+                        height={0}
+                        onLoad={() => {
+                          setLoadingImage(true)
+                        }}
+                        style={{ height: 'auto', width: '560px' }}
+                        unoptimized={loadingImage}
+                        className={`object-cover rounded-md  md:w-[560px]  border-2 border-[#171717]
+                          ${
+                            !loadingImage
+                              ? 'animate-pulse rounded-md bg-neutral-700'
+                              : ''
+                          }
+                          
+                          ${aspectRatio === '16:9' && 'aspect-video'}
+                          ${aspectRatio === '1:1' && 'aspect-square'}
+                          ${aspectRatio === '4:3' && 'fourRationThree'}
+                          ${aspectRatio === '3:4' && 'threeRatioFour'}
+                          `}
+                      />
+                    )}
+                  </CarouselItem>
+                )
+              })}
+            </CarouselContent>
+          </Carousel>
+        )}
+        {attachments.length > 1 && (
+          <div className='py-2 absolute left-[50%] -translate-x-[50%] text-center mt-2 text-sm text-muted-foreground flex items-center gap-1 justify-center'>
+            {attachments.map((attachment, index) => (
+              <div
+                key={attachment._id}
+                className={`h-1 w-1 rounded-full transition-all ${
+                  index === current - 1 ? 'bg-primary scale-150' : 'bg-neutral-600 '
+                } `}
+              ></div>
+            ))}
+          </div>
+        )}
       </div>
       <div>
         {authUser ? (

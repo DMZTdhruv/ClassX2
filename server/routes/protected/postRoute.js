@@ -24,6 +24,7 @@ import {
   getAllSavedPost,
   getTotalSavedPostCount,
 } from '../../controllers/post/index.js'
+import { PostController } from '../../controllers/post/PostController.js'
 
 const router = express.Router()
 
@@ -37,7 +38,7 @@ router.get('/saved-post', authenticateUserToken, getAllSavedPost)
 router.get('/total-saved-post', authenticateUserToken, getTotalSavedPostCount)
 
 // Post routes
-router.post('/create-post', authenticateUserToken, createPostController)
+router.post('/create-post', authenticateUserToken, PostController)
 router.post('/like-post/:postId', authenticateUserToken, likePostController)
 router.post('/unlike-post/:postId', authenticateUserToken, unLikePostController)
 router.post('/save-post/:postId', authenticateUserToken, savePostController)

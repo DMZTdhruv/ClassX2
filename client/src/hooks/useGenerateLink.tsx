@@ -38,10 +38,31 @@ export const useGenerateLink = () => {
 
     try {
       const createImage = await client.create(doc)
-      const url = await client.fetch(
-        `*[_id == '${createImage.image.asset._ref}']{url}`
-      )
+      const url = await client.fetch(`*[_id == '${createImage.image.asset._ref}']{url}`)
       return url[0].url
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const getUrlImageObj = async (file: any) => {
+    const doc = {
+      _type: 'Image',
+      image: {
+        type: 'Image',
+        asset: {
+          _type: 'reference',
+          _ref: file._id,
+        },
+      },
+    }
+
+    try {
+      const createImage = await client.create(doc)
+      const url = await client.fetch(
+        `*[_id == '${createImage.image.asset._ref}']{_id, originalFilename, extension, url, _createdAt}`
+      )
+      return url
     } catch (err) {
       console.log(err)
     }
@@ -50,5 +71,6 @@ export const useGenerateLink = () => {
   return {
     generateUrl,
     getUrl,
+    getUrlImageObj,
   }
 }

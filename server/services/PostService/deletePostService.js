@@ -11,6 +11,7 @@ export default async function (postId, userProfileId) {
       throw new Error('Failed to delete the post')
     }
     
+
     await postRepo.deletePostById(post, userProfileId)
     return {
       message: 'Deleted successfully',
@@ -19,4 +20,3 @@ export default async function (postId, userProfileId) {
     throw new Error(error.message)
   }
 }
-;[]

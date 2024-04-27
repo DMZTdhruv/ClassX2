@@ -43,6 +43,7 @@ export default function PostModal({ params }: { params: { id: string } }) {
   }
 
   useEffect(() => {
+    // @ts-ignore
     getPost(params.id, setPost)
   }, [])
 
@@ -62,7 +63,7 @@ export default function PostModal({ params }: { params: { id: string } }) {
     <div
       className={`flexCenter  ${
         window.scrollY < 60 && 'translate-y-[-60px] sm:translate-y-[0px]'
-      } top-0 sticky h-screen z-[1111110]`}
+      } top-0 sticky h-[100vh] `}
     >
       {/* @ts-ignore */}
       <PagePostModal postData={postData} postId={params.id} />

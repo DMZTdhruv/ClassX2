@@ -139,6 +139,7 @@ export const createUserProfile = async (
       {
         userID: user._id,
         userProfileId: userProfileInstance._id,
+        userProfileImage: userProfileInstance.userProfileImage
       },
       process.env.JWT_SECRET,
       {

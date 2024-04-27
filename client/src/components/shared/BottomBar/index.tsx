@@ -28,7 +28,7 @@ function BottomBar() {
 
   return (
     <section
-      className={`sticky transition-all opacity-90 ${
+      className={`sticky z-[1000] transition-all opacity-90 ${
         isBottomBarHidden ? 'bottom-[-60px]' : 'bottom-[0px]'
       } ${
         isMessageRoute && 'hidden'

@@ -8,6 +8,7 @@ import { AuthContextProvider } from '@/context/AuthContext'
 import SocketContextProvider from '@/context/SocketContext'
 import PostContextProvider from '@/context/PostContext'
 import MessageContextProvider from '@/context/MessageContext'
+import SyncData from '@/components/SyncData'
 
 export const metadata: Metadata = {
   title: 'classX app',

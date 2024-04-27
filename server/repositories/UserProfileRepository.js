@@ -1,6 +1,7 @@
 // repositories/UserProfileRepository.js
 import UserProfileRepositoryInterface from '../interfaces/UserProfileRepositoryInterface.js'
 import Post from '../models/post/post.model.js'
+import PostSchema from '../models/post/postSchema.model..js'
 import UserProfile from '../models/user/userProfile.model.js'
 
 export default class UserProfileRepository extends UserProfileRepositoryInterface {
@@ -44,11 +45,11 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
   }
 
   async getUserPosts(startIndex, itemsPerPage, userId) {
-    const posts = await Post.find({ postedBy: userId })
+    const posts = await PostSchema.find({ postedBy: userId })
       .sort({ createdAt: -1 })
       .skip(startIndex)
       .limit(itemsPerPage)
-      .select('imageUrl likes comments')
+      .select('attachments likes comments')
     return posts
   }
 
@@ -76,7 +77,7 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
   }
 
   async getAllSavedPost(userProfileId) {
-    const posts = await Post.find({ saved: userProfileId })
+    const posts = await PostSchema.find({ saved: userProfileId })
     return posts
   }
 

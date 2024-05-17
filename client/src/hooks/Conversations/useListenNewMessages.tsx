@@ -11,7 +11,6 @@ const useListenNewMessages = () => {
     // @ts-ignore
     socket?.on('newMessage', newMessage => {
       setMessages(prev => [...prev, newMessage])
-      console.log(newMessage)
     })
 
     return () => {

@@ -1,138 +1,163 @@
-import { MessageContextProps } from '@/Constants'
-import { useAuthContext } from '@/context/AuthContext'
-import { useMessageContext } from '@/context/MessageContext'
-import { DetailedMessageTime, messageTime } from '@/utils/messageTime'
+import { webUrl } from '@/Constants';
+import { useAuthContext } from '@/context/AuthContext';
+import { useMessageContext } from '@/context/MessageContext';
+import { DetailedMessageTime, messageTime } from '@/utils/messageTime';
 // @ts-ignore
-import { CopyIcon } from '@radix-ui/react-icons'
-import Image from 'next/image'
-import React, { useEffect, useRef, useState } from 'react'
-import { BsThreeDots } from 'react-icons/bs'
-import { MdOutlineReport } from 'react-icons/md'
-import { FiTrash } from 'react-icons/fi'
-import { ImCancelCircle } from 'react-icons/im'
-import { LuReply } from 'react-icons/lu'
+import { CopyIcon } from '@radix-ui/react-icons';
+import Image from 'next/image';
+import React, { useEffect, useRef, useState } from 'react';
+import { BsThreeDots } from 'react-icons/bs';
+import { MdOutlineReport } from 'react-icons/md';
+import { FiTrash } from 'react-icons/fi';
+import { ImCancelCircle } from 'react-icons/im';
+import { LuReply } from 'react-icons/lu';
+import Link from 'next/link';
+
+interface PostDetails {
+  _id: string;
+  originalFilename: string;
+  url: string;
+  extension: string;
+  _createdAt: string;
+}
 
 interface MessageProps {
-  _id: string
-  senderId: { userProfileImage: string; username: string; _id: string } | string
-  receiverId: { userProfileImage: string; username: string; _id: string } | string
-  message: string
+  _id: string;
+  senderId: { userProfileImage: string; username: string; _id: string } | string;
+  receiverId: { userProfileImage: string; username: string; _id: string } | string;
+  message: string;
+  post: {
+    _id: string;
+    attachments: PostDetails[];
+    caption: string;
+    postedBy: {
+      _id: string;
+      userProfileImage: string;
+      username: string;
+    };
+    aspectRatio: string;
+  };
   replyMessage: {
-    repliedMessageId: string
-    replyMessage: string
-    replyToUsername: string
-  }
-  createdAt: string
+    repliedMessageId: string;
+    replyMessage: string;
+    replyToUsername: string;
+  };
+  createdAt: string;
 }
 
 interface MessageComponentProps {
-  message: MessageProps
+  message: MessageProps;
   deleteMessage: {
-    deleteMessage: (_id: string, messageType: string) => void
-    loading: boolean
-  }
-  messageType: 'previous' | 'current'
+    deleteMessage: (_id: string, messageType: string) => void;
+    loading: boolean;
+  };
+  messageType: 'previous' | 'current';
 }
 
 const Message = ({ message, deleteMessage, messageType }: MessageComponentProps) => {
   // @ts-ignore
-  const { authUser } = useAuthContext()
-  const { conversation, replyMessage, setReplyMessage } = useMessageContext()!
+  const { authUser } = useAuthContext();
+  const { conversation, replyMessage, setReplyMessage } = useMessageContext()!;
   const isUserMessage =
     // @ts-ignore
     message.senderId._id === authUser?.userProfileId ||
-    message.senderId === authUser?.userProfileId
-  const userMessageChatBubbleClass = `md:rounded-l-[20px] rounded-l-[30px] md:rounded-tr-[20px] rounded-tr-[30px]`
-  const messageDate = messageTime(message.createdAt)
-  const detailedMessageTime = DetailedMessageTime(message.createdAt)
-  const [modal, setModal] = useState<boolean>(false)
-  const [copied, setCopied] = useState<boolean>(false)
-  const modalRef = useRef<HTMLDivElement>(null)
-  const [timer, setTimer] = useState<any>(null)
+    message.senderId === authUser?.userProfileId;
+  const userMessageChatBubbleClass = `md:rounded-l-[20px] rounded-l-[30px] md:rounded-tr-[20px] rounded-tr-[30px]`;
+  const messageDate = messageTime(message.createdAt);
+  const detailedMessageTime = DetailedMessageTime(message.createdAt);
+  const [modal, setModal] = useState<boolean>(false);
+  const [copied, setCopied] = useState<boolean>(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const [timer, setTimer] = useState<any>(null);
 
   // copy messages
   const copyMessage = () => {
     try {
-      navigator.clipboard.writeText(message.message)
-      setCopied(true)
+      navigator.clipboard.writeText(message.message);
+      setCopied(true);
       setTimeout(() => {
-        setCopied(false)
-      }, 1000)
+        setCopied(false);
+      }, 1000);
     } catch (error: any) {
-      console.error(error.message)
+      console.error(error.message);
     }
-  }
+  };
 
   useEffect(() => {
     setReplyMessage({
       repliedUser: '',
       repliedUserMessage: '',
-    })
-  }, [conversation])
+      repliedPost: {
+        postId: '',
+        postUrl: '',
+        extension: '',
+      },
+    });
+  }, [conversation]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-        setModal(false)
+        setModal(false);
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
-    document.addEventListener('touchstart', handleClickOutside)
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('touchstart', handleClickOutside)
-    }
-  }, [])
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     if (modalRef.current) {
-      const { top, left, right, bottom } = modalRef.current.getBoundingClientRect()
-      const windowHeight = window.innerHeight
-      const windowWidth = window.innerWidth
-      let newTop = top
-      let newLeft = left
-      let newRight = right
+      const { top, left, right, bottom } = modalRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const windowWidth = window.innerWidth;
+      let newTop = top;
+      let newLeft = left;
+      let newRight = right;
 
       if (top < 100) {
-        newTop = 10
+        newTop = 10;
       }
 
       if (right > windowWidth - 50) {
-        newLeft = windowWidth - right - 50
+        newLeft = windowWidth - right - 50;
       }
 
       if (left < 50) {
-        newRight = 50
+        newRight = 50;
       }
 
       if (newTop !== top) {
-        modalRef.current.style.top = `${newTop}px`
+        modalRef.current.style.top = `${newTop}px`;
       }
 
       if (newLeft !== left) {
-        modalRef.current.style.left = `${newLeft - 25}px`
+        modalRef.current.style.left = `${newLeft - 25}px`;
       }
 
       if (newRight !== right) {
-        modalRef.current.style.right = `-${newRight + 50}px`
+        modalRef.current.style.right = `-${newRight + 50}px`;
       }
     }
-  }, [modal])
+  }, [modal]);
 
   const handleOpenModal = () => {
     const time = setTimeout(() => {
-      setModal(true)
-    }, 500)
+      setModal(true);
+    }, 500);
 
-    setTimer(time)
-  }
+    setTimer(time);
+  };
 
   const handleTouchEnd = () => {
-    clearTimeout(timer)
-    setModal(false)
-  }
+    clearTimeout(timer);
+    setModal(false);
+  };
 
   return (
     <>
@@ -159,7 +184,85 @@ const Message = ({ message, deleteMessage, messageType }: MessageComponentProps)
           </div>
         </div>
       )}
-
+      {message?.post?.attachments && (
+        <div
+          className={`h-fit text-[13px] flex flex-col justify-center mb-2 ${
+            isUserMessage ? 'items-end   pr-10' : 'items-start pl-10'
+          }`}
+        >
+          <Link
+            href={`${webUrl}/post/${message.post._id}`}
+            className={` bg-neutral-900 relative  rounded-lg aspect-square
+            ${message.post.aspectRatio === '16:9' && 'aspect-video'}
+            ${message.post.aspectRatio === '1:1' && 'aspect-square'}
+            ${message.post.aspectRatio === '4:3' && 'fourRationThree'}
+            ${message.post.aspectRatio === '3:4' && 'threeRatioFour'}
+          `}
+          >
+            <div className='flex p-2 items-center justify-between w-full gap-[11px]'>
+              <div className='flex items-center gap-[11px]'>
+                <Image
+                  src={message.post.postedBy?.userProfileImage}
+                  width={30}
+                  height={30}
+                  alt='user jpg'
+                  className='rounded-full object-cover '
+                  style={{
+                    width: '30px',
+                    height: '30px',
+                  }}
+                  unoptimized
+                />
+                <div className='flex font-semibold gap-3 items-center'>
+                  <div>
+                    <div className='flex items-center gap-2'>
+                      <Link
+                        href={`/profile/${message.post.postedBy._id}`}
+                        className='flex items-center gap-3'
+                      >
+                        {message.post.postedBy?.username}
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className=''>
+              {message.post.attachments[0].extension === 'mp4' ? (
+                <video
+                  src={message.post.attachments[0].url}
+                  muted={false}
+                  preload='false'
+                  className={`h-full w-full min-w-[250px] max-w-[250px] md:max-w-[300px] transition-all object-cover aspect-square ${
+                    message.post.aspectRatio === '16:9' && 'aspect-video'
+                  }
+                  ${message.post.aspectRatio === '1:1' && 'aspect-square'}
+                  ${message.post.aspectRatio === '4:3' && 'fourRationThree'}
+                  ${message.post.aspectRatio === '3:4' && 'threeRatioFour'} `}
+                ></video>
+              ) : (
+                <Image
+                  src={message.post.attachments[0].url}
+                  alt='image'
+                  width={300}
+                  height={0}
+                  style={{ height: 'auto', width: '300' }}
+                  className={`min-w-[250px] max-w-[250px] md:max-w-[300px] object-cover h-auto  
+                  ${message.post.aspectRatio === '16:9' && 'aspect-video'}
+                  ${message.post.aspectRatio === '1:1' && 'aspect-square'}
+                  ${message.post.aspectRatio === '4:3' && 'fourRationThree'}
+                  ${message.post.aspectRatio === '3:4' && 'threeRatioFour'}
+                `}
+                />
+              )}
+            </div>
+            <div className='p-2'>{message.post.caption}</div>
+            <span className='absolute text-[10px] top-[55px] bg-neutral-700/30 backdrop-blur-xl rounded-full px-3 font-semibold right-[10px]'>
+              {message.post.attachments.length}
+            </span>
+          </Link>
+        </div>
+      )}
       <div
         className={`w-full group animate-in  duration-300 fade-in flex justify-start gap-3  ${
           isUserMessage && 'flex-row-reverse'
@@ -193,18 +296,25 @@ const Message = ({ message, deleteMessage, messageType }: MessageComponentProps)
               // @ts-ignore
               repliedUser: message.senderId.username,
               repliedUserMessage: message.message,
-            })
+              repliedPost: {
+                postId: message?.post?._id || '',
+                postUrl: message?.post?.attachments[0].url || '',
+                extension: message?.post?.attachments[0].extension || '',
+              },
+            });
           }}
         >
-          <pre
-            className={`h-auto text-wrap font-poppins ${
-              isUserMessage
-                ? userMessageChatBubbleClass
-                : ' md:rounded-r-[20px] text-wrap rounded-r-[20px] md:rounded-tl-[20px] rounded-tl-[20px] '
-            } bg-primary/50 px-5 py-2`}
-          >
-            <span className='text-wrap break-words'>{message.message}</span>
-          </pre>
+          {message.message && (
+            <pre
+              className={`h-auto text-wrap font-poppins ${
+                isUserMessage
+                  ? userMessageChatBubbleClass
+                  : ' md:rounded-r-[20px] text-wrap rounded-r-[20px] md:rounded-tl-[20px] rounded-tl-[20px] '
+              } bg-primary/50 px-5 py-2`}
+            >
+              <span className='text-wrap break-words'>{message.message}</span>
+            </pre>
+          )}
           <span
             className={`text-[11px] mt-[2px] ${
               isUserMessage ? 'text-right' : 'text-left'
@@ -227,7 +337,12 @@ const Message = ({ message, deleteMessage, messageType }: MessageComponentProps)
                 // @ts-ignore
                 repliedUser: message.senderId.username,
                 repliedUserMessage: message.message,
-              })
+                repliedPost: {
+                  postId: message?.post?._id || '',
+                  postUrl: message?.post?.attachments[0].url || '',
+                  extension: message?.post?.attachments[0].extension || '',
+                },
+              });
             }}
           >
             <LuReply />
@@ -249,8 +364,8 @@ const Message = ({ message, deleteMessage, messageType }: MessageComponentProps)
                   <button
                     className=' w-full flex px-[20px] py-1 rounded-[10px] hover:bg-neutral-700/50 justify-between items-center'
                     onClick={() => {
-                      copyMessage()
-                      setModal(false)
+                      copyMessage();
+                      setModal(false);
                     }}
                   >
                     <span>{copied ? 'Copied' : 'Copy'}</span>
@@ -299,7 +414,7 @@ const Message = ({ message, deleteMessage, messageType }: MessageComponentProps)
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Message
+export default Message;

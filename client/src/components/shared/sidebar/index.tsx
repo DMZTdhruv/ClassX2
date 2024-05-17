@@ -1,43 +1,54 @@
-'use client'
+'use client';
 
-import React, { useEffect, useState } from 'react'
-import { sideBarData } from '@/Constants'
-import Image from 'next/image'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import Cookies from 'js-cookie'
-import { useRouter } from 'next/navigation'
-import useLogOut from '@/hooks/auth/useLogout'
-import LogOut from '../LogOut/LogOut'
-import SideBarMoreCard from '@/components/cards/SideBarMoreCard'
-import { useAuthContext } from '@/context/AuthContext'
+import React, { useDebugValue, useEffect, useState } from 'react';
+import { sideBarData } from '@/Constants';
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import useLogOut from '@/hooks/auth/useLogout';
+import SideBarMoreCard from '@/components/cards/SideBarMoreCard';
+import { useAuthContext } from '@/context/AuthContext';
 
 export default function SideBar(props: any) {
-  const pathname = usePathname()
-  const [isActive, setIsActive] = useState<string>('/')
-  const { loading, logout } = useLogOut()
-  const router = useRouter()
-  const { authUser } = useAuthContext()
+  const pathname = usePathname();
+  const [isActive, setIsActive] = useState<string>('/');
+  const { loading, logout } = useLogOut();
+  const router = useRouter();
+  const { authUser } = useAuthContext();
   const logOutUser = async () => {
-    await logout()
-    localStorage.removeItem('classX_user')
-    router.push('/auth/sign-in')
-  }
+    await logout();
+    localStorage.removeItem('classX_user');
+    router.push('/auth/sign-in');
+  };
 
-  const [openMoreModal, setOpenMoreModal] = useState<boolean>(false)
+  const [isInMessageRoute, setIsInMessageRoute] = useState<boolean>(false);
 
-  const isMessageRoute = pathname.startsWith('/message')
+  useEffect(() => {
+    if (pathname.includes('/message')) {
+      setIsInMessageRoute(true);
+    } else if (!pathname.includes('/message') && !pathname.includes('/post')) {
+      setIsInMessageRoute(false);
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    console.log(isInMessageRoute);
+  }, [isInMessageRoute]);
+
+  const [path, setPath] = useState<string>('');
+  const [openMoreModal, setOpenMoreModal] = useState<boolean>(false);
+
   return (
     <section
       className={`h-[100vh] sticky top-0 transition-all hidden sm:block font-poppins ${
-        isMessageRoute ? '' : 'lg:w-[300px]'
+        isInMessageRoute ? '' : 'lg:w-[300px]'
       } px-[35px] relative w-auto border-r-2 border-neutral-800 `}
     >
       <div className='h-[150px] flex items-center'>
         <Image
           src={`/assets/ClassX.svg`}
-          className={`hidden ${!isMessageRoute && 'lg:block'}`}
+          className={`hidden ${!isInMessageRoute && 'lg:block'}`}
           height={25}
           width={0}
           alt='classX'
@@ -47,7 +58,7 @@ export default function SideBar(props: any) {
         />
         <Image
           src={`/assets/Cx.svg`}
-          className={`block ${!isMessageRoute && 'lg:hidden'}`}
+          className={`block ${!isInMessageRoute && 'lg:hidden'}`}
           height={45}
           width={45}
           alt='Responsive logo of cx'
@@ -55,11 +66,11 @@ export default function SideBar(props: any) {
       </div>
       <div
         className={`flex transition-transform  ${
-          isMessageRoute ? 'lg:gap-[27px] gap-[19px]' : 'gap-[20px]'
-        }  ${!isMessageRoute && 'lg:translate-x-[-10px]'} flex-col`}
+          isInMessageRoute ? 'lg:gap-[27px] gap-[19px]' : 'gap-[20px]'
+        }  ${!isInMessageRoute && 'lg:translate-x-[-10px]'} flex-col`}
       >
         {sideBarData.map(links => {
-          const onPath = pathname === links.routes
+          const onPath = pathname === links.routes;
 
           return (
             <Link
@@ -77,21 +88,20 @@ export default function SideBar(props: any) {
                     : `${links.icon}`
                 }`}
                 width={24}
-                //
                 height={24}
                 alt={links.name}
                 className=''
                 unoptimized
               />
               <span
-                className={`text-[19px] hidden ${!isMessageRoute && 'lg:block'} ${
+                className={`text-[19px] hidden ${!isInMessageRoute && 'lg:block'} ${
                   isActive === links.name || onPath ? 'font-semibold' : ''
                 } `}
               >
                 {links.name}
               </span>
             </Link>
-          )
+          );
         })}
 
         <Link
@@ -112,7 +122,7 @@ export default function SideBar(props: any) {
             unoptimized
           />
           <span
-            className={`text-[19px] hidden ${!isMessageRoute && 'lg:block'} ${
+            className={`text-[19px] hidden ${!isInMessageRoute && 'lg:block'} ${
               pathname.includes('/profile') ? 'font-semibold' : ''
             } `}
           >
@@ -120,14 +130,14 @@ export default function SideBar(props: any) {
           </span>
         </Link>
       </div>
-      {!isMessageRoute && (
+      {!isInMessageRoute && (
         <>
           {openMoreModal && (
             <SideBarMoreCard userProfileId={authUser?.userProfileId || ''} />
           )}
           <div
             className={`fixed bottom-4 left-[28px] group   translate-x-[5px] ${
-              isMessageRoute ? 'translate-x-[10px]' : 'lg:translate-x-[0px]'
+              isInMessageRoute ? 'translate-x-[10px]' : 'lg:translate-x-[0px]'
             } `}
           >
             <button
@@ -144,7 +154,7 @@ export default function SideBar(props: any) {
               />
               <span
                 className={`group-active:scale-[0.9] ${
-                  isMessageRoute ? 'hidden' : 'lg:block'
+                  isInMessageRoute ? 'hidden' : 'lg:block'
                 } hidden text-[15px] font-semibold`}
               >
                 More
@@ -154,5 +164,5 @@ export default function SideBar(props: any) {
         </>
       )}
     </section>
-  )
+  );
 }

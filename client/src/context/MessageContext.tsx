@@ -1,36 +1,41 @@
-'use client'
+'use client';
 
-import { IReplyMessage } from '@/Constants'
-import React, { createContext, useContext, useState } from 'react'
+import { IReplyMessage } from '@/Constants';
+import React, { createContext, useContext, useState } from 'react';
 
 interface MessageContextProps {
-  conversation: any
-  setConversation: React.Dispatch<React.SetStateAction<any>>
-  messages: any[]
-  setMessages: React.Dispatch<React.SetStateAction<any[]>>
-  replyMessage: IReplyMessage
-  setReplyMessage: React.Dispatch<React.SetStateAction<IReplyMessage>>
+  conversation: any;
+  setConversation: React.Dispatch<React.SetStateAction<any>>;
+  messages: any[];
+  setMessages: React.Dispatch<React.SetStateAction<any[]>>;
+  replyMessage: IReplyMessage;
+  setReplyMessage: React.Dispatch<React.SetStateAction<IReplyMessage>>;
 }
-export const MessageContext = createContext<MessageContextProps | undefined>(undefined)
+export const MessageContext = createContext<MessageContextProps | undefined>(undefined);
 
 export const useMessageContext = () => {
-  const context = useContext(MessageContext)
+  const context = useContext(MessageContext);
 
   if (!context) {
-    throw new Error('useMessageContext must be used within a MessageContextProvider')
+    throw new Error('useMessageContext must be used within a MessageContextProvider');
   }
 
-  return context
-}
+  return context;
+};
 
 const MessageContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const [conversation, setConversation] = useState(null)
+  const [conversation, setConversation] = useState(null);
 
-  const [messages, setMessages] = useState<any[]>([])
+  const [messages, setMessages] = useState<any[]>([]);
   const [replyMessage, setReplyMessage] = useState<IReplyMessage>({
     repliedUser: '',
     repliedUserMessage: '',
-  })
+    repliedPost: {
+      postId: '',
+      postUrl: '',
+      extension: '',
+    },
+  });
 
   const value = {
     conversation,
@@ -39,9 +44,9 @@ const MessageContextProvider = ({ children }: { children: React.ReactNode }) => 
     setReplyMessage,
     replyMessage,
     setMessages,
-  }
+  };
 
-  return <MessageContext.Provider value={value}>{children}</MessageContext.Provider>
-}
+  return <MessageContext.Provider value={value}>{children}</MessageContext.Provider>;
+};
 
-export default MessageContextProvider
+export default MessageContextProvider;

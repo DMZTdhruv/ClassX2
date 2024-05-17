@@ -1,35 +1,56 @@
-'use client'
+'use client';
 
-import CustomTextArea from '@/components/shared/ChatComponents/CustomTextArea'
-import { useMessageContext } from '@/context/MessageContext'
-import useSendMessage from '@/hooks/Conversations/useSendMessage'
-import { RxCross2 } from 'react-icons/rx'
-import React, { FormEvent, useEffect, useRef, useState } from 'react'
+import CustomTextArea from '@/components/shared/ChatComponents/CustomTextArea';
+import { useMessageContext } from '@/context/MessageContext';
+import useSendMessage from '@/hooks/Conversations/useSendMessage';
+import { RxCross2 } from 'react-icons/rx';
+import React, { FormEvent, useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 
 const MessageInput = () => {
-  const { loading, sendMessage } = useSendMessage()
-  const [message, setMessage] = useState<string>('')
-  const { replyMessage, setReplyMessage } = useMessageContext()
+  const { loading, sendMessage } = useSendMessage();
+  const [message, setMessage] = useState<string>('');
+  const { replyMessage, setReplyMessage } = useMessageContext();
 
   const handleSendMessage = async (e: FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (message.trim() === '') {
-      return
+      return;
     }
-    await sendMessage(message)
-    setMessage('')
-  }
+    await sendMessage(message);
+    setMessage('');
+  };
 
   return (
-    <form className='h-auto p-3 transition-all' onSubmit={handleSendMessage}>
-      {replyMessage.repliedUserMessage.length !== 0 ? (
-        <div className='text-[12px] mb-3 relative'>
+    <form className={`p-3 transition-all`} onSubmit={handleSendMessage}>
+      {replyMessage?.repliedUser?.length !== 0 ? (
+        <div className='text-[12px] animate-in fade-in-0 mb-3 relative'>
           <span>Replying to: </span> <strong>{replyMessage.repliedUser}</strong>
           <br />
           <span className='opacity-70'>
-            {' '}
             {replyMessage.repliedUserMessage.slice(0, 100)}
           </span>
+          {replyMessage.repliedPost.postUrl !== '' && (
+            <div className='max-w-[85px] object-cover aspect-square'>
+              {replyMessage.repliedPost.extension === 'mp4' ? (
+                <video
+                  src={replyMessage.repliedPost.postUrl}
+                  muted={false}
+                  preload='false'
+                  className={` w-full min-w-[85px] aspect-square  object-cover max-w-[85px] transition-all `}
+                ></video>
+              ) : (
+                <Image
+                  src={replyMessage.repliedPost.postUrl}
+                  alt='image'
+                  width={300}
+                  height={0}
+                  style={{ height: 'auto', width: '300' }}
+                  className={` max-w-[85px] aspect-square object-cover min-w-[85px]    `}
+                />
+              )}
+            </div>
+          )}
           {replyMessage.repliedUserMessage.length > 100 ? '...' : ''}
           <button
             className='absolute right-0 top-0 active:scale-[0.9]'
@@ -37,7 +58,12 @@ const MessageInput = () => {
               setReplyMessage({
                 repliedUser: '',
                 repliedUserMessage: '',
-              })
+                repliedPost: {
+                  postId: '',
+                  postUrl: '',
+                  extension: '',
+                },
+              });
             }}
           >
             <RxCross2 size={20} />
@@ -51,7 +77,7 @@ const MessageInput = () => {
           value={message}
           // ref={}
           onChange={e => {
-            setMessage(e.target.value)
+            setMessage(e.target.value);
           }}
         />
         <button
@@ -66,7 +92,7 @@ const MessageInput = () => {
         </button>
       </div>
     </form>
-  )
-}
+  );
+};
 
-export default MessageInput
+export default MessageInput;

@@ -1,107 +1,108 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import useGenerateFileLink from '@/hooks/useGenerateFileLink'
-import { useGenerateLink } from '@/hooks/useGenerateLink'
-import { SanityAssetDocument, SanityImageAssetDocument } from '@sanity/client'
-import React, { FormEvent, useEffect, useState } from 'react'
-import { AiOutlineCloudUpload } from 'react-icons/ai'
-import { MdAdd, MdDeleteOutline } from 'react-icons/md'
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import useGenerateFileLink from '@/hooks/useGenerateFileLink';
+import { useGenerateLink } from '@/hooks/useGenerateLink';
+import { SanityAssetDocument, SanityImageAssetDocument } from '@sanity/client';
+import React, { FormEvent, useEffect, useMemo, useState } from 'react';
+import { AiOutlineCloudUpload } from 'react-icons/ai';
+import { MdAdd, MdDeleteOutline } from 'react-icons/md';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@/components/ui/carousel'
-import { type CarouselApi } from '@/components/ui/carousel'
-import Image from 'next/image'
-import useUploadPost from '@/hooks/posts/useUploadPost'
-import { updateFeed } from '../serverActions'
-import { usePostContext } from '@/context/PostContext'
-import { useRouter } from 'next/navigation'
-import { v4 as uuidv4 } from 'uuid'
+} from '@/components/ui/carousel';
+import { type CarouselApi } from '@/components/ui/carousel';
+import Image from 'next/image';
+import useUploadPost from '@/hooks/posts/useUploadPost';
+import { updateFeed } from '../serverActions';
+import { usePostContext } from '@/context/PostContext';
+import { useRouter } from 'next/navigation';
+import { v4 as uuidv4 } from 'uuid';
+import PostVideo from '@/components/shared/Post/PostVideo';
 
 interface UploadAttachments {
-  _id: string
-  originalFilename: string
-  url: string
-  extension: string
-  _createdAt: string
+  _id: string;
+  originalFilename: string;
+  url: string;
+  extension: string;
+  _createdAt: string;
 }
 
 interface IAttachment {
-  attachments: UploadAttachments[]
-  aspectRatio: string
-  caption: string
-  location: string
-  category: string
+  attachments: UploadAttachments[];
+  aspectRatio: string;
+  caption: string;
+  location: string;
+  category: string;
 }
 
 const UploadPost = () => {
   //carousel
-  const [api, setApi] = React.useState<CarouselApi>()
-  const [current, setCurrent] = React.useState(0)
-  const [count, setCount] = React.useState(0)
+  const [api, setApi] = React.useState<CarouselApi>();
+  const [current, setCurrent] = React.useState(0);
+  const [count, setCount] = React.useState(0);
 
   // Loading states
-  const [loading, setLoading] = useState<boolean>(false)
-  const [postUploading, setPostUploading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false);
+  const [postUploading, setPostUploading] = useState<boolean>(false);
 
   // Error states
-  const [error, setError] = useState<string>('')
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     if (!api) {
-      return
+      return;
     }
 
-    setCount(api.scrollSnapList().length)
-    setCurrent(api.selectedScrollSnap() + 1)
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap() + 1);
 
     api.on('select', () => {
-      setCurrent(api.selectedScrollSnap() + 1)
-    })
-  }, [api])
+      setCurrent(api.selectedScrollSnap() + 1);
+    });
+  }, [api]);
 
   //constants and contexts
-  const { getFile, generateTempVideoUrl } = useGenerateFileLink()
-  const { getUrlImageObj, generateUrl } = useGenerateLink()
-  const { uploadPost } = useUploadPost()
-  const { setFeedPost, setExplorePost, setUserPost } = usePostContext()
-  const router = useRouter()
+  const { getFile, generateTempVideoUrl } = useGenerateFileLink();
+  const { getUrlImageObj, generateUrl } = useGenerateLink();
+  const { uploadPost } = useUploadPost();
+  const { setFeedPost, setExplorePost, setUserPost } = usePostContext();
+  const router = useRouter();
 
   // attachment states
   const [temporaryAttachments, setTemporaryAttachments] = useState<
     SanityImageAssetDocument[] | SanityAssetDocument[]
-  >([])
+  >([]);
 
   // Post states
-  const aspectRatios = ['16:9', '1:1', '4:3', '3:4']
-  const [aspectRatio, setAspectRatio] = useState<string>('')
-  const [caption, setCaption] = useState<string>('')
-  const [location, setLocation] = useState<string>('')
-  const [category, setCategory] = useState<string>('')
+  const aspectRatios = ['16:9', '1:1', '4:3', '3:4'];
+  const [aspectRatio, setAspectRatio] = useState<string>('');
+  const [caption, setCaption] = useState<string>('');
+  const [location, setLocation] = useState<string>('');
+  const [category, setCategory] = useState<string>('');
 
   // loading states
-  const [dummyLoading, setDummyLoading] = useState<boolean>(false)
+  const [dummyLoading, setDummyLoading] = useState<boolean>(false);
 
   // UseEffects
   useEffect(() => {
-    setCount(temporaryAttachments.length)
-    console.log(temporaryAttachments)
-  }, [temporaryAttachments])
+    setCount(temporaryAttachments.length);
+    console.log(temporaryAttachments);
+  }, [temporaryAttachments]);
 
   // Functions
   const getTemporaryUrl = async (e: FormEvent<HTMLInputElement>) => {
     try {
-      setLoading(true)
-      const inputElement = e.target as HTMLInputElement
+      setLoading(true);
+      const inputElement = e.target as HTMLInputElement;
       if (inputElement.files) {
-        const { type } = inputElement.files[0]
-        console.log(type)
+        const { type } = inputElement.files[0];
+        console.log(type);
         if (
           type === 'image/jpeg' ||
           type === 'image/png' ||
@@ -109,76 +110,76 @@ const UploadPost = () => {
           type === 'image/svg+xml' ||
           type === 'image/webp'
         ) {
-          const tempFile = await generateUrl(e)
-          tempFile && setTemporaryAttachments(prev => [tempFile, ...prev])
+          const tempFile = await generateUrl(e);
+          tempFile && setTemporaryAttachments(prev => [tempFile, ...prev]);
         } else if (type === 'video/mp4') {
-          const tempFile = await generateTempVideoUrl(e)
-          tempFile && setTemporaryAttachments(prev => [tempFile, ...prev])
+          const tempFile = await generateTempVideoUrl(e);
+          tempFile && setTemporaryAttachments(prev => [tempFile, ...prev]);
         } else {
-          throw new Error('Invalid format')
+          throw new Error('Invalid format');
         }
       }
     } catch (error: any) {
-      console.log(error.message)
-      setError(error.message)
+      console.log(error.message);
+      setError(error.message);
       setTimeout(() => {
-        setError('')
-      }, 5000)
+        setError('');
+      }, 5000);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const generateUrls = async () => {
-    const mp4Files = temporaryAttachments.filter(file => file.extension === 'mp4')
-    const pictureFiles = temporaryAttachments.filter(file => file.extension !== 'mp4')
+    const mp4Files = temporaryAttachments.filter(file => file.extension === 'mp4');
+    const pictureFiles = temporaryAttachments.filter(file => file.extension !== 'mp4');
 
-    const mp4Promises = mp4Files.map(async file => await getFile(file))
-    const picturePromises = pictureFiles.map(async file => await getUrlImageObj(file))
+    const mp4Promises = mp4Files.map(async file => await getFile(file));
+    const picturePromises = pictureFiles.map(async file => await getUrlImageObj(file));
 
     const [mp4Urls, pictureUrls] = await Promise.all([
       Promise.all(mp4Promises),
       Promise.all(picturePromises),
-    ])
+    ]);
 
-    const allUrls: UploadAttachments[] = [...mp4Urls.flat(), ...pictureUrls.flat()]
-    console.log(allUrls)
-    return allUrls
-  }
+    const allUrls: UploadAttachments[] = [...mp4Urls.flat(), ...pictureUrls.flat()];
+    console.log(allUrls);
+    return allUrls;
+  };
 
   const uploadPostToDb = async (e: FormEvent) => {
-    e.preventDefault()
-    setPostUploading(true)
+    e.preventDefault();
+    setPostUploading(true);
     try {
-      validateInput()
-      const allAttachmentUrls = await generateUrls()
-      console.log(allAttachmentUrls)
+      validateInput();
+      const allAttachmentUrls = await generateUrls();
+      console.log(allAttachmentUrls);
       const uploadPostBody: IAttachment = {
         attachments: allAttachmentUrls,
         aspectRatio: aspectRatio,
         caption: caption,
         location: location,
         category: category,
-      }
+      };
 
-      console.log(uploadPostBody)
+      console.log(uploadPostBody);
 
-      await uploadPost(uploadPostBody)
-      updateFeed()
-      setExplorePost([])
-      setFeedPost([])
-      setUserPost([])
-      router.replace('/')
+      await uploadPost(uploadPostBody);
+      updateFeed();
+      setExplorePost([]);
+      setFeedPost([]);
+      setUserPost([]);
+      router.replace('/');
     } catch (error: any) {
-      setError(error.message)
+      setError(error.message);
       setTimeout(() => {
-        setError('')
-      }, 5000)
-      console.error(error.message)
+        setError('');
+      }, 5000);
+      console.error(error.message);
     } finally {
-      setPostUploading(false)
+      setPostUploading(false);
     }
-  }
+  };
 
   const validateInput = () => {
     if (
@@ -187,9 +188,54 @@ const UploadPost = () => {
       location.trim() === '' ||
       temporaryAttachments.length === 0
     ) {
-      throw new Error('Incomplete details')
+      throw new Error('Incomplete details');
     }
-  }
+  };
+
+  const attachmentElements = useMemo(() => {
+    return temporaryAttachments.map((file, index) => {
+      return (
+        <div className='relative w-full h-full flex-shrink-0' key={uuidv4()}>
+          <CarouselItem className='rounded-md '>
+            {file.extension === 'mp4' ? (
+              <PostVideo aspectRatio={aspectRatio} url={file.url} />
+            ) : (
+              <div>
+                <Image
+                  src={file.url}
+                  alt='image'
+                  width={150}
+                  height={150}
+                  unoptimized
+                  className={` 
+                transition-all
+                aspect-square
+                cursor-pointer w-full h-full object-cover rounded-md
+                ${aspectRatio === '16:9' && 'aspect-video'}
+                ${aspectRatio === '1:1' && 'aspect-square'}
+                ${aspectRatio === '4:3' && 'fourRationThree'}
+                ${aspectRatio === '3:4' && 'threeRatioFour'}
+              `}
+                />
+              </div>
+            )}
+          </CarouselItem>
+          <button
+            type='button'
+            className='absolute   cursor-pointer group z-50 top-3 right-3 rounded-full shadow-md  '
+            onClick={() => {
+              console.log('hello');
+              setTemporaryAttachments(prev => {
+                return prev.filter(attachment => attachment._id !== file._id);
+              });
+            }}
+          >
+            <MdDeleteOutline size={24} className='group-active:scale-[0.90]' />
+          </button>
+        </div>
+      );
+    });
+  }, [temporaryAttachments, aspectRatio]);
 
   return (
     <div className='flex-col w-full  flex lg:justify-center pb-[100px] sm:px-[16px] lg:h-screen p-[16px] mt-[80px] sm:mt-[0px]'>
@@ -215,71 +261,7 @@ const UploadPost = () => {
                   } min-h-[300px] relative`}
                   setApi={setApi}
                 >
-                  <CarouselContent>
-                    {temporaryAttachments.map((file, index) => {
-                      return (
-                        <div
-                          className='relative w-full h-full flex-shrink-0'
-                          key={uuidv4()}
-                        >
-                          <CarouselItem className='rounded-md '>
-                            {file.extension === 'mp4' ? (
-                              <div className='h-full w-full flex items-center'>
-                                <video
-                                  src={file.url}
-                                  autoPlay
-                                  muted
-                                  loop
-                                  className={`h-full w-full transition-all object-cover aspect-square ${
-                                    aspectRatio === '16:9' && 'aspect-video'
-                                  }
-                                  ${aspectRatio === '1:1' && 'aspect-square'}
-                                  ${aspectRatio === '4:3' && 'fourRationThree'}
-                                  ${aspectRatio === '3:4' && 'threeRatioFour'} `}
-                                ></video>
-                              </div>
-                            ) : (
-                              <div>
-                                <Image
-                                  src={file.url}
-                                  alt='image'
-                                  width={150}
-                                  height={150}
-                                  unoptimized
-                                  className={` 
-                                transition-all
-                                aspect-square
-                                cursor-pointer w-full h-full object-cover rounded-md
-                                ${aspectRatio === '16:9' && 'aspect-video'}
-                                ${aspectRatio === '1:1' && 'aspect-square'}
-                                ${aspectRatio === '4:3' && 'fourRationThree'}
-                                ${aspectRatio === '3:4' && 'threeRatioFour'}
-                              `}
-                                />
-                              </div>
-                            )}
-                          </CarouselItem>
-                          <button
-                            type='button'
-                            className='absolute   cursor-pointer group z-50 top-3 right-3 rounded-full shadow-md  '
-                            onClick={() => {
-                              console.log('hello')
-                              setTemporaryAttachments(prev => {
-                                return prev.filter(
-                                  attachment => attachment._id !== file._id
-                                )
-                              })
-                            }}
-                          >
-                            <MdDeleteOutline
-                              size={24}
-                              className='group-active:scale-[0.90]'
-                            />
-                          </button>
-                        </div>
-                      )
-                    })}
-                  </CarouselContent>
+                  <CarouselContent>{attachmentElements}</CarouselContent>
                   <CarouselPrevious />
                   <CarouselNext />
                 </Carousel>
@@ -305,7 +287,7 @@ const UploadPost = () => {
                         disabled={loading}
                         className='h-0 w-0 hidden'
                         onChange={e => {
-                          getTemporaryUrl(e)
+                          getTemporaryUrl(e);
                         }}
                       />
                     </label>
@@ -316,12 +298,12 @@ const UploadPost = () => {
                         <Button
                           key={uuidv4()}
                           onClick={() => {
-                            setAspectRatio(aspectRationValue)
+                            setAspectRatio(aspectRationValue);
                           }}
                         >
                           {aspectRationValue}
                         </Button>
-                      )
+                      );
                     })}
                   </div>
                 </div>
@@ -351,7 +333,7 @@ const UploadPost = () => {
                   disabled={loading}
                   className='h-0 w-0 hidden'
                   onChange={e => {
-                    getTemporaryUrl(e)
+                    getTemporaryUrl(e);
                   }}
                 />
               </label>
@@ -412,7 +394,7 @@ const UploadPost = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default UploadPost
+export default UploadPost;

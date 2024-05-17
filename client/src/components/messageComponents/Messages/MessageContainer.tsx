@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { useMessageContext } from '@/context/MessageContext'
-import { MessageContextProps } from '@/Constants'
-import MessageHeader from './MessageHeader'
-import MessageInput from './MessageInput'
-import MessagesTwo from './MessagesTwo'
+import React from 'react';
+import { useMessageContext } from '@/context/MessageContext';
+import { MessageContextProps } from '@/Constants';
+import MessageHeader from './MessageHeader';
+import MessageInput from './MessageInput';
+import MessagesTwo from './MessagesTwo';
 
 const MessageContainer = () => {
-  const { conversation }: MessageContextProps = useMessageContext()
+  const { conversation }: MessageContextProps = useMessageContext();
   return (
     <div
       className={`flex-1 sm:pl-[100px] lg:pl-[0]  ${
@@ -21,7 +21,7 @@ const MessageContainer = () => {
         </div>
       ) : (
         <>
-          <div className='flex flex-col h-screen max-h-screen overflow-y-hidden w-full'>
+          <div className='flex transition-all flex-col h-screen max-h-screen overflow-y-hidden w-full'>
             <MessageHeader userDetails={conversation} />
             <MessagesTwo />
             <MessageInput />
@@ -29,7 +29,7 @@ const MessageContainer = () => {
         </>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default MessageContainer
+export default MessageContainer;

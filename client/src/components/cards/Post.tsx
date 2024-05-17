@@ -1,19 +1,23 @@
-'use client'
+'use client';
 
-import React, { useEffect, useState } from 'react'
-import Image from 'next/image'
-import { formatMessageSideBarDate } from '@/utils/formatDate'
-import Link from 'next/link'
-import { IPost } from '@/Constants'
-import { savePost, unSavePost } from '@/utils/LikeFunctions'
-import { BsThreeDots } from 'react-icons/bs'
-import { useAuthContext } from '@/context/AuthContext'
-import { Skeleton } from '../ui/skeleton'
-import useLikePost from '@/hooks/posts/useLikePost'
-import useUnlikePost from '@/hooks/posts/useUnlikePost'
-import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '../ui/carousel'
-import { useInView } from 'react-intersection-observer'
-import PostVideo from '../shared/Post/PostVideo'
+import React, { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import { formatMessageSideBarDate } from '@/utils/formatDate';
+import Link from 'next/link';
+import { IPost } from '@/Constants';
+import { savePost, unSavePost } from '@/utils/LikeFunctions';
+import { BsThreeDots } from 'react-icons/bs';
+import { useAuthContext } from '@/context/AuthContext';
+import { Skeleton } from '../ui/skeleton';
+import useLikePost from '@/hooks/posts/useLikePost';
+import useUnlikePost from '@/hooks/posts/useUnlikePost';
+import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '../ui/carousel';
+import { useInView } from 'react-intersection-observer';
+import PostVideo from '../shared/Post/PostVideo';
+import SuggestedUser from './SuggestedUser';
+import { LuSend } from 'react-icons/lu';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Input } from '../ui/input';
 
 const Post: React.FC<IPost> = ({
   _id,
@@ -32,49 +36,74 @@ const Post: React.FC<IPost> = ({
   handleDeletePostDetails,
   handleDeleteModal,
 }) => {
-  const date = new Date(createdAt)
-  const { ref, inView } = useInView()
+  const date = new Date(createdAt);
+  const { ref, inView } = useInView();
 
   //@ts-ignore
-  const { authUser } = useAuthContext()
-  const { likePost } = useLikePost()
-  const { unlikePost } = useUnlikePost()
+  const { authUser } = useAuthContext();
+  const { likePost } = useLikePost();
+  const { unlikePost } = useUnlikePost();
 
-  const [api, setApi] = React.useState<CarouselApi>()
-  const [current, setCurrent] = React.useState(0)
-  const [count, setCount] = React.useState(0)
+  const [api, setApi] = React.useState<CarouselApi>();
+  const [current, setCurrent] = React.useState(0);
+  const [count, setCount] = React.useState(0);
 
-  const [numberOfLikes, setNumberOfLikes] = useState<number>(likes.length)
-  const [isLiked, setIsLiked] = useState<boolean>(false)
-  const [isSaved, setIsSaved] = useState<boolean>(false)
-  const [showFullCaption, setShowFullCaption] = useState<boolean>(false)
-  const [loadingImage, setLoadingImage] = useState<boolean>(false)
+  const [numberOfLikes, setNumberOfLikes] = useState<number>(likes.length);
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [isSaved, setIsSaved] = useState<boolean>(false);
+  const [showFullCaption, setShowFullCaption] = useState<boolean>(false);
+  const [loadingImage, setLoadingImage] = useState<boolean>(false);
+
+  const [openShareToToggle, setOpenShareToToggle] = useState<boolean>(false);
 
   useEffect(() => {
-    setIsLiked(likes.filter(id => id === authUser?.userProfileId).length > 0)
-    setIsSaved(saved?.filter(id => id === authUser?.userProfileId).length > 0)
-  }, [authUser])
+    setIsLiked(likes.filter(id => id === authUser?.userProfileId).length > 0);
+    setIsSaved(saved?.filter(id => id === authUser?.userProfileId).length > 0);
+  }, [authUser]);
 
   useEffect(() => {
     if (!api) {
-      return
+      return;
     }
 
-    setCount(api.scrollSnapList().length)
-    setCurrent(api.selectedScrollSnap() + 1)
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap() + 1);
 
     api.on('select', () => {
-      setCurrent(api.selectedScrollSnap() + 1)
-    })
-  }, [api])
+      setCurrent(api.selectedScrollSnap() + 1);
+    });
+  }, [api]);
 
   useEffect(() => {
-    console.log(inView)
-  }, [inView])
+    console.log(inView);
+  }, [inView]);
 
   return (
     <div className='w-full animate-in fade-in-0 lg:w-[544px] h-auto  border-b-2 border-[#171717] font-poppins  postSection'>
       <div className='h-[60px] px-[15px] flex items-center justify-between md:text-[14px] text-[12px]'>
+        {openShareToToggle && (
+          <div className='h-screen w-full animate-in fade-in-0 bg-[#0E0E0E]/80 fixed top-0 left-0 z-[100]'>
+            <motion.div
+              initial={{ scale: 1.1 }}
+              animate={{ scale: 1 }}
+              transition={{
+                duration: 0.2,
+                type: 'spring',
+                stiffness: 800,
+                damping: 50,
+              }}
+              style={{
+                position: 'fixed',
+                top: '50%',
+                zIndex: '100',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+              }}
+            >
+              <SuggestedUser postId={_id} setOpenShareToToggle={setOpenShareToToggle} />
+            </motion.div>
+          </div>
+        )}
         <div className='flex items-center justify-between w-full gap-[11px]'>
           <div className='flex items-center gap-[11px]'>
             <Image
@@ -112,11 +141,11 @@ const Post: React.FC<IPost> = ({
           </div>
           <button
             onClick={() => {
-              handleDeleteModal(true)
+              handleDeleteModal(true);
               handleDeletePostDetails({
                 userProfileId: postedBy._id,
                 deleteId: _id,
-              })
+              });
             }}
           >
             <BsThreeDots
@@ -142,7 +171,7 @@ const Post: React.FC<IPost> = ({
                         width={384}
                         height={0}
                         onLoad={() => {
-                          setLoadingImage(true)
+                          setLoadingImage(true);
                         }}
                         style={{ height: 'auto', width: '560px' }}
                         unoptimized={loadingImage}
@@ -161,7 +190,7 @@ const Post: React.FC<IPost> = ({
                       />
                     )}
                   </CarouselItem>
-                )
+                );
               })}
             </CarouselContent>
           </Carousel>
@@ -185,7 +214,7 @@ const Post: React.FC<IPost> = ({
             <div className='flex gap-[15px] items-center'>
               <button
                 onClick={() => {
-                  setIsLiked(prev => !prev)
+                  setIsLiked(prev => !prev);
                   if (!isLiked) {
                     likePost(
                       _id,
@@ -196,7 +225,7 @@ const Post: React.FC<IPost> = ({
                       setIsLiked,
                       authUser,
                       serverRenderedPost
-                    )
+                    );
                   } else {
                     unlikePost(
                       _id,
@@ -207,7 +236,7 @@ const Post: React.FC<IPost> = ({
                       setIsLiked,
                       authUser,
                       serverRenderedPost
-                    )
+                    );
                   }
                 }}
                 className='hover:scale-105'
@@ -255,15 +284,19 @@ const Post: React.FC<IPost> = ({
                   }}
                 />
               </Link>
+              <LuSend
+                className='h-[22px] translate-y-[-5px] w-[22px] rotate-[15deg] active:scale-90 hover:scale-[1.05] transition-all cursor-pointer '
+                onClick={() => setOpenShareToToggle(prev => !prev)}
+              />
             </div>
             <div>
               {isSaved ? (
                 <button
                   onClick={() => {
-                    setIsSaved(prev => !prev)
-                    const data = unSavePost(_id, isSaved)
+                    setIsSaved(prev => !prev);
+                    const data = unSavePost(_id, isSaved);
                     if (!data) {
-                      setIsSaved(false)
+                      setIsSaved(false);
                     }
                   }}
                 >
@@ -284,10 +317,10 @@ const Post: React.FC<IPost> = ({
               ) : (
                 <button
                   onClick={() => {
-                    setIsSaved(prev => !prev)
-                    const data = savePost(_id, isSaved)
+                    setIsSaved(prev => !prev);
+                    const data = savePost(_id, isSaved);
                     if (!data) {
-                      setIsSaved(false)
+                      setIsSaved(false);
                     }
                   }}
                 >
@@ -320,7 +353,7 @@ const Post: React.FC<IPost> = ({
                 <button
                   className='text-neutral-500 mx-[10px] inline-block'
                   onClick={() => {
-                    setShowFullCaption(prev => !prev)
+                    setShowFullCaption(prev => !prev);
                   }}
                 >
                   less
@@ -332,7 +365,7 @@ const Post: React.FC<IPost> = ({
                 <button
                   className='text-neutral-500 mx-[10px] inline-block'
                   onClick={() => {
-                    setShowFullCaption(prev => !prev)
+                    setShowFullCaption(prev => !prev);
                   }}
                 >
                   more
@@ -357,7 +390,7 @@ const Post: React.FC<IPost> = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Post
+export default Post;

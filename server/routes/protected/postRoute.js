@@ -1,5 +1,5 @@
-import express from 'express'
-import { authenticateUserToken } from '../../middlewares/authenticateUser.js'
+import express from 'express';
+import { authenticateUserToken } from '../../middlewares/authenticateUser.js';
 import {
   createCommentController,
   likeCommentController,
@@ -8,7 +8,7 @@ import {
   likeSubCommentController,
   unlikeSubCommentController,
   deleteParentComment,
-} from '../../controllers/comment/index.js'
+} from '../../controllers/comment/index.js';
 import {
   createPostController,
   getPostController,
@@ -23,62 +23,70 @@ import {
   unSavePostController,
   getAllSavedPost,
   getTotalSavedPostCount,
-} from '../../controllers/post/index.js'
-import { PostController } from '../../controllers/post/PostController.js'
+} from '../../controllers/post/index.js';
+import { PostController } from '../../controllers/post/PostController.js';
+import { sendPostController } from '../../controllers/post/sendPostController.js';
 
-const router = express.Router()
+const router = express.Router();
 
 // Get routes
-router.get('/get-post', getPostController)
-router.get('/', authenticateUserToken, getPostByIdController)
-router.get('/total-post', getTotalPostCount)
-router.get('/total-saved-post', authenticateUserToken)
-router.get('/comment/sub-comment', authenticateUserToken, getSubCommentsController)
-router.get('/saved-post', authenticateUserToken, getAllSavedPost)
-router.get('/total-saved-post', authenticateUserToken, getTotalSavedPostCount)
+router.get('/get-post', getPostController);
+router.get('/', authenticateUserToken, getPostByIdController);
+router.get('/total-post', getTotalPostCount);
+router.get('/total-saved-post', authenticateUserToken);
+router.get('/comment/sub-comment', authenticateUserToken, getSubCommentsController);
+router.get('/saved-post', authenticateUserToken, getAllSavedPost);
+router.get('/total-saved-post', authenticateUserToken, getTotalSavedPostCount);
 
 // Post routes
-router.post('/create-post', authenticateUserToken, PostController)
-router.post('/like-post/:postId', authenticateUserToken, likePostController)
-router.post('/unlike-post/:postId', authenticateUserToken, unLikePostController)
-router.post('/save-post/:postId', authenticateUserToken, savePostController)
-router.post('/unsave-post/:postId', authenticateUserToken, unSavePostController)
+router.post('/create-post', authenticateUserToken, PostController);
+router.post('/like-post/:postId', authenticateUserToken, likePostController);
+router.post('/unlike-post/:postId', authenticateUserToken, unLikePostController);
+router.post('/save-post/:postId', authenticateUserToken, savePostController);
+router.post('/unsave-post/:postId', authenticateUserToken, unSavePostController);
 
 // Comment routes
-router.post('/comment/create-comment', authenticateUserToken, createCommentController)
-router.post('/comment/like-comment', authenticateUserToken, likeCommentController)
-router.post('/comment/unlike-comment', authenticateUserToken, unlikeCommentController)
+router.post('/comment/create-comment', authenticateUserToken, createCommentController);
+router.post('/comment/like-comment', authenticateUserToken, likeCommentController);
+router.post('/comment/unlike-comment', authenticateUserToken, unlikeCommentController);
 
 // Sub-comment routes
 router.post(
   '/comment/sub/like-comment',
   authenticateUserToken,
   likeSubCommentController
-)
+);
 router.post(
   '/comment/sub/unlike-comment',
   authenticateUserToken,
   unlikeSubCommentController
-)
+);
 
 // Reply comment route
-router.post('/comment/reply-comment', authenticateUserToken, replyCommentController)
+router.post('/comment/reply-comment', authenticateUserToken, replyCommentController);
+
+//send
+router.post('/send-post', authenticateUserToken, sendPostController);
 
 // Delete routes
 // Delete routes for post
-router.delete('/delete-post/:deletePostId', authenticateUserToken, deletePostController)
+router.delete(
+  '/delete-post/:deletePostId',
+  authenticateUserToken,
+  deletePostController
+);
 
 // Delete routes for comments and sub-comments
 router.delete(
   '/comment/delete-comment/:commentId',
   authenticateUserToken,
   deleteParentComment
-)
+);
 
 router.delete(
   '/comment/subComment/delete-comment/:subCommentID',
   authenticateUserToken,
   deleteSubCommentController
-)
+);
 
-export default router
+export default router;

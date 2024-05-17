@@ -29,6 +29,7 @@ app.use(
       'http://localhost:3000',
       'https://classxfrontend-production.up.railway.app',
       'https://classx.up.railway.app',
+      'https://classx2-clientbackup.onrender.com',
     ],
     credentials: true,
   })

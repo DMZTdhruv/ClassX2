@@ -1,8 +1,8 @@
-import ClassroomRepositoryInterface from '../interfaces/classroom.interface.js'
-import Classroom from '../models/classroom/classroom.model.js'
-import UserProfile from '../models/user/userProfile.model.js'
-import ClassroomPost from '../models/classroom/classroomPost.model.js'
-import ClassroomClasswork from '../models/classroom/classroomClasswork.model.js'
+import Classroom from '../models/classroom/classroom.model.js';
+import UserProfile from '../models/user/userProfile.model.js';
+import ClassroomPost from '../models/classroom/classroomPost.model.js';
+import ClassroomClasswork from '../models/classroom/classroomClasswork.model.js';
+import ClassroomRepositoryInterface from '../interfaces/classroom.interface.js';
 
 export default class ClassroomRepository extends ClassroomRepositoryInterface {
   async createClassroom(
@@ -14,7 +14,7 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
     semester,
     user
   ) {
-    const userProfile = await UserProfile.findById(user.userProfileId)
+    const userProfile = await UserProfile.findById(user.userProfileId);
     const classroom = await Classroom.create({
       className,
       classroomJoinId,
@@ -24,9 +24,9 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
       semester,
       adminEmails: [user.userProfileId],
       createdBy: user.userProfileId,
-    })
-    userProfile.classrooms.push(classroom._id)
-    await userProfile.save()
+    });
+    userProfile.classrooms.push(classroom._id);
+    await userProfile.save();
   }
 
   async getAllClassrooms(user) {
@@ -38,18 +38,18 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
           path: 'createdBy',
           select: 'username',
         },
-      })
-    return userProfile
+      });
+    return userProfile;
   }
 
   async getClassroomById(classId) {
-    return await Classroom.findById(classId)
+    return await Classroom.findById(classId);
   }
 
   async getClassroomMinimalData(classId) {
     const classroom = await Classroom.findById(classId).select(
       'className branch division semester adminEmails classroomAdminJoinId classroomJoinId updates'
-    )
+    );
 
     return {
       _id: classroom._id,
@@ -61,7 +61,7 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
       classroomJoinId: classroom.classroomJoinId,
       adminEmails: classroom.adminEmails,
       updates: classroom.updates.length,
-    }
+    };
   }
 
   //send empty array incase of no attachments
@@ -72,10 +72,10 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
       description: description,
       attachments: attachments,
       postedBy: user.userProfileId,
-    })
+    });
 
-    classroom.updates.push(classroomPost._id)
-    classroom.save()
+    classroom.updates.push(classroomPost._id);
+    classroom.save();
   }
 
   async getClassroomUpdate(startIndex, itemsPerPage, classId) {
@@ -86,25 +86,25 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
         select: 'username userProfileImage',
       })
       .skip(startIndex)
-      .limit(itemsPerPage)
-    return updates
+      .limit(itemsPerPage);
+    return updates;
   }
 
   async getClassroomByJoinClassroomId(classroomJoinId) {
-    const classroom = await Classroom.findOne({ classroomJoinId })
-    return classroom
+    const classroom = await Classroom.findOne({ classroomJoinId });
+    return classroom;
   }
 
   async getClassroomByAdminJoinId(classroomAdminJoinId) {
-    return await Classroom.findOne({ classroomAdminJoinId })
+    return await Classroom.findOne({ classroomAdminJoinId });
   }
 
   async getClassroomUpdateById(classroomUpdateId) {
     const update = await ClassroomPost.findById(classroomUpdateId).populate({
       path: 'postedBy',
       select: 'username userProfileImage',
-    })
-    return update
+    });
+    return update;
   }
 
   async createClassroomClasswork(
@@ -122,15 +122,15 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
       postedBy: userProfileId,
       attachments,
       topic,
-    })
+    });
 
-    return await classwork.save()
+    return await classwork.save();
   }
 
   async isAdmin(userProfileId, classId) {
-    const classroom = await Classroom.findById(classId).select('adminEmails')
-    console.log(classroom)
-    return classroom.adminEmails.includes(userProfileId)
+    const classroom = await Classroom.findById(classId).select('adminEmails');
+    console.log(classroom);
+    return classroom.adminEmails.includes(userProfileId);
   }
 
   async getClassroomAdmins(classId) {
@@ -139,9 +139,9 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
         path: 'adminEmails',
         select: 'username userProfileImage -_id',
       })
-      .select('adminEmails')
+      .select('adminEmails');
 
-    return classroomAdmins.adminEmails
+    return classroomAdmins.adminEmails;
   }
 
   async getClassroomStudents(classId) {
@@ -150,13 +150,13 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
         path: 'studentEmails',
         select: 'username userProfileImage',
       })
-      .select('studentEmails')
+      .select('studentEmails');
 
-    return classroomStudents.studentEmails
+    return classroomStudents.studentEmails;
   }
 
   async deleteUpdateById(updateId) {
-    return await ClassroomPost.findByIdAndDelete(updateId)
+    return await ClassroomPost.findByIdAndDelete(updateId);
   }
 
   async deleteClassroomById(classId) {
@@ -164,47 +164,47 @@ export default class ClassroomRepository extends ClassroomRepositoryInterface {
       await UserProfile.updateMany(
         { classrooms: classId },
         { $pull: { classrooms: classId } }
-      )
+      );
 
-      await ClassroomClasswork.deleteMany({ classId })
-      await ClassroomPost.deleteMany({ classId })
-      return true
+      await ClassroomClasswork.deleteMany({ classId });
+      await ClassroomPost.deleteMany({ classId });
+      return true;
     } catch (error) {
-      return false
+      return false;
     }
   }
 
   async deleteClassworkById(classId, userProfileId, classworkId) {
-    const classroom = await Classroom.findById(classId)
+    const classroom = await Classroom.findById(classId);
     if (!classroom.adminEmails.includes(userProfileId)) {
-      return false
+      return false;
     }
-    classroom.classWork.remove(userProfileId)
+    classroom.classWork.remove(userProfileId);
     await Promise.all([
       ClassroomClasswork.findByIdAndDelete(classworkId),
       classroom.save(),
-    ])
-    return true
+    ]);
+    return true;
   }
 
   async deleteStudentFromClassroom(classId, userProfileId, deleteStudentId) {
     const [classroom, user] = await Promise.all([
       Classroom.findById(classId),
       UserProfile.findById(deleteStudentId),
-    ])
+    ]);
 
     if (!classroom.adminEmails.includes(userProfileId)) {
-      return false
+      return false;
     }
 
     if (!classroom.studentEmails.includes(deleteStudentId)) {
-      return false
+      return false;
     }
 
-    user.classrooms.remove(classroom._id)
-    classroom.studentEmails.remove(deleteStudentId)
+    user.classrooms.remove(classroom._id);
+    classroom.studentEmails.remove(deleteStudentId);
 
-    await Promise.all([user.save(), classroom.save()])
-    return true
+    await Promise.all([user.save(), classroom.save()]);
+    return true;
   }
 }

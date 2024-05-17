@@ -1,23 +1,33 @@
-import { Api, MessageContextProps } from '@/Constants'
-import { useAuthContext } from '@/context/AuthContext'
-import { useMessageContext } from '@/context/MessageContext'
-import { useState } from 'react'
+import { Api, MessageContextProps } from '@/Constants';
+import { useAuthContext } from '@/context/AuthContext';
+import { useMessageContext } from '@/context/MessageContext';
+import { useState } from 'react';
 
 const useSendMessage = () => {
-  const [loading, setLoading] = useState<boolean>(false)
-  const { authUser } = useAuthContext()
+  const [loading, setLoading] = useState<boolean>(false);
+  const { authUser } = useAuthContext();
 
   // @ts-ignore
   const { messages, setMessages, conversation, replyMessage, setReplyMessage } =
-    useMessageContext()
+    useMessageContext();
   const sendMessage = async (message: string) => {
-    setLoading(true)
+    setLoading(true);
 
     try {
-      const messageBody = {
-        message: message,
-        repliedUser: replyMessage.repliedUser,
-        repliedMessage: replyMessage.repliedUserMessage,
+      let messageBody;
+      if (replyMessage.repliedPost.postId === '') {
+        messageBody = {
+          message: message,
+          repliedUser: replyMessage.repliedUser,
+          repliedMessage: replyMessage.repliedUserMessage,
+        };
+      } else {
+        messageBody = {
+          message: message,
+          repliedUser: replyMessage.repliedUser,
+          repliedMessage: replyMessage.repliedUserMessage,
+          postId: replyMessage.repliedPost.postId,
+        };
       }
 
       const res = await fetch(`${Api}/message/chat/send/${conversation._id}`, {
@@ -25,25 +35,31 @@ const useSendMessage = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messageBody }),
         credentials: 'include',
-      })
+      });
 
-      const data = await res.json()
+      const data = await res.json();
+      console.log(data);
       if (data.error) {
-        throw new Error(data.error)
+        throw new Error(data.error);
       }
-      setMessages(prev => [...prev, data.data])
+      setMessages(prev => [...prev, data.data]);
       setReplyMessage({
         repliedUser: '',
         repliedUserMessage: '',
-      })
+        repliedPost: {
+          postId: '',
+          postUrl: '',
+          extension: '',
+        },
+      });
     } catch (error: any) {
-      console.error(error.message)
+      console.error(error.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  return { sendMessage, loading }
-}
+  return { sendMessage, loading };
+};
 
-export default useSendMessage
+export default useSendMessage;

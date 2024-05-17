@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
 const userProfileSchema = new mongoose.Schema(
   {
@@ -22,6 +22,7 @@ const userProfileSchema = new mongoose.Schema(
     requestsId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile' }],
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
     savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
+    suggestedUser: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UserProfile' }],
     gender: { type: 'String' },
     medals: { type: Number, default: 0 },
     totalPoints: { type: Number, default: 0 },
@@ -29,8 +30,8 @@ const userProfileSchema = new mongoose.Schema(
     lastActiveOn: { type: Date, default: Date.now() },
   },
   { timestamps: true }
-)
+);
 
-const UserProfile = mongoose.model('UserProfile', userProfileSchema)
+const UserProfile = mongoose.model('UserProfile', userProfileSchema);
 
-export default UserProfile
+export default UserProfile;

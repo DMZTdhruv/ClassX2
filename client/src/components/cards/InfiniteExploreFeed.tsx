@@ -1,39 +1,39 @@
-'use client'
-import { IPost } from '@/Constants'
-import { getPosts } from '@/app/(root)/postActions'
-import React, { useEffect, useState } from 'react'
-import { useInView } from 'react-intersection-observer'
-import NormalPost from './NormalPost'
-import { usePostContext } from '@/context/PostContext'
+'use client';
+import { IPost } from '@/Constants';
+import { getPosts } from '@/app/(root)/postActions';
+import React, { useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
+import NormalPost from './NormalPost';
+import { useClassXContext } from '@/context/ClassXContext';
 
 const InfiniteExploreFeed = ({
   cookie,
   totalPost,
 }: {
-  cookie: string
-  totalPost: number
+  cookie: string;
+  totalPost: number;
 }) => {
-  const { setExplorePost, explorePost, userPost } = usePostContext()
-  const { ref, inView } = useInView()
-  const [page, setPage] = useState<number>(0)
-  const [allPostLoaded, setAllPostLoaded] = useState<boolean>(false)
+  const { setExplorePost, explorePost, userPost } = useClassXContext();
+  const { ref, inView } = useInView();
+  const [page, setPage] = useState<number>(0);
+  const [allPostLoaded, setAllPostLoaded] = useState<boolean>(false);
 
   const loadMorePosts = async () => {
-    const nextPage = page + 1
-    const newPosts: IPost[] = await getPosts(cookie, nextPage)
-    setExplorePost(prev => [...prev, ...newPosts])
-    setPage(nextPage)
-  }
+    const nextPage = page + 1;
+    const newPosts: IPost[] = await getPosts(cookie, nextPage);
+    setExplorePost(prev => [...prev, ...newPosts]);
+    setPage(nextPage);
+  };
 
   useEffect(() => {
-    if (inView) {
+    if (inView) { 
       if (explorePost.length >= totalPost) {
-        setAllPostLoaded(true)
-        return
+        setAllPostLoaded(true);
+        return;
       }
-      loadMorePosts()
+      loadMorePosts();
     }
-  }, [inView, page])
+  }, [inView, page]);
 
   return (
     <>
@@ -47,7 +47,7 @@ const InfiniteExploreFeed = ({
               likes={posts.likes.length}
               comments={posts.comments.length}
             />
-          )
+          );
         })}
       </div>
       <div className='w-full flex justify-center'>
@@ -58,7 +58,7 @@ const InfiniteExploreFeed = ({
         )}
       </div>
     </>
-  )
-}
+  );
+};
 
-export default InfiniteExploreFeed
+export default InfiniteExploreFeed;

@@ -14,3 +14,11 @@ Features completed
  -> branch creation
  -> Semester creation
  
+
+
+## Message updates
+[] -> send messages using socket instead of fetch
+[] -> show the reply asset
+[] -> show the reply post
+[] -> review the code
+[] -> make it little bit secure

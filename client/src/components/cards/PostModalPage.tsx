@@ -67,6 +67,7 @@ interface ISubComment {
   createdAt: string;
 }
 interface IUserCommentReplies {
+  repliedUserId: string;
   parentCommentId: string;
   comment: ISubComment[];
 }
@@ -138,8 +139,6 @@ export default function PostModalPage({
       body.style.overflow = 'auto';
     };
   }, []);
-
-  // All handles
 
   // modal handlers
   function handleModal(value: boolean) {
@@ -226,6 +225,7 @@ export default function PostModalPage({
       const index = prev.findIndex(
         comment => comment.parentCommentId === parentCommentId
       );
+
       if (index !== -1) {
         const updatedComments = [...prev];
         const updatedComment = { ...updatedComments[index] };
@@ -345,6 +345,7 @@ export default function PostModalPage({
           withCredentials: true,
         }
       );
+      console.log(response);
 
       const { message: result } = response.data;
 
@@ -363,7 +364,11 @@ export default function PostModalPage({
         } else {
           return [
             ...prev,
-            { parentCommentId: replyCommentData.parentCommentId, comment: [result] },
+            {
+              parentCommentId: replyCommentData.parentCommentId,
+              comment: [result],
+              repliedUserId: replyCommentData.repliedUserId,
+            },
           ];
         }
       });
@@ -376,6 +381,10 @@ export default function PostModalPage({
       setIsPendingComment(false);
     }
   };
+
+  useEffect(() => {
+    console.log(dummyUserComments);
+  }, [dummyUserComments]);
 
   const submitComment = async (e: FormEvent) => {
     e.preventDefault();
@@ -681,7 +690,7 @@ export default function PostModalPage({
                 </div>
               </div>
             </div>
-            {memoizedAllComments?.map((comment: IComments) => {
+            {memoizedAllComments?.map(comment => {
               return (
                 <ParentComment
                   key={comment?._id}

@@ -1,33 +1,33 @@
-'use client'
+'use client';
 
-import Conversations from './Conversations'
-import { useMessageContext } from '@/context/MessageContext'
-import { useState } from 'react'
-import { FaArrowLeft } from 'react-icons/fa6'
-import Link from 'next/link'
-import { Input } from '@/components/ui/input'
-import Conversation from './Conversation'
+import Conversations from './Conversations';
+import { useMessageContext } from '@/context/MessageContext';
+import { useState } from 'react';
+import { FaArrowLeft } from 'react-icons/fa6';
+import Link from 'next/link';
+import { Input } from '@/components/ui/input';
+import Conversation from './Conversation';
 
 interface IUserDetails {
-  _id: string
-  userProfileImage: string
-  username: string
-  update: string
-  url: string
-  lastActiveOn: string
+  _id: string;
+  userProfileImage: string;
+  username: string;
+  update: string;
+  url: string;
+  lastActiveOn: string;
 }
 
 export default function MessageSideBar({
   sideBarUsers,
 }: {
-  sideBarUsers: IUserDetails[]
+  sideBarUsers: IUserDetails[];
 }) {
-  const { conversation } = useMessageContext()
-  const [findUsername, setFindUsername] = useState<string>('')
+  const { conversation } = useMessageContext();
+  const [findUsername, setFindUsername] = useState<string>('');
 
   const filteredConversationUsers = sideBarUsers.filter(user => {
-    return user.username.toLowerCase().includes(findUsername.toLowerCase())
-  })
+    return user.username.toLowerCase().includes(findUsername.toLowerCase());
+  });
 
   return (
     <div
@@ -63,7 +63,7 @@ export default function MessageSideBar({
         <Input
           onChange={e => setFindUsername(e.target.value)}
           placeholder='Search a friend'
-          className='bg-[#242424] border-none pl-[52px] rounded-[10px]'
+          className='bg-[#242424] border-none pl-[52px] rounded-full'
           maxLength={30}
         />
       </div>
@@ -87,13 +87,14 @@ export default function MessageSideBar({
               <div className='mt-3' key={user._id}>
                 <Conversation userDetails={user} />
               </div>
-            )
+            );
           })}
         </div>
       )}
+      <div>hello</div>
       <div className={`${findUsername && 'opacity-20'} transition-all`}>
         <Conversations sideBarUsers={sideBarUsers} />
       </div>
     </div>
-  )
+  );
 }

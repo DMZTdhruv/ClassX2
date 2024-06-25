@@ -1,71 +1,73 @@
-'use client'
+'use client';
 
-import Styles from './styles.module.css'
-import { formatDate } from '@/utils'
-import Image from 'next/image'
-import SubComment from './SubComment'
-import React, { useEffect, useState } from 'react'
-import { Api } from '@/Constants'
-import { BsThreeDots } from 'react-icons/bs'
-import DeleteCommentComponent from '../DeleteComponent/DeleteComment'
-import { useAuthContext } from '@/context/AuthContext'
-import Link from 'next/link'
+import Styles from './styles.module.css';
+import { formatDate } from '@/utils';
+import Image from 'next/image';
+import SubComment from './SubComment';
+import React, { useEffect, useState } from 'react';
+import { Api } from '@/Constants';
+import { BsThreeDots } from 'react-icons/bs';
+import DeleteCommentComponent from '../DeleteComponent/DeleteComment';
+import { useAuthContext } from '@/context/AuthContext';
+import Link from 'next/link';
 
 interface UpdateReplyCommentData {
-  parentCommentId: string
-  repliedUserId: string
+  parentCommentId: string;
+  repliedUserId: string;
 }
 
 interface ISubComment {
-  _id: string
-  parentCommentId: string
-  postId: string
-  repliedUserId: string
-  commentText: string
+  _id: string;
+  parentCommentId: string;
+  postId: string;
+  repliedUserId: string;
+  commentText: string;
   postedBy: {
-    userProfileImage: string
-    username: string
-    _id: string
-  }
-  likes: string[]
-  createdAt: string
+    userProfileImage: string;
+    username: string;
+    _id: string;
+  };
+  likes: string[];
+  createdAt: string;
 }
 
+
 interface DeleteCommentDetails {
-  userId: string
-  deleteId: string
-  clientComponent?: boolean
+  userId: string;
+  deleteId: string;
+  clientComponent?: boolean;
 }
 
 interface IUserCommentReplies {
-  parentCommentId: string
-  comment: ISubComment[]
+  repliedUserId: string;
+  parentCommentId: string;
+  comment: ISubComment[];
 }
 
 interface Comment {
-  postId: string
-  _id: string
-  parentCommentImage: string
-  parentCommentUserId: string
-  parentCommentUsername: string
-  parentCommentCommentText: string
-  parentCommentPostedDate: string
-  parentCommentTotalLikes: string[]
-  parentTotalCommentReplies: number
-  setDummyUserComment: React.Dispatch<React.SetStateAction<IUserCommentReplies[]>>
-  updateUsername: (name: string) => void
-  updateReplyCommentData: (data: UpdateReplyCommentData) => void
-  userRepliedComments: IUserCommentReplies[]
-  updateRepliedComments: (parentCommentId: string) => void
-  likeSubComment: (parentCommentId: string, subCommentId: string) => void
-  unlikeSubComment: (parentCommentId: string, subCommentId: string) => void
-  handleModal: (data: boolean) => void
-  setDeleteCommentDetails: (data: DeleteCommentDetails) => void
-  deleteSubComment: (parentCommentId: string, commentId: string) => void
+  postId: string;
+  _id: string;
+  parentCommentImage: string;
+  parentCommentUserId: string;
+  parentCommentUsername: string;
+  parentCommentCommentText: string;
+  parentCommentPostedDate: string;
+  parentCommentTotalLikes: string[];
+  parentTotalCommentReplies: number;
+  setDummyUserComment: React.Dispatch<React.SetStateAction<IUserCommentReplies[]>>;
+  updateUsername: (name: string) => void;
+  updateReplyCommentData: (data: UpdateReplyCommentData) => void;
+  userRepliedComments: IUserCommentReplies[];
+  updateRepliedComments: (parentCommentId: string) => void;
+  likeSubComment: (parentCommentId: string, subCommentId: string) => void;
+  unlikeSubComment: (parentCommentId: string, subCommentId: string) => void;
+  handleModal: (data: boolean) => void;
+  setDeleteCommentDetails: (data: DeleteCommentDetails) => void;
+  deleteSubComment: (parentCommentId: string, commentId: string) => void;
 }
 
 interface BackendData {
-  data: ISubComment[]
+  data: ISubComment[];
 }
 
 export default function ParentComment({
@@ -91,58 +93,62 @@ export default function ParentComment({
   // @ts-ignore
 
   // context
-  const { authUser } = useAuthContext()
+  const { authUser } = useAuthContext();
 
-  const date = new Date(parentCommentPostedDate)
-  const formatedDate = formatDate(date)
+  const date = new Date(parentCommentPostedDate);
+  const formatedDate = formatDate(date);
   // states
-  const [subComments, setSubComments] = useState<ISubComment[]>([])
-
-  const [isOpeningRepliedComments, setIsOpeningRepliedComments] =
-    useState<boolean>(false)
-  const [openRepliedComments, setOpenRepliedComments] = useState<boolean>(false)
-  const [openUserRepliedComments, setOpeningUserRepliedComments] =
-    useState<boolean>(true)
-  const [isLiked, setIsLiked] = useState<boolean>(
-    parentCommentTotalLikes.filter(id => id === authUser?.userProfileId).length > 0
-  )
-  const [numberOfLikes, setNumberOfLikes] = useState<number>(
-    parentCommentTotalLikes.length
-  )
-  const [userRepliedCommentsLength, setUserRepliedCommentsLength] = useState<number>(
-    userRepliedComments?.length
-  )
-  const [totalCommentReplies, setTotalCommentReplies] = useState<number>(
-    parentTotalCommentReplies
-  )
-
-  const [deleteSubCommentDetails, setDeleteSubCommentDetails] =
-    useState<DeleteCommentDetails | null>(null)
-  const [openDeleteParentCommentModal, setOpenDeleteParentCommentModal] =
-    useState<boolean>(false)
-  const handleParentDeleteModal = (value: boolean) => {
-    setOpenDeleteParentCommentModal(value)
-  }
-  const handleDeleteSubComment = (commentId: string) => {
-    setSubComments(prev => {
-      const comments = prev?.filter(comment => comment._id !== commentId)!
-      return comments
-    })
-    setTotalCommentReplies(prev => prev - 1)
-  }
-
-  const handleDeleteUserRepliedComments = (commentId: string) => {
-    deleteSubComment(_id, commentId)
-  }
+  const [subComments, setSubComments] = useState<ISubComment[]>([]);
 
   useEffect(() => {
-    setUserRepliedCommentsLength(userRepliedComments?.length)
-  }, [userRepliedComments])
+    console.log(subComments);
+  }, [subComments]);
+
+  const [isOpeningRepliedComments, setIsOpeningRepliedComments] =
+    useState<boolean>(false);
+  const [openRepliedComments, setOpenRepliedComments] = useState<boolean>(false);
+  const [openUserRepliedComments, setOpeningUserRepliedComments] =
+    useState<boolean>(true);
+  const [isLiked, setIsLiked] = useState<boolean>(
+    parentCommentTotalLikes.filter(id => id === authUser?.userProfileId).length > 0
+  );
+  const [numberOfLikes, setNumberOfLikes] = useState<number>(
+    parentCommentTotalLikes.length
+  );
+  const [userRepliedCommentsLength, setUserRepliedCommentsLength] = useState<number>(
+    userRepliedComments?.length
+  );
+  const [totalCommentReplies, setTotalCommentReplies] = useState<number>(
+    parentTotalCommentReplies
+  );
+
+  const [deleteSubCommentDetails, setDeleteSubCommentDetails] =
+    useState<DeleteCommentDetails | null>(null);
+  const [openDeleteParentCommentModal, setOpenDeleteParentCommentModal] =
+    useState<boolean>(false);
+  const handleParentDeleteModal = (value: boolean) => {
+    setOpenDeleteParentCommentModal(value);
+  };
+  const handleDeleteSubComment = (commentId: string) => {
+    setSubComments(prev => {
+      const comments = prev?.filter(comment => comment._id !== commentId)!;
+      return comments;
+    });
+    setTotalCommentReplies(prev => prev - 1);
+  };
+
+  const handleDeleteUserRepliedComments = (commentId: string) => {
+    deleteSubComment(_id, commentId);
+  };
+
+  useEffect(() => {
+    setUserRepliedCommentsLength(userRepliedComments?.length);
+  }, [userRepliedComments]);
 
   // get replies of the comments
   const getRepliedComments = async (parentCommentId: string) => {
     if (subComments?.length! >= totalCommentReplies) {
-      return
+      return;
     }
 
     if (openRepliedComments) {
@@ -150,18 +156,18 @@ export default function ParentComment({
       setSubComments(prev => {
         const index = userRepliedComments.findIndex(
           comment => comment.parentCommentId === parentCommentId
-        )
+        );
         if (userRepliedComments[index]?.comment.length !== 0) {
-          return [...prev, ...userRepliedComments[index].comment]
+          return [...prev, ...userRepliedComments[index].comment];
         }
-        return [...prev]
-      })
-      setTotalCommentReplies(prev => prev + userRepliedComments.length)
-      updateRepliedComments(parentCommentId)
-      return
+        return [...prev];
+      });
+      setTotalCommentReplies(prev => prev + userRepliedComments.length);
+      updateRepliedComments(parentCommentId);
+      return;
     }
 
-    setIsOpeningRepliedComments(true)
+    setIsOpeningRepliedComments(true);
     try {
       const response = await fetch(
         `${Api}/post/comment/sub-comment?parentCommentId=${parentCommentId}`,
@@ -169,30 +175,30 @@ export default function ParentComment({
           method: 'GET',
           credentials: 'include',
         }
-      )
+      );
 
       if (!response.ok) {
-        throw new Error('There was an error in getting the replied comments')
+        throw new Error('There was an error in getting the replied comments');
       }
 
-      const { data: result }: BackendData = await response.json()
+      const { data: result }: BackendData = await response.json();
 
       if (parentCommentId === userRepliedComments[0]?.parentCommentId) {
-        setTotalCommentReplies(result.length)
-        updateRepliedComments(_id)
+        setTotalCommentReplies(result.length);
+        updateRepliedComments(_id);
       }
-      setSubComments(result)
-      return
+      setSubComments(result);
+      return;
     } catch (error: any) {
-      console.error(error.message)
+      console.error(error.message);
     } finally {
-      setIsOpeningRepliedComments(false)
+      setIsOpeningRepliedComments(false);
     }
-  }
+  };
 
   const likeComment = async () => {
-    if (isLiked) return
-    setNumberOfLikes(numberOfLikes + 1)
+    if (isLiked) return;
+    setNumberOfLikes(numberOfLikes + 1);
     try {
       const response = await fetch(`${Api}/post/comment/like-comment`, {
         method: 'POST',
@@ -204,23 +210,23 @@ export default function ParentComment({
           userID: authUser?.userProfileId,
         }),
         credentials: 'include',
-      })
+      });
 
       if (!response.ok) {
-        setIsLiked(false)
-        setNumberOfLikes(numberOfLikes)
-        throw new Error('Error liking in post ')
+        setIsLiked(false);
+        setNumberOfLikes(numberOfLikes);
+        throw new Error('Error liking in post ');
       }
 
-      const result = await response.json()
+      const result = await response.json();
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
-  }
+  };
 
   const unlikeComment = async () => {
-    if (!isLiked) return
-    setNumberOfLikes(numberOfLikes - 1)
+    if (!isLiked) return;
+    setNumberOfLikes(numberOfLikes - 1);
 
     try {
       const response = await fetch(`${Api}/post/comment/unlike-comment`, {
@@ -233,19 +239,19 @@ export default function ParentComment({
           commentId: _id,
         }),
         credentials: 'include',
-      })
+      });
 
       if (!response.ok) {
-        setIsLiked(false)
-        setNumberOfLikes(numberOfLikes)
-        throw new Error('Error unliking the post ')
+        setIsLiked(false);
+        setNumberOfLikes(numberOfLikes);
+        throw new Error('Error unliking the post ');
       }
 
-      const result = await response.json()
+      const result = await response.json();
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
-  }
+  };
 
   return (
     <div className='my-[10px]'>
@@ -294,9 +300,9 @@ export default function ParentComment({
               <button
                 className='hover:scale-105 p-2 flexCenter w-auto'
                 onClick={() => {
-                  setIsLiked(prev => !prev)
-                  likeComment()
-                  unlikeComment()
+                  setIsLiked(prev => !prev);
+                  likeComment();
+                  unlikeComment();
                 }}
               >
                 {isLiked ? (
@@ -331,22 +337,22 @@ export default function ParentComment({
               {numberOfLikes > 0 && <p>{numberOfLikes} likes</p>}
               <button
                 onClick={() => {
-                  updateUsername(parentCommentUsername)
+                  updateUsername(parentCommentUsername);
                   updateReplyCommentData({
                     parentCommentId: _id,
                     repliedUserId: parentCommentUserId,
-                  })
+                  });
                 }}
               >
                 Reply
               </button>
               <button
                 onClick={() => {
-                  handleModal(true)
+                  handleModal(true);
                   setDeleteCommentDetails({
                     userId: parentCommentUserId,
                     deleteId: _id,
-                  })
+                  });
                 }}
               >
                 <BsThreeDots
@@ -378,20 +384,20 @@ export default function ParentComment({
                     setSubComments(prev => {
                       const index = userRepliedComments?.findIndex(
                         comment => comment.parentCommentId === _id
-                      )
-                      return [...prev, ...userRepliedComments[index].comment]
-                    })
+                      );
+                      return [...prev, ...userRepliedComments[index].comment];
+                    });
                     setTotalCommentReplies(
                       prev =>
                         prev +
                         (userRepliedComments?.find(
                           comment => comment.parentCommentId === _id
                         )?.comment.length || 0)
-                    )
-                    updateRepliedComments(_id)
+                    );
+                    updateRepliedComments(_id);
                   }
-                  setOpenRepliedComments(prev => !prev)
-                  getRepliedComments(_id)
+                  setOpenRepliedComments(prev => !prev);
+                  getRepliedComments(_id);
                 }}
               >
                 {openRepliedComments
@@ -409,6 +415,7 @@ export default function ParentComment({
                   <SubComment
                     key={comment._id}
                     _id={comment._id}
+                    repliedUserId={comment.repliedUserId}
                     postId={postId}
                     parentCommentId={_id}
                     subCommentUserId={comment.postedBy._id}
@@ -440,7 +447,7 @@ export default function ParentComment({
                     <button
                       className=' text-neutral-500 text-[10px] flex items-center gap-3'
                       onClick={() => {
-                        setOpeningUserRepliedComments(prev => !prev)
+                        setOpeningUserRepliedComments(prev => !prev);
                       }}
                     >
                       {' '}
@@ -466,6 +473,7 @@ export default function ParentComment({
                             key={userComment._id}
                             _id={userComment._id}
                             postId={userComment.postId}
+                            repliedUserId={comment.repliedUserId}
                             parentCommentId={userComment.parentCommentId}
                             subCommentUserId={userComment.postedBy._id}
                             subCommentImage={userComment.postedBy.userProfileImage}
@@ -474,6 +482,7 @@ export default function ParentComment({
                             subCommentPostedDate={userComment.createdAt}
                             subCommentTotalLikes={userComment.likes}
                             updateUsername={updateUsername}
+                            
                             updateReplyCommentData={updateReplyCommentData}
                             clientComment={true}
                             likeSubComment={likeSubComment}
@@ -482,8 +491,8 @@ export default function ParentComment({
                             setDeleteSubCommentDetails={setDeleteSubCommentDetails}
                             deleteSubComment={deleteSubComment}
                           />
-                        )
-                      })
+                        );
+                      });
                     }
                   })}
                 </div>
@@ -492,5 +501,5 @@ export default function ParentComment({
           )}
       </div>
     </div>
-  )
+  );
 }

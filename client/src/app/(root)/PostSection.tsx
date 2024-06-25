@@ -1,56 +1,56 @@
-'use client'
+'use client';
 
-import Post from '@/components/cards/Post'
-import { useEffect, useState } from 'react'
-import DeletePostModal from '@/components/shared/DeleteComponent/DeletePost'
-import { useInView } from 'react-intersection-observer'
-import { getPosts } from './postActions'
-import { usePostContext } from '@/context/PostContext'
+import Post from '@/components/cards/Post';
+import { useEffect, useState } from 'react';
+import DeletePostModal from '@/components/shared/DeleteComponent/DeletePost';
+import { useInView } from 'react-intersection-observer';
+import { getPosts } from './postActions';
+import { useClassXContext } from '@/context/ClassXContext';
 
 interface IComments {
-  _id: string
-  commentText: string
+  _id: string;
+  commentText: string;
   postedBy: {
-    _id: string
-    username: string
-    userProfileImage: string
-  }
-  createdAt: string
-  likes: string[]
-  commentReplies: string[]
+    _id: string;
+    username: string;
+    userProfileImage: string;
+  };
+  createdAt: string;
+  likes: string[];
+  commentReplies: string[];
 }
 
 interface UploadAttachments {
-  _id: string
-  originalFilename: string
-  url: string
-  extension: string
-  _createdAt: string
+  _id: string;
+  originalFilename: string;
+  url: string;
+  extension: string;
+  _createdAt: string;
 }
 
 interface IPost {
-  _id: string
-  attachments: UploadAttachments[]
-  aspectRatio: string
-  caption: string
-  location: string
-  category: string
-  saved: string[]
+  _id: string;
+  attachments: UploadAttachments[];
+  aspectRatio: string;
+  caption: string;
+  location: string;
+  category: string;
+  saved: string[];
   postedBy: {
-    _id: string
-    username: string
-    userProfileImage: string
-  }
-  likes: any[]
-  comments: IComments[]
-  createdAt: string
+    _id: string;
+    username: string;
+    userProfileImage: string;
+  };
+  likes: any[];
+  comments: IComments[];
+  createdAt: string;
 }
 
 interface IDeletePostDetails {
-  deleteId: string
-  userProfileId: string
-  handleModal?: (data: boolean) => void
-  className?: string
+  deleteId: string;
+  userProfileId: string;
+  handleModal?: (data: boolean) => void;
+  className?: string;
 }
 
 export default function PostSection({
@@ -58,58 +58,58 @@ export default function PostSection({
   cookie,
   totalPost,
 }: {
-  postData: IPost[]
-  cookie: string
-  totalPost: number
+  postData: IPost[];
+  cookie: string;
+  totalPost: number;
 }) {
   // ref
-  const { ref, inView } = useInView()
+  const { ref, inView } = useInView();
 
   // states
   // const [posts, setPosts] = useState<IPost[]>(postData)
-  const { feedPost, setFeedPost, totalPostDeleted } = usePostContext()
+  const { feedPost, setFeedPost, totalPostDeleted } = useClassXContext();
 
-  const [isOpenModal, setIsOpenModal] = useState<boolean>(false)
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [deletePostDetails, setDeletePotDetails] = useState<IDeletePostDetails | null>(
     null
-  )
-  const [allPostLoaded, setAllPostLoaded] = useState<boolean>(false)
-  const [page, setPage] = useState(1)
+  );
+  const [allPostLoaded, setAllPostLoaded] = useState<boolean>(false);
+  const [page, setPage] = useState(1);
 
   //  handlers
   const loadMoreUpdates = async () => {
-    const nextPage = page + 1
-    const newPosts = await getPosts(cookie, nextPage)
-    setFeedPost(prev => [...prev, ...newPosts])
-    setPage(nextPage)
-  }
+    const nextPage = page + 1;
+    const newPosts = await getPosts(cookie, nextPage);
+    setFeedPost(prev => [...prev, ...newPosts]);
+    setPage(nextPage);
+  };
 
   const handleDeleteModal = (value: boolean) => {
-    setIsOpenModal(value)
-  }
+    setIsOpenModal(value);
+  };
 
   const handleDeletePostDetails = ({ userProfileId, deleteId }: IDeletePostDetails) => {
     setDeletePotDetails({
       deleteId: deleteId,
       userProfileId: userProfileId,
       handleModal: handleDeleteModal,
-    })
-  }
+    });
+  };
 
   const handlePostState = (postId: string) => {
-    setFeedPost(prev => (prev ? prev.filter(post => post._id !== postId) : []))
-  }
+    setFeedPost(prev => (prev ? prev.filter(post => post._id !== postId) : []));
+  };
 
   // useEffects
   useEffect(() => {
     if (inView) {
       if (feedPost.length + postData.length - totalPostDeleted >= totalPost) {
-        setAllPostLoaded(true)
-        return
+        setAllPostLoaded(true);
+        return;
       }
-      loadMoreUpdates()
+      loadMoreUpdates();
     }
-  }, [inView, page])
+  }, [inView, page]);
 
   return (
     <div
@@ -144,7 +144,7 @@ export default function PostSection({
             handleDeletePostDetails={handleDeletePostDetails}
             handleDeleteModal={handleDeleteModal}
           />
-        )
+        );
       })}
       {feedPost?.map((post, index) => {
         return (
@@ -166,7 +166,7 @@ export default function PostSection({
             handleDeletePostDetails={handleDeletePostDetails}
             handleDeleteModal={handleDeleteModal}
           />
-        )
+        );
       })}
       <div className='w-full flex justify-center'>
         {allPostLoaded ? (
@@ -176,5 +176,5 @@ export default function PostSection({
         )}
       </div>
     </div>
-  )
+  );
 }

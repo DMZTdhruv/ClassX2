@@ -1,9 +1,9 @@
-import { Api } from '@/Constants'
-import { usePostContext } from '@/context/PostContext'
-import React, { SetStateAction } from 'react'
+import { Api } from '@/Constants';
+import { useClassXContext } from '@/context/ClassXContext';
+import React, { SetStateAction } from 'react';
 
 const useUnlikePost = () => {
-  const { feedPost, setFeedPost } = usePostContext()
+  const { feedPost, setFeedPost } = useClassXContext();
   const unlikePost = async (
     _id: string,
     index: number,
@@ -14,15 +14,15 @@ const useUnlikePost = () => {
     authUser: { userProfileId: string },
     serverRendered: boolean
   ) => {
-    setNumberOfLikes(prev => prev - 1)
+    setNumberOfLikes(prev => prev - 1);
     if (!serverRendered) {
       setFeedPost(prev => {
-        const posts = [...prev]
+        const posts = [...prev];
         posts[index].likes = posts[index].likes.filter(
           like => like !== authUser.userProfileId
-        )
-        return posts
-      })
+        );
+        return posts;
+      });
     }
 
     try {
@@ -32,29 +32,28 @@ const useUnlikePost = () => {
           'Content-type': 'application/json',
         },
         credentials: 'include',
-      })
+      });
 
-      const data = await res.json()
+      const data = await res.json();
       if (data.error) {
-        throw new Error(data.error)
+        throw new Error(data.error);
       }
-
     } catch (error: any) {
-      setNumberOfLikes(numberOfLikes)
-      console.error(error.message)
+      setNumberOfLikes(numberOfLikes);
+      console.error(error.message);
       if (!serverRendered) {
         setFeedPost(prev => {
-          const posts = [...prev]
-          posts[index].likes.push(authUser.userProfileId)
-          return posts
-        })
+          const posts = [...prev];
+          posts[index].likes.push(authUser.userProfileId);
+          return posts;
+        });
       }
 
-      setIsLiked(true)
+      setIsLiked(true);
     }
-  }
+  };
 
-  return { unlikePost }
-}
+  return { unlikePost };
+};
 
-export default useUnlikePost
+export default useUnlikePost;

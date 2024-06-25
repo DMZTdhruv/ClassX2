@@ -1,29 +1,29 @@
-'use client'
+'use client';
 
-import ClassroomImageModal from '@/components/classroom/ClassroomImageModal'
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
-import { Skeleton } from '@/components/ui/skeleton'
-import useGetUpdate from '@/hooks/classroom/useGetUpdate'
-import { formatDate } from '@/utils'
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
-import React, { useEffect, useRef, useState } from 'react'
+import ImageModal from '@/components/shared/ImageModal';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { Skeleton } from '@/components/ui/skeleton';
+import useGetUpdate from '@/hooks/classroom/useGetUpdate';
+import { formatDate } from '@/utils';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useRef, useState } from 'react';
 
 const Update = ({ params }: { params: { classId: string; updateId: string } }) => {
-  const { loading, error, getClassroomUpdate, updateData } = useGetUpdate()
-  const updateRef = useRef<HTMLDivElement>(null)
-  const router = useRouter()
-  const [imageOpenModal, setImageOpenModal] = useState<boolean>(false)
-  const [selectedImage, setSelectedImage] = useState('')
+  const { loading, error, getClassroomUpdate, updateData } = useGetUpdate();
+  const updateRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const [imageOpenModal, setImageOpenModal] = useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState('');
 
   useEffect(() => {
-    getClassroomUpdate(params.classId, params.updateId)
-  }, [])
+    getClassroomUpdate(params.classId, params.updateId);
+  }, []);
   useEffect(() => {
     if (updateRef.current) {
-      updateRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' }) // Scroll the component into view
+      updateRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Scroll the component into view
     }
-  }, [])
+  }, []);
 
   if (loading) {
     return (
@@ -35,20 +35,18 @@ const Update = ({ params }: { params: { classId: string; updateId: string } }) =
           <Skeleton className='h-[250px] w-[250px]  rounded-[20px] ' />
         </div>
       </div>
-    )
+    );
   }
 
   // @ts-ignore
-  const formattedDate = formatDate(new Date(updateData?.createdAt))
+  const formattedDate = formatDate(new Date(updateData?.createdAt));
   const closeModal = () => {
-    setImageOpenModal(false)
-    setSelectedImage('')
-  }
+    setImageOpenModal(false);
+    setSelectedImage('');
+  };
   return (
     <div className='w-full sm:p-[16px] p-[6px] md:p-[30px]'>
-      {imageOpenModal && (
-        <ClassroomImageModal imageUrl={selectedImage} onClose={closeModal} />
-      )}
+      {imageOpenModal && <ImageModal imageUrl={selectedImage} onClose={closeModal} />}
       <div className='  rounded-xl sm:p-6 p-2 mb-8'>
         <article className='flex items-start flex-col gap-2 '>
           <div className='bg-neutral-900/80 w-full rounded-xl p-6'>
@@ -76,13 +74,13 @@ const Update = ({ params }: { params: { classId: string; updateId: string } }) =
                             height={150}
                             unoptimized
                             onClick={() => {
-                              setImageOpenModal(prev => !prev)
-                              setSelectedImage(image)
+                              setImageOpenModal(prev => !prev);
+                              setSelectedImage(image);
                             }}
-                            className='aspect-square w-full h-full object-cover rounded-md'
+                            className='aspect-square cursor- w-full h-full object-cover rounded-md'
                           />
                         </CarouselItem>
-                      )
+                      );
                     })}
                   </CarouselContent>
                 </Carousel>
@@ -124,7 +122,7 @@ const Update = ({ params }: { params: { classId: string; updateId: string } }) =
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Update
+export default Update;

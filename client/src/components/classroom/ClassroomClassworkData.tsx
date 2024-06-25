@@ -30,7 +30,6 @@ const ClassroomClassworkData = async ({
   return (
     <div className='flex flex-col gap-2 mt-2'>
       {classWorkData.map((classwork: IClassroomWork) => {
-        console.log(classwork)
         return (
           <div
             className='h-fit flex items-center w-full p-2 justify-between hover:bg-neutral-900 gap-2  rounded-[20px]'

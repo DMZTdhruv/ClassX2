@@ -1,38 +1,38 @@
-import { MessageContextProps } from '@/Constants'
-import { useMessageContext } from '@/context/MessageContext'
-import { useSocketContext } from '@/context/SocketContext'
-import { formatMessageSideBarDate } from '@/utils/formatDate'
-import useConversation from '@/zustand/useConversation'
-import Image from 'next/image'
-import Link from 'next/link'
-import { useEffect } from 'react'
+import { MessageContextProps } from '@/Constants';
+import { useMessageContext } from '@/context/MessageContext';
+import { useClassXSocketContext } from '@/context/ClassXSocketContext';
+import { formatMessageSideBarDate } from '@/utils/formatDate';
+import useConversation from '@/zustand/useConversation';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect } from 'react';
 
 interface IUserDetails {
-  _id: string
-  userProfileImage: string
-  username: string
-  update: string
-  url?: string
-  lastActiveOn: string
+  _id: string;
+  userProfileImage: string;
+  username: string;
+  update: string;
+  url?: string;
+  lastActiveOn: string;
 }
 
 export default function Conversation({ userDetails }: { userDetails: IUserDetails }) {
   // @ts-ignore
-  const { conversation, setConversation }: MessageContextProps = useMessageContext()
-  const isSelected = conversation?._id === userDetails?._id
+  const { conversation, setConversation }: MessageContextProps = useMessageContext();
+  const isSelected = conversation?._id === userDetails?._id;
   // @ts-ignore
-  const { activeUsers } = useSocketContext()
-  const date = formatMessageSideBarDate(new Date(userDetails.lastActiveOn))
-  const isActive = activeUsers?.includes(userDetails._id)
+  const { activeUsers } = useClassXSocketContext();
+  const date = formatMessageSideBarDate(new Date(userDetails.lastActiveOn));
+  const isActive = activeUsers?.includes(userDetails._id);
 
-  const { userProfileImage, username, update, url } = userDetails
+  const { userProfileImage, username, update, url } = userDetails;
   return (
     <div
       className={`flex ${
         isSelected && 'bg-[#111111]'
       } cursor-pointer transition-all items-center lg:px-[31px] px-[16px] h-[70px] gap-2 hover:bg-[#111111] w-full`}
       onClick={() => {
-        setConversation(userDetails)
+        setConversation(userDetails);
       }}
     >
       <div className='relative flex justify-center'>
@@ -55,5 +55,5 @@ export default function Conversation({ userDetails }: { userDetails: IUserDetail
         </p>
       </div>
     </div>
-  )
+  );
 }

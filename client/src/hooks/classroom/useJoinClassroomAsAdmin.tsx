@@ -25,7 +25,6 @@ const useJoinClassroomAsAdmin = () => {
         throw new Error(data.error)
       }
 
-      console.log(data)
       updateClassroom()
       router.replace('/classroom')
     } catch (error: any) {

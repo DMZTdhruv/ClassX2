@@ -12,6 +12,9 @@ import { FiTrash } from 'react-icons/fi';
 import { ImCancelCircle } from 'react-icons/im';
 import { LuReply } from 'react-icons/lu';
 import Link from 'next/link';
+import { IoPlay } from 'react-icons/io5';
+import { BsFullscreen } from 'react-icons/bs';
+import ImageModal from '@/components/shared/ImageModal';
 
 interface PostDetails {
   _id: string;
@@ -42,6 +45,10 @@ interface MessageProps {
     replyMessage: string;
     replyToUsername: string;
   };
+  asset: {
+    extension: string;
+    url: string;
+  };
   createdAt: string;
 }
 
@@ -57,7 +64,8 @@ interface MessageComponentProps {
 const Message = ({ message, deleteMessage, messageType }: MessageComponentProps) => {
   // @ts-ignore
   const { authUser } = useAuthContext();
-  const { conversation, replyMessage, setReplyMessage } = useMessageContext()!;
+  const { conversation, replyMessage, setReplyMessage, setAsset } =
+    useMessageContext()!;
   const isUserMessage =
     // @ts-ignore
     message.senderId._id === authUser?.userProfileId ||
@@ -69,6 +77,19 @@ const Message = ({ message, deleteMessage, messageType }: MessageComponentProps)
   const [copied, setCopied] = useState<boolean>(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const [timer, setTimer] = useState<any>(null);
+
+  const [imageOpenModal, setImageOpenModal] = useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState('');
+
+  const allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
+  const isImageAssetAvailable = allowedExtensions.some(ext =>
+    message?.asset?.extension.includes(ext)
+  );
+
+  const isFileAssetAvailable = message?.asset?.extension.includes(
+    'docx' || 'ppt' || 'pdf' || 'pptx'
+  );
+  const isVideoAssetAvailable = message?.asset?.extension.includes('mp4');
 
   // copy messages
   const copyMessage = () => {
@@ -91,6 +112,10 @@ const Message = ({ message, deleteMessage, messageType }: MessageComponentProps)
         postId: '',
         postUrl: '',
         extension: '',
+      },
+      repliedAsset: {
+        extension: '',
+        url: '',
       },
     });
   }, [conversation]);
@@ -159,6 +184,10 @@ const Message = ({ message, deleteMessage, messageType }: MessageComponentProps)
     setModal(false);
   };
 
+  const closeModal = () => {
+    setImageOpenModal(false);
+    setSelectedImage('');
+  };
   return (
     <>
       {message?.replyMessage?.replyMessage && (
@@ -186,20 +215,20 @@ const Message = ({ message, deleteMessage, messageType }: MessageComponentProps)
       )}
       {message?.post?.attachments && (
         <div
-          className={`h-fit text-[13px] flex flex-col justify-center mb-2 ${
+          className={`h-fit text-[13px]   flex flex-col justify-center mb-2 ${
             isUserMessage ? 'items-end   pr-10' : 'items-start pl-10'
           }`}
         >
           <Link
             href={`${webUrl}/post/${message.post._id}`}
-            className={` bg-neutral-900 relative  rounded-lg aspect-square
+            className={` bg-neutral-900 relative min-w-[250px] max-w-[250px] md:max-w-[300px] min-h-[250px] max-h-[300px] rounded-lg aspect-square
             ${message.post.aspectRatio === '16:9' && 'aspect-video'}
             ${message.post.aspectRatio === '1:1' && 'aspect-square'}
             ${message.post.aspectRatio === '4:3' && 'fourRationThree'}
             ${message.post.aspectRatio === '3:4' && 'threeRatioFour'}
           `}
           >
-            <div className='flex p-2 items-center justify-between w-full gap-[11px]'>
+            <div className='flex p-2 items-center min-w-[250px] max-w-[250px] md:max-w-[300px] justify-between w-full gap-[11px]'>
               <div className='flex items-center gap-[11px]'>
                 <Image
                   src={message.post.postedBy?.userProfileImage}
@@ -227,7 +256,7 @@ const Message = ({ message, deleteMessage, messageType }: MessageComponentProps)
                 </div>
               </div>
             </div>
-            <div className=''>
+            <div className='min-w-[250px] max-w-[250px] md:max-w-[300px]'>
               {message.post.attachments[0].extension === 'mp4' ? (
                 <video
                   src={message.post.attachments[0].url}
@@ -256,13 +285,48 @@ const Message = ({ message, deleteMessage, messageType }: MessageComponentProps)
                 />
               )}
             </div>
-            <div className='p-2'>{message.post.caption}</div>
+            <div className='p-2 min-w-[250px] max-w-[250px] md:max-w-[300px]'>
+              {message.post.caption}
+            </div>
             <span className='absolute text-[10px] top-[55px] bg-neutral-700/30 backdrop-blur-xl rounded-full px-3 font-semibold right-[10px]'>
               {message.post.attachments.length}
             </span>
           </Link>
         </div>
       )}
+
+      {message?.asset && (
+        <div
+          className={`flex w-full px-12 py-2 ${
+            isUserMessage ? 'flex-row-reverse' : ''
+          }`}
+        >
+          {isImageAssetAvailable && (
+            <div
+              className={`md:max-w-[300px] md:min-w-[300px] md:min-h-[300px] min-w-[200px] min-h-[200px]  relative max-h-[200px] cursor-pointer rounded-md border-2 border-neutral-800 bg-neutral-700 max-w-[200px] md:max-h-[300px] object-cover aspect-square`}
+            >
+              <Image
+                src={message.asset?.url || 'image'}
+                alt='image'
+                fill={true}
+                className='absolute h-full w-full object-cover'
+                onClick={() => setAsset(message.asset.url)}
+              />
+            </div>
+          )}
+
+          {isVideoAssetAvailable && (
+            <video
+              src={message.asset?.url || 'video'}
+              style={{ height: 'auto', width: '300' }}
+              loop
+              controls
+              className={`md:max-w-[300px] w-auto max-w-[250px] rounded-md object-contain max-h-[200px]`}
+            ></video>
+          )}
+        </div>
+      )}
+
       <div
         className={`w-full group animate-in  duration-300 fade-in flex justify-start gap-3  ${
           isUserMessage && 'flex-row-reverse'
@@ -275,6 +339,7 @@ const Message = ({ message, deleteMessage, messageType }: MessageComponentProps)
             </span>
           </div>
         )}
+
         <div>
           <Image
             src={
@@ -300,6 +365,10 @@ const Message = ({ message, deleteMessage, messageType }: MessageComponentProps)
                 postId: message?.post?._id || '',
                 postUrl: message?.post?.attachments[0].url || '',
                 extension: message?.post?.attachments[0].extension || '',
+              },
+              repliedAsset: {
+                url: '',
+                extension: '',
               },
             });
           }}
@@ -341,6 +410,11 @@ const Message = ({ message, deleteMessage, messageType }: MessageComponentProps)
                   postId: message?.post?._id || '',
                   postUrl: message?.post?.attachments[0].url || '',
                   extension: message?.post?.attachments[0].extension || '',
+                },
+                repliedAsset: {
+                  url: '',
+
+                  extension: '',
                 },
               });
             }}

@@ -1,28 +1,29 @@
-import type { Metadata } from 'next'
-import '../globals.css'
-import TopBar from '@/components/shared/TopBar'
-import BottomBar from '@/components/shared/BottomBar'
-import SideBar from '@/components/shared/sidebar'
-import NextTopLoader from 'nextjs-toploader'
-import { AuthContextProvider } from '@/context/AuthContext'
-import SocketContextProvider from '@/context/SocketContext'
-import PostContextProvider from '@/context/PostContext'
-import MessageContextProvider from '@/context/MessageContext'
-import SyncData from '@/components/SyncData'
+import type { Metadata } from 'next';
+import '../globals.css';
+import TopBar from '@/components/shared/TopBar';
+import BottomBar from '@/components/shared/BottomBar';
+import SideBar from '@/components/shared/sidebar';
+import NextTopLoader from 'nextjs-toploader';
+import { AuthContextProvider } from '@/context/AuthContext';
+import SocketContextProvider from '@/context/ClassXSocketContext';
+import { ClassXContextProvider } from '@/context/ClassXContext';
+import GetNotification from '../../components/GetNotification';
+import FcmTokenComponent from '@/components/firebase/FcmTokenComponent';
+import ClassXSocketContextProvider from '@/context/ClassXSocketContext';
 
 export const metadata: Metadata = {
   title: 'classX app',
   description: 'An app for students of the college to enhance the student expericene',
   manifest: '/manifest.json',
   icons: { apple: '/icon.png' },
-}
+};
 
 export default function RootLayout({
   children,
   postModal,
 }: Readonly<{
-  children: React.ReactNode
-  postModal: React.ReactNode
+  children: React.ReactNode;
+  postModal: React.ReactNode;
 }>) {
   return (
     <html lang='en'>
@@ -31,9 +32,10 @@ export default function RootLayout({
         <meta name='theme-color' content='#0E0E0E' />
         <meta httpEquiv='ScreenOrientation' content='autoRotate:disabled'></meta>
       </head>
+      <FcmTokenComponent />
       <AuthContextProvider>
-        <SocketContextProvider>
-          <PostContextProvider>
+        <ClassXSocketContextProvider>
+          <ClassXContextProvider>
             <body className='dark sm:flex items-center sm:flex-col bg-[#0d0d0d] font-poppins '>
               <NextTopLoader
                 color='rgba(137, 29, 204, 1)'
@@ -48,9 +50,9 @@ export default function RootLayout({
               </main>
               <BottomBar />
             </body>
-          </PostContextProvider>
-        </SocketContextProvider>
+          </ClassXContextProvider>
+        </ClassXSocketContextProvider>
       </AuthContextProvider>
     </html>
-  )
+  );
 }

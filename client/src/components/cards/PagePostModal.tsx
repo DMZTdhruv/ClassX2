@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, {
   ChangeEvent,
@@ -7,10 +7,10 @@ import React, {
   useRef,
   useEffect,
   useMemo,
-} from 'react'
-import Image from 'next/image'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Input } from '@/components/ui/input'
+} from 'react';
+import Image from 'next/image';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Input } from '@/components/ui/input';
 import {
   Api,
   IComments,
@@ -18,160 +18,160 @@ import {
   UpdateReplyCommentData,
   UploadAttachments,
   webUrl,
-} from '@/Constants'
-import { likePost, unlikePost } from '@/utils/LikeFunctions'
+} from '@/Constants';
+import { likePost, unlikePost } from '@/utils/LikeFunctions';
 const ParentComment = React.lazy(
   () => import('@/components/shared/PostComponents/ParentComment')
-)
-import { formatDate } from '@/utils'
-import axios from 'axios'
-import { BsThreeDots } from 'react-icons/bs'
-import DeleteCommentComponent from '../shared/DeleteComponent/DeleteComment'
-import Link from 'next/link'
-import { useAuthContext } from '@/context/AuthContext'
-import DeletePostModal from '../shared/DeleteComponent/DeletePost'
-import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '../ui/carousel'
+);
+import { formatDate } from '@/utils';
+import axios from 'axios';
+import { BsThreeDots } from 'react-icons/bs';
+import DeleteCommentComponent from '../shared/DeleteComponent/DeleteComment';
+import Link from 'next/link';
+import { useAuthContext } from '@/context/AuthContext';
+import DeletePostModal from '../shared/DeleteComponent/DeletePost';
+import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '../ui/carousel';
 
 // Interfaces
 interface GetSubComment {
-  _id: string
-  parentCommentId: string
-  postId: string
-  repliedUserId: string
-  commentText: string
+  _id: string;
+  parentCommentId: string;
+  postId: string;
+  repliedUserId: string;
+  commentText: string;
   postedBy: {
-    userProfileImage: string
-    username: string
-    _id: string
-  }
-  likes: string[]
-  createdAt: string
+    userProfileImage: string;
+    username: string;
+    _id: string;
+  };
+  likes: string[];
+  createdAt: string;
 }
 
 interface ISubComment {
-  _id: string
-  parentCommentId: string
-  postId: string
-  repliedUserId: string
-  commentText: string
+  _id: string;
+  parentCommentId: string;
+  postId: string;
+  repliedUserId: string;
+  commentText: string;
   postedBy: {
-    userProfileImage: string
-    username: string
-    _id: string
-  }
-  likes: string[]
-  createdAt: string
+    userProfileImage: string;
+    username: string;
+    _id: string;
+  };
+  likes: string[];
+  createdAt: string;
 }
 interface IUserCommentReplies {
-  parentCommentId: string
-  comment: ISubComment[]
+  parentCommentId: string;
+  comment: ISubComment[];
 }
 
 export default function PagePostModal({
   postData,
   postId,
 }: {
-  postData: IPost
-  postId: string
+  postData: IPost;
+  postId: string;
 }) {
   //constants
-  const { authUser } = useAuthContext()
-  const [dummyUserComments, setDummyUserComments] = useState<IUserCommentReplies[]>([])
-  const [api, setApi] = React.useState<CarouselApi>()
-  const [current, setCurrent] = React.useState(0)
-  const [count, setCount] = React.useState(0)
+  const { authUser } = useAuthContext();
+  const [dummyUserComments, setDummyUserComments] = useState<IUserCommentReplies[]>([]);
+  const [api, setApi] = React.useState<CarouselApi>();
+  const [current, setCurrent] = React.useState(0);
+  const [count, setCount] = React.useState(0);
 
   //constants
 
-  const router = useRouter()
-  const isProfile = useSearchParams().get('isProfile')
-  const postedDate = formatDate(new Date(postData.createdAt))
+  const router = useRouter();
+  const isProfile = useSearchParams().get('isProfile');
+  const postedDate = formatDate(new Date(postData.createdAt));
 
   // refs
-  const modalRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const modalRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // loading states
-  const [isPendingComment, setIsPendingComment] = useState<boolean>(false)
+  const [isPendingComment, setIsPendingComment] = useState<boolean>(false);
 
   // Post data states
   const [isLiked, setIsLiked] = useState<boolean>(
     postData.likes.filter(id => id === authUser?.userProfileId).length > 0
-  )
-  const [numberOfLikes, setNumberOfLikes] = useState<number>(postData.likes.length)
+  );
+  const [numberOfLikes, setNumberOfLikes] = useState<number>(postData.likes.length);
 
   // Delete post states
-  const [openDeletePostModal, setOpenDeletePostModal] = useState<boolean>(false)
+  const [openDeletePostModal, setOpenDeletePostModal] = useState<boolean>(false);
 
   // comment states
-  const [allComments, setAllComments] = useState<IComments[]>(postData.comments)
-  const memoizedAllComments = useMemo(() => allComments, [allComments])
+  const [allComments, setAllComments] = useState<IComments[]>(postData.comments);
+  const memoizedAllComments = useMemo(() => allComments, [allComments]);
 
-  const [openDeleteCommentModal, setOpenDeleteCommentModal] = useState<boolean>(false)
-  const [comment, setComment] = useState<string>('')
+  const [openDeleteCommentModal, setOpenDeleteCommentModal] = useState<boolean>(false);
+  const [comment, setComment] = useState<string>('');
   const [deleteCommentDetails, setDeleteCommentDetails] =
-    useState<DeleteCommentDetails | null>(null)
+    useState<DeleteCommentDetails | null>(null);
 
   //subcomments states
-  const [replyUsername, setReplyUsername] = useState<string>('')
+  const [replyUsername, setReplyUsername] = useState<string>('');
   const [replyCommentData, setReplyCommentData] = useState({
     parentCommentId: '',
     postId: '',
     repliedUserId: '',
     commentText: '',
     postedBy: '',
-  })
+  });
 
   //use effects
   useEffect(() => {
-    const body = document.getElementsByTagName('body')[0]
-    body.style.overflow = 'hidden'
+    const body = document.getElementsByTagName('body')[0];
+    body.style.overflow = 'hidden';
     return () => {
-      body.style.overflow = 'auto'
-    }
-  }, [])
+      body.style.overflow = 'auto';
+    };
+  }, []);
 
   useEffect(() => {
     if (!api) {
-      return
+      return;
     }
 
-    setCount(api.scrollSnapList().length)
-    setCurrent(api.selectedScrollSnap() + 1)
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap() + 1);
 
     api.on('select', () => {
-      setCurrent(api.selectedScrollSnap() + 1)
-    })
-  }, [api])
+      setCurrent(api.selectedScrollSnap() + 1);
+    });
+  }, [api]);
 
   // All handles
 
   // modal handlers
   function handleModal(value: boolean) {
-    setOpenDeleteCommentModal(value)
+    setOpenDeleteCommentModal(value);
   }
 
   function handleDeletePostModal(value: boolean) {
-    setOpenDeletePostModal(value)
+    setOpenDeletePostModal(value);
   }
 
   function hanldePostModalClose(event: any) {
     if (event.type === 'click' || (event.type === 'keydown' && event.key === 'Enter')) {
       if (modalRef.current) {
-        const { left, right, top, bottom } = modalRef.current.getBoundingClientRect()
-        const { clientX, clientY, target } = event
+        const { left, right, top, bottom } = modalRef.current.getBoundingClientRect();
+        const { clientX, clientY, target } = event;
         const isClickOrEnterInsideForm =
-          target instanceof HTMLElement && target.closest('form')
+          target instanceof HTMLElement && target.closest('form');
 
         if (
           !isClickOrEnterInsideForm &&
           (clientX < left || clientX > right || clientY < top || clientY > bottom)
         ) {
-          router.back()
+          router.back();
         }
 
         if (event.type === 'keydown' && !isClickOrEnterInsideForm) {
-          event.preventDefault()
+          event.preventDefault();
         }
       }
     }
@@ -180,61 +180,63 @@ export default function PagePostModal({
   // all comment handlers
   const handleDeleteComment = (commentId: string) => {
     setAllComments(prev => {
-      const comments = prev.filter(comment => comment._id !== commentId)
-      return comments
-    })
-  }
+      const comments = prev.filter(comment => comment._id !== commentId);
+      return comments;
+    });
+  };
 
   const handleComment = (e: ChangeEvent<HTMLInputElement>) => {
-    setComment(e.target.value)
-  }
+    setComment(e.target.value);
+  };
 
   // all sub/reply comments
   const handleReplyUsername = (name: string) => {
-    setReplyUsername(name)
-    setComment(`@${name} `)
-  }
+    setReplyUsername(name);
+    setComment(`@${name} `);
+  };
 
   const likeDummyUserComment = (parentCommentId: string, subCommentId: string) => {
     setDummyUserComments(prev => {
       const index = prev.findIndex(
         comment => comment.parentCommentId === parentCommentId
-      )
+      );
       if (index !== -1) {
-        const updatedComments = [...prev]
-        const updatedComment = { ...updatedComments[index] }
+        const updatedComments = [...prev];
+        const updatedComment = { ...updatedComments[index] };
         const subCommentIndex = updatedComment.comment.findIndex(
           comment => comment._id === subCommentId
-        )
+        );
         if (subCommentIndex !== -1) {
           if (
             !updatedComment.comment[subCommentIndex].likes.includes(
               authUser?.userProfileId!
             )
           ) {
-            updatedComment.comment[subCommentIndex].likes.push(authUser?.userProfileId!)
+            updatedComment.comment[subCommentIndex].likes.push(
+              authUser?.userProfileId!
+            );
           }
         }
         // Hey gpt should I add this line?
-        updatedComments[index] = updatedComment
-        return updatedComments
+        updatedComments[index] = updatedComment;
+        return updatedComments;
       } else {
-        return prev
+        return prev;
       }
-    })
-  }
+    });
+  };
 
   const unlikeDummyUserComment = (parentCommentId: string, subCommentId: string) => {
     setDummyUserComments(prev => {
       const index = prev.findIndex(
         comment => comment.parentCommentId === parentCommentId
-      )
+      );
       if (index !== -1) {
-        const updatedComments = [...prev]
-        const updatedComment = { ...updatedComments[index] }
+        const updatedComments = [...prev];
+        const updatedComment = { ...updatedComments[index] };
         const subCommentIndex = updatedComment.comment.findIndex(
           comment => comment._id === subCommentId
-        )
+        );
         if (subCommentIndex !== -1) {
           if (
             updatedComment.comment[subCommentIndex].likes.includes(
@@ -243,49 +245,52 @@ export default function PagePostModal({
           ) {
             const subCommentLikeIndex = updatedComment.comment[
               subCommentIndex
-            ].likes.indexOf(authUser?.userProfileId!)
-            updatedComment.comment[subCommentIndex].likes.splice(subCommentLikeIndex, 1)
+            ].likes.indexOf(authUser?.userProfileId!);
+            updatedComment.comment[subCommentIndex].likes.splice(
+              subCommentLikeIndex,
+              1
+            );
           }
         }
-        return updatedComments
+        return updatedComments;
       } else {
-        return prev
+        return prev;
       }
-    })
-  }
+    });
+  };
 
   const deleteSubComment = (parentCommentId: string, commentId: string) => {
     setDummyUserComments(prev => {
       const index = prev.findIndex(
         comment => comment.parentCommentId === parentCommentId
-      )
+      );
       if (index !== -1) {
-        const updatedComments = [...prev]
+        const updatedComments = [...prev];
         const subCommentIndex = updatedComments[index].comment.findIndex(
           comment => comment._id === commentId
-        )
-        updatedComments[index].comment.splice(subCommentIndex, 1)
-        return updatedComments
+        );
+        updatedComments[index].comment.splice(subCommentIndex, 1);
+        return updatedComments;
       }
-      return prev
-    })
-  }
+      return prev;
+    });
+  };
 
   const handleReplyUserComment = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === '') {
-      setReplyUsername('')
-      setComment('')
+      setReplyUsername('');
+      setComment('');
     }
     if (comment.length < replyUsername.length + 2) {
       if (e.target.value === `@${replyUsername} `) {
-        setComment(e.target.value)
+        setComment(e.target.value);
       } else {
-        return
+        return;
       }
     }
-    setComment(e.target.value)
-    setReplyCommentData({ ...replyCommentData, commentText: e.target.value })
-  }
+    setComment(e.target.value);
+    setReplyCommentData({ ...replyCommentData, commentText: e.target.value });
+  };
 
   const updateReplyCommentData = ({
     parentCommentId,
@@ -297,42 +302,42 @@ export default function PagePostModal({
       repliedUserId,
       commentText: comment,
       postedBy: authUser?.userProfileId!,
-    })
-  }
+    });
+  };
 
   const updateRepliedComments = (parentCommentId: string) => {
     setDummyUserComments(prev => {
       const index = prev.findIndex(
         comment => comment.parentCommentId === parentCommentId
-      )
+      );
       if (index !== -1) {
-        const updatedComments = [...prev]
+        const updatedComments = [...prev];
         updatedComments[index] = {
           ...updatedComments[index],
           comment: [], // Set the comment array to an empty array
-        }
-        return updatedComments
+        };
+        return updatedComments;
       } else {
-        return prev // Return the previous state if parent comment is not found
+        return prev; // Return the previous state if parent comment is not found
       }
-    })
-  }
+    });
+  };
 
   // Normal important functions
   const focusInput = () => {
-    setComment('')
-    setReplyUsername('')
+    setComment('');
+    setReplyUsername('');
     if (inputRef.current) {
-      inputRef.current.focus()
+      inputRef.current.focus();
     }
-  }
+  };
 
   const goBack = () => {
-    router.replace(`${webUrl}`)
-  }
+    router.replace(`${webUrl}`);
+  };
 
   const replyComment = async () => {
-    setIsPendingComment(true)
+    setIsPendingComment(true);
 
     try {
       const response = await axios.post(
@@ -344,47 +349,47 @@ export default function PagePostModal({
           },
           withCredentials: true,
         }
-      )
+      );
 
-      const { message: result } = response.data
+      const { message: result } = response.data;
 
       setDummyUserComments(prev => {
         const index = prev.findIndex(
           commentReply =>
             commentReply.parentCommentId === replyCommentData.parentCommentId
-        )
+        );
         if (index !== -1) {
-          const updatedComments = [...prev]
+          const updatedComments = [...prev];
           updatedComments[index] = {
             ...updatedComments[index],
             comment: [...updatedComments[index].comment, result],
-          }
-          return updatedComments
+          };
+          return updatedComments;
         } else {
           return [
             ...prev,
             { parentCommentId: replyCommentData.parentCommentId, comment: [result] },
-          ]
+          ];
         }
-      })
+      });
 
-      setComment('')
-      setReplyUsername('')
+      setComment('');
+      setReplyUsername('');
     } catch (error: any) {
-      console.error(error.message)
+      console.error(error.message);
     } finally {
-      setIsPendingComment(false)
+      setIsPendingComment(false);
     }
-  }
+  };
 
   const submitComment = async (e: FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (replyUsername) {
-      replyComment()
-      return
+      replyComment();
+      return;
     }
 
-    setIsPendingComment(true)
+    setIsPendingComment(true);
 
     try {
       const response = await axios.post(
@@ -400,9 +405,9 @@ export default function PagePostModal({
           },
           withCredentials: true,
         }
-      )
+      );
 
-      const { message } = response.data
+      const { message } = response.data;
       const userComment: IComments = {
         _id: message?._id,
         commentText: message?.commentText,
@@ -414,18 +419,18 @@ export default function PagePostModal({
         createdAt: message?.createdAt,
         commentReplies: message?.commentReplies,
         likes: message?.likes,
-      }
+      };
 
       setAllComments(prev => {
-        return [userComment, ...prev]
-      })
-      setComment('')
+        return [userComment, ...prev];
+      });
+      setComment('');
     } catch (err: any) {
-      console.error(err.message)
+      console.error(err.message);
     } finally {
-      setIsPendingComment(false)
+      setIsPendingComment(false);
     }
-  }
+  };
   return (
     <section
       className='w-full min-h-[100vh] responiveModalPage flexCenter sm:h-full  bg-[#0E0E0E] md:bg-transparent'
@@ -526,7 +531,9 @@ export default function PagePostModal({
                   parentTotalCommentReplies={comment?.commentReplies?.length}
                   updateUsername={handleReplyUsername}
                   updateReplyCommentData={updateReplyCommentData}
+                  // @ts-ignore
                   userRepliedComments={dummyUserComments}
+                  // @ts-ignore
                   setDummyUserComment={setDummyUserComments}
                   updateRepliedComments={updateRepliedComments}
                   likeSubComment={likeDummyUserComment}
@@ -535,28 +542,28 @@ export default function PagePostModal({
                   setDeleteCommentDetails={setDeleteCommentDetails}
                   deleteSubComment={deleteSubComment}
                 />
-              )
+              );
             })}
           </div>
           <div className='md:flex hidden border-t md:border-t-0 border-neutral-800 flex-col justify-center gap-[9px] p-[15px]'>
             <div className='flex items-center gap-[10px] '>
               <button
                 onClick={() => {
-                  setIsLiked(prev => !prev)
+                  setIsLiked(prev => !prev);
                   if (!isLiked) {
                     likePost({
                       _id: postData._id,
                       setNumberOfLikes,
                       setIsLiked,
                       numberOfLikes,
-                    })
+                    });
                   } else {
                     unlikePost({
                       _id: postData._id,
                       setNumberOfLikes,
                       setIsLiked,
                       numberOfLikes,
-                    })
+                    });
                   }
                 }}
                 className='hover:scale-105'
@@ -635,21 +642,21 @@ export default function PagePostModal({
         </div>
       </div>
     </section>
-  )
+  );
 }
 interface HeaderProps {
-  username: string
-  userProfileImage: string
-  createdAt: string
-  userId: string
-  router: any
-  handleModal: (data: boolean) => void
-  isProfile?: string
+  username: string;
+  userProfileImage: string;
+  createdAt: string;
+  userId: string;
+  router: any;
+  handleModal: (data: boolean) => void;
+  isProfile?: string;
 }
 
 interface DeleteCommentDetails {
-  userId: string
-  deleteId: string
+  userId: string;
+  deleteId: string;
 }
 
 function Header({
@@ -685,16 +692,16 @@ function Header({
         </button>
       )}
     </header>
-  )
+  );
 }
 
 interface ImageDisplayProps {
-  attachments: UploadAttachments[]
-  aspectRatio: string
-  className?: string
-  unoptimized?: boolean
-  setApi: any
-  current: number
+  attachments: UploadAttachments[];
+  aspectRatio: string;
+  className?: string;
+  unoptimized?: boolean;
+  setApi: any;
+  current: number;
 }
 
 function ImageDisplay({
@@ -703,7 +710,7 @@ function ImageDisplay({
   setApi,
   current,
 }: ImageDisplayProps) {
-  const [loadingImage, setLoadingImage] = useState<boolean>(false)
+  const [loadingImage, setLoadingImage] = useState<boolean>(false);
   return (
     <Carousel
       className='md:w-[560px] md:max-h-[80vh] h-full relative flexCenter  rounded-md'
@@ -735,7 +742,7 @@ function ImageDisplay({
                   width={384}
                   height={0}
                   onLoad={() => {
-                    setLoadingImage(true)
+                    setLoadingImage(true);
                   }}
                   style={{ height: 'auto', width: '560px' }}
                   unoptimized={loadingImage}
@@ -750,7 +757,7 @@ function ImageDisplay({
                 />
               )}
             </CarouselItem>
-          )
+          );
         })}
       </CarouselContent>
       {attachments.length > 1 && (
@@ -766,5 +773,5 @@ function ImageDisplay({
         </div>
       )}
     </Carousel>
-  )
+  );
 }

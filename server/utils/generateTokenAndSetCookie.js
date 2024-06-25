@@ -15,7 +15,7 @@ const generateTokenAndSetCookie = (userId, res) => {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
       sameSite: 'Strict',
-      domain: '.onrender.com',
+      domain: 'classx2-clientbackup.onrender.com',
       secure: process.env.NODE_ENV !== 'development',
     });
   }

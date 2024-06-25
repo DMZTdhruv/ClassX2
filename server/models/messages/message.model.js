@@ -23,6 +23,11 @@ const messageSchema = new mongoose.Schema(
     message: {
       type: String,
     },
+    asset: {
+      originalFileName: String,
+      extension: String,
+      url: String,
+    },
     conversationId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Conversation',

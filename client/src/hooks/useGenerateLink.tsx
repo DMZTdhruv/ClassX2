@@ -1,9 +1,9 @@
-import client from '../../client'
+import { SanityAssetDocument } from '@sanity/client';
+import client from '../../client';
 
 export const useGenerateLink = () => {
   const generateUrl = async (e: any) => {
-    const { type, name } = e.target.files[0]
-
+    const { type, name } = e.target.files[0];
     if (
       type === 'image/jpeg' ||
       type === 'image/png' ||
@@ -14,15 +14,16 @@ export const useGenerateLink = () => {
         const file = await client.assets.upload('image', e.target.files[0], {
           contentType: type,
           filename: name,
-        })
-        return file
+        });
+
+        return file;
       } catch (err: any) {
-        console.log(err.message)
+        console.log(err.message);
       }
     } else {
-      throw new Error('image type is not valid')
+      throw new Error('image type is not valid');
     }
-  }
+  };
 
   const getUrl = async (file: any) => {
     const doc = {
@@ -34,18 +35,20 @@ export const useGenerateLink = () => {
           _ref: file._id,
         },
       },
-    }
+    };
 
     try {
-      const createImage = await client.create(doc)
-      const url = await client.fetch(`*[_id == '${createImage.image.asset._ref}']{url}`)
-      return url[0].url
+      const createImage = await client.create(doc);
+      const url = await client.fetch(
+        `*[_id == '${createImage.image.asset._ref}']{url}`
+      );
+      return url[0].url;
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
 
-  const getUrlImageObj = async (file: any) => {
+  const getUrlImageObj = async (file: SanityAssetDocument) => {
     const doc = {
       _type: 'Image',
       image: {
@@ -55,22 +58,22 @@ export const useGenerateLink = () => {
           _ref: file._id,
         },
       },
-    }
+    };
 
     try {
-      const createImage = await client.create(doc)
+      const createImage = await client.create(doc);
       const url = await client.fetch(
         `*[_id == '${createImage.image.asset._ref}']{_id, originalFilename, extension, url, _createdAt}`
-      )
-      return url
+      );
+      return url;
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
 
   return {
     generateUrl,
     getUrl,
     getUrlImageObj,
-  }
-}
+  };
+};

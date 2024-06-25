@@ -3,7 +3,7 @@
 // Textarea.tsx
 import { useAuthContext } from '@/context/AuthContext';
 import { useMessageContext } from '@/context/MessageContext';
-import { useSocketContext } from '@/context/SocketContext';
+import { useClassXSocketContext } from '@/context/ClassXSocketContext';
 import React, { useEffect, useRef, ChangeEvent, useState } from 'react';
 
 interface TextareaProps {
@@ -20,7 +20,7 @@ const CustomTextArea: React.FC<TextareaProps> = ({
   className,
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { socket } = useSocketContext();
+  const { socket } = useClassXSocketContext();
   const { conversation } = useMessageContext();
   const { authUser } = useAuthContext();
   const [isTyping, setIsTyping] = useState<boolean>(false);

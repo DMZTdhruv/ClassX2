@@ -46,30 +46,6 @@ interface ErrorMessages {
   totalImagesError: string
 }
 
-/*
-{
-    classId: { type: mongoose.Schema.Types.ObjectId, ref: 'Classroom' },
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    postedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'UserProfile',
-      required: true,
-    },
-    attachments: [
-      {
-        type: String,
-      },
-    ],
-    topic: [
-      {
-        type: String,
-        required: true,
-      },
-    ],
-    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
-  },
-*/
 
 const ClassroomClassworkCreator = ({
   adminIds,

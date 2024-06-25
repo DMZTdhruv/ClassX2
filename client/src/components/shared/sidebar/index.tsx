@@ -32,10 +32,6 @@ export default function SideBar(props: any) {
     }
   }, [pathname]);
 
-  useEffect(() => {
-    console.log(isInMessageRoute);
-  }, [isInMessageRoute]);
-
   const [path, setPath] = useState<string>('');
   const [openMoreModal, setOpenMoreModal] = useState<boolean>(false);
 

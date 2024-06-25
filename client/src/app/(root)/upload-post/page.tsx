@@ -1,100 +1,100 @@
-'use client'
+'use client';
 
-import { AiOutlineCloudUpload } from 'react-icons/ai'
-import React, { ChangeEvent, ChangeEventHandler, FormEvent, useState } from 'react'
-import { useGenerateLink } from '@/hooks/useGenerateLink'
-import { SanityImageAssetDocument } from '@sanity/client'
-import Image from 'next/image'
-import { MdDeleteOutline } from 'react-icons/md'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
-import { useRouter } from 'next/navigation'
-import { updateFeed } from '../serverActions'
-import { useAuthContext } from '@/context/AuthContext'
-import { usePostContext } from '@/context/PostContext'
+import { AiOutlineCloudUpload } from 'react-icons/ai';
+import React, { ChangeEvent, ChangeEventHandler, FormEvent, useState } from 'react';
+import { useGenerateLink } from '@/hooks/useGenerateLink';
+import { SanityImageAssetDocument } from '@sanity/client';
+import Image from 'next/image';
+import { MdDeleteOutline } from 'react-icons/md';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
+import { updateFeed } from '../serverActions';
+import { useAuthContext } from '@/context/AuthContext';
+import { useClassXContext } from '@/context/ClassXContext';
 
 interface Post {
-  title: string
-  imageUrl: string | any
-  caption: string
-  location: string
-  category: string
-  postedBy: string | null | undefined
+  title: string;
+  imageUrl: string | any;
+  caption: string;
+  location: string;
+  category: string;
+  postedBy: string | null | undefined;
 }
 
 export default function UploadPost() {
-  const router = useRouter()
+  const router = useRouter();
   //@ts-ignore
-  const { authUser } = useAuthContext()
-  const { generateUrl, getUrl } = useGenerateLink()
-  const { setExplorePost, setUserPost, setFeedPost } = usePostContext()
+  const { authUser } = useAuthContext();
+  const { generateUrl, getUrl } = useGenerateLink();
+  const { setExplorePost, setUserPost, setFeedPost } = useClassXContext();
 
   // media type
-  const [mediaType, setMediaType] = useState<string>('image')
+  const [mediaType, setMediaType] = useState<string>('image');
 
   //states of video image
   const [demoVideoUrl, setDemoVideoUrl] = useState<string>('');
   // const []
-  // states of 
+  // states of
   const [demoUploadImage, setDemoUploadImage] = useState<
     SanityImageAssetDocument | undefined
-  >(undefined)
-  const [title, setTitle] = useState<string>('')
-  const [caption, setCaption] = useState<string>('')
-  const [location, setLocation] = useState<string>('')
-  const [category, setCategory] = useState<string>('')
+  >(undefined);
+  const [title, setTitle] = useState<string>('');
+  const [caption, setCaption] = useState<string>('');
+  const [location, setLocation] = useState<string>('');
+  const [category, setCategory] = useState<string>('');
 
   //loading states
-  const [isUploadingImage, setIsUploadingImage] = useState<boolean>(false)
-  const [isPosting, setIsPosting] = useState<boolean>(false)
+  const [isUploadingImage, setIsUploadingImage] = useState<boolean>(false);
+  const [isPosting, setIsPosting] = useState<boolean>(false);
 
   //error states
-  const [errorMessage, setErrorMessage] = useState<string>('')
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   //handlers
   const handleTitle = (e: ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value)
-  }
+    setTitle(e.target.value);
+  };
 
   const handleCaption: ChangeEventHandler<HTMLTextAreaElement> = (
     e: ChangeEvent<HTMLTextAreaElement>
   ) => {
-    setCaption(e.target.value)
-  }
+    setCaption(e.target.value);
+  };
 
   const handleLocation = (e: ChangeEvent<HTMLInputElement>) => {
-    setLocation(e.target.value)
-  }
+    setLocation(e.target.value);
+  };
 
   const handleCategory = (e: ChangeEvent<HTMLInputElement>) => {
-    setCategory(e.target.value)
-  }
+    setCategory(e.target.value);
+  };
 
   const handleUploadFile = async (e: FormEvent<HTMLInputElement>) => {
-    setIsUploadingImage(true)
+    setIsUploadingImage(true);
     try {
-      const url = await generateUrl(e)
-      setDemoUploadImage(url)
+      const url = await generateUrl(e);
+      setDemoUploadImage(url);
     } catch (err: any) {
-      console.log(err.message)
-      setErrorMessage(err.message)
+      console.log(err.message);
+      setErrorMessage(err.message);
       setTimeout(() => {
-        setErrorMessage('')
-      }, 5000)
+        setErrorMessage('');
+      }, 5000);
     } finally {
-      setIsUploadingImage(false)
+      setIsUploadingImage(false);
     }
-  }
+  };
 
   const handleFormSubmitEvent = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsPosting(true)
+    e.preventDefault();
+    setIsPosting(true);
     try {
       if (!title || !demoUploadImage || !caption || !location) {
-        throw new Error('Invalid details')
+        throw new Error('Invalid details');
       }
-      const imageUrl = await getUrl(demoUploadImage)
+      const imageUrl = await getUrl(demoUploadImage);
       const data = {
         title: title,
         imageUrl: imageUrl,
@@ -102,26 +102,26 @@ export default function UploadPost() {
         location: location,
         category: category,
         postedBy: authUser?.userProfileId,
-      }
-      updateFeed()
-      setExplorePost([])
-      setFeedPost([])
-      setUserPost([])
-      await submitDataToBackend(data)
-      router.push('/')
+      };
+      updateFeed();
+      setExplorePost([]);
+      setFeedPost([]);
+      setUserPost([]);
+      await submitDataToBackend(data);
+      router.push('/');
     } catch (err: any) {
-      console.log(err)
-      setErrorMessage(err.message)
+      console.log(err);
+      setErrorMessage(err.message);
       setTimeout(() => {
-        setErrorMessage(err.message)
-      }, 5000)
+        setErrorMessage(err.message);
+      }, 5000);
     } finally {
-      setIsPosting(false)
-  }
-  }
+      setIsPosting(false);
+    }
+  };
 
   const submitDataToBackend = async (data: Post) => {
-    const api = process.env.NEXT_PUBLIC_API
+    const api = process.env.NEXT_PUBLIC_API;
     try {
       const response = await fetch(`${api}/post/create-post`, {
         method: 'POST',
@@ -130,13 +130,13 @@ export default function UploadPost() {
         },
         credentials: 'include',
         body: JSON.stringify(data),
-      })
+      });
 
-      const result = await response.json()
+      const result = await response.json();
     } catch (err: any) {
-      throw new Error(err.message)
+      throw new Error(err.message);
     }
-  }
+  };
 
   return (
     <div className='flex-col w-full  flex lg:justify-center pb-[100px] sm:px-[16px] lg:h-screen p-[16px] mt-[80px] sm:mt-[0px]'>
@@ -261,5 +261,5 @@ export default function UploadPost() {
         )}
       </div>
     </div>
-  )
+  );
 }

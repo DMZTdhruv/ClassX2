@@ -1,68 +1,58 @@
-import React from 'react'
-import ProfilePosts from '../ProfilePosts'
-import { cookies } from 'next/headers'
-import { jwtDecode } from 'jwt-decode'
-import { Api } from '@/Constants'
+import React from 'react';
+import ProfilePosts from '../ProfilePosts';
+import { cookies } from 'next/headers';
+import { jwtDecode } from 'jwt-decode';
+import { Api } from '@/Constants';
+import { getUserProfileData } from '../ProfileAction';
 
 interface Token {
-  userProfileId: string
+  userProfileId: string;
 }
 
 interface UserProfileProps {
-  _id: string
-  name: string
-  username: string
-  about: string
-  userProfileImage: string
-  isPrivate: boolean
-  following: any[]
-  followers: any[]
-  posts: string[]
+  profileData: {
+    _id: string;
+    userID: string;
+    name: string;
+    username: string;
+    about: string;
+    userProfileImage: string;
+  };
+  userStatus: {
+    _id: string;
+    followersCount: number;
+    postCount: number;
+    followingCount: number;
+  };
 }
 
 const Page = async ({ params }: { params: { userId: string } }) => {
-  const cookie = cookies()
-  const token = cookie.get('classX_user_token')
+  const cookie = cookies();
+  const token = cookie.get('classX_user_token');
   const { userProfileId }: Token = token
     ? jwtDecode(token?.value || '')
-    : { userProfileId: '' }
+    : { userProfileId: '' };
 
-  if(!cookie) {
-    
+  if (!cookie) {
+    return <p>Unauthorized user</p>;
   }
 
-  const getUserProfile = async () => {
-    const userProfileApi = `${Api}/users?userId=${params.userId}`
-    try {
-      const response = await fetch(userProfileApi, {
-        method: 'GET',
-        headers: {
-          Cookies: `classX_user_token=${token?.value}`,
-        },
-      })
+  const userProfile: UserProfileProps = await getUserProfileData(
+    params,
+    token?.value || ''
+  );
 
-      const data = await response.json()
-      if (data.error) {
-        console.log('Failed to fetch the user')
-      }
 
-      return data.data
-    } catch (error: any) {
-      console.log(error.message)
-    }
-  }
-
-  const userProfile: UserProfileProps = await getUserProfile()
   return (
     <div>
       <ProfilePosts
-        userProfileId={userProfile?._id}
+        userProfileId={userProfile?.profileData._id}
         token={token?.value || ''}
         isDifferentUser={params.userId !== userProfileId}
-        totalPosts={userProfile?.posts.length}
+        totalPosts={userProfile?.userStatus.postCount}
       />
     </div>
-  )
-}
+  );
+};
 
-export default Page
+export default Page;

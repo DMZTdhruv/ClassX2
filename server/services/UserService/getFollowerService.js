@@ -2,9 +2,9 @@ import UserProfileRepository from '../../repositories/UserProfileRepository.js';
 import { returnMessage } from '../../utils/returnMessage.js';
 
 const userRepo = new UserProfileRepository();
-const getFollowingService = async (startIndex, itemsPerPage, userProfileId) => {
+const getFollowerService = async (startIndex, itemsPerPage, userProfileId) => {
   try {
-    const userFollowingList = await userRepo.getFollowers(
+    const userFollowingList = await userRepo.getFollowersByAggregate(
       startIndex,
       itemsPerPage,
       userProfileId
@@ -17,4 +17,4 @@ const getFollowingService = async (startIndex, itemsPerPage, userProfileId) => {
   }
 };
 
-export default getFollowingService;
+export default getFollowerService;

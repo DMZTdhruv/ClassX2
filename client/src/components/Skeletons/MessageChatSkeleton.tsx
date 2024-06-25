@@ -1,8 +1,8 @@
-import { Skeleton } from "../ui/skeleton"
+import { Skeleton } from '../ui/skeleton';
 
 export const MessageIsLoadingUiSkeleton = () => {
   return (
-    <section className='flex h-full animate-in fade-in-0 justify-end flex-col gap-3 px-[16px]'>
+    <section className='flex h-full pb-[80px] animate-in fade-in-0 justify-end flex-col gap-3 px-[16px]'>
       <div className='flex w-full justify-end items-center gap-3'>
         <Skeleton className='w-[20%] h-10 rounded-t-[20px] rounded-bl-[20px]' />
         <Skeleton className='w-10 h-10 rounded-full' />
@@ -32,5 +32,5 @@ export const MessageIsLoadingUiSkeleton = () => {
         <Skeleton className='w-10 h-10 rounded-full' />
       </div>
     </section>
-  )
-}
+  );
+};

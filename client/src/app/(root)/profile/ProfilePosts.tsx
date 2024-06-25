@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import NormalPost from '@/components/cards/NormalPost'
-import { getUserPosts } from './ProfileAction'
-import { useEffect, useState } from 'react'
-import { useInView } from 'react-intersection-observer'
-import { IPost } from '@/Constants'
-import { usePostContext } from '@/context/PostContext'
+import NormalPost from '@/components/cards/NormalPost';
+import { getUserPosts } from './ProfileAction';
+import { useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { IPost } from '@/Constants';
+import { useClassXContext } from '@/context/ClassXContext';
 
 const ProfilePosts = ({
   userProfileId,
@@ -13,51 +13,48 @@ const ProfilePosts = ({
   totalPosts,
   isDifferentUser,
 }: {
-  token: string
-  userProfileId: string
-  totalPosts: number
-  isDifferentUser: boolean
+  token: string;
+  userProfileId: string;
+  totalPosts: number;
+  isDifferentUser: boolean;
 }) => {
-  const { ref, inView } = useInView()
-  const { userPost, setUserPost } = usePostContext()
-  const [differentUserPost, setDifferentUserPost] = useState<IPost[]>([])
-  const [page, setPage] = useState<number>(1)
-  const [allPostLoaded, setAllPostLoaded] = useState<boolean>(false)
+  const { ref, inView } = useInView();
+  const { userPost, setUserPost } = useClassXContext();
+  const [differentUserPost, setDifferentUserPost] = useState<IPost[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [allPostLoaded, setAllPostLoaded] = useState<boolean>(false);
   const loadMorePosts = async () => {
-    const nextPage = page + 1
-    const newPosts: IPost[] = await getUserPosts(userProfileId, token, page)
+    const nextPage = page + 1;
+    const newPosts: IPost[] = await getUserPosts(userProfileId, token, page);
     if (isDifferentUser) {
-      setDifferentUserPost(prev => [...prev, ...newPosts])
+      if (newPosts.length !== 0) {
+        setDifferentUserPost(prev => [...prev, ...newPosts]);
+      }
     } else {
-      setUserPost(prev => [...prev, ...newPosts])
+      setUserPost(prev => [...prev, ...newPosts]);
     }
-    setPage(nextPage)
-    console.log(userPost)
-  }
-
-  useEffect(() => {
-    console.log(userPost)
-  }, [userPost])
+    setPage(nextPage);
+  };
 
   useEffect(() => {
     if (isDifferentUser) {
       if (inView) {
         if (differentUserPost.length >= totalPosts) {
-          setAllPostLoaded(true)
-          return
+          setAllPostLoaded(true);
+          return;
         }
-        loadMorePosts()
+        loadMorePosts();
       }
     } else if (!isDifferentUser) {
       if (inView) {
         if (userPost.length >= totalPosts) {
-          setAllPostLoaded(true)
-          return
+          setAllPostLoaded(true);
+          return;
         }
-        loadMorePosts()
+        loadMorePosts();
       }
     }
-  }, [inView, page])
+  }, [inView, page]);
 
   return (
     <>
@@ -72,7 +69,7 @@ const ProfilePosts = ({
                 likes={posts.likes.length}
                 comments={posts.comments.length}
               />
-            )
+            );
           })}
         {!isDifferentUser &&
           userPost?.map(posts => {
@@ -84,7 +81,7 @@ const ProfilePosts = ({
                 likes={posts.likes.length}
                 comments={posts.comments.length}
               />
-            )
+            );
           })}
       </div>
       {totalPosts === 0 ? (
@@ -99,7 +96,7 @@ const ProfilePosts = ({
         </div>
       )}
     </>
-  )
-}
+  );
+};
 
-export default ProfilePosts
+export default ProfilePosts;

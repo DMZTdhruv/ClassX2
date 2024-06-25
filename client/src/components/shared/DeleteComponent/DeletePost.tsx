@@ -4,7 +4,7 @@ import { deletePostFromUserPage, updateFeed } from '@/app/(root)/serverActions';
 import SuggestedUser from '@/components/cards/SuggestedUser';
 import { Api, IPost, IPostMinimal } from '@/Constants';
 import { useAuthContext } from '@/context/AuthContext';
-import { usePostContext } from '@/context/PostContext';
+import { useClassXContext } from '@/context/ClassXContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { IoWarningOutline } from 'react-icons/io5';
@@ -35,7 +35,7 @@ export default function DeletePostModal({
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const { setUserPost, setExplorePost, setTotalPostDeleted, savedPost } =
-    usePostContext();
+    useClassXContext();
 
   const deletePost = async () => {
     setIsDeleting(true);

@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { Checkbox } from '../ui/checkbox';
 import { Button } from '../ui/button';
 import useSendPost from '@/hooks/posts/useSendPost';
-import { usePostContext } from '@/context/PostContext';
+import { useClassXContext } from '@/context/ClassXContext';
 
 interface IUserCard {
   _id: string;
@@ -32,7 +32,7 @@ const SuggestedUser = ({
   const { getSuggestedUser, loading } = useGetSuggestedUser();
   const { authUser } = useAuthContext();
   const { loading: sendingPost, sendPost, errorMessage } = useSendPost();
-  const { suggestedUserList, setSuggestedUserList } = usePostContext();
+  const { suggestedUserList, setSuggestedUserList } = useClassXContext();
 
   const [textMessage, setTextMessage] = useState<string>('');
   const [newUsers, setNewUsers] = useState<IUserCard[]>([]);
@@ -103,6 +103,7 @@ const SuggestedUser = ({
         postId: postId,
       };
       await sendPost(data);
+      setOpenShareToToggle(prev => !prev);
     } catch (error: any) {
       console.log(error.message);
     }
@@ -219,23 +220,29 @@ const SuggestedUser = ({
                   </div>
                 ))
               )}
-              {newUserFetching && (
+              {searchUserName.length !== 0 && newUserFetching && (
                 <p className='text-center w-full text-neutral-500 animate-pulse '>
                   Loading new users
                 </p>
               )}
             </div>
           </div>
-          <div className='border-t border-neutral-700'>
-            <textarea
-              className='text-white p-2 bg-transparent mt-2  focus:outline-none resize-none w-full '
-              rows={1}
-              value={textMessage}
-              placeholder='Type a message here'
-              onChange={handleChange}
-            />
-          </div>
-          <Button className='w-full' onClick={handleSendPost}>
+          {selectedIds.length !== 0 && (
+            <div className='border-t border-neutral-700'>
+              <textarea
+                className='text-white p-2 bg-transparent mt-2  focus:outline-none resize-none w-full '
+                rows={1}
+                value={textMessage}
+                placeholder='Type a message here'
+                onChange={handleChange}
+              />
+            </div>
+          )}
+          <Button
+            className='w-full mt-1'
+            onClick={handleSendPost}
+            disabled={sendingPost}
+          >
             {sendingPost ? 'sending...' : 'send'}
           </Button>
         </div>

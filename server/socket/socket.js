@@ -38,6 +38,14 @@ io.on('connection', socket => {
       .emit('typingStarted', { status: currentStatus, receiverId: senderId });
   });
 
+  socket.on('hello', message => {
+    console.log(message);
+  });
+
+  socket.on('private_message', message => {
+    console.log(message);
+  });
+
   // active users info when they get online
   io.emit('activeUsers', Object.keys(users));
 

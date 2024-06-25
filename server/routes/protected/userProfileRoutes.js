@@ -14,8 +14,16 @@ import { getUserProfileController } from '../../controllers/profile/getUserProfi
 import getUserPostsController from '../../controllers/post/getUserPostsController.js';
 import getUserProfileDetailsController from '../../controllers/profile/getUserProfileDetails.controller.js';
 import { editProfileController } from '../../controllers/profile/editProfileController.js';
-import getFollowersController from '../../controllers/userControllers/getFollowerController.js';
+
 import getSuggestedUser from '../../controllers/userControllers/getSuggestedUser.js';
+import {
+  getFollowingController,
+  getTotalFollowings,
+} from '../../controllers/userControllers/getFollowingController.js';
+import {
+  getFollowersController,
+  getTotalFollowers,
+} from '../../controllers/userControllers/getFollowerController.js';
 
 const router = express.Router();
 
@@ -52,5 +60,13 @@ router.post('/edit-profile', authenticateUserToken, editProfileController);
 
 // following routes
 router.get('/:userProfileId/followers', authenticateUserToken, getFollowersController);
+router.get('/:currentUserProfileId/followings', authenticateUserToken, getFollowingController);
+router.get('/:userProfileId/total-followers', authenticateUserToken, getTotalFollowers);
+router.get(
+  '/:userProfileId/total-followings',
+  authenticateUserToken,
+  getTotalFollowings
+);
+
 router.get('/suggestedUsers', authenticateUserToken, getSuggestedUser);
 export default router;

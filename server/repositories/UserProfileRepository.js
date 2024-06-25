@@ -1,4 +1,5 @@
 // repositories/UserProfileRepository.js
+import mongoose from 'mongoose';
 import UserProfileRepositoryInterface from '../interfaces/UserProfileRepositoryInterface.js';
 import Post from '../models/post/post.model.js';
 import PostSchema from '../models/post/postSchema.model..js';
@@ -220,5 +221,135 @@ export default class UserProfileRepository extends UserProfileRepositoryInterfac
       });
 
     return userData.following;
+  }
+
+  async getFollowingDataByAggregate(
+    startIndex,
+    itemsPerPage,
+    currentUserProfileId,
+    userProfileId
+  ) {
+    const followings = await UserProfile.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(currentUserProfileId) } },
+      { $project: { following: 1 } },
+      { $unwind: '$following' },
+      { $skip: startIndex },
+      { $limit: itemsPerPage },
+      {
+        $lookup: {
+          from: 'userprofiles',
+          localField: 'following',
+          foreignField: '_id',
+          as: 'followingDetails',
+        },
+      },
+      { $unwind: '$followingDetails' },
+      {
+        $lookup: {
+          from: 'userprofiles',
+          let: { followingId: '$following' },
+          pipeline: [
+            { $match: { _id: new mongoose.Types.ObjectId(userProfileId) } },
+            { $project: { following: 1 } },
+            {
+              $match: {
+                $expr: { $in: ['$$followingId', '$following'] },
+              },
+            },
+          ],
+          as: 'isFollowedByUser',
+        },
+      },
+      {
+        $project: {
+          'followingDetails._id': 1,
+          'followingDetails.userProfileImage': 1,
+          'followingDetails.username': 1,
+          isFollowedByUser: { $gt: [{ $size: '$isFollowedByUser' }, 0] },
+          _id: 0,
+        },
+      },
+    ]);
+
+    return followings;
+  }
+
+  async getFollowersByAggregate(startIndex, itemsPerPage, userProfileId) {
+    const followers = await UserProfile.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(userProfileId) } },
+      { $project: { followers: 1, following: 1 } }, //
+      { $unwind: '$followers' },
+      { $skip: startIndex },
+      { $limit: itemsPerPage },
+      {
+        $lookup: {
+          from: 'userprofiles',
+          localField: 'followers',
+          foreignField: '_id',
+          as: 'followerDetails',
+        },
+      },
+      { $unwind: '$followerDetails' },
+      {
+        $addFields: {
+          isFollowedByUser: { $in: ['$followerDetails._id', '$following'] },
+        },
+      },
+      {
+        $project: {
+          'followerDetails._id': 1,
+          'followerDetails.userProfileImage': 1,
+          'followerDetails.username': 1,
+          isFollowedByUser: 1,
+        },
+      },
+    ]);
+
+    return followers;
+  }
+
+  async getUserProfileData(userId) {
+    const userProfile = UserProfile.findById(userId).select(
+      'userID name username about userProfileImage'
+    );
+
+    if (!userProfile) {
+      throw new Error("User doesn't exist");
+    }
+
+    const aggregationPipeLine = [
+      {
+        $match: { _id: new mongoose.Types.ObjectId(userId) },
+      },
+      {
+        $project: {
+          followersCount: { $size: '$followers' },
+          postCount: { $size: '$posts' },
+          followingCount: { $size: '$following' },
+        },
+      },
+    ];
+
+    const [profileData, userStatus] = await Promise.all([
+      userProfile,
+      UserProfile.aggregate(aggregationPipeLine),
+    ]);
+
+    const userData = { data: { profileData, userStatus: userStatus[0] } };
+    return userData;
+  }
+
+  async getUserProfileFollowers(userId) {
+    const aggregationPipeLine = [
+      {
+        $match: { _id: new mongoose.Types.ObjectId(userId) },
+      },
+      {
+        $project: { followersCount: { $size: '$followers' } },
+      },
+    ];
+
+    const result = await UserProfile.aggregate(aggregationPipeLine);
+    return result;
   }
 }

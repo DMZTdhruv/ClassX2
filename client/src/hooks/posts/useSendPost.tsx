@@ -10,7 +10,7 @@ interface MessageDetails {
 const useSendPost = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-
+  
   const sendPost = async (messageDetails: MessageDetails) => {
     try {
       setLoading(true);

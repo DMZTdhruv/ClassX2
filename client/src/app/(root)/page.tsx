@@ -20,6 +20,8 @@ export default async function HomeLayout() {
   const decodedValue = cookie ? jwtDecode(cookie || '') : '';
   const totalPost = await getTotalPost(cookie || '');
 
+  
+
   if (postData?.error) {
     return (
       <div className='xl:w-[60%] h-[100vh] md w-full flex-1 px-[16px] flex gap-5 justify-center'>

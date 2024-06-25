@@ -1,10 +1,35 @@
-'use server'
+'use server';
 
-import { Api } from '@/Constants'
-import { revalidateTag } from 'next/cache'
+import { Api } from '@/Constants';
+import { revalidateTag } from 'next/cache';
+
+export const getUserProfileData = async (params: { userId: string }, token: string) => {
+  const userProfileApi = `${Api}/users?userId=${params.userId}`;
+  try {
+    const response = await fetch(userProfileApi, {
+      method: 'GET',
+      headers: {
+        Cookies: `classX_user_token=${token}`,
+      },
+      cache: 'no-cache',
+      next: {
+        tags: ['userProfileData'],
+      },
+    });
+
+    const data = await response.json();
+    if (data.error) {
+      console.log('Failed to fetch the user');
+    }
+
+    return data.data.data;
+  } catch (error: any) {
+    console.log(error.message);
+  }
+};
 
 export const getUserProfile = async (cookie: string) => {
-  const userProfileApi = `${Api}/users/get-user-profile`
+  const userProfileApi = `${Api}/users/get-user-profile`;
   try {
     const response = await fetch(userProfileApi, {
       method: 'GET',
@@ -14,18 +39,18 @@ export const getUserProfile = async (cookie: string) => {
       next: {
         tags: ['userProfile'],
       },
-    })
+    });
 
-    const data = await response.json()
+    const data = await response.json();
     if (data.error) {
-      throw new Error(data.error)
+      throw new Error(data.error);
     }
 
-    return data.data
+    return data.data;
   } catch (err: any) {
-    console.log(err.message)
+    console.log(err.message);
   }
-}
+};
 
 export const getUserPosts = async (
   userProfileId: string,
@@ -44,19 +69,25 @@ export const getUserPosts = async (
           tags: ['userPost'],
         },
       }
-    )
+    );
 
     if (!response.ok) {
-      console.log('There was an error')
+      console.log('There was an error');
     }
 
-    const { data: result } = await response.json()
-    return result
+    const { data: result } = await response.json();
+    return result;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
+
+
 
 export const updateUserProfile = () => {
-  revalidateTag('userProfile')
+  revalidateTag('userProfile');
+};
+
+export const updateUserProfileData = () => {
+  revalidateTag('userProfileData')
 }

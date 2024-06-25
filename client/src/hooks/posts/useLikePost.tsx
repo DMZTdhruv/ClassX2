@@ -1,9 +1,9 @@
-import { Api } from '@/Constants'
-import { usePostContext } from '@/context/PostContext'
-import React, { SetStateAction } from 'react'
+import { Api } from '@/Constants';
+import { useClassXContext } from '@/context/ClassXContext';
+import React, { SetStateAction } from 'react';
 
 const useLikePost = () => {
-  const { feedPost, setFeedPost } = usePostContext()
+  const { feedPost, setFeedPost } = useClassXContext();
   const likePost = async (
     _id: string,
     index: number,
@@ -14,16 +14,16 @@ const useLikePost = () => {
     authUser: { userProfileId: string },
     serverRendered: boolean
   ) => {
-    setNumberOfLikes(prev => prev + 1)
+    setNumberOfLikes(prev => prev + 1);
     if (!serverRendered) {
       setFeedPost(prev => {
-        const posts = [...prev]
-        const post = posts[index]
+        const posts = [...prev];
+        const post = posts[index];
         if (!post.likes.includes(authUser.userProfileId)) {
-          post.likes.push(authUser.userProfileId)
+          post.likes.push(authUser.userProfileId);
         }
-        return posts
-      })
+        return posts;
+      });
     }
     try {
       const res = await fetch(`${Api}/post/like-post/${_id}`, {
@@ -32,31 +32,30 @@ const useLikePost = () => {
           'Content-type': 'application/json',
         },
         credentials: 'include',
-      })
+      });
 
-      const data = await res.json()
+      const data = await res.json();
       if (data.error) {
-        throw new Error(data.error)
+        throw new Error(data.error);
       }
-
     } catch (error: any) {
-      console.error(error.message)
-      setIsLiked(false)
-      setNumberOfLikes(numberOfLikes)
+      console.error(error.message);
+      setIsLiked(false);
+      setNumberOfLikes(numberOfLikes);
       if (!serverRendered) {
         setFeedPost(prev => {
-          const posts = [...prev]
-          const post = posts[index]
+          const posts = [...prev];
+          const post = posts[index];
           if (!post.likes.includes(authUser.userProfileId)) {
-            post.likes.push(authUser.userProfileId)
+            post.likes.push(authUser.userProfileId);
           }
-          return posts
-        })
+          return posts;
+        });
       }
     }
-  }
+  };
 
-  return { likePost }
-}
+  return { likePost };
+};
 
-export default useLikePost
+export default useLikePost;

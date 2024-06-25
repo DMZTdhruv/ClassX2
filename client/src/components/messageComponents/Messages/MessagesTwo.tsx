@@ -6,7 +6,7 @@ import { useMessageContext } from '@/context/MessageContext';
 import { useInView } from 'react-intersection-observer';
 import useGetMessagesTwo from '@/hooks/Conversations/useGetMessagesTwo';
 import { useDeleteMessage } from '@/hooks/Message/useDeleteMessage';
-import { useSocketContext } from '@/context/SocketContext';
+import { useClassXSocketContext } from '@/context/ClassXSocketContext';
 import { useAuthContext } from '@/context/AuthContext';
 import { FaArrowDown } from 'react-icons/fa6';
 import { MessageIsLoadingUiSkeleton } from '@/components/Skeletons/MessageChatSkeleton';
@@ -21,13 +21,9 @@ interface PostDetails {
 
 interface MessageProps {
   _id: string;
-  senderId: { userProfileImage: string; username: string; _id: string };
-  receiverId: { userProfileImage: string; username: string; _id: string };
-  replyMessage: {
-    repliedMessageId: string;
-    replyMessage: string;
-    replyToUsername: string;
-  };
+  senderId: { userProfileImage: string; username: string; _id: string } | string;
+  receiverId: { userProfileImage: string; username: string; _id: string } | string;
+  message: string;
   post: {
     _id: string;
     attachments: PostDetails[];
@@ -39,7 +35,15 @@ interface MessageProps {
     };
     aspectRatio: string;
   };
-  message: string;
+  replyMessage: {
+    repliedMessageId: string;
+    replyMessage: string;
+    replyToUsername: string;
+  };
+  asset: {
+    extension: string;
+    url: string;
+  };
   createdAt: string;
 }
 
@@ -49,7 +53,7 @@ const MessagesTwo = () => {
   const { getMessages, getTotalMessages } = useGetMessagesTwo();
   const { authUser } = useAuthContext();
   const { messages, setMessages, conversation } = useMessageContext();
-  const { socket } = useSocketContext();
+  const { socket } = useClassXSocketContext();
   const { loading, deleteMessage: messageDelete } = useDeleteMessage();
 
   // State variables
@@ -257,7 +261,9 @@ const MessagesTwo = () => {
   };
 
   return (
-    <div className={`p-2 flex-1 border-y border-neutral-800 overflow-y-auto`}>
+    <div
+      className={`p-2 flex-1 border-y pt-[80px] pb-[80px] border-neutral-800 overflow-y-auto`}
+    >
       {isLoading ? (
         <MessageIsLoadingUiSkeleton />
       ) : (

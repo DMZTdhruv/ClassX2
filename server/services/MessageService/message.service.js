@@ -1,8 +1,36 @@
 import Conversation from '../../models/messages/conversation.model.js';
 import Message from '../../models/messages/message.model.js';
-import UserProfile from '../../models/user/userProfile.model.js';
 import { getSocketIdByUserId, io } from '../../socket/socket.js';
+import { returnMessage } from '../../utils/returnMessage.js';
 import { getMessageValidator } from '../../validations/MessageValidator/message.validator.js';
+
+// Helper function to create a new message
+const createNewMessage = (messageBody, senderId, receiverId, conversationId) => {
+  const baseMessage = {
+    senderId,
+    receiverId,
+    message: messageBody.message,
+    replyMessage: {
+      replyToUsername: messageBody.repliedUser,
+      replyMessage: messageBody.repliedMessage,
+    },
+    conversationId,
+  };
+
+  if (messageBody?.asset) {
+    baseMessage.asset = {
+      extension: messageBody.asset.extension,
+      url: messageBody.asset.url,
+      originalFileName: messageBody.asset?.originalFileName || '',
+    };
+  }
+
+  if (messageBody?.postId) {
+    baseMessage.post = messageBody.postId;
+  }
+
+  return new Message(baseMessage);
+};
 
 export const messageService = async (messageBody, senderId, receiverId, res) => {
   try {
@@ -16,31 +44,12 @@ export const messageService = async (messageBody, senderId, receiverId, res) => 
       });
     }
 
-    let newMessage;
-    if (messageBody?.postId) {
-      newMessage = new Message({
-        senderId,
-        receiverId,
-        message: messageBody.message,
-        replyMessage: {
-          replyToUsername: messageBody.repliedUser,
-          replyMessage: messageBody.repliedMessage,
-        },
-        post: messageBody.postId,
-        conversationId: conversation._id,
-      });
-    } else {
-      newMessage = new Message({
-        senderId,
-        receiverId,
-        message: messageBody.message,
-        replyMessage: {
-          replyToUsername: messageBody.repliedUser,
-          replyMessage: messageBody.repliedMessage,
-        },
-        conversationId: conversation._id,
-      });
-    }
+    const newMessage = createNewMessage(
+      messageBody,
+      senderId,
+      receiverId,
+      conversation._id
+    );
 
     if (newMessage) {
       conversation.messages.push(newMessage);
@@ -50,24 +59,19 @@ export const messageService = async (messageBody, senderId, receiverId, res) => 
 
     const receiverSocketId = getSocketIdByUserId(receiverId);
 
-    let messageData;
-    if (messageBody?.postId) {
-      messageData = await newMessage.populate({
-        path: 'post',
-        select: 'attachments aspectRatio caption',
-        populate: {
-          path: 'postedBy',
-          select: 'userProfileImage username',
-        },
-      });
-    } else {
-      messageData = newMessage;
-    }
+    const messageData = messageBody?.postId
+      ? await newMessage.populate({
+          path: 'post',
+          select: 'attachments aspectRatio caption',
+          populate: {
+            path: 'postedBy',
+            select: 'userProfileImage username',
+          },
+        })
+      : newMessage;
 
     if (receiverSocketId) {
-      console.log(newMessage);
       io.to(receiverSocketId).emit('newMessage', messageData);
-      console.log({receiverSocketId, messageData});
     }
 
     return res
@@ -87,6 +91,7 @@ export const getMessageService = async (
 ) => {
   try {
     getMessageValidator(senderId, receiverId);
+
     const conversation = await Conversation.findOne({
       participants: { $all: [senderId, receiverId] },
     });
@@ -107,14 +112,8 @@ export const getMessageService = async (
       .sort({ createdAt: -1 })
       .skip(startIndex)
       .limit(itemsPerPage)
-      .populate({
-        path: 'senderId',
-        select: 'username userProfileImage',
-      })
-      .populate({
-        path: 'receiverId',
-        select: 'username userProfileImage',
-      })
+      .populate('senderId', 'username userProfileImage')
+      .populate('receiverId', 'username userProfileImage')
       .populate({
         path: 'post',
         select: 'attachments aspectRatio caption',
@@ -123,17 +122,6 @@ export const getMessageService = async (
           select: 'userProfileImage username',
         },
       });
-
-    console.log(conversationMessages[0]);
-    if (!conversationMessages) {
-      return {
-        statusCode: 200,
-        response: {
-          message: 'Message received successfully',
-          data: [],
-        },
-      };
-    }
 
     return {
       statusCode: 200,
@@ -147,7 +135,7 @@ export const getMessageService = async (
     return {
       statusCode: 500,
       response: {
-        error: `Internal server error`,
+        error: 'Internal server error',
       },
     };
   }
@@ -156,6 +144,7 @@ export const getMessageService = async (
 export const getTotalMessageService = async (senderId, receiverId) => {
   try {
     getMessageValidator(senderId, receiverId);
+
     const conversation = await Conversation.findOne({
       participants: { $all: [senderId, receiverId] },
     });
@@ -170,15 +159,16 @@ export const getTotalMessageService = async (senderId, receiverId) => {
       };
     }
 
-    const totalConversationMessages = await Message.find({
+    const totalMessages = await Message.countDocuments({
       conversationId: conversation._id,
-    }).countDocuments({});
+    });
 
+    console.log({totalMessages});
     return {
       statusCode: 200,
       response: {
         message: 'Message received successfully',
-        data: totalConversationMessages,
+        data: totalMessages,
       },
     };
   } catch (error) {
@@ -186,9 +176,25 @@ export const getTotalMessageService = async (senderId, receiverId) => {
     return {
       statusCode: 500,
       response: {
-        error: `Internal server error`,
+        error: 'Internal server error',
       },
     };
+  }
+};
+
+export const getTotalConversationMessagesService = async (senderId, receiverId) => {
+  try {
+    if (!senderId || !receiverId) {
+      return returnMessage(400, { error: `Incomplete details` });
+    }
+
+    const messages = await Message.countDocuments({
+      senderId: senderId,
+      receiverId: receiverId,
+    });
+    return returnMessage(200, { data: messages });
+  } catch (error) {
+    throw new Error(`Error in getTotalConversationMessagesService `, error.message);
   }
 };
 
@@ -196,20 +202,24 @@ export const deleteMessageService = async (deleteId, receiverId) => {
   try {
     const message = await Message.findByIdAndDelete(deleteId);
     const receiverSocketId = getSocketIdByUserId(receiverId);
-    io.to(receiverSocketId).emit('deletedMessage', deleteId);
+
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit('deletedMessage', deleteId);
+    }
+
     if (message) {
       io.emit('delete-message');
       return {
         statusCode: 201,
         response: {
-          message: 'deleted successfully',
+          message: 'Message deleted successfully',
         },
       };
     } else {
       return {
-        statusCode: 201,
+        statusCode: 404,
         response: {
-          error: 'Failed to delete message',
+          error: 'Message not found',
         },
       };
     }
@@ -217,7 +227,9 @@ export const deleteMessageService = async (deleteId, receiverId) => {
     console.log(error.message);
     return {
       statusCode: 500,
-      error: error.message,
+      response: {
+        error: 'Internal server error',
+      },
     };
   }
 };

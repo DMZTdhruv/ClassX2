@@ -20,7 +20,7 @@ import { type CarouselApi } from '@/components/ui/carousel';
 import Image from 'next/image';
 import useUploadPost from '@/hooks/posts/useUploadPost';
 import { updateFeed } from '../serverActions';
-import { usePostContext } from '@/context/PostContext';
+import { useClassXContext } from '@/context/ClassXContext';
 import { useRouter } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 import PostVideo from '@/components/shared/Post/PostVideo';
@@ -71,7 +71,7 @@ const UploadPost = () => {
   const { getFile, generateTempVideoUrl } = useGenerateFileLink();
   const { getUrlImageObj, generateUrl } = useGenerateLink();
   const { uploadPost } = useUploadPost();
-  const { setFeedPost, setExplorePost, setUserPost } = usePostContext();
+  const { setFeedPost, setExplorePost, setUserPost } = useClassXContext();
   const router = useRouter();
 
   // attachment states
@@ -92,7 +92,6 @@ const UploadPost = () => {
   // UseEffects
   useEffect(() => {
     setCount(temporaryAttachments.length);
-    console.log(temporaryAttachments);
   }, [temporaryAttachments]);
 
   // Functions
@@ -102,7 +101,6 @@ const UploadPost = () => {
       const inputElement = e.target as HTMLInputElement;
       if (inputElement.files) {
         const { type } = inputElement.files[0];
-        console.log(type);
         if (
           type === 'image/jpeg' ||
           type === 'image/png' ||
@@ -143,7 +141,6 @@ const UploadPost = () => {
     ]);
 
     const allUrls: UploadAttachments[] = [...mp4Urls.flat(), ...pictureUrls.flat()];
-    console.log(allUrls);
     return allUrls;
   };
 
@@ -153,7 +150,6 @@ const UploadPost = () => {
     try {
       validateInput();
       const allAttachmentUrls = await generateUrls();
-      console.log(allAttachmentUrls);
       const uploadPostBody: IAttachment = {
         attachments: allAttachmentUrls,
         aspectRatio: aspectRatio,
@@ -162,7 +158,6 @@ const UploadPost = () => {
         category: category,
       };
 
-      console.log(uploadPostBody);
 
       await uploadPost(uploadPostBody);
       updateFeed();
@@ -224,7 +219,6 @@ const UploadPost = () => {
             type='button'
             className='absolute   cursor-pointer group z-50 top-3 right-3 rounded-full shadow-md  '
             onClick={() => {
-              console.log('hello');
               setTemporaryAttachments(prev => {
                 return prev.filter(attachment => attachment._id !== file._id);
               });

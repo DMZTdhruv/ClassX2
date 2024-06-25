@@ -28,6 +28,13 @@ export const sideBarData = [
     routes: '/message',
   },
   {
+    id: 10,
+    name: 'MessageV2',
+    icon: 'message.svg',
+    filledIcon: 'message-fill.svg',
+    routes: '/messagev2',
+  },
+  {
     id: 5,
     name: 'Classroom',
     icon: 'classroom.svg',
@@ -104,6 +111,13 @@ interface UploadAttachments {
   _createdAt: string;
 }
 
+interface IMessageUser {
+  _id: string;
+  userProfileImage: string;
+  username: string;
+  lastActiveOn: string;
+}
+
 interface IPostMinimal {
   _id: string;
   attachments: UploadAttachments[];
@@ -165,6 +179,54 @@ interface IReplyMessage {
     extension: string;
     postId: string;
   };
+  repliedAsset: {
+    extension: string;
+    url: string;
+  };
+}
+
+interface PostDetails {
+  _id: string;
+  originalFilename: string;
+  url: string;
+  extension: string;
+  _createdAt: string;
+}
+
+interface IConversationChats {
+  _id: string;
+  senderId: { userProfileImage: string; username: string; _id: string };
+  receiverId: { userProfileImage: string; username: string; _id: string } | string;
+  message: string;
+  post: {
+    _id: string;
+    attachments: PostDetails[];
+    caption: string;
+    postedBy: {
+      _id: string;
+      userProfileImage: string;
+      username: string;
+    };
+    aspectRatio: string;
+  };
+  replyMessage: {
+    repliedMessageId: string;
+    replyMessage: string;
+    replyToUsername: string;
+  };
+  asset: {
+    extension: string;
+    url: string;
+  };
+  createdAt: string;
+}
+
+interface IConversationMessage {
+  _id: string;
+  page: number;
+  totalMessages: number;
+  totalMessagesLoaded: number;
+  conversationChats: IConversationChats[];
 }
 
 export type {
@@ -173,10 +235,13 @@ export type {
   UploadAttachments,
   IPost,
   IPostMinimal,
+  IConversationChats,
   UpdateReplyCommentData,
   Comment,
   MessageContextProps,
   AuthContext,
+  IMessageUser,
+  IConversationMessage,
 };
 
 export const Api = process.env.NEXT_PUBLIC_API;

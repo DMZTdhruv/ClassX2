@@ -1,17 +1,17 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Api } from '@/Constants'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react';
+import { Api } from '@/Constants';
+import { useRouter } from 'next/navigation';
 
 const useSignInUser = () => {
-  const router = useRouter()
-  const [loading, setLoading] = useState<boolean>(false)
-  const [errorMessage, setErrorMessage] = useState<string>('')
-  const [message, setMessage] = useState<string>('')
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [message, setMessage] = useState<string>('');
 
   const signInUser = async (email: string, password: string) => {
-    setLoading(true)
+    setLoading(true);
     try {
       const res = await fetch(`${Api}/auth/signIn`, {
         method: 'POST',
@@ -23,31 +23,31 @@ const useSignInUser = () => {
           password,
         }),
         credentials: 'include',
-      })
+      });
 
-      const data = await res.json()
+      const data = await res.json();
       if (data.error) {
-        throw new Error(data.error)
+        throw new Error(data.error);
       }
 
-      setMessage(data.message)
+      setMessage(data.message);
       setTimeout(() => {
-        setMessage('')
-      }, 5000)
-      localStorage.setItem('classX_user', JSON.stringify(data.userProfile))
-      window.location.replace('/')
+        setMessage('');
+      }, 5000);
+      localStorage.setItem('classX_user', JSON.stringify(data.userProfile));
+      window.location.replace('/');
     } catch (error: any) {
-      console.error(error.message)
-      setErrorMessage(error.message)
+      console.error(error.message);
+      setErrorMessage(error.message);
       setTimeout(() => {
-        setErrorMessage('')
-      }, 5000)
+        setErrorMessage('');
+      }, 5000);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  return { loading, errorMessage, message, signInUser }
-}
+  return { loading, errorMessage, message, signInUser };
+};
 
-export default useSignInUser
+export default useSignInUser;

@@ -1,54 +1,53 @@
-import { jwtDecode } from 'jwt-decode'
-import { cookies } from 'next/headers'
-import React from 'react'
-import { getClassworkById } from '../../../classroomActions'
-import { BsFiletypeDocx, BsFiletypePdf, BsFiletypePpt } from 'react-icons/bs'
-import Link from 'next/link'
-import { FaArrowRightLong } from 'react-icons/fa6'
-import { formatMessageSideBarDate } from '@/utils/formatDate'
-import Image from 'next/image'
-import { MdOutlineFileDownload } from 'react-icons/md'
-import DownloadButton from '@/components/classroom/DownloadButton'
+import { jwtDecode } from 'jwt-decode';
+import { cookies } from 'next/headers';
+import React from 'react';
+import { getClassworkById } from '../../../classroomActions';
+import { BsFiletypeDocx, BsFiletypePdf, BsFiletypePpt } from 'react-icons/bs';
+import Link from 'next/link';
+import { FaArrowRightLong } from 'react-icons/fa6';
+import { formatMessageSideBarDate } from '@/utils/formatDate';
+import Image from 'next/image';
+import { MdOutlineFileDownload } from 'react-icons/md';
+import DownloadButton from '@/components/classroom/DownloadButton';
 
 interface Token {
-  userProfileId: string
+  userProfileId: string;
 }
 
 interface IClassroomWork {
-  _id: string
-  classId: string
-  title: string
-  description: string
+  _id: string;
+  classId: string;
+  title: string;
+  description: string;
   postedBy: {
-    userProfileImage: string
-    username: string
-  }
+    userProfileImage: string;
+    username: string;
+  };
   attachments: [
     {
-      extension: string
-      url: string
-      originalFilename: string
-      _id: string
+      extension: string;
+      url: string;
+      originalFilename: string;
+      _id: string;
     }
-  ]
-  topic: string
-  createdAt: string
+  ];
+  topic: string;
+  createdAt: string;
 }
 
 const Page = async ({
   params,
 }: {
-  params: { classId: string; classworkId: string }
+  params: { classId: string; classworkId: string };
 }) => {
-  const cookie = cookies().get('classX_user_token')?.value
-  const decodedCookie: Token | null = cookie ? jwtDecode(cookie) : null
+  const cookie = cookies().get('classX_user_token')?.value;
+  const decodedCookie: Token | null = cookie ? jwtDecode(cookie) : null;
 
   const classworkData: IClassroomWork = await getClassworkById(
     cookie || '',
     params.classId,
     params.classworkId
-  )
-
+  );
 
   return (
     <div className='w-full p-[16px] mt-4 md:p-[30px]'>
@@ -88,12 +87,12 @@ const Page = async ({
                   View file <FaArrowRightLong className='ml-2' />
                 </Link>
                 <DownloadButton file={file} />
-                {/* <a href={`${file.url}?dl=`} download>
+                <a href={`${file.url}?dl=`} download>
                   <MdOutlineFileDownload size={24} className='text-neutral-300' />
-                </a> */}
+                </a>
               </div>
             </div>
-          )
+          );
         })}
       </div>
       <div className='gap-[10px] flex justify-between px-6 border-t-2 border-neutral-900 pt-6 mt-6'>
@@ -118,7 +117,7 @@ const Page = async ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Page
+export default Page;

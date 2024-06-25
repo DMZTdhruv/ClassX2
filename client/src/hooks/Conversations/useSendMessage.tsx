@@ -1,35 +1,40 @@
-import { Api, MessageContextProps } from '@/Constants';
-import { useAuthContext } from '@/context/AuthContext';
+import { Api } from '@/Constants';
 import { useMessageContext } from '@/context/MessageContext';
+import { SanityAssetDocument } from '@sanity/client';
 import { useState } from 'react';
 
 const useSendMessage = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const { authUser } = useAuthContext();
 
-  // @ts-ignore
-  const { messages, setMessages, conversation, replyMessage, setReplyMessage } =
+  const { setMessages, conversation, replyMessage, setReplyMessage } =
     useMessageContext();
-  const sendMessage = async (message: string) => {
-    setLoading(true);
 
+  const sendMessage = async (
+    message: string,
+    asset: SanityAssetDocument | undefined
+  ) => {
+    setLoading(true);
+    console.log(asset);
     try {
-      let messageBody;
-      if (replyMessage.repliedPost.postId === '') {
-        messageBody = {
-          message: message,
-          repliedUser: replyMessage.repliedUser,
-          repliedMessage: replyMessage.repliedUserMessage,
-        };
-      } else {
-        messageBody = {
-          message: message,
-          repliedUser: replyMessage.repliedUser,
-          repliedMessage: replyMessage.repliedUserMessage,
-          postId: replyMessage.repliedPost.postId,
+      let messageBody: any = {
+        message: message,
+        repliedUser: replyMessage.repliedUser,
+        repliedMessage: replyMessage.repliedUserMessage,
+      };
+
+      if (replyMessage.repliedPost.postId !== '') {
+        messageBody.postId = replyMessage.repliedPost.postId;
+      }
+
+      if (asset) {
+        messageBody.asset = {
+          extension: asset[0].extension,
+          url: asset[0].url,
+          originalFileName: asset[0]?.originalFilename || '',
         };
       }
 
+      console.log('Final message body:', messageBody);
       const res = await fetch(`${Api}/message/chat/send/${conversation._id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -38,10 +43,12 @@ const useSendMessage = () => {
       });
 
       const data = await res.json();
-      console.log(data);
+      console.log('Response from server:', data);
+
       if (data.error) {
         throw new Error(data.error);
       }
+
       setMessages(prev => [...prev, data.data]);
       setReplyMessage({
         repliedUser: '',
@@ -51,9 +58,13 @@ const useSendMessage = () => {
           postUrl: '',
           extension: '',
         },
+        repliedAsset: {
+          url: '',
+          extension: '',
+        },
       });
     } catch (error: any) {
-      console.error(error.message);
+      console.error('Error sending message:', error.message);
     } finally {
       setLoading(false);
     }

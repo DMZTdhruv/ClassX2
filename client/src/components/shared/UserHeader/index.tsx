@@ -1,24 +1,23 @@
-import { Button } from '@/components/ui/button'
-import { jwtDecode } from 'jwt-decode'
-import { cookies } from 'next/headers'
-import Image from 'next/image'
-import FollowButton from '../FollowButton/FollowButton'
-import Link from 'next/link'
+import { Button } from '@/components/ui/button';
+import { jwtDecode } from 'jwt-decode';
+import { cookies } from 'next/headers';
+import Image from 'next/image';
+import FollowButton from '../FollowButton/FollowButton';
+import Link from 'next/link';
 
 interface Token {
-  userProfileId: string
+  userProfileId: string;
 }
 
 interface UserHeaderProps {
-  _id: string
-  name: string
-  username: string
-  about: string
-  userProfileImage: string
-  isPrivate: boolean
-  following: any[]
-  followers: any[]
-  posts: string[]
+  _id: string;
+  name: string;
+  username: string;
+  about: string;
+  userProfileImage: string;
+  followersCount: number;
+  postCount: number;
+  followingCount: number;
 }
 
 export default function UserHeader({
@@ -27,16 +26,16 @@ export default function UserHeader({
   username,
   about,
   userProfileImage,
-  isPrivate,
-  following,
-  followers,
-  posts,
+  followersCount,
+  followingCount,
+  postCount,
 }: UserHeaderProps) {
-  const cookie = cookies()
-  const token = cookie.get('classX_user_token')
+  const cookie = cookies();
+  const token = cookie.get('classX_user_token');
   const { userProfileId }: Token = token?.value
     ? jwtDecode(token?.value || '')
-    : { userProfileId: '' }
+    : { userProfileId: '' };
+
   return (
     <div className='flex flex-col items-center  relative mt-[40px] font-semibold  font-poppins gap-[10px]'>
       <div className='absolute top-10 right-14 sm:hidden '></div>
@@ -59,18 +58,18 @@ export default function UserHeader({
         <span className='text-[#474747]'>@{username}</span>
       </div>
       <div className='flex items-center gap-10 translate-x-[-2px]'>
-        <p className='flex flex-col items-center'>
-          <span className='text-[25px] font-bold'>{following?.length}</span>
+        <Link href={`/profile/${_id}/following`} className='flex flex-col items-center'>
+          <span className='text-[25px] font-bold'>{followingCount}</span>
           <span className='text-[10px] opacity-30'>following</span>
-        </p>
-        <p className='flex flex-col items-center'>
-          <span className='text-[25px] font-bold'>{posts.length}</span>
+        </Link>
+        <Link href={`/profile/${_id}`} className='flex flex-col items-center'>
+          <span className='text-[25px] font-bold'>{postCount}</span>
           <span className='text-[10px] opacity-30'>Posts</span>
-        </p>
-        <p className='flex flex-col items-center'>
-          <span className='text-[25px] font-bold'>{followers?.length}</span>
+        </Link>
+        <Link href={`/profile/${_id}/followers`} className='flex flex-col items-center'>
+          <span className='text-[25px] font-bold'>{followersCount}</span>
           <span className='text-[10px] opacity-30'>followers</span>
-        </p>
+        </Link>
       </div>
       <pre className='w-[85%]   text-wrap text-center text-[14px] font-poppins'>
         {about}
@@ -96,5 +95,5 @@ export default function UserHeader({
         )}
       </div>
     </div>
-  )
+  );
 }

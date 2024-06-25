@@ -10,6 +10,8 @@ interface MessageContextProps {
   setMessages: React.Dispatch<React.SetStateAction<any[]>>;
   replyMessage: IReplyMessage;
   setReplyMessage: React.Dispatch<React.SetStateAction<IReplyMessage>>;
+  setAsset: React.Dispatch<React.SetStateAction<string>>;
+  asset: string;
 }
 export const MessageContext = createContext<MessageContextProps | undefined>(undefined);
 
@@ -25,6 +27,7 @@ export const useMessageContext = () => {
 
 const MessageContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [conversation, setConversation] = useState(null);
+  const [asset, setAsset] = useState<string>('');
 
   const [messages, setMessages] = useState<any[]>([]);
   const [replyMessage, setReplyMessage] = useState<IReplyMessage>({
@@ -35,6 +38,10 @@ const MessageContextProvider = ({ children }: { children: React.ReactNode }) => 
       postUrl: '',
       extension: '',
     },
+    repliedAsset: {
+      extension: '',
+      url: '',
+    },
   });
 
   const value = {
@@ -44,6 +51,8 @@ const MessageContextProvider = ({ children }: { children: React.ReactNode }) => 
     setReplyMessage,
     replyMessage,
     setMessages,
+    asset,
+    setAsset,
   };
 
   return <MessageContext.Provider value={value}>{children}</MessageContext.Provider>;

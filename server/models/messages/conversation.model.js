@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
 const converSationSchema = new mongoose.Schema(
   {
@@ -16,7 +16,7 @@ const converSationSchema = new mongoose.Schema(
     ],
   },
   { timestamps: true }
-)
+);
 
-const Conversation = mongoose.model('Conversation', converSationSchema)
-export default Conversation
+const Conversation = mongoose.model('Conversation', converSationSchema);
+export default Conversation;

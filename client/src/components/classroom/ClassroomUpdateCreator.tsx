@@ -1,102 +1,102 @@
-'use client'
+'use client';
 
-import { useAuthContext } from '@/context/AuthContext'
-import React, { FormEvent, useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
-import useCreateUpdate from '@/hooks/classroom/useCreateUpdate'
-import { Input } from '../ui/input'
-import { Button } from '../ui/button'
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
-import { SanityImageAssetDocument } from '@sanity/client'
-import { useGenerateLink } from '@/hooks/useGenerateLink'
-import { MdCancel, MdOutlineCancel } from 'react-icons/md'
-import ClassroomImageModal from './ClassroomImageModal'
-import { Skeleton } from '../ui/skeleton'
+import { useAuthContext } from '@/context/AuthContext';
+import React, { FormEvent, useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import useCreateUpdate from '@/hooks/classroom/useCreateUpdate';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { SanityImageAssetDocument } from '@sanity/client';
+import { useGenerateLink } from '@/hooks/useGenerateLink';
+import { MdCancel, MdOutlineCancel } from 'react-icons/md';
+import ClassroomImageModal from '../shared/ImageModal';
+import { Skeleton } from '../ui/skeleton';
 
 interface IClassroomUpdate {
-  classId: string
-  title?: string
-  description: string
-  attachments?: string[]
+  classId: string;
+  title?: string;
+  description: string;
+  attachments?: string[];
 }
 
 interface ErrorMessages {
-  fileUploadError: string
-  incompleteDetails: string
-  uploadingImagesError: string
-  uploadError: string
-  totalImagesError: string
+  fileUploadError: string;
+  incompleteDetails: string;
+  uploadingImagesError: string;
+  uploadError: string;
+  totalImagesError: string;
 }
 
 const ClassroomUpdateCreator = ({
   adminIds,
   classId,
 }: {
-  adminIds: string[]
-  classId: string
+  adminIds: string[];
+  classId: string;
 }) => {
-  const { authUser } = useAuthContext()
-  const { loading, createUpdate, message } = useCreateUpdate()
-  const textAreaRef = useRef<HTMLTextAreaElement>(null)
-  const { getUrl, generateUrl } = useGenerateLink()
+  const { authUser } = useAuthContext();
+  const { loading, createUpdate, message } = useCreateUpdate();
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const { getUrl, generateUrl } = useGenerateLink();
 
   // States
-  const [isAdmin, setIsAdmin] = useState<boolean>(false)
-  const [openModal, setOpenModal] = useState<boolean>(false)
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
   // Update body
-  const [title, setTitle] = useState<string>('')
-  const [description, setDescription] = useState<string>('')
-  const [images, setImages] = useState<SanityImageAssetDocument[]>([])
-  const [generatedUrls, setGeneratedUrls] = useState<string[]>([])
+  const [title, setTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [images, setImages] = useState<SanityImageAssetDocument[]>([]);
+  const [generatedUrls, setGeneratedUrls] = useState<string[]>([]);
 
   // loading states
-  const [uploadingImage, setUploadingImage] = useState<boolean>(false)
-  const [isCreatingUpdate, setIsCreatingUpdate] = useState<boolean>(false)
+  const [uploadingImage, setUploadingImage] = useState<boolean>(false);
+  const [isCreatingUpdate, setIsCreatingUpdate] = useState<boolean>(false);
 
   // Error states
-  const [error, setError] = useState<string>('')
+  const [error, setError] = useState<string>('');
 
-  const [imageOpenModal, setImageOpenModal] = useState<boolean>(false)
-  const [selectedImage, setSelectedImage] = useState('')
+  const [imageOpenModal, setImageOpenModal] = useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState('');
 
   const closeModal = () => {
-    setImageOpenModal(false)
-    setSelectedImage('')
-  }
+    setImageOpenModal(false);
+    setSelectedImage('');
+  };
 
   const setErrorFunc = (errorMessage: string) => {
-    setError(errorMessage)
+    setError(errorMessage);
     setTimeout(() => {
-      setError('')
-    }, 5000)
-  }
+      setError('');
+    }, 5000);
+  };
 
   useEffect(() => {
     if (authUser?.userProfileId) {
-      setIsAdmin(adminIds.includes(authUser.userProfileId))
+      setIsAdmin(adminIds.includes(authUser.userProfileId));
     } else {
-      setIsAdmin(false)
+      setIsAdmin(false);
     }
-  }, [authUser])
+  }, [authUser]);
 
   const adjustTextareaHeight = () => {
     if (textAreaRef.current) {
-      textAreaRef.current.style.height = 'auto'
-      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`
+      textAreaRef.current.style.height = 'auto';
+      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
     }
-  }
+  };
 
   useEffect(() => {
-    adjustTextareaHeight()
-  }, [description])
+    adjustTextareaHeight();
+  }, [description]);
 
   const createUpdateForClassroom = async (e: FormEvent) => {
-    e.preventDefault()
-    setIsCreatingUpdate(true)
+    e.preventDefault();
+    setIsCreatingUpdate(true);
     try {
       if (description.trim() === '') {
-        throw new Error('Incomplete details')
+        throw new Error('Incomplete details');
       }
 
       const updateData = {
@@ -104,58 +104,58 @@ const ClassroomUpdateCreator = ({
         title: title,
         description: description,
         attachments: await uploadImagesToSanity(),
-      }
+      };
 
-      await createUpdate(updateData)
-      setTitle('')
-      setDescription('')
-      setImages([])
+      await createUpdate(updateData);
+      setTitle('');
+      setDescription('');
+      setImages([]);
     } catch (error: any) {
-      setErrorFunc(error.message)
-      console.error(error.message)
+      setErrorFunc(error.message);
+      console.error(error.message);
     } finally {
-      setIsCreatingUpdate(false)
+      setIsCreatingUpdate(false);
     }
-  }
+  };
 
   const uploadImagesToSanity = async () => {
     try {
       const urls = await Promise.all(
         images.map(async image => {
-          return await getUrl(image)
+          return await getUrl(image);
         })
-      )
-      return urls
+      );
+      return urls;
     } catch (error: any) {
-      setErrorFunc(error.message)
-      console.error(error.message)
+      setErrorFunc(error.message);
+      console.error(error.message);
     }
-  }
+  };
 
   const getTemporaryImageUrl = async (e: FormEvent<HTMLInputElement>) => {
     try {
-      e.preventDefault()
-      setUploadingImage(true)
-      const url = await generateUrl(e)
+      e.preventDefault();
+      setUploadingImage(true);
+      const url = await generateUrl(e);
       // @ts-ignore
-      setImages(prev => [url, ...prev])
+      setImages(prev => [url, ...prev]);
     } catch (error: any) {
-      setErrorFunc(error.message)
-      console.error(error.message)
+      setErrorFunc(error.message);
+      console.error(error.message);
     } finally {
-      setUploadingImage(false)
+      setUploadingImage(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (imageOpenModal) {
-      const body = document.getElementsByTagName('body')[0]
-      body.style.overflow = 'hidden'
+      const body = document.getElementsByTagName('body')[0];
+      body.style.overflow = 'hidden';
       return () => {
-        body.style.overflow = 'auto'
-      }
+        body.style.overflow = 'auto';
+      };
     }
-  }, [imageOpenModal])
+  }, [imageOpenModal]);
 
   return (
     <section>
@@ -221,8 +221,8 @@ const ClassroomUpdateCreator = ({
                           height={150}
                           unoptimized
                           onClick={() => {
-                            setImageOpenModal(prev => !prev)
-                            setSelectedImage(image.url)
+                            setImageOpenModal(prev => !prev);
+                            setSelectedImage(image.url);
                           }}
                           className='aspect-square cursor-pointer w-full h-full object-cover rounded-md'
                         />
@@ -231,13 +231,15 @@ const ClassroomUpdateCreator = ({
                           type='button'
                           className='absolute group top-3 right-3 bg-black/80 rounded-full shadow-md shadow-neutral-700 '
                           onClick={() => {
-                            setImages(prev => prev.filter(img => img._id !== image._id))
+                            setImages(prev =>
+                              prev.filter(img => img._id !== image._id)
+                            );
                           }}
                         >
                           <MdCancel size={24} className='group-active:scale-[0.90]' />
                         </button>
                       </CarouselItem>
-                    )
+                    );
                   })}
                 </CarouselContent>
                 <p className='mt-2 font-semibold'>Total attachments: {images.length}</p>
@@ -304,7 +306,7 @@ const ClassroomUpdateCreator = ({
         </div>
       )}
     </section>
-  )
-}
+  );
+};
 
-export default ClassroomUpdateCreator
+export default ClassroomUpdateCreator;

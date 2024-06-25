@@ -74,10 +74,6 @@ const Post: React.FC<IPost> = ({
     });
   }, [api]);
 
-  useEffect(() => {
-    console.log(inView);
-  }, [inView]);
-
   return (
     <div className='w-full animate-in fade-in-0 lg:w-[544px] h-auto  border-b-2 border-[#171717] font-poppins  postSection'>
       <div className='h-[60px] px-[15px] flex items-center justify-between md:text-[14px] text-[12px]'>
@@ -285,7 +281,7 @@ const Post: React.FC<IPost> = ({
                 />
               </Link>
               <LuSend
-                className='h-[22px] translate-y-[-5px] w-[22px] rotate-[15deg] active:scale-90 hover:scale-[1.05] transition-all cursor-pointer '
+                className='h-[22px] translate-y-[-3px] w-[22px] rotate-[15deg] active:scale-90 hover:scale-[1.05] transition-all cursor-pointer '
                 onClick={() => setOpenShareToToggle(prev => !prev)}
               />
             </div>

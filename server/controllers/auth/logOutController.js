@@ -12,7 +12,7 @@ export const logOutController = async (req, res) => {
         maxAge: 0,
         httpOnly: true,
         sameSite: 'Strict',
-        domain: '.onrender.com',
+        domain: 'classx2-clientbackup.onrender.com',
         secure: process.env.NODE_ENV !== 'development',
       });
     }

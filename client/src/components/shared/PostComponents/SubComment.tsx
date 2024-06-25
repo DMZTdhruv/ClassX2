@@ -1,42 +1,43 @@
-'use client'
+'use client';
 
-import { Api, webUrl } from '@/Constants'
-import { formatDate } from '@/utils'
-import Image from 'next/image'
-import Link from 'next/link'
-import React, { useState } from 'react'
-import { BsThreeDots } from 'react-icons/bs'
-import Styles from './styles.module.css'
-import { useAuthContext } from '@/context/AuthContext'
+import { Api, webUrl } from '@/Constants';
+import { formatDate } from '@/utils';
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { useState } from 'react';
+import { BsThreeDots } from 'react-icons/bs';
+import Styles from './styles.module.css';
+import { useAuthContext } from '@/context/AuthContext';
 
 interface DeleteCommentDetails {
-  userId: string
-  deleteId: string
-  clientComponent?: boolean
+  userId: string;
+  deleteId: string;
+  clientComponent?: boolean;
 }
 
 interface UpdateReplyCommentData {
-  parentCommentId: string
-  repliedUserId: string
+  parentCommentId: string;
+  repliedUserId: string;
 }
 interface SubComments {
-  _id: string
-  postId: string
-  parentCommentId: string
-  subCommentUserId: string
-  subCommentImage: string
-  subCommentUsername: string
-  subCommentCommentText: string
-  subCommentPostedDate: string
-  subCommentTotalLikes: string[]
-  updateUsername: (name: string) => void
-  updateReplyCommentData: (data: UpdateReplyCommentData) => void
-  clientComment?: boolean
-  likeSubComment?: (parentCommentId: string, subCommentId: string) => void
-  unlikeSubComment?: (parentCommentId: string, subCommentId: string) => void
-  handleParentCommentModal: (data: boolean) => void
-  setDeleteSubCommentDetails: (data: DeleteCommentDetails) => void
-  deleteSubComment?: (parentCommentId: string, commentId: string) => void
+  _id: string;
+  postId: string;
+  parentCommentId: string;
+  subCommentUserId: string;
+  subCommentImage: string;
+  subCommentUsername: string;
+  subCommentCommentText: string;
+  subCommentPostedDate: string;
+  repliedUserId: string;
+  subCommentTotalLikes: string[];
+  updateUsername: (name: string) => void;
+  updateReplyCommentData: (data: UpdateReplyCommentData) => void;
+  clientComment?: boolean;
+  likeSubComment?: (parentCommentId: string, subCommentId: string) => void;
+  unlikeSubComment?: (parentCommentId: string, subCommentId: string) => void;
+  handleParentCommentModal: (data: boolean) => void;
+  setDeleteSubCommentDetails: (data: DeleteCommentDetails) => void;
+  deleteSubComment?: (parentCommentId: string, commentId: string) => void;
 }
 
 export default function SubComment({
@@ -50,6 +51,7 @@ export default function SubComment({
   subCommentPostedDate,
   subCommentTotalLikes,
   updateUsername,
+  repliedUserId,
   updateReplyCommentData,
   clientComment,
   likeSubComment,
@@ -59,24 +61,24 @@ export default function SubComment({
   deleteSubComment,
 }: SubComments) {
   //@ts-ignore
-  const { authUser } = useAuthContext()
-  const date = new Date(subCommentPostedDate)
-  const formatedDate = formatDate(date)
+  const { authUser } = useAuthContext();
+  const date = new Date(subCommentPostedDate);
+  const formatedDate = formatDate(date);
 
   const [isLiked, setIsLiked] = useState<boolean>(
     subCommentTotalLikes.filter(id => id === authUser?.userProfileId).length > 0
-  )
+  );
   const [numberOfLikes, setNumberOfLikes] = useState<number>(
     subCommentTotalLikes.length
-  )
+  );
 
-  const user = subCommentCommentText.split(' ')[0]
-  const userComment = subCommentCommentText.split(' ').slice(1).join(' ')
+  const user = subCommentCommentText.split(' ')[0];
+  const userComment = subCommentCommentText.split(' ').slice(1).join(' ');
 
   const likeComment = async () => {
-    if (isLiked) return
-    clientComment && likeSubComment?.(parentCommentId, _id)
-    setNumberOfLikes(numberOfLikes + 1)
+    if (isLiked) return;
+    clientComment && likeSubComment?.(parentCommentId, _id);
+    setNumberOfLikes(numberOfLikes + 1);
     try {
       const response = await fetch(`${Api}/post/comment/sub/like-comment`, {
         method: 'POST',
@@ -88,24 +90,24 @@ export default function SubComment({
           userID: authUser?.userProfileId,
         }),
         credentials: 'include',
-      })
+      });
 
       if (!response.ok) {
-        setIsLiked(false)
-        setNumberOfLikes(numberOfLikes)
-        throw new Error('Error liking in post ')
+        setIsLiked(false);
+        setNumberOfLikes(numberOfLikes);
+        throw new Error('Error liking in post ');
       }
 
-      await response.json()
+      await response.json();
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
-  }
+  };
 
   const unlikeComment = async () => {
-    if (!isLiked) return
-    setNumberOfLikes(numberOfLikes - 1)
-    clientComment && unlikeSubComment?.(parentCommentId, _id)
+    if (!isLiked) return;
+    setNumberOfLikes(numberOfLikes - 1);
+    clientComment && unlikeSubComment?.(parentCommentId, _id);
     try {
       const response = await fetch(`${Api}/post/comment/sub/unlike-comment`, {
         method: 'POST',
@@ -117,19 +119,19 @@ export default function SubComment({
           commentId: _id,
         }),
         credentials: 'include',
-      })
+      });
 
       if (!response.ok) {
-        setIsLiked(false)
-        setNumberOfLikes(numberOfLikes)
-        throw new Error('Error unliking the post ')
+        setIsLiked(false);
+        setNumberOfLikes(numberOfLikes);
+        throw new Error('Error unliking the post ');
       }
 
-      await response.json()
+      await response.json();
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
-  }
+  };
 
   return (
     <div
@@ -158,7 +160,7 @@ export default function SubComment({
           <span className='text-[12px] lg:text-[14px]'>
             <Link
               className='text-slate-400'
-              href={`${webUrl}/user-profile/${user}`}
+              href={`${webUrl}/profile/${repliedUserId}`}
               prefetch={false}
             >
               {user}
@@ -171,29 +173,29 @@ export default function SubComment({
           <p>{numberOfLikes} likes</p>
           <button
             onClick={() => {
-              updateUsername(subCommentUsername)
+              updateUsername(subCommentUsername);
               updateReplyCommentData({
                 parentCommentId: parentCommentId,
                 repliedUserId: subCommentUserId,
-              })
+              });
             }}
           >
             Reply
           </button>
           <button
             onClick={() => {
-              handleParentCommentModal(true)
+              handleParentCommentModal(true);
               if (clientComment) {
                 setDeleteSubCommentDetails({
                   userId: subCommentUserId,
                   deleteId: _id,
                   clientComponent: true,
-                })
+                });
               } else {
                 setDeleteSubCommentDetails({
                   userId: subCommentUserId,
                   deleteId: _id,
-                })
+                });
               }
             }}
           >
@@ -207,11 +209,11 @@ export default function SubComment({
       <button
         className='hover:scale-105  flexCenter w-auto'
         onClick={() => {
-          setIsLiked(prev => !prev)
+          setIsLiked(prev => !prev);
           if (isLiked) {
-            unlikeComment()
+            unlikeComment();
           } else {
-            likeComment()
+            likeComment();
           }
         }}
       >
@@ -242,5 +244,5 @@ export default function SubComment({
         )}
       </button>
     </div>
-  )
+  );
 }

@@ -70,7 +70,7 @@ const useGenerateFileLink = () => {
       const file = await client.fetch(
         `*[_id == '${createFile.file.asset._ref}']{_id, originalFilename, extension, url, _createdAt}`
       )
-      return file[0]
+      return file;
     } catch (error: any) {
       console.error(error.message)
       setSanityError(error.message)

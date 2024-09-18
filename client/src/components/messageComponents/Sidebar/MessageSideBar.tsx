@@ -91,7 +91,6 @@ export default function MessageSideBar({
           })}
         </div>
       )}
-      <div>hello</div>
       <div className={`${findUsername && 'opacity-20'} transition-all`}>
         <Conversations sideBarUsers={sideBarUsers} />
       </div>

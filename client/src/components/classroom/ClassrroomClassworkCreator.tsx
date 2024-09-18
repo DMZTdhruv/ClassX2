@@ -1,173 +1,180 @@
-'use client'
+'use client';
 
-import { useAuthContext } from '@/context/AuthContext'
-import React, { FormEvent, useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
-import { Input } from '../ui/input'
-import { Button } from '../ui/button'
+import { useAuthContext } from '@/context/AuthContext';
+import React, { FormEvent, useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select'
-import useGenerateFileLink from '@/hooks/useGenerateFileLink'
-import { SanityAssetDocument, SanityImageAssetDocument } from '@sanity/client'
-import { BsFiletypePdf } from 'react-icons/bs'
-import { BsFiletypePpt } from 'react-icons/bs'
-import { BsFiletypeDocx } from 'react-icons/bs'
-import Link from 'next/link'
-import { Textarea } from '../ui/textarea'
-import { RxCross2 } from 'react-icons/rx'
-import { IoWarningOutline } from 'react-icons/io5'
-import ClassroomHeader from './ClassroomHeader'
-import useCreateClassroom from '@/hooks/classroom/useCreateClassroom'
-import useCreateClasswork from '@/hooks/classroom/useCreateClasswork'
+} from '../ui/select';
+import useGenerateFileLink from '@/hooks/useGenerateFileLink';
+import { SanityAssetDocument, SanityImageAssetDocument } from '@sanity/client';
+import { BsFiletypePdf } from 'react-icons/bs';
+import { BsFiletypePpt } from 'react-icons/bs';
+import { BsFiletypeDocx } from 'react-icons/bs';
+import Link from 'next/link';
+import { Textarea } from '../ui/textarea';
+import { RxCross2 } from 'react-icons/rx';
+import { IoWarningOutline } from 'react-icons/io5';
+import ClassroomHeader from './ClassroomHeader';
+import useCreateClassroom from '@/hooks/classroom/useCreateClassroom';
+import useCreateClasswork from '@/hooks/classroom/useCreateClasswork';
 import {
   updateClassroom,
   updateClassroomUpdates,
-} from '@/app/(root)/classroom/classroomActions'
-import useGetTopics from '@/hooks/classroom/useGetTopics'
-import { Skeleton } from '../ui/skeleton'
+} from '@/app/(root)/classroom/classroomActions';
+import useGetTopics from '@/hooks/classroom/useGetTopics';
+import { Skeleton } from '../ui/skeleton';
 
 interface IClassroomCreator {
-  classId: string
-  title?: string
-  description: string
-  attachments?: string[]
+  classId: string;
+  title?: string;
+  description: string;
+  attachments?: string[];
 }
 
 interface ErrorMessages {
-  fileUploadError: string
-  incompleteDetails: string
-  uploadingImagesError: string
-  uploadError: string
-  totalImagesError: string
+  fileUploadError: string;
+  incompleteDetails: string;
+  uploadingImagesError: string;
+  uploadError: string;
+  totalImagesError: string;
 }
-
 
 const ClassroomClassworkCreator = ({
   adminIds,
   classId,
 }: {
-  adminIds: string[]
-  classId: string
+  adminIds: string[];
+  classId: string;
 }) => {
-  const { authUser } = useAuthContext()
-  const textAreaRef = useRef<HTMLTextAreaElement>(null)
-  const { generateTempFileUrl, getFile, sanityError } = useGenerateFileLink()
+  const { authUser } = useAuthContext();
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const { generateTempFileUrl, getFile, sanityError } = useGenerateFileLink();
   const { uploadingFile, uploadingFileError, message, createClasswork } =
-    useCreateClasswork()
+    useCreateClasswork();
 
-  const { getTopics, loading, topics } = useGetTopics()
+  const { getTopics, loading, topics } = useGetTopics();
 
   useEffect(() => {
-    getTopics(classId)
-  }, [])
+    getTopics(classId);
+  }, []);
 
   // States
-  const [isAdmin, setIsAdmin] = useState<boolean>(false)
-  const [openModal, setOpenModal] = useState<boolean>(false)
-  const [existingTopics, setExistingTopics] = useState<string[]>(topics)
-  const [posted, setPosted] = useState<boolean>(false)
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [existingTopics, setExistingTopics] = useState<string[]>(topics);
+  const [posted, setPosted] = useState<boolean>(false);
 
   // error states
-  const [classWorkError, setClassWorkError] = useState<string>('')
+  const [classWorkError, setClassWorkError] = useState<string>('');
 
   // loading states
-  const [generatingTempUrl, setGeneratingTempUrl] = useState<boolean>(false)
-  const [gettingUrl, setGettingUrl] = useState<boolean>(false)
-  const [uploading, setUploading] = useState<boolean>(false)
+  const [generatingTempUrl, setGeneratingTempUrl] = useState<boolean>(false);
+  const [gettingUrl, setGettingUrl] = useState<boolean>(false);
+  const [uploading, setUploading] = useState<boolean>(false);
 
   // classwork body
-  const [title, setTitle] = useState<string>('')
-  const [description, setDescription] = useState<string>('')
-  const [attachments, setAttachMents] = useState<SanityAssetDocument[]>([])
-  const [attachmentsUrl, setAttachmentsoUrl] = useState<string[]>([])
-  const [topic, setTopic] = useState<string>('')
+  const [title, setTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [attachments, setAttachMents] = useState<SanityAssetDocument[]>([]);
+  const [attachmentsUrl, setAttachmentsoUrl] = useState<string[]>([]);
+  const [topic, setTopic] = useState<string>('');
 
   // loading states
-  const [uploadingImage, setUploadingImage] = useState<boolean>(false)
+  const [uploadingImage, setUploadingImage] = useState<boolean>(false);
 
   // Error states
-  const [error, setError] = useState<string>('')
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     if (authUser?.userProfileId) {
-      setIsAdmin(adminIds.includes(authUser.userProfileId))
+      setIsAdmin(adminIds.includes(authUser.userProfileId));
     } else {
-      setIsAdmin(false)
+      setIsAdmin(false);
     }
-  }, [authUser])
+  }, [authUser]);
 
   const adjustTextareaHeight = () => {
     if (textAreaRef.current) {
-      textAreaRef.current.style.height = 'auto'
-      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`
+      textAreaRef.current.style.height = 'auto';
+      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
     }
-  }
+  };
 
   const handleTopicChange = (value: string) => {
-    setTopic(value)
-  }
+    setTopic(value);
+  };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      setGeneratingTempUrl(true)
-      const url = await generateTempFileUrl(e)
-      url && setAttachMents(prev => [url, ...prev])
+      setGeneratingTempUrl(true);
+      const url = await generateTempFileUrl(e);
+      url && setAttachMents(prev => [url, ...prev]);
     } catch (error: any) {
-      console.error(error.message)
+      console.error(error.message);
     } finally {
-      setGeneratingTempUrl(false)
+      setGeneratingTempUrl(false);
     }
-  }
+  };
 
   const handleCloseModal = () => {
-    setOpenModal(false)
-    clearClasswork()
-  }
+    setOpenModal(false);
+    clearClasswork();
+  };
 
   const clearClasswork = () => {
-    setTitle('')
-    setDescription('')
-    setAttachMents([])
-    setTopic('')
-  }
+    setTitle('');
+    setDescription('');
+    setAttachMents([]);
+    setTopic('');
+  };
 
   useEffect(() => {
-    adjustTextareaHeight()
-  }, [description])
+    adjustTextareaHeight();
+  }, [description]);
 
   const getFileUrlsFromSanity = async () => {
     try {
       const files = await Promise.all(
-        attachments.map(async attachment => await getFile(attachment))
-      )
-
-      return files
+        attachments.map(async attachment => {
+          const fileObj = await getFile(attachment);
+          return fileObj[0];
+        })
+      );
+      console.log(files);
+      return files;
     } catch (error: any) {
-      console.error(error.message)
-      setClassWorkError(error.message)
+      console.error(error.message);
+      setClassWorkError(error.message);
     } finally {
       setTimeout(() => {
-        setClassWorkError('')
-      }, 5000)
+        setClassWorkError('');
+      }, 5000);
     }
-  }
+  };
 
   interface IClassroomWork {
-    classId: string
-    title: string
-    description: string
-    topic: string
-    attachments: string[]
+    classId: string;
+    title: string;
+    description: string;
+    topic: string;
+    attachments: string[];
   }
 
+  useEffect(() => {
+    console.log(attachments);
+  }, [attachments]);
+
   const handleClassworkSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    setUploading(true)
+    e.preventDefault();
+    setUploading(true);
+    console.log(attachments.length);
     try {
       if (
         description.trim() === '' ||
@@ -175,7 +182,7 @@ const ClassroomClassworkCreator = ({
         topic.trim() === '' ||
         attachments.length === 0
       ) {
-        throw new Error('Incomplete details')
+        throw new Error('Incomplete details');
       }
 
       const classworkObj: IClassroomWork = {
@@ -185,30 +192,30 @@ const ClassroomClassworkCreator = ({
         topic: topic,
         // @ts-ignore
         attachments: await getFileUrlsFromSanity(),
-      }
+      };
 
       if (classworkObj.attachments.length === attachments.length) {
-        await createClasswork(classworkObj)
+        await createClasswork(classworkObj);
       } else {
-        throw new Error(`Post again!`)
+        throw new Error(`Post again!`);
       }
 
-      setPosted(true)
+      setPosted(true);
       setTimeout(() => {
-        setPosted(false)
-      }, 5000)
-      setOpenModal(false)
-      clearClasswork()
+        setPosted(false);
+      }, 5000);
+      setOpenModal(false);
+      clearClasswork();
     } catch (error: any) {
-      console.error(error.message)
-      setClassWorkError(error.message)
+      console.log(error.message);
+      setClassWorkError(error.message);
       setTimeout(() => {
-        setClassWorkError('')
-      }, 5000)
+        setClassWorkError('');
+      }, 5000);
     } finally {
-      setUploading(false)
+      setUploading(false);
     }
-  }
+  };
 
   return (
     <section className='p-[16px] mt-3'>
@@ -275,13 +282,13 @@ const ClassroomClassworkCreator = ({
                         <SelectItem key={topic} className='bg-[#202020]' value={topic}>
                           {topic}
                         </SelectItem>
-                      )
+                      );
                     })}
                   </SelectContent>
                 </Select>
               </div>
             </label>
-
+            {/* as you can see all are indented properly */}
             <label
               className='flex w-fit flex-col justify-start items-start'
               htmlFor='uploadFile'
@@ -354,7 +361,7 @@ const ClassroomClassworkCreator = ({
                       </Link>
                     </div>
                   </div>
-                )
+                );
               })}
             </div>
           </div>
@@ -412,7 +419,7 @@ const ClassroomClassworkCreator = ({
         </div>
       )}
     </section>
-  )
-}
+  );
+};
 
-export default ClassroomClassworkCreator
+export default ClassroomClassworkCreator;

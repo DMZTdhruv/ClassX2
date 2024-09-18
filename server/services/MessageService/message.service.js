@@ -5,7 +5,7 @@ import { returnMessage } from '../../utils/returnMessage.js';
 import { getMessageValidator } from '../../validations/MessageValidator/message.validator.js';
 
 // Helper function to create a new message
-const createNewMessage = (messageBody, senderId, receiverId, conversationId) => {
+export const createNewMessage = (messageBody, senderId, receiverId, conversationId) => {
   const baseMessage = {
     senderId,
     receiverId,
@@ -16,6 +16,10 @@ const createNewMessage = (messageBody, senderId, receiverId, conversationId) => 
     },
     conversationId,
   };
+
+  if (messageBody?.repliedAsset?.url !== '') {
+    baseMessage.repliedAsset = messageBody.repliedAsset;
+  }
 
   if (messageBody?.asset) {
     baseMessage.asset = {
@@ -67,6 +71,63 @@ export const messageService = async (messageBody, senderId, receiverId, res) => 
             path: 'postedBy',
             select: 'userProfileImage username',
           },
+          
+        })
+      : newMessage;
+
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit('newMessage', messageData);
+    }
+
+    console.log(newMessage);
+    return res
+      .status(201)
+      .json({ message: 'Message created successfully', data: newMessage });
+  } catch (error) {
+    console.log(`Error: ${error.message}`);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const conversationSendMessageService = async (
+  messageBody,
+  senderId,
+  receiverId
+) => {
+  try {
+    let conversation = await Conversation.findOne({
+      participants: { $all: [senderId, receiverId] },
+    });
+
+    if (!conversation) {
+      conversation = await Conversation.create({
+        participants: [senderId, receiverId],
+      });
+    }
+
+    const newMessage = createNewMessage(
+      messageBody,
+      senderId,
+      receiverId,
+      conversation._id
+    );
+
+    if (newMessage) {
+      conversation.messages.push(newMessage);
+    }
+
+    await Promise.all([conversation.save(), newMessage.save()]);
+
+    const receiverSocketId = getSocketIdByUserId(receiverId);
+
+    const messageData = messageBody?.postId
+      ? await newMessage.populate({
+          path: 'post',
+          select: 'attachments aspectRatio caption',
+          populate: {
+            path: 'postedBy',
+            select: 'userProfileImage username',
+          },
         })
       : newMessage;
 
@@ -78,8 +139,7 @@ export const messageService = async (messageBody, senderId, receiverId, res) => 
       .status(201)
       .json({ message: 'Message created successfully', data: newMessage });
   } catch (error) {
-    console.log(`Error: ${error.message}`);
-    return res.status(500).json({ error: 'Internal server error' });
+    throw new Error(`Error in conversationSendMessageService ${error.message}`);
   }
 };
 
@@ -163,7 +223,7 @@ export const getTotalMessageService = async (senderId, receiverId) => {
       conversationId: conversation._id,
     });
 
-    console.log({totalMessages});
+    console.log({ totalMessages });
     return {
       statusCode: 200,
       response: {

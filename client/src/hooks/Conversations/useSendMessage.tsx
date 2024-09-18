@@ -6,7 +6,7 @@ import { useState } from 'react';
 const useSendMessage = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { setMessages, conversation, replyMessage, setReplyMessage } =
+  const { setMessages, messages, conversation, replyMessage, setReplyMessage } =
     useMessageContext();
 
   const sendMessage = async (
@@ -50,6 +50,7 @@ const useSendMessage = () => {
       }
 
       setMessages(prev => [...prev, data.data]);
+      console.log(messages);
       setReplyMessage({
         repliedUser: '',
         repliedUserMessage: '',

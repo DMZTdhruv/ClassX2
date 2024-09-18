@@ -71,6 +71,7 @@ const ProfilePosts = ({
               />
             );
           })}
+        
         {!isDifferentUser &&
           userPost?.map(posts => {
             return (

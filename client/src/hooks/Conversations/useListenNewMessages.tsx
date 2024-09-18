@@ -13,6 +13,10 @@ const useListenNewMessages = () => {
       setMessages(prev => [...prev, newMessage]);
     });
 
+    socket?.on('private_message_StoC', message => {
+      console.log(message);
+    });
+
     return () => {
       socket?.off('newMessage');
     };

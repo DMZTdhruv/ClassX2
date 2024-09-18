@@ -5,9 +5,7 @@ import BottomBar from '@/components/shared/BottomBar';
 import SideBar from '@/components/shared/sidebar';
 import NextTopLoader from 'nextjs-toploader';
 import { AuthContextProvider } from '@/context/AuthContext';
-import SocketContextProvider from '@/context/ClassXSocketContext';
 import { ClassXContextProvider } from '@/context/ClassXContext';
-import GetNotification from '../../components/GetNotification';
 import FcmTokenComponent from '@/components/firebase/FcmTokenComponent';
 import ClassXSocketContextProvider from '@/context/ClassXSocketContext';
 

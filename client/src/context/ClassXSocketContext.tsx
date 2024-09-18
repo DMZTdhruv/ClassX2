@@ -43,9 +43,6 @@ const ClassXSocketContextProvider = ({ children }: { children: React.ReactNode }
         setActiveUsers(users);
       });
 
-      socketInstance.emit('hello', {
-        greetings: 'hello world',
-      });
       return () => {
         socketInstance.close();
       };

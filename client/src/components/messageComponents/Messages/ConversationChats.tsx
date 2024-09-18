@@ -6,6 +6,9 @@ import useGetConversationsMessages from '@/hooks/Conversations/useGetConversatio
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import ConversationChatBubble from './ConversationChatBubble';
 import { useInView } from 'react-intersection-observer';
+import { yearsToQuarters } from 'date-fns';
+import { useAuthContext } from '@/context/AuthContext';
+import useSendConversationMessage from '@/hooks/Message/useSendConversationMessage';
 
 interface IConversationChatSection {
   userId: string;
@@ -18,16 +21,20 @@ const ConversationChatSection = ({ userId }: IConversationChatSection) => {
 
   // states
   const [loadingConversation, setLoadingConversation] = useState<boolean>(false);
-
   //refs
   const lastMessageRef = useRef<HTMLDivElement>(null);
   const { ref, inView } = useInView();
+  const { ref: lastMessageRefRef, inView: lastMessageInView } = useInView();
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // contexts
+  const { authUser } = useAuthContext();
   const { conversationChats, setConversationChats } = useClassXContext();
   const currentConversationUser = conversationChats.find(user => user._id === userId);
+
+  //socket handler for new message
+  const handleNewMessageOfSocket = () => {};
 
   const initializeTheTotalNumberOfMessage = async () => {
     try {
@@ -103,6 +110,12 @@ const ConversationChatSection = ({ userId }: IConversationChatSection) => {
   };
 
   useEffect(() => {
+    if (lastMessageInView) {
+      console.log(lastMessageInView);
+    }
+  }, [lastMessageInView]);
+
+  useEffect(() => {
     if (userId) {
       initializeTheConversationData();
     }
@@ -120,11 +133,36 @@ const ConversationChatSection = ({ userId }: IConversationChatSection) => {
     }
   }, [userId, loadingConversation]);
 
+  useEffect(() => {
+    const currentChat = conversationChats.find(user => user._id === userId);
+    const lastMessage =
+      currentChat?.conversationChats[currentChat?.conversationChats.length - 1];
+    const isUserMessage = lastMessage?.senderId?._id === authUser?.userProfileId;
+
+    console.log({ messageSenderId: lastMessage?.senderId?._id, userId });
+
+    if (isUserMessage) {
+      lastMessageRef.current?.scrollIntoView({ block: 'center' });
+    } else if (lastMessageInView) {
+      lastMessageRef.current?.scrollIntoView({ block: 'center' });
+    }
+  }, [conversationChats]);
+
   const previousPosition = useRef<number>(0);
   const newPosition = useRef<number>(0);
 
   useLayoutEffect(() => {
-    if (scrollContainerRef.current && currentConversationUser) {
+    const currentChat = conversationChats.find(user => user._id === userId);
+    const lastMessage =
+      currentChat?.conversationChats[currentChat?.conversationChats.length - 1];
+    const isUserMessage = lastMessage?.senderId?._id === authUser?.userProfileId;
+
+    if (
+      scrollContainerRef.current &&
+      currentConversationUser &&
+      !lastMessageInView &&
+      !isUserMessage
+    ) {
       previousPosition.current = newPosition.current;
       newPosition.current = scrollContainerRef.current.scrollHeight;
       if (currentConversationUser.page > 1) {
@@ -134,6 +172,10 @@ const ConversationChatSection = ({ userId }: IConversationChatSection) => {
         );
       }
     }
+  }, [currentConversationUser?.conversationChats]);
+
+  useEffect(() => {
+    console.log(currentConversationUser?.conversationChats);
   }, [currentConversationUser?.conversationChats]);
 
   return (
@@ -161,6 +203,7 @@ const ConversationChatSection = ({ userId }: IConversationChatSection) => {
                 </div>
               );
             })}
+          <div ref={lastMessageRefRef}></div>
         </div>
       )}
     </div>

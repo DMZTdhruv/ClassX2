@@ -1,5 +1,9 @@
+import { IReplyMessage } from '@/Constants';
+import { useAuthContext } from '@/context/AuthContext';
 import { useClassXSocketContext } from '@/context/ClassXSocketContext';
 import { useConversationMessageContext } from '@/context/ConversationMessageContext';
+import useSendConversationMessage from '@/hooks/Message/useSendConversationMessage';
+
 import useGenerateFileLink from '@/hooks/useGenerateFileLink';
 import { useGenerateLink } from '@/hooks/useGenerateLink';
 import { checkTypeOfFile } from '@/utils/checkTypeOfFile';
@@ -11,11 +15,27 @@ import { GiCancel } from 'react-icons/gi';
 import { HiMiniPaperClip } from 'react-icons/hi2';
 import { RxCross2 } from 'react-icons/rx';
 
+type MessageBody = IReplyMessage & {
+  message: string;
+  asset?: {
+    url: string;
+    extension: string;
+  };
+};
+
+interface IImgFile {
+  file: File | undefined;
+  blobUrl: string | undefined;
+}
+
 const ConversationMessageInput = ({ userId }: { userId: string }) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [userMessage, setUserMessage] = useState<string>('');
-  const [typeOfFile, setTypeOfFile] = useState<string>('');
+  const { authUser } = useAuthContext();
 
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const [typeOfFile, setTypeOfFile] = useState<string>('');
   const [demo, setDemo] = useState<string>('');
 
   const generateBlobUrl = (file: File) => {
@@ -29,11 +49,14 @@ const ConversationMessageInput = ({ userId }: { userId: string }) => {
   const { generateTempVideoUrl, getFile } = useGenerateFileLink();
   const { replyMessage, setReplyMessage } = useConversationMessageContext();
 
+  // sending message hook
+  const { sendMessage } = useSendConversationMessage();
+
+  useEffect(() => {
+    console.log(replyMessage);
+  }, [replyMessage]);
+
   //image states
-  interface IImgFile {
-    file: File | undefined;
-    blobUrl: string | undefined;
-  }
   const [temporaryImageFile, setTemporaryImageFile] = useState<IImgFile>({
     file: undefined,
     blobUrl: undefined,
@@ -52,19 +75,36 @@ const ConversationMessageInput = ({ userId }: { userId: string }) => {
     }
   };
 
-  const sendSocketMessage = () => {
+  const sendSocketMessage = (messageBody: MessageBody) => {
     try {
       if (socket) {
-        socket.emit('private_message', { userId, userMessage });
+        socket.emit('private_message_CtoS', { userId, messageBody });
       }
     } catch (error: any) {
       console.log(error.message);
     }
   };
 
+  const buildMessage = async () => {
+    try {
+      if (authUser) {
+        const response: boolean = await sendMessage(
+          authUser.userProfileId,
+          userId,
+          userMessage
+        );
+        console.log(response);
+      }
+    } catch (error: any) {
+      console.error(error.message);
+    }
+  };
+
   const handleSendMessage = async (e: FormEvent) => {
     e.preventDefault();
-    sendSocketMessage();
+    setLoading(prev => true);
+    await buildMessage();
+    setLoading(prev => false);
   };
 
   const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -137,11 +177,24 @@ const ConversationMessageInput = ({ userId }: { userId: string }) => {
           </button>
         </div>
       ) : null}
+
+      {replyMessage?.repliedAsset?.url ? (
+        <div className='h-[100px] w-[100px] px-2 relative'>
+          <Image
+            src={replyMessage?.repliedAsset?.url || ''}
+            height={100}
+            width={100}
+            className='aspect-square object-cover rounded-md'
+            alt='user file'
+          />
+        </div>
+      ) : null}
+
       {temporaryImageFile.file || temporaryVideoUrl?.url ? (
-        <div className='h-[100px] w-[100px] p-2 relative'>
+        <div className='h-[100px] w-[100px] px-2 relative'>
           <Image
             // @ts-ignore
-            src={temporaryImageFile.blobUrl}
+            src={temporaryImageFile.blobUrl || replyMessage?.repliedAsset?.url || ''}
             height={100}
             width={100}
             className='aspect-square object-cover rounded-md'
@@ -149,12 +202,25 @@ const ConversationMessageInput = ({ userId }: { userId: string }) => {
           />
           <button
             className='absolute top-0 right-0'
-            onClick={() =>
+            onClick={() => {
               setTemporaryImageFile(prev => ({
                 file: undefined,
                 blobUrl: undefined,
-              }))
-            }
+              }));
+              setReplyMessage({
+                repliedUser: '',
+                repliedUserMessage: '',
+                repliedPost: {
+                  postId: '',
+                  postUrl: '',
+                  extension: '',
+                },
+                repliedAsset: {
+                  extension: '',
+                  url: '',
+                },
+              });
+            }}
           >
             <GiCancel size={20} className='bg-neutral-700 rounded-full' />
           </button>
@@ -174,7 +240,12 @@ const ConversationMessageInput = ({ userId }: { userId: string }) => {
           rows={1}
           className='bg-[#171717] transition-all focus:bg-[#1E1E1E] max-h-[150px] w-full pl-[50px] outline-none focus-visible:ring-0 resize-none md:font-semibold  rounded-[30px] py-[20px] pr-[60px] caret-violet-300'
         />
-        <button className='absolute bottom-0 right-2 -translate-y-[50%]  text-neutral-800 group font-semibold'>
+        <button
+          className={`absolute bottom-0 right-2 -translate-y-[50%] ${
+            loading ? 'animate-pulse' : ''
+          }   text-neutral-800 group font-semibold`}
+          disabled={loading}
+        >
           <FaArrowRight className='h-[35px] rounded-full w-[35px] p-[8px] bg-neutral-100 group-hover:bg-neutral-300 group-active:scale-[0.9]' />
         </button>
       </div>

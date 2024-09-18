@@ -1,35 +1,35 @@
-'use client'
+'use client';
 
-import Image from 'next/image'
-import React, { FormEvent, useEffect, useReducer, useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { AiOutlineCloudUpload } from 'react-icons/ai'
-import { Input } from '@/components/ui/input'
+import Image from 'next/image';
+import React, { FormEvent, useEffect, useReducer, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { AiOutlineCloudUpload } from 'react-icons/ai';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import useGetUser from '@/hooks/user/useGetUser'
-import { Textarea } from '@/components/ui/textarea'
-import { useGenerateLink } from '@/hooks/useGenerateLink'
-import { Api } from '@/Constants'
-import { SanityImageAssetDocument } from '@sanity/client'
-import { useRouter } from 'next/navigation'
-import { updateUserProfile } from '../ProfileAction'
-import { Skeleton } from '@/components/ui/skeleton'
-import { updateFeed } from '../../serverActions'
-import { AuthContextProvider, useAuthContext } from '@/context/AuthContext'
+} from '@/components/ui/select';
+import useGetUser from '@/hooks/user/useGetUser';
+import { Textarea } from '@/components/ui/textarea';
+import { useGenerateLink } from '@/hooks/useGenerateLink';
+import { Api } from '@/Constants';
+import { SanityImageAssetDocument } from '@sanity/client';
+import { useRouter } from 'next/navigation';
+import { updateUserProfile } from '../ProfileAction';
+import { Skeleton } from '@/components/ui/skeleton';
+import { updateFeed } from '../../serverActions';
+import { AuthContextProvider, useAuthContext } from '@/context/AuthContext';
 
 interface EditProfileState {
-  username: string
-  name: string
-  userProfileImage: string
-  bio: string
-  privateAccount: string
-  gender: string
+  username: string;
+  name: string;
+  userProfileImage: string;
+  bio: string;
+  privateAccount: string;
+  gender: string;
 }
 
 const ACTIONS = {
@@ -39,7 +39,7 @@ const ACTIONS = {
   SET_BIO: 'SET_BIO',
   SET_PRIVATE_ACCOUNT: 'SET_PRIVATE_ACCOUNT',
   SET_GENDER: 'SET_GENDER',
-}
+};
 
 type Action =
   | { type: typeof ACTIONS.SET_USERNAME; payload: string }
@@ -47,31 +47,31 @@ type Action =
   | { type: typeof ACTIONS.SET_USER_PROFILE_IMAGE; payload: string }
   | { type: typeof ACTIONS.SET_BIO; payload: string }
   | { type: typeof ACTIONS.SET_PRIVATE_ACCOUNT; payload: string }
-  | { type: typeof ACTIONS.SET_GENDER; payload: string }
+  | { type: typeof ACTIONS.SET_GENDER; payload: string };
 
 const reducer = (state: EditProfileState, action: Action): EditProfileState => {
   switch (action.type) {
     case ACTIONS.SET_USERNAME:
-      return { ...state, username: action.payload }
+      return { ...state, username: action.payload };
     case ACTIONS.SET_NAME:
-      return { ...state, name: action.payload }
+      return { ...state, name: action.payload };
     case ACTIONS.SET_USER_PROFILE_IMAGE:
-      return { ...state, userProfileImage: action.payload }
+      return { ...state, userProfileImage: action.payload };
     case ACTIONS.SET_BIO:
-      return { ...state, bio: action.payload }
+      return { ...state, bio: action.payload };
     case ACTIONS.SET_PRIVATE_ACCOUNT:
-      return { ...state, privateAccount: action.payload }
+      return { ...state, privateAccount: action.payload };
     case ACTIONS.SET_GENDER:
-      return { ...state, gender: action.payload }
+      return { ...state, gender: action.payload };
     default:
-      return state
+      return state;
   }
-}
+};
 
 const capitalizeFirstLetter = (word: string) => {
-  const text = word.charAt(0).toUpperCase() + word.slice(1)
-  return text
-}
+  const text = word.charAt(0).toUpperCase() + word.slice(1);
+  return text;
+};
 
 const EditProfile = () => {
   const initialState: EditProfileState = {
@@ -81,86 +81,86 @@ const EditProfile = () => {
     bio: '',
     privateAccount: '',
     gender: '',
-  }
+  };
 
   // custom hooks
-  const { generateUrl, getUrl } = useGenerateLink()
-  const { loading, getUserProfile, errorMessage } = useGetUser()
+  const { generateUrl, getUrl } = useGenerateLink();
+  const { loading, getUserProfile, errorMessage } = useGetUser();
 
   // Reducers
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   // Loading states
-  const [uploadingImage, setUploadingImage] = useState<boolean>(false)
-  const [submittingData, setSubmittingData] = useState<boolean>(false)
+  const [uploadingImage, setUploadingImage] = useState<boolean>(false);
+  const [submittingData, setSubmittingData] = useState<boolean>(false);
 
   // other states
   const [imageData, setImageData] = useState<SanityImageAssetDocument | undefined>(
     undefined
-  )
-  const [newProfileData, setNewProfileData] = useState(null)
+  );
+  const [newProfileData, setNewProfileData] = useState(null);
 
-  const router = useRouter()
-  const { setAuthUser } = useAuthContext()
+  const router = useRouter();
+  const { setAuthUser } = useAuthContext();
 
   const handleImageUpload = async (e: FormEvent<HTMLInputElement>) => {
-    e.preventDefault()
-    setUploadingImage(true)
+    e.preventDefault();
+    setUploadingImage(true);
     try {
-      const url = await generateUrl(e)
-      setImageData(url)
+      const url = await generateUrl(e);
+      setImageData(url);
       // @ts-ignore
-      handleUserProfileImage(url?.url)
+      handleUserProfileImage(url?.url);
     } catch (err: any) {
-      console.error(err.message)
+      console.error(err.message);
     } finally {
-      setUploadingImage(false)
+      setUploadingImage(false);
     }
-  }
+  };
 
   // handlers
   const handleUsername = (username: string) => {
-    dispatch({ type: ACTIONS.SET_USERNAME, payload: username })
-  }
+    dispatch({ type: ACTIONS.SET_USERNAME, payload: username });
+  };
   const handleUserProfileImage = (userProfileImage: string) => {
-    dispatch({ type: ACTIONS.SET_USER_PROFILE_IMAGE, payload: userProfileImage })
-  }
+    dispatch({ type: ACTIONS.SET_USER_PROFILE_IMAGE, payload: userProfileImage });
+  };
   const handleName = (name: string) => {
-    dispatch({ type: ACTIONS.SET_NAME, payload: name })
-  }
+    dispatch({ type: ACTIONS.SET_NAME, payload: name });
+  };
   const handleBio = (bio: string) => {
-    dispatch({ type: ACTIONS.SET_BIO, payload: bio })
-  }
+    dispatch({ type: ACTIONS.SET_BIO, payload: bio });
+  };
   const handlePrivateAccount = (privateAccount: string) => {
-    dispatch({ type: ACTIONS.SET_PRIVATE_ACCOUNT, payload: privateAccount })
-  }
+    dispatch({ type: ACTIONS.SET_PRIVATE_ACCOUNT, payload: privateAccount });
+  };
   const handleGender = (gender: string) => {
-    dispatch({ type: ACTIONS.SET_GENDER, payload: gender })
-  }
+    dispatch({ type: ACTIONS.SET_GENDER, payload: gender });
+  };
 
   const setUserDetails = async () => {
-    const data = await getUserProfile()
-    handleUsername(data.username)
-    handleName(data.name)
-    handleUserProfileImage(data.userProfileImage)
-    handleBio(data.about)
-    handlePrivateAccount(capitalizeFirstLetter(data.isPrivate.toString()))
+    const data = await getUserProfile();
+    handleUsername(data.username);
+    handleName(data.name);
+    handleUserProfileImage(data.userProfileImage);
+    handleBio(data.about);
+    handlePrivateAccount(capitalizeFirstLetter(data.isPrivate.toString()));
     if (data.gender) {
-      handleGender(capitalizeFirstLetter(data.gender.toString()))
+      handleGender(capitalizeFirstLetter(data.gender.toString()));
     }
-  }
+  };
 
   const submitNewProfile = async (e: FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     try {
-      setSubmittingData(true)
+      setSubmittingData(true);
       if (imageData) {
-        const imageUrl = await getUrl(imageData)
+        const imageUrl = await getUrl(imageData);
         if (!imageUrl) {
-          throw new Error('There was an error generating the image')
+          throw new Error('There was an error generating the image');
         }
-        handleUserProfileImage(imageUrl)
+        handleUserProfileImage(imageUrl);
       }
 
       const requestBody = {
@@ -170,7 +170,7 @@ const EditProfile = () => {
         bio: state.bio,
         privateAccount: state.privateAccount,
         gender: state.gender,
-      }
+      };
 
       const res = await fetch(`${Api}/users/edit-profile`, {
         method: 'POST',
@@ -178,29 +178,29 @@ const EditProfile = () => {
         body: JSON.stringify(requestBody),
         credentials: 'include',
         cache: 'no-cache',
-      })
+      });
 
-      const data = await res.json()
-      if (data.error) throw new Error(data.error)
-      const updatedProfileData = data.data
-      setNewProfileData(updatedProfileData)
-      localStorage.setItem('classX_user', JSON.stringify(updatedProfileData))
-      const storedUser = localStorage.getItem('classX_user')
-      const value = JSON.parse(storedUser || '')
-      setAuthUser(value)
-      updateUserProfile()
-      updateFeed()
-      router.push("/profile")
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      const updatedProfileData = data.data;
+      setNewProfileData(updatedProfileData);
+      localStorage.setItem('classX_user', JSON.stringify(updatedProfileData));
+      const storedUser = localStorage.getItem('classX_user');
+      const value = JSON.parse(storedUser || '');
+      setAuthUser(value);
+      updateUserProfile();
+      updateFeed();
+      router.push('/profile');
     } catch (error: any) {
-      console.error(error.message)
+      console.error(error.message);
     } finally {
-      setSubmittingData(false)
+      setSubmittingData(false);
     }
-  }
+  };
 
   useEffect(() => {
-    setUserDetails()
-  }, [])
+    setUserDetails();
+  }, []);
 
   return (
     <div className='w-full pb-8 flex justify-center '>
@@ -278,38 +278,6 @@ const EditProfile = () => {
                     required
                   />
                 </label>
-                <label className='w-full mb-[4px]'>
-                  <p className='mb-[2px] font-semibold'>Private account</p>
-                  <Select onValueChange={handlePrivateAccount}>
-                    <SelectTrigger className='sm:rounded-full  rounded-[0px] focus-visible:ring-0 border-neutral-800 sm:bg-[#171717] bg-transparent sm:border-none border-b-2 border-t-0 border-l-0 border-r-0 outline-none px-[16px]'>
-                      <SelectValue placeholder='Private account?' />
-                    </SelectTrigger>
-                    <SelectContent className='bg-[#171717]'>
-                      <SelectItem className='bg-[#171717]' value='True'>
-                        True
-                      </SelectItem>
-                      <SelectItem className='bg-[#171717]' value='False'>
-                        False
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </label>
-                <label className='w-full mb-[4px]'>
-                  <p className='mb-[2px] font-semibold'>Choose a gender</p>
-                  <Select onValueChange={handleGender}>
-                    <SelectTrigger className='sm:rounded-full  rounded-[0px] focus-visible:ring-0 border-neutral-800 sm:bg-[#171717] bg-transparent sm:border-none border-b-2 border-t-0 border-l-0 border-r-0 outline-none px-[16px]'>
-                      <SelectValue placeholder='Choose a gender' />
-                    </SelectTrigger>
-                    <SelectContent className='bg-[#171717]'>
-                      <SelectItem className='bg-[#171717]' value='Male'>
-                        Male
-                      </SelectItem>
-                      <SelectItem className='bg-[#171717]' value='Female'>
-                        Female
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </label>
               </div>
             )}
 
@@ -324,7 +292,7 @@ const EditProfile = () => {
               <Button
                 className='text-white font-bold bg-neutral-800 hover:bg-neutral-700 rounded-full h-[35px] mt-[15px]'
                 onClick={() => {
-                  router.push('/profile')
+                  router.push('/profile');
                 }}
                 type='button'
               >
@@ -335,8 +303,8 @@ const EditProfile = () => {
         </section>
       </div>
     </div>
-  )
-}
+  );
+};
 
 const UserInfoCard = ({
   imageUrl,
@@ -344,10 +312,10 @@ const UserInfoCard = ({
   name,
   loading,
 }: {
-  imageUrl: string
-  username: string
-  name: string
-  loading: boolean
+  imageUrl: string;
+  username: string;
+  name: string;
+  loading: boolean;
 }) => {
   if (loading) {
     return (
@@ -358,7 +326,7 @@ const UserInfoCard = ({
           <Skeleton className='h-[13px] w-[60px]' />
         </div>
       </div>
-    )
+    );
   }
   return (
     <div className='flex items-center flex-col sm:flex-row gap-[14px]'>
@@ -375,10 +343,10 @@ const UserInfoCard = ({
         <p className='opacity-65 text-[13px]'>@{username}</p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default EditProfile
+export default EditProfile;
 
 function FormSkeleton() {
   return (
@@ -404,5 +372,5 @@ function FormSkeleton() {
         <Skeleton className='rounded-[15px]  active:scale-[0.99] h-[20px]  w-full  p-4' />
       </div>
     </div>
-  )
+  );
 }

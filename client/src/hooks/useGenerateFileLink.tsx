@@ -1,12 +1,12 @@
-import { SanityAssetDocument } from '@sanity/client'
-import client from '../../client'
-import { useState } from 'react'
+import { SanityAssetDocument } from '@sanity/client';
+import client from '../../client';
+import { useState } from 'react';
 
 const useGenerateFileLink = () => {
-  const [sanityError, setSanityError] = useState<string>('')
+  const [sanityError, setSanityError] = useState<string>('');
 
   const generateTempFileUrl = async (e: any) => {
-    const { type, name } = e.target.files[0]
+    const { type, name } = e.target.files[0];
     try {
       if (
         type === 'application/pdf' ||
@@ -17,44 +17,46 @@ const useGenerateFileLink = () => {
         const file = await client.assets.upload('file', e.target.files[0], {
           contentType: type,
           filename: name,
-        })
+        });
 
-        return file
+        return file;
       } else {
-        throw new Error(`Invalid file type`)
+        throw new Error(`Invalid file type`);
       }
     } catch (error: any) {
-      console.error(error.message)
-      setSanityError(error.message)
+      console.error(error.message);
+      setSanityError(error.message);
       setTimeout(() => {
-        setSanityError('')
-      }, 5000)
+        setSanityError('');
+      }, 5000);
     }
-  }
+  };
 
   const generateTempVideoUrl = async (e: any) => {
-    const { type, name } = e.target.files[0]
+    const { type, name } = e.target.files[0];
     try {
       if (type === 'video/mp4') {
         const file = await client.assets.upload('file', e.target.files[0], {
           contentType: type,
           filename: name,
-        })
+        });
 
-        return file
+        return file;
       } else {
-        throw new Error(`Invalid file type`)
+        throw new Error(`Invalid file type`);
       }
     } catch (error: any) {
-      console.error(error.message)
-      setSanityError(error.message)
+      console.error(error.message);
+      setSanityError(error.message);
       setTimeout(() => {
-        setSanityError('')
-      }, 5000)
+        setSanityError('');
+      }, 5000);
     }
-  }
+  };
 
   const getFile = async (file: SanityAssetDocument) => {
+    console.log('From sanity here');
+    console.log(file);
     const doc = {
       _type: 'classwork',
       file: {
@@ -64,28 +66,28 @@ const useGenerateFileLink = () => {
           _ref: file._id,
         },
       },
-    }
+    };
     try {
-      const createFile = await client.create(doc)
+      const createFile = await client.create(doc);
       const file = await client.fetch(
         `*[_id == '${createFile.file.asset._ref}']{_id, originalFilename, extension, url, _createdAt}`
-      )
+      );
       return file;
     } catch (error: any) {
-      console.error(error.message)
-      setSanityError(error.message)
+      console.error(error.message);
+      setSanityError(error.message);
       setTimeout(() => {
-        setSanityError('')
-      }, 5000)
+        setSanityError('');
+      }, 5000);
     }
-  }
+  };
 
   return {
     generateTempFileUrl,
     getFile,
     generateTempVideoUrl,
     sanityError,
-  }
-}
+  };
+};
 
-export default useGenerateFileLink
+export default useGenerateFileLink;

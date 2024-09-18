@@ -26,7 +26,7 @@ const ConversationChatBubble = ({ chatData }: { chatData: IConversationChats }) 
     replyMessage: senderReply,
   } = chatData;
   const { authUser } = useAuthContext();
-  const isUserMessage = authUser?.userProfileId === senderId._id;
+  const isUserMessage = authUser?.userProfileId === senderId?._id;
   const userMessageChatBubbleClass = `md:rounded-l-[20px] rounded-l-[30px] md:rounded-tr-[20px] rounded-tr-[30px]`;
   const messageDate = messageTime(createdAt);
 
@@ -306,8 +306,8 @@ const ConversationChatBubble = ({ chatData }: { chatData: IConversationChats }) 
                           extension: post?.attachments[0]?.extension || '',
                         },
                         repliedAsset: {
-                          url: '',
-                          extension: '',
+                          url: asset?.url,
+                          extension: asset?.extension,
                         },
                       });
                     }}
@@ -372,8 +372,8 @@ const ConversationChatBubble = ({ chatData }: { chatData: IConversationChats }) 
                         extension: post?.attachments[0]?.extension || '',
                       },
                       repliedAsset: {
-                        url: '',
-                        extension: '',
+                        url: asset?.url,
+                        extension: asset?.extension,
                       },
                     });
                   }}

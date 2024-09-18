@@ -1,14 +1,14 @@
-import { Api } from '@/Constants'
-import ClassroomCard, { IClassroomCard } from '@/components/classroom/ClassroomCard'
-import ClassroomOptions from '@/components/classroom/ClassroomOptions'
-import AccessProfile from '@/components/shared/profile/AccessProfile'
-import { Skeleton } from '@/components/ui/skeleton'
-import { cookies } from 'next/headers'
-import Link from 'next/link'
+import { Api } from '@/Constants';
+import ClassroomCard, { IClassroomCard } from '@/components/classroom/ClassroomCard';
+import ClassroomOptions from '@/components/classroom/ClassroomOptions';
+import AccessProfile from '@/components/shared/profile/AccessProfile';
+import { Skeleton } from '@/components/ui/skeleton';
+import { cookies } from 'next/headers';
+import Link from 'next/link';
 
 export default async function Classroom() {
-  const cookie = cookies().get('classX_user_token')?.value
-  let requestError = undefined
+  const cookie = cookies().get('classX_user_token')?.value;
+  let requestError = undefined;
 
   const getClassrooms = async () => {
     try {
@@ -18,20 +18,20 @@ export default async function Classroom() {
           Cookies: `classX_user_token=${cookie}`,
         },
         cache: 'no-store',
-      })
+      });
 
-      const data = await res.json()
+      const data = await res.json();
       if (data.error) {
-        throw new Error(`${data.error}`)
+        throw new Error(`${data.error}`);
       }
-      return data.data
+      return data.data;
     } catch (error: any) {
-      console.error(error.message)
-      requestError = error.message
+      console.error(error.message);
+      requestError = error.message;
     }
-  }
+  };
 
-  const classrooms = await getClassrooms()
+  const classrooms = await getClassrooms();
 
   return (
     <section className='h-full w-full relative md:mt-[0px]'>
@@ -42,7 +42,7 @@ export default async function Classroom() {
         bg-gradient-to-r from-[#891DCC] to-[#C01DCC] bg-clip-text text-transparent
         '
           >
-            ClassX
+            ClassX-Classroom
           </span>
         </div>
         <div className='flex items-center gap-3'>
@@ -81,7 +81,7 @@ export default async function Classroom() {
                 semester={classroom.semester}
                 createdBy={classroom.createdBy}
               />
-            )
+            );
           })}
         </div>
       ) : (
@@ -91,5 +91,5 @@ export default async function Classroom() {
         </div>
       )}
     </section>
-  )
+  );
 }

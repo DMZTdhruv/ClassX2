@@ -29,16 +29,15 @@ const SocketContextProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [activeUsers, setActiveUsers] = useState<any[]>([]);
-  // @ts-ignore
   const { authUser } = useAuthContext();
 
-  // @ts-ignore
   useEffect(() => {
     if (authUser) {
       const socketInstance = io(`${Api}`, {
         query: {
           userId: authUser.userProfileId,
         },
+        withCredentials: true
       });
 
       setSocket(socketInstance);
@@ -46,10 +45,18 @@ const SocketContextProvider: React.FC<{ children: React.ReactNode }> = ({
         setActiveUsers(users);
       });
 
-      return () => socketInstance.close();
+      socketInstance.on('private_message_StoC', message => {
+        console.log(message);
+      });
+
+      return () => {
+        socketInstance.off();
+        socketInstance.disconnect();
+      };
     } else {
       if (socket) {
-        socket.close();
+        socket.off();
+        socket.disconnect();
         setSocket(null);
       }
     }

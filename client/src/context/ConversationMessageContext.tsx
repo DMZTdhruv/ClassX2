@@ -29,6 +29,8 @@ const ConversationMessageContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [asset, setAsset] = useState<string>('');
+
+  // message details
   const [replyMessage, setReplyMessage] = useState<IReplyMessage>({
     repliedUser: '',
     repliedUserMessage: '',

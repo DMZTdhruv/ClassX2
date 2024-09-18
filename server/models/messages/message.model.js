@@ -11,6 +11,10 @@ const messageSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'PostSchema',
     },
+    repliedAsset: {
+      url: String,
+      extension: String,
+    },
     receiverId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'UserProfile',

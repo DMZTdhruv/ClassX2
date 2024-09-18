@@ -17,8 +17,6 @@ import Link from 'next/link';
 import { GiCancel } from 'react-icons/gi';
 
 const MessageInput = () => {
-  
-
   const { sendMessage } = useSendMessage();
   const [sendingMessageLoading, setSendingMessageLoading] = useState<boolean>(false);
   const [assetLoading, setAssetLoading] = useState<boolean>(false);
@@ -96,11 +94,10 @@ const MessageInput = () => {
 
   const sendSocketMessage = () => {
     try {
-
     } catch (error: any) {
       console.error(error.message);
     }
-  }
+  };
 
   const handleSendMessage = async (e: FormEvent) => {
     e.preventDefault();
@@ -131,7 +128,7 @@ const MessageInput = () => {
   return (
     <form
       className={`${
-        temporaryAttachmentUrl || replyMessage.repliedUser.length !== 0
+        temporaryAttachmentUrl || replyMessage.repliedUser?.length !== 0
           ? 'px-3 pb-3'
           : 'p-3'
       } 

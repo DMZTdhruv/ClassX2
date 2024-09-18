@@ -49,6 +49,7 @@ const Page = async ({
     params.classworkId
   );
 
+  console.log(classworkData);
   return (
     <div className='w-full p-[16px] mt-4 md:p-[30px]'>
       <div className='bg-neutral-900 rounded-xl p-6 mb-8'>
@@ -60,7 +61,7 @@ const Page = async ({
           return (
             <div
               className='bg-neutral-900 rounded-xl p-4 flex flex-col justify-between'
-              key={file._id}
+              key={`${file._id}_${index}`}
             >
               <div className='flex items-center justify-between'>
                 <span className='font-semibold text-lg text-neutral-200'>

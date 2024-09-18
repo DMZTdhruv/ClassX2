@@ -27,9 +27,12 @@ export const useMessageContext = () => {
 
 const MessageContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [conversation, setConversation] = useState(null);
+  
+  //message details
   const [asset, setAsset] = useState<string>('');
-
   const [messages, setMessages] = useState<any[]>([]);
+  
+  //reply message details
   const [replyMessage, setReplyMessage] = useState<IReplyMessage>({
     repliedUser: '',
     repliedUserMessage: '',

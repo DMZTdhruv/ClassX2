@@ -2,14 +2,14 @@
 
 import MessageConversationContainer from '@/components/messageComponents/Messages/MessageConversationContainer';
 import ConversationMessageContextProvider from '@/context/ConversationMessageContext';
-import MessageContextProvider from '@/context/MessageContext';
+import useListenNewMessagesOfConversation from '@/hooks/Conversations/useListenNewMessagesOfConversation';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 
 const MessageV2Layout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const isConversationOpen = pathname.endsWith('/messagev2');
-
+  useListenNewMessagesOfConversation();
   return (
     <ConversationMessageContextProvider>
       <div

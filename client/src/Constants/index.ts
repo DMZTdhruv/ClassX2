@@ -27,13 +27,7 @@ export const sideBarData = [
     filledIcon: 'message-fill.svg',
     routes: '/message',
   },
-  {
-    id: 10,
-    name: 'MessageV2',
-    icon: 'message.svg',
-    filledIcon: 'message-fill.svg',
-    routes: '/messagev2',
-  },
+
   {
     id: 5,
     name: 'Classroom',

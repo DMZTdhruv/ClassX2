@@ -1,4 +1,4 @@
-import { returnMessage } from '../../utils/returnMessage.js'
+import { returnMessage } from '../../utils/returnMessage.js';
 
 export function validateClasswork(
   userProfileId,
@@ -16,6 +16,7 @@ export function validateClasswork(
     !topic ||
     attachments.length === 0
   ) {
-    return returnMessage(400, { error: 'Incomplete details' })
+    console.log(attachments);
+    return returnMessage(400, { error: 'Incomplete details' });
   }
 }

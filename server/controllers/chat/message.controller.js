@@ -27,6 +27,10 @@ export const sendMessage = async (req, res) => {
   }
 };
 
+export const conversationSendMessage = async () => {
+
+}
+
 export const getMessage = async (req, res) => {
   try {
     const { page, limit } = req.query;

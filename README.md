@@ -1,32 +1,23 @@
 # ClassX
-because it looks dope
-Features completed
-## client
- -> Sign-in/sign-up
- -> User profile creation
 
-## server
- -> sign-in/ sign-up controller
- -> user profile controller
- -> Post creation
- -> Comment creation
- -> Reply comment
- -> branch creation
- -> Semester creation
- 
+A college social platform that won the Aavishkar Award — combining social media with classroom management.
 
-## Message updates
-[] -> send messages using socket instead of fetch
-[] -> show the reply asset
-[] -> show the reply post
-[] -> review the code
-[] -> make it little bit secure
+## Features
+- Posts, feed, likes, comments
+- DMs and real-time messaging
+- Follow/unfollow system
+- Event sharing and collaboration
+- Custom-built Google Classroom alternative
+- Course management and assignments
 
+## What makes it different
+Built as an all-in-one system for students — no need to switch between Instagram for socializing and Google Classroom for academics. Everything lives in one place.
 
-## Socket challenges
-[] -> send socket normal message
-[] -> update the context of messages
-[] -> send assets 
-[] -> update the context of messages
-[] -> send posts with socket
-[] -> update the context of messages
+## Recognition
+🏆 Won the Aavishkar Award at my university
+
+## Tech Stack
+NextJs, SocketIo, NodeJs, ExpressJs, Sanity for media storage
+
+## Status
+No longer actively maintained, but the code is available for reference.
